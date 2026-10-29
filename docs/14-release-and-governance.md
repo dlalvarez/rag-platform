@@ -1,6 +1,6 @@
 # 14 — Política de ramas, releases y cambios
 
-- `main`: releases aprobadas; `develop`: integración estable; `feat/Fxx-*`: PR de alcance acotado. Políticas modificables por ADR antes de F00.
+- **Política propuesta, pendiente de ratificación en F00:** `main` para releases aprobadas, `develop` para integración estable, `feat/Fxx-*` para PR de alcance acotado. A fecha de esta realineación solo existe el flujo de PR hacia `main`; no asumir que `develop` ni su protección están configurados. Aprobación formal y ajustes por ADR antes del desarrollo de F00.
 - Todo PR exige checklist y evidencia; aprobación humana para merge. Codex no puede promover ambientes por iniciativa propia.
 - Versionado semántico de APIs, eventos y migraciones; tags para hitos aprobados.
 - Cambio incompatible de datos requiere plan expand/migrate/contract, estrategia backup y recuperación y prueba en dos tenants.

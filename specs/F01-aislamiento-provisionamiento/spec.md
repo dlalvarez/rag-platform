@@ -26,6 +26,7 @@ Esta fase transforma el estado previo en: Prueba técnica de aislamiento antes d
 - **AC-F01-04** — Reintentar provisioning produce una sola identidad/BD/bucket por tenant, sin datos duplicados.
 - **AC-F01-05** — Fallo inyectado en creación de bucket no marca tenant READY; recuperación demostrada.
 - **AC-F01-06** — Resolver cambia tenant/instancia sin reutilizar conexión o credenciales.
+- **AC-F01-07** — Migrar y reintentar la migración de un tenant conserva su versión, aplica locks e informa fallos sin modificar la base de otro tenant (trazabilidad de F01-R07).
 
 ## No-objetivos y límites
 

@@ -14,7 +14,7 @@ Este paquete documenta decisiones expresadas en la conversación y propuestas de
 
 - FastAPI/monolito modular/workers, MinIO/S3, OIDC, PostgreSQL job queue, modelos concretos, versiones de librerías, framework UI, cuotas y SLOs.
 - Nombres de esquemas y endpoints: contrato de referencia que se consolida fase a fase.
-- Flujo de ramas `main`/`develop` y CI: adoptar formalmente en F00.
+- Flujo de ramas `main`/`develop` y política de protección: adoptar formalmente en F00. La validación documental en GitHub Actions ya existe, pero no sustituye la CI de lint/tests requerida por F00.
 
 ## Estado actualizado de ejecución (2026-10-28)
 

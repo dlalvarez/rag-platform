@@ -9,4 +9,4 @@
 
 **Decisiones a cerrar antes de tareas:** versión PostgreSQL/pgvector; secret store dev/prod; biblioteca de conexiones; máximos de pools; bucket/policy; privilegios mínimos del provisioner.
 
-**Aceptación:** AC-F01-01 a 06. **Rollback:** provisioning compensado e inspeccionable, no `DROP DATABASE` sin identificar que el recurso fue creado por esa operación y sin aprobación admin.
+**Aceptación:** AC-F01-01 a 07. **Rollback:** provisioning compensado e inspeccionable, no `DROP DATABASE` sin identificar que el recurso fue creado por esa operación y sin aprobación admin.

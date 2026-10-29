@@ -10,13 +10,13 @@
 4. Abrir tarea para Codex Cloud apuntando explícitamente a `AGENTS.md`, spec, plan y tasks; pedir rama/PR, cambios mínimos y **no merge**.
 5. Ejecutar tests en sandbox; Codex reporta resultados y vacíos; no usar archivos secretos ni credenciales reales.
 6. Revisar PR, seguridad, migraciones y cambios colaterales. Corregir vía iteraciones pequeñas; la aprobación humana precede al merge.
-7. Registrar evidencia en `evidence.md` y checklist; merge a `develop` solamente cuando puertas y tests pasen; promover a `main` bajo política de release.
+7. Registrar evidencia en `evidence.md` y checklist; integrar mediante PR a la rama destino de la política aprobada. Mientras no se adopte formalmente `develop`, los PR se dirigen a `main`; no crear ni usar `develop` por suposición.
 
 ## Variante opcional: Spec Kit + Codex CLI
 
 Según documentación oficial vigente, integración `codex` de Spec Kit crea skills bajo `.agents/skills/` y se invocan como `$speckit-<command>` dentro de Codex. **No ejecutar `$speckit-*` como comando de shell.**
 
-Ejemplo de bootstrap en repositorio **ya existente** (revisar `specify --help` ygit diff, evitar sobreescribir documentos):
+Ejemplo de bootstrap en repositorio **ya existente** (revisar `specify --help` y `git diff`, evitar sobreescribir documentos):
 
 ```bash
 uv tool install specify-cli
@@ -50,7 +50,7 @@ Después de inicializar, sincronizar la copia derivada de la constitución con `
 - G2 plan: arquitectura concordante con P01–P14, ADRs y contrato API/DB.
 - G3 tareas: trazabilidad AC -> implementación/test, riesgos y rollback.
 - G4 PR: pruebas, integraciones y seguridad verificadas.
-- G5 postmerge: ejecución sobre `develop`, evidencia y actualización de roadmap.
+- G5 postmerge: validación sobre la rama destino aprobada, evidencia y actualización de roadmap.
 
 ## Roles
 
