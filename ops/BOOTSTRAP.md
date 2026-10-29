@@ -2,9 +2,9 @@
 
 ## Preparación
 
-1. Crear repo privado `rag-platform` en GitHub; copiar este paquete como commit fundacional en `main` o rama inicial.
-2. Revisar/ratificar constitución y ADRs propuestos. Crear rama `develop` protegida, requerir PR y CI.
-3. Instalar herramientas compatibles: git, Python, uv, Docker/Compose, PostgreSQL cliente y Codex según modalidad.
+1. **Ya realizado:** repositorio `dlalvarez/rag-platform` inicializado en GitHub. Actualmente público, aunque el kit original sugería privado: revisar política de visibilidad. Esta realineación se propone mediante rama/PR; no copiar encima de `main`.
+2. Revisar/ratificar constitución y ADRs propuestos. La adopción de rama `develop`, protecciones GitHub y CI sigue pendiente de decisión formal F00; no asumir que ya está configurada.
+3. **Infraestructura dev actual:** Ubuntu 24.04.5 y Docker/Compose operativos en `ragdev01`; Python/uv, PostgreSQL cliente y Codex según modalidad se validarán para F00, sin presuponer instalados.
 4. F00 define versiones exactas y archivos de dependencias; evitar imágenes `latest` y secretos en `.env` versionados.
 5. Configurar GitHub Actions con jobs de documentación y más tarde tests/seguridad; secretos solo en GitHub Secrets o store autorizado.
 6. Iniciar F00 con `ops/CODEX_PROMPTS.md` A y posteriormente B.

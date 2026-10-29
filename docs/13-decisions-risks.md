@@ -1,11 +1,18 @@
 # 13 — Registro de decisiones abiertas y riesgos
 
-## Decisiones ya adoptadas (ADRs vinculantes)
+## Decisiones confirmadas (ADRs vinculantes)
 
 - ADR-0001: un PostgreSQL database por tenant + base control.
-- ADR-0002: monolito modular + workers y proveedores desacoplados.
 - ADR-0003: SDD, Codex, GitHub y aprobaciones por PR.
-- ADR-0004: referencias de secrets, roles y almacenamiento segregado.
+
+## Propuestas de ADR pendientes de ratificación
+
+- ADR-0002: monolito modular + workers y proveedores desacoplados (propuesto F00).
+- ADR-0004: secret manager y bucket por tenant (propuesto F01).
+
+## Decisión operacional ya ejecutada
+
+- ADR-0005: VM Synology VMM con Ubuntu y Docker como host de desarrollo. No supone que F00 del paquete haya terminado.
 
 ## Decisiones técnicas a confirmar antes de su fase (no bloquean la documentación)
 
