@@ -1,6 +1,6 @@
 # Constitución de RAG Platform
 
-**Estado:** propuesta para aprobación en PR F00. **Autoridad:** los ADR y specs aprobados rigen la implementación.
+**Estado:** aprobada por el responsable del proyecto para F00. **PR de formalización:** #2. **Autoridad:** los ADR y specs aprobados rigen la implementación.
 
 ## Propósito
 Desarrollar una plataforma SaaS comercializable de recuperación documental (RAG) con múltiples tenants, usuarios, repositorios y asistentes, mediante entregas incrementales orientadas a evidencia.

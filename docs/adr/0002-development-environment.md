@@ -1,6 +1,6 @@
 # ADR 0002 — Infraestructura inicial de desarrollo en Synology VMM
 
-- **Estado:** entorno implementado y observado, ADR propuesto para registro formal.
+- **Estado:** entorno implementado y observado; ADR ratificado documentalmente en F00 (PR #2).
 - **Fecha:** 2026-10-28.
 
 ## Decisión

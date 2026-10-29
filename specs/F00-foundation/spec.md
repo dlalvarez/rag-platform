@@ -1,6 +1,6 @@
 # F00 — Fundación documental y especificación de infraestructura
 
-**Estado:** propuesta para revisión en PR. **Issue:** #1. **Tipo:** documental (no despliegue).
+**Estado:** aprobada por el responsable; formalización mediante PR #2. **Issue:** #1. **Tipo:** documental (no despliegue).
 
 ## Objetivo
 Establecer una jerarquía de decisiones técnicas y un proceso SDD para desarrollar RAG Platform sobre infraestructura ya preparada, sin cambios funcionales ni contenedores de aplicación.
@@ -22,8 +22,8 @@ Despliegue PostgreSQL/pgvector, credenciales reales, automatización de aprovisi
 - R08: declarar como propuestas, no decisiones, los componentes que aún requieren aprobación.
 
 ## Aceptación
-- [ ] Archivos de F00 creados y consistentes.
-- [ ] Ninguna tecnología pendiente presentada como aprobada.
-- [ ] No se incluyen secretos ni direcciones públicas sensibles.
-- [ ] Ningún servicio funcional desplegado ni commit directo a `main`.
-- [ ] PR de revisión hacia `main` que referencia Issue #1.
+- [x] Archivos de F00 creados y consistentes.
+- [x] Ninguna tecnología pendiente presentada como aprobada.
+- [x] No se incluyen secretos ni direcciones públicas sensibles.
+- [x] Ningún servicio funcional desplegado ni commit directo a `main`.
+- [x] PR de revisión hacia `main` que referencia Issue #1.

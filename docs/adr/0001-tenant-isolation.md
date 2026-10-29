@@ -1,6 +1,6 @@
 # ADR 0001 — Aislamiento por base PostgreSQL para cada tenant
 
-- **Estado:** decisión rectora acordada; registrada para ratificación formal con F00.
+- **Estado:** decisión rectora ratificada en F00; documentada mediante PR #2.
 - **Fecha:** 2026-10-28.
 - **Contexto:** el proyecto debe poder comercializarse; migrar después de tablas compartidas/RLS a aislamiento fuerte sería costoso y riesgoso.
 
