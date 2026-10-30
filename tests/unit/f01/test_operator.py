@@ -138,3 +138,86 @@ def test_recovery_check_cannot_recreate_missing_canary(monkeypatch):
     with pytest.raises(SecretStoreError) as error:
         operator.check_runtime(Http(), "synthetic-operator")
     assert error.value.code == SecretErrorCode.NOT_FOUND
+
+
+def test_unseal_http_error_is_actionable_without_echoing_any_secret():
+    import httpx
+
+    marker = "synthetic-value-never-echo"
+    with httpx.Client(
+        transport=httpx.MockTransport(
+            lambda request: httpx.Response(400, json={"errors": [marker]})
+        ),
+        base_url="https://openbao:8200",
+    ) as http:
+        with pytest.raises(operator.OperatorFailure) as error:
+            operator.call(http, "POST", "sys/unseal", payload={"key": marker})
+    assert error.value.code == "UNSEAL_REJECTED"
+    assert "HTTP 400" in str(error.value)
+    assert marker not in str(error.value)
+
+
+def test_connection_exception_is_sanitized():
+    import httpx
+
+    marker = "synthetic-sensitive-transport-detail"
+
+    def fail(request):
+        raise httpx.ReadTimeout(marker)
+
+    with httpx.Client(transport=httpx.MockTransport(fail), base_url="https://openbao:8200") as http:
+        with pytest.raises(operator.OperatorFailure) as error:
+            operator.call(http, "POST", "sys/unseal", payload={"key": marker})
+    assert error.value.code == "CONNECTION"
+    assert marker not in str(error.value)
+    assert error.value.__cause__ is None
+
+
+def test_check_does_not_ask_for_password_while_sealed(monkeypatch):
+    monkeypatch.setattr(operator, "tty_required", lambda: None)
+    monkeypatch.setattr(operator, "call", lambda *a, **kw: {"initialized": True, "sealed": True})
+
+    def never_prompt(*args):
+        raise AssertionError("Do not request a password for a sealed server")
+
+    monkeypatch.setattr(operator.getpass, "getpass", never_prompt)
+    with pytest.raises(operator.OperatorFailure) as error:
+        operator.check_existing(object())
+    assert error.value.code == "SEALED"
+
+
+@pytest.mark.parametrize(("typed", "code"), [("  ", "KEY_EMPTY"), ("synthetic key", "KEY_FORMAT")])
+def test_invalid_key_format_never_sent_or_echoed(monkeypatch, capsys, typed, code):
+    monkeypatch.setattr(operator, "tty_required", lambda: None)
+    monkeypatch.setattr(operator.getpass, "getpass", lambda prompt: typed)
+    calls = []
+
+    def fake_call(http, method, path, **kwargs):
+        calls.append(path)
+        assert path == "sys/seal-status"
+        return {"initialized": True, "sealed": True}
+
+    monkeypatch.setattr(operator, "call", fake_call)
+    with pytest.raises(operator.OperatorFailure) as error:
+        operator.unseal_operator(object())
+    assert error.value.code == code
+    assert calls == ["sys/seal-status"]
+    assert capsys.readouterr().out == ""
+
+
+def test_unseal_trims_only_surrounding_copy_whitespace(monkeypatch, capsys):
+    monkeypatch.setattr(operator, "tty_required", lambda: None)
+    monkeypatch.setattr(operator.getpass, "getpass", lambda prompt: "  synthetic-key\t")
+    calls = []
+
+    def fake_call(http, method, path, **kwargs):
+        calls.append(path)
+        if path == "sys/seal-status":
+            return {"initialized": True, "sealed": True}
+        assert kwargs["payload"] == {"key": "synthetic-key"}
+        return {"sealed": False}
+
+    monkeypatch.setattr(operator, "call", fake_call)
+    operator.unseal_operator(object())
+    assert calls == ["sys/seal-status", "sys/unseal"]
+    assert capsys.readouterr().out == "Desbloqueado.\n"

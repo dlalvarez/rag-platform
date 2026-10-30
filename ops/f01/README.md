@@ -97,6 +97,26 @@ Para demostrar persistencia: check, restart solo openbao, status sellado, compro
 rechazo de acceso sellado, unseal por Diego y check de nuevo. El restart y la prueba
 de token expirado real se coordinarán después del bootstrap; no están acreditados todavía.
 
+## Diagnóstico de desbloqueo sin secretos
+
+Unseal informa códigos cerrados y, si corresponde, estado HTTP. Nunca imprime
+la clave, el cuerpo de respuesta, headers, tokens ni mensajes del transporte.
+Recorta solo espacios exteriores de copia; rechaza claves vacías y espacios/saltos
+de línea internos sin enviarlos al servidor. No cambia ni regenera la clave.
+
+- F01-UNSEAL_REJECTED / HTTP 400: el servicio rechazó la clave enviada. Revisar en
+  privado la copia original completa, en una línea; contraseña de operador y root
+  son valores distintos. No compartir la clave ni usar init/resume como recuperación.
+- F01-KEY_EMPTY / F01-KEY_FORMAT: revisar la copia en el gestor; no se envió al servidor.
+- F01-CONNECTION: revisar conexión/TLS; no se muestra la excepción del proveedor.
+- F01-SEALED: check se detiene antes de pedir contraseña. Ejecutar unseal primero.
+- F01-AUTH: autenticación rechazada tras el desbloqueo; informar solo el código,
+  sin contraseñas, tokens o salida de init.
+
+Unseal no solicita otra clave si el nodo ya está desbloqueado. No ejecutar check
+hasta ver «Desbloqueado» u «OpenBao ya está desbloqueado». Estos mensajes distinguen
+la causa de una próxima ejecución; no explican retrospectivamente el fallo genérico anterior.
+
 ## Pruebas y trazabilidad
 
 F01-R01/R03 → AC-F01-01/06 parciales → P1 → T001 → V01/V03.

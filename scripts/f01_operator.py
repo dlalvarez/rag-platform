@@ -19,6 +19,64 @@ CA = Path(os.environ.get("BAO_CACERT", "/run/f01-ca.crt"))
 ENDPOINT = "https://openbao:8200"
 
 
+class OperatorFailure(RuntimeError):
+    MESSAGES = {
+        "CONNECTION": "No se pudo completar la conexión TLS con OpenBao.",
+        "UNSEAL_REJECTED": (
+            "OpenBao rechazó la clave de desbloqueo. Copia únicamente la clave original "
+            "completa en una línea; no uses la contraseña del operador ni el token root."
+        ),
+        "KEY_EMPTY": "No se recibió una clave de desbloqueo.",
+        "KEY_FORMAT": "La clave contiene espacios o saltos de línea internos. Revisa la copia.",
+        "NOT_INITIALIZED": "OpenBao no está inicializado. Detente y revisa el estado con Codex.",
+        "SEALED": "OpenBao sigue sellado. Ejecuta unseal antes de check.",
+        "UNAVAILABLE": "OpenBao no está disponible o sigue sellado.",
+        "AUTH": "OpenBao rechazó la autenticación; no se muestran valores ni respuestas.",
+        "API": "OpenBao rechazó la operación; no se muestra el cuerpo de respuesta.",
+        "RESPONSE": "OpenBao devolvió una respuesta inesperada.",
+    }
+
+    def __init__(self, code: str, status: int | None = None) -> None:
+        message = self.MESSAGES[code]
+        suffix = f" HTTP {status}." if type(status) is int and 100 <= status <= 599 else ""
+        super().__init__(f"F01-{code}: {message}{suffix}")
+        self.code = code
+
+
+def require_unsealed(http: httpx.Client) -> None:
+    status = call(http, "GET", "sys/seal-status")
+    if not status["initialized"]:
+        raise OperatorFailure("NOT_INITIALIZED")
+    if status["sealed"]:
+        raise OperatorFailure("SEALED")
+
+
+def unseal_operator(http: httpx.Client) -> None:
+    tty_required()
+    status = call(http, "GET", "sys/seal-status")
+    if not status["initialized"]:
+        raise OperatorFailure("NOT_INITIALIZED")
+    if not status["sealed"]:
+        print("OpenBao ya está desbloqueado.")
+        return
+    key = getpass.getpass("Clave de desbloqueo original (una línea): ").strip()
+    if not key:
+        raise OperatorFailure("KEY_EMPTY")
+    if any(character.isspace() for character in key):
+        raise OperatorFailure("KEY_FORMAT")
+    result = call(http, "POST", "sys/unseal", payload={"key": key})
+    del key
+    if result["sealed"]:
+        raise OperatorFailure("SEALED")
+    print("Desbloqueado.")
+
+
+def check_existing(http: httpx.Client) -> None:
+    tty_required()
+    require_unsealed(http)
+    check_runtime(http, login_operator(http))
+
+
 def client() -> httpx.Client:
     return httpx.Client(
         base_url=ENDPOINT,
@@ -36,12 +94,30 @@ def call(
     token: str | None = None,
     payload: dict | None = None,
 ) -> dict:
-    response = http.request(
-        method, "/v1/" + path, headers={"X-Vault-Token": token} if token else {}, json=payload
-    )
-    if response.status_code not in (200, 204):
-        raise RuntimeError("OpenBao refused the operation; no response body is logged")
-    return response.json() if response.content else {}
+    try:
+        response = http.request(
+            method, "/v1/" + path, headers={"X-Vault-Token": token} if token else {}, json=payload
+        )
+    except httpx.HTTPError:
+        raise OperatorFailure("CONNECTION") from None
+    status = response.status_code
+    if status not in (200, 204):
+        if path == "sys/unseal" and status == 400:
+            raise OperatorFailure("UNSEAL_REJECTED", status)
+        if status == 503:
+            raise OperatorFailure("UNAVAILABLE", status)
+        if status in (401, 403) or (
+            status == 400 and path in ("auth/userpass/login/diego", "auth/approle/login")
+        ):
+            raise OperatorFailure("AUTH", status)
+        raise OperatorFailure("API", status)
+    try:
+        result = response.json() if response.content else {}
+        if not isinstance(result, dict):
+            raise ValueError
+        return result
+    except ValueError:
+        raise OperatorFailure("RESPONSE") from None
 
 
 def tty_required() -> None:
@@ -228,17 +304,19 @@ def main() -> None:
             elif args.command in ("init", "resume"):
                 bootstrap(http, resume=args.command == "resume")
             elif args.command == "unseal":
-                tty_required()
-                result = call(
-                    http,
-                    "POST",
-                    "sys/unseal",
-                    payload={"key": getpass.getpass("Clave de desbloqueo: ")},
-                )
-                print("Desbloqueado." if not result["sealed"] else "Sigue sellado.")
+                unseal_operator(http)
             else:
-                tty_required()
-                check_runtime(http, login_operator(http))
+                check_existing(http)
+    except OperatorFailure as error:
+        raise SystemExit(str(error)) from None
+    except SecretStoreError as error:
+        raise SystemExit(
+            f"F01-SECRET: {error.code.value}. No se muestran valores secretos."
+        ) from None
+    except httpx.HTTPError:
+        raise SystemExit(
+            "F01-CONNECTION: conexión TLS interrumpida; no se muestran detalles."
+        ) from None
     except (Exception, KeyboardInterrupt):
         # No traceback, exception message, HTTP body or initialization response.
         raise SystemExit(

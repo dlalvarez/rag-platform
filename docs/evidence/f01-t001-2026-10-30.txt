@@ -140,3 +140,11 @@ Independent TLS status after restart: initialized=true, sealed=true, threshold=1
 Recovery check hardened: missing canary must fail; init/resume alone may initialize it. Regression test verifies no write on missing recovery canary.
 ruff check . exit=0; ruff format --check . exit=0; pytest -q: 44 passed, 1 existing Starlette warning; check_docs.py exit=0; git diff --check exit=0; tools rebuild exit=0.
 Pending: operator unseal plus strict check of existing canary after restart, and real token expiration. No completed T001/AC claim.
+
+Unseal diagnostic correction 2026-10-30T17:48:49.280619+00:00
+Operator reported generic failures of unseal and check after controlled restart. Previous exception suppression did not expose a cause; no assumption of wrong key or lost data.
+Independent TLS checks: sys/seal-status HTTP 200; health HTTP 503; initialized=true, sealed=true, threshold=1/1, progress=0, OpenBao 2.7.2.
+OperatorFailure now exposes only closed static codes and numeric HTTP status. Server body, token/key/password and transport exception text suppressed. Empty/internal-whitespace keys rejected locally; only surrounding copy whitespace trimmed.
+check now checks seal state before requesting operator password. No init/resume, credential read/reset, data deletion or service restart performed in this correction.
+ruff check/format, check_docs.py and git diff --check correct; pytest: 50 passed, 1 existing Starlette warning. Tools image rebuilt; final state still initialized=true, sealed=true, threshold=1/1.
+Pending: operator retries unseal and reports only safe message/code. Actual persistence read and token-expiry test still pending; T001 incomplete.
