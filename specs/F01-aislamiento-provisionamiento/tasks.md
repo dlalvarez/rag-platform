@@ -1,7 +1,7 @@
 # Tareas F01 — planificación ratificada
 
-**Estado:** ratificadas en PR #8; T001 en curso, pendiente de bootstrap/V03 reales. T002–T007 pendientes.
-[Registro de aprobación](https://github.com/dlalvarez/rag-platform/pull/8#issuecomment-6528543252). No se cierra ninguna tarea por este incremento.
+**Estado:** ratificadas en PR #8; T001 implementada y pruebas técnicas demostradas. Checks CI y aceptación humana del PR #9 pendientes; T002–T007 no iniciadas.
+[Registro de aprobación](https://github.com/dlalvarez/rag-platform/pull/8#issuecomment-6528543252). La casilla T001 permanece abierta hasta checks/revisión/aceptación del PR #9; no se cierra F01.
 Referencias: [plan P1–P7 y pruebas V01–V07](plan.md), [ratificación](ratification.md).
 Se conservan los IDs T001–T007 originales. Orden: T001 → T002/T003 → T004 → T005 → T006 → T007;
 cada tarea comienza solo después de ratificar la planificación y sus decisiones.

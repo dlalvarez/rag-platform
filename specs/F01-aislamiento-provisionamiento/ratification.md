@@ -2,7 +2,7 @@
 
 **Estado:** aprobada por Diego e integrada en develop mediante PR #8.
 [Registro de aprobación](https://github.com/dlalvarez/rag-platform/pull/8#issuecomment-6528543252). Merge f2c74400d2cafb5fce065b6eb0db23243731f8cf.
-T001 en curso; aprobación de planificación no equivale a aceptación técnica ni merge de nuevos PR.
+T001 implementada y ensayada, aceptación del PR #9 pendiente; aprobación de planificación no equivale a aceptación técnica ni merge de nuevos PR.
 Dependencia F00 satisfecha en [PR #6](https://github.com/dlalvarez/rag-platform/pull/6)
 e [Issue #4](https://github.com/dlalvarez/rag-platform/issues/4).
 Seguimiento: [Issue #7](https://github.com/dlalvarez/rag-platform/issues/7).
@@ -18,15 +18,15 @@ Seguimiento: [Issue #7](https://github.com/dlalvarez/rag-platform/issues/7).
 
 | Decisión | Propuesta concreta | Estado |
 |---|---|---|
-| Secret manager dev | OpenBao 2.7.2 por digest, KV v2, Raft un nodo y TLS | Ratificado; arrancado sin inicializar en T001 |
-| Custodia de desbloqueo | Shamir 1/1 solo dev; clave en gestor de contraseñas independiente de la VM y copia fuera de línea, ambas fuera de ragdev01 | Esquema y preparación de destinos confirmados por Diego; generación/entrega y copias efectivas pendientes de bootstrap |
+| Secret manager dev | OpenBao 2.7.2 por digest, KV v2, Raft un nodo y TLS | Ratificado; inicializado, recuperación/caducidad probadas en T001 |
+| Custodia de desbloqueo | Shamir 1/1 solo dev; clave en gestor de contraseñas independiente de la VM y copia fuera de línea, ambas fuera de ragdev01 | Esquema y preparación de destinos confirmados por Diego; bootstrap/custodia confirmados por Diego; root inicial revocado |
 | Identidad del gestor | Operador userpass de infraestructura + AppRole CLI de TTL corto | Aprobado, sin usuarios SaaS/F02 |
 | SQL/objetos | PostgreSQL 17/pgvector 0.8.7 y MinIO fijados como F00, nuevas instancias/datos F01 | Aprobado; riesgo MinIO conservado |
 | Provisionador | Bootstrap manual del template vector; cuenta CREATEDB/CREATEROLE separada, ningún app superuser | Aprobado; privilegios de clúster reconocidos |
 | Pools | 2 conexiones por tenant/engine, 4 engines y 8 conexiones tenant por proceso; control 2; admin serial | Aprobado para probar, sin prometer límite multiproceso |
 | Topología de prueba | A/B misma instancia y A2/B2 en dos endpoints reales | Aprobado; sin migrar datos entre instancias |
 | Rollback/recuperación | Conservar datos, no borrar recursos ajenos ni ejecutar DROP/borrados automáticos | Aprobado; backup externo/HA/producción no acreditados |
-| Ejecución | Solo ragdev01, rama feat/F01-* y PR hacia develop después de aprobación | T001 en curso, nueva rama técnica |
+| Ejecución | Solo ragdev01, rama feat/F01-* y PR hacia develop después de aprobación | T001 implementada y ensayada, aceptación del PR #9 pendiente, nueva rama técnica |
 | Merge | Revisión y autorización humana por PR | PR #8 autorizado e integrado; futuros PR requieren revisión |
 
 La aprobación inicial de custodia fue seguida por la ratificación completa del PR #8.

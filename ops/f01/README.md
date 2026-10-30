@@ -1,5 +1,9 @@
 # F01 T001 — catálogo y bootstrap OpenBao
 
+Estado de ragdev01: bootstrap completado por Diego, root inicial revocado; recuperación
+tras reinicio y token caducado comprobados. No volver a ejecutar init/resume en ese host.
+Implementación/pruebas T001 disponibles en PR #9; checks CI, revisión y merge pendientes.
+
 Planificación ratificada en [PR #8](https://github.com/dlalvarez/rag-platform/pull/8),
 registro [6528543252](https://github.com/dlalvarez/rag-platform/pull/8#issuecomment-6528543252).
 Diego confirmó preparados el gestor y el medio de copia fuera de línea el 2026-10-30.
@@ -65,7 +69,7 @@ La clave mostrada sigue en el historial visual del terminal; cerrar esa sesión 
 No pegar claves, tokens ni la salida de init en chat, Git, logs o evidence.
 
 Si finaliza correctamente, informar únicamente «bootstrap completado».
-Las pruebas reales de ese flujo aún no se ejecutaron por Codex: requieren este paso del operador.
+El flujo real fue ejecutado por Diego y documentado en evidence; Codex no recibió credenciales.
 
 ## Interrupciones y reinicios
 
@@ -95,7 +99,7 @@ la prueba posterior a reinicio. No se habilita listado/borrado general de secret
 
 Para demostrar persistencia: check, restart solo openbao, status sellado, comprobar
 rechazo de acceso sellado, unseal por Diego y check de nuevo. El restart y la prueba
-de token expirado real se coordinarán después del bootstrap; no están acreditados todavía.
+de token expirado real se ejecutaron y quedaron registrados en evidence T001.
 
 ## Caducidad real de una sesión temporal
 

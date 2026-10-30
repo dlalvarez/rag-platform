@@ -1,13 +1,13 @@
 # Checklist F01 — aceptación pendiente
 
-**Estado:** planificación ratificada; T001 en curso con pruebas parciales V01/V03. Ningún AC F01 completo.
+**Estado:** pruebas técnicas T001 demostradas; checks CI y aceptación de PR #9 pendientes. Ningún AC F01 completo.
 
 ## Antes de implementar
 
 - [x] Dependencia F00 aprobada y cerrada; PR #6 integrado y postmerge comprobado.
 - [x] Spec/plan/tasks F01 y ADR-0004 ratificados por Diego en PR #8.
 - [x] Esquema de custodia de unseal aprobado por Diego el 2026-10-30: gestor de contraseñas y copia fuera de línea, fuera de ragdev01, Shamir 1/1.
-- [x] Diego confirmó preparados los destinos de custodia el 2026-10-30; aún no existen copias de una clave generada.
+- [x] Diego confirmó preparados los destinos de custodia el 2026-10-30; bootstrap y custodia confirmados posteriormente por Diego.
 - [x] Diego confirmó credenciales custodiadas y bootstrap con operador limitado y root inicial revocado; no se solicitaron ni leyeron valores.
 - [ ] Perfil F01 separado, límites, TLS, bootstrap SQL y políticas de acceso revisados.
 - [x] T001: SQLAlchemy 2.1.6/Alembic 1.20.1 fijados con hashes; psycopg/httpx conservados, sin upgrades ajenos. Las dependencias futuras se revisan en sus tareas.
@@ -21,7 +21,7 @@
 - [ ] AC-F01-05: fallo de bucket no publica READY, recuperación y recursos ajenos intactos.
 - [ ] AC-F01-06: dos endpoints PostgreSQL reales; pools/credenciales sin mezcla y con límites.
 - [ ] AC-F01-07: locks, versión real, migración repetida/fallida/reversible sin alterar otro tenant.
-- [ ] OpenBao conserva secretos tras restart y unseal; token inválido/caducado/denegado falla cerrado.
+- [x] T001: OpenBao conserva canary tras restart/unseal; token inválido y caducado rechazados HTTP 403; sellado rechaza HTTP 503. Ejecución sensible por Diego.
 - [ ] Ningún secreto o contenido privado en Git, catálogo, argumentos, logs ni evidence.
 - [ ] TLS verificado, montaje real ext4, permisos y persistencia probados.
 - [ ] Pruebas offline/CI y regresión F00 exitosas; comandos, versiones y logs reales.

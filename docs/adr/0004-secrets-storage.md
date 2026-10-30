@@ -2,8 +2,8 @@
 
 **Estado:** aprobado por Diego en PR #8 el 2026-10-30.
 [Registro de ratificación](https://github.com/dlalvarez/rag-platform/pull/8#issuecomment-6528543252).
-OpenBao arrancado sin inicializar durante T001; su bootstrap y validación V03 reales
-siguen pendientes. La aprobación del diseño no equivale a aceptación técnica. Referencias: [plan F01](../../specs/F01-aislamiento-provisionamiento/plan.md)
+OpenBao inicializado por Diego durante T001; bootstrap, revocación de root y pruebas
+reales de recuperación/caducidad demostradas. Aceptación del PR #9 y checks CI pendientes. Referencias: [plan F01](../../specs/F01-aislamiento-provisionamiento/plan.md)
 y [decisiones de ratificación](../../specs/F01-aislamiento-provisionamiento/ratification.md).
 
 ## Decisión aprobada

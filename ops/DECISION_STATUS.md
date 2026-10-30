@@ -53,3 +53,14 @@ Catálogo control con Alembic y prueba PostgreSQL/TLS real; OpenBao arrancado si
 inicializar. Ninguna clave de desbloqueo generada; ningún AC F01 completo.
 Bootstrap solo en terminal de Diego, sin capturar secretos; ver [runbook](f01/README.md).
 Las menciones anteriores de propuestas pendientes son históricas.
+
+
+## Resultado técnico T001 (2026-10-30)
+
+PR #9: catálogo/control Alembic y SecretStore implementados y ensayados en ragdev01.
+Diego completó bootstrap, confirmó root inicial revocado, recuperación de canary tras
+restart/unseal y token AppRole caducado rechazado HTTP 403 con nodo desbloqueado.
+Token ficticio rechazado HTTP 403; F00 saludable e integración correcta. 53 tests offline.
+Checks GitHub Actions recientes observados queued sin runner; no declararlos exitosos.
+Revisión/aceptación/merge de PR #9 pendientes. No se inicia T002 ni se cierra F01/Issue #7.
+Ver evidence F01 y NEXT_CODEX_TASK.md. Las notas anteriores son históricas.

@@ -155,3 +155,15 @@ Independent TLS status: initialized=true, sealed=false, threshold=1/1. Checkout 
 check-expiry added for operator's own terminal: separate AppRole session, canary read, operator logout, renew-self increment 2s, wait for actual server TTL plus 2s, require HTTP 403 while still unsealed. AppRole token is not revoked to avoid confusing revocation with expiry. No policies/roles changed.
 53 offline tests passed (one existing Starlette warning); Ruff, documentation and diff checks correct; tools image rebuilt. Real expiry execution still pending.
 GitHub Actions for ec2efe344fa6ec39275c70eda292238397020837 were queued; job metadata showed no assigned runner. Do not report CI success for that commit or merge while checks remain pending.
+
+T001 technical evidence consolidated 2026-10-30T18:01:51.820331+00:00
+Operator executed check-expiry on 4c6458d25d16b6fc38a22def28df6e7073251a0f: read before expiry correct; confirmed TTL=2s; wait=4s; PASS expired AppRole token rejected by OpenBao HTTP 403, node unsealed. AppRole token was not revoked. Credential values never provided to Codex.
+Independent final TLS check: initialized=true, sealed=false, synthetic invalid token HTTP 403. No response body printed.
+Final F00 smoke exit=0: API/PostgreSQL/vector/synthetic S3 roundtrip PASS; three F00 services healthy. No F00 restart or data replacement.
+53 offline tests remain last successful code validation. Final changes are documentation only; no unnecessary test repetition.
+$ python3 scripts/check_docs.py
+OK: SDD baseline, 12 phases, P01-P14, canonical references, ADRs and links.
+exit=0
+$ git diff --check
+exit=0
+Original F00/F01 requirements and AC preserved exactly. T001 acceptance checkbox, all phase AC, T002-T007, CI/merge remain pending; no bypass, no merge.
