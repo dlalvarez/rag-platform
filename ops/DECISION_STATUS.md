@@ -34,3 +34,7 @@ Este paquete documenta decisiones expresadas en la conversación y propuestas de
 
 Preparación autorizada de planificación y gobierno; revisión y aprobación del contenido pendientes. Ver [registro F00](../specs/F00-fundacion-repositorio/ratification.md) y [ADR-0006](../docs/adr/0006-branch-policy.md).
 Develop se propone crear desde main después del merge humano del PR documental. Protección no verificada ni modificada; deben decidirse checks, revisores y excepciones antes de ampliar CI. F00 técnica e Issue #4 siguen pendientes. Repositorio público sin cambio de visibilidad. No se ejecutó ningún servicio en ragdev01.
+
+## Actualización F00 autorizada (2026-10-30)
+
+PR #5 aprobado e integrado; ADR-0002 y ADR-0006 ratificados, develop creada y ruleset 26218280 activo. Diego es único revisor/responsable de merge. Desarrollo y pruebas F00 autorizados por SSH exclusivamente en ragdev01, con datos sintéticos. Checkout /home/diego/proyectos/rag-platform; datos /srv/rag-data/rag-platform/f00. Ver F00_RUNBOOK.md y evidence F00 para resultados. F00 no se declara cerrada hasta su revisión; ADR-0004/F01 y backups externos permanecen pendientes.

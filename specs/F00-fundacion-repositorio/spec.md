@@ -1,6 +1,6 @@
 # F00 — Fundación del repositorio y calidad SDD
 
-**Estado:** propuesta de ratificación F00; pendiente de revisión humana en PR. Esta entrega solo formaliza la planificación; no acredita implementación ni autoriza despliegue.  
+**Estado:** planificación aprobada el 2026-10-30 en PR #5; implementación en revisión, no fase completada.
 **Dependencia:** ninguna.  
 **Meta:** Repositorio reproducible y listo para que Codex desarrolle F01.
 

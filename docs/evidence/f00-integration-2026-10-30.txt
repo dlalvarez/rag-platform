@@ -1,0 +1,154 @@
+F00 integration validation on ragdev01
+2026-10-30T16:21:18.240972+00:00
+Base implementation: a8e56a23fa3bd1322cbe554aceb953a75e300a3d; Dockerfile smoke entrypoint correction pending publication.
+Initial seed attempt exposed Compose CMD replacement; fixed smoke ENTRYPOINT and rebuilt before this run.
+$ python3 scripts/f00_compose.py config --quiet
+
+
+exit=0
+$ python3 scripts/f00_compose.py run --rm --no-deps smoke
+F00 integration PASS: API, PostgreSQL/vector and synthetic S3 roundtrip.
+
+ Container rag-f00-dev-smoke-run-017fc2b252d9 Creating 
+ Container rag-f00-dev-smoke-run-017fc2b252d9 Created 
+
+exit=0
+$ python3 scripts/f00_compose.py run --rm --no-deps smoke seed
+F00 integration PASS: seed
+
+ Container rag-f00-dev-smoke-run-36da76682369 Creating 
+ Container rag-f00-dev-smoke-run-36da76682369 Created 
+
+exit=0
+$ python3 scripts/f00_compose.py stop minio
+
+ Container rag-f00-dev-minio-1 Stopping 
+ Container rag-f00-dev-minio-1 Stopped 
+
+exit=0
+$ python3 scripts/f00_compose.py run --rm --no-deps smoke
+
+ Container rag-f00-dev-smoke-run-067454e9bee2 Creating 
+ Container rag-f00-dev-smoke-run-067454e9bee2 Created 
+F00 integration FAILED: dependency unavailable or assertion failed.
+
+
+exit=1
+$ python3 scripts/f00_compose.py up -d --wait --wait-timeout 180 minio
+
+ Container rag-f00-dev-minio-1 Starting 
+ Container rag-f00-dev-minio-1 Started 
+ Container rag-f00-dev-minio-1 Waiting 
+ Container rag-f00-dev-minio-1 Healthy 
+
+exit=0
+$ python3 scripts/f00_compose.py run --rm --no-deps smoke
+F00 integration PASS: API, PostgreSQL/vector and synthetic S3 roundtrip.
+
+ Container rag-f00-dev-smoke-run-c2f0fb3b2ad7 Creating 
+ Container rag-f00-dev-smoke-run-c2f0fb3b2ad7 Created 
+
+exit=0
+$ python3 scripts/f00_compose.py down
+
+ Container rag-f00-dev-postgres-1 Stopping 
+ Container rag-f00-dev-api-1 Stopping 
+ Container rag-f00-dev-minio-1 Stopping 
+ Container rag-f00-dev-minio-1 Stopped 
+ Container rag-f00-dev-minio-1 Removing 
+ Container rag-f00-dev-postgres-1 Stopped 
+ Container rag-f00-dev-postgres-1 Removing 
+ Container rag-f00-dev-minio-1 Removed 
+ Container rag-f00-dev-postgres-1 Removed 
+ Container rag-f00-dev-api-1 Stopped 
+ Container rag-f00-dev-api-1 Removing 
+ Container rag-f00-dev-api-1 Removed 
+ Network rag-f00-dev_default Removing 
+ Network rag-f00-dev_default Removed 
+
+exit=0
+$ python3 scripts/f00_compose.py up -d --wait --wait-timeout 180 postgres minio api
+
+ Network rag-f00-dev_default Creating 
+ Network rag-f00-dev_default Creating 
+ Network rag-f00-dev_default Created 
+ Network rag-f00-dev_default Created 
+ Container rag-f00-dev-postgres-1 Creating 
+ Container rag-f00-dev-api-1 Creating 
+ Container rag-f00-dev-minio-1 Creating 
+ Container rag-f00-dev-minio-1 Created 
+ Container rag-f00-dev-api-1 Created 
+ Container rag-f00-dev-postgres-1 Created 
+ Container rag-f00-dev-postgres-1 Starting 
+ Container rag-f00-dev-minio-1 Starting 
+ Container rag-f00-dev-api-1 Starting 
+ Container rag-f00-dev-postgres-1 Started 
+ Container rag-f00-dev-minio-1 Started 
+ Container rag-f00-dev-api-1 Started 
+ Container rag-f00-dev-minio-1 Waiting 
+ Container rag-f00-dev-api-1 Waiting 
+ Container rag-f00-dev-postgres-1 Waiting 
+ Container rag-f00-dev-postgres-1 Healthy 
+ Container rag-f00-dev-minio-1 Healthy 
+ Container rag-f00-dev-api-1 Healthy 
+
+exit=0
+$ python3 scripts/f00_compose.py run --rm --no-deps smoke verify
+F00 integration PASS: verify
+
+ Container rag-f00-dev-smoke-run-faa953710a95 Creating 
+ Container rag-f00-dev-smoke-run-faa953710a95 Created 
+
+exit=0
+$ python3 scripts/f00_compose.py run --rm --no-deps smoke clean
+F00 integration PASS: clean
+
+ Container rag-f00-dev-smoke-run-2a39a58ab38f Creating 
+ Container rag-f00-dev-smoke-run-2a39a58ab38f Created 
+
+exit=0
+$ python3 scripts/f00_compose.py run --rm --no-deps smoke
+F00 integration PASS: API, PostgreSQL/vector and synthetic S3 roundtrip.
+
+ Container rag-f00-dev-smoke-run-3f887ff233e2 Creating 
+ Container rag-f00-dev-smoke-run-3f887ff233e2 Created 
+
+exit=0
+$ python3 scripts/f00_compose.py ps
+NAME                     IMAGE                                                                                                           COMMAND                  SERVICE    CREATED          STATUS                    PORTS
+rag-f00-dev-api-1        rag-f00-api:0.0.1                                                                                               "uvicorn rag_platfor…"   api        48 seconds ago   Up 47 seconds (healthy)   127.0.0.1:8000->8000/tcp
+rag-f00-dev-minio-1      rag-f00-minio:RELEASE.2025-10-15T17-29-55Z                                                                      "minio server /data …"   minio      48 seconds ago   Up 47 seconds (healthy)   
+rag-f00-dev-postgres-1   pgvector/pgvector:0.8.7-pg17-bookworm@sha256:ac08538c6f8b9904c33c8224c5e5706dbe760aca29db1d096972b4052c22a75d   "docker-entrypoint.s…"   postgres   48 seconds ago   Up 47 seconds (healthy)   5432/tcp
+
+
+exit=0
+$ python3 scripts/f00_compose.py exec -T postgres psql -U f00_dev -d f00_scratch -Atc SHOW server_version; SELECT extversion FROM pg_extension WHERE extname='vector';
+17.11 (Debian 17.11-1.pgdg12+2)
+0.8.7
+
+
+exit=0
+$ python3 scripts/f00_compose.py exec -T minio minio --version
+minio version DEVELOPMENT.GOGET (commit-id=DEVELOPMENT.GOGET)
+Runtime: go1.24.9 linux/amd64
+License: GNU AGPLv3 - https://www.gnu.org/licenses/agpl-3.0.html
+Copyright: 2015-0000 MinIO, Inc.
+
+
+exit=0
+$ docker compose --env-file /dev/null config --quiet (empty environment)
+
+error while interpolating secrets.minio_password.file: required variable RAG_DATA_ROOT is missing a value: Run f00_prepare.py
+error while interpolating secrets.minio_user.file: required variable RAG_DATA_ROOT is missing a value: Run f00_prepare.py
+error while interpolating secrets.postgres_password.file: required variable RAG_DATA_ROOT is missing a value: Run f00_prepare.py
+error while interpolating services.minio.user: required variable RAG_UID is missing a value: Set RAG_UID
+error while interpolating services.minio.volumes.[].source: required variable RAG_DATA_ROOT is missing a value: Run f00_prepare.py
+error while interpolating services.postgres.volumes.[].source: required variable RAG_DATA_ROOT is missing a value: Run f00_prepare.py
+
+exit=1
+$ f00_compose.py --env-file <invalid-mount-fixture> config --quiet
+
+F00 refused: check env file, isolated paths and ext4 mount.
+
+exit=1
+PASS: health, SQL/vector, S3, dependency failure/recovery, SQL/S3 persistence, missing config/mount.
