@@ -5,9 +5,14 @@ Fuente: [ratificación F01](../specs/F01-aislamiento-provisionamiento/ratificati
 [Issue #7](https://github.com/dlalvarez/rag-platform/issues/7).
 
 Antes de código, comprobar aprobación humana de spec/plan/tasks y ADR-0004.
-Antes de inicializar OpenBao, Diego confirma custodia externa y establece/introduce
-sus credenciales de operador en terminal. No pedir secretos por chat ni capturarlos
-en logs de automatización.
+Custodia de desbloqueo aprobada por Diego el 2026-10-30: Shamir 1/1, una clave en su
+gestor de contraseñas y una copia fuera de línea, ambas fuera de ragdev01. El gestor
+debe poder abrirse sin depender de esta VM/OpenBao. Antes de inicializar, Diego
+confirma que ambos destinos están preparados y que puede recuperar la copia.
+Establece/introduce sus credenciales de operador en terminal. No pedir secretos por
+chat ni capturarlos en logs de automatización. No generar ni capturar material de
+inicialización hasta disponer de entrega segura al operador. La aprobación de
+custodia no equivale a ratificación del PR ni a permiso de implementación.
 
 ```text
 Implementa exclusivamente F01-aislamiento-provisionamiento, según planificación

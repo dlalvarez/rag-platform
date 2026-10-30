@@ -26,9 +26,18 @@ acoplar la recuperación del almacén de secretos a las instancias que aprovisio
 
 Bootstrap por Diego en terminal segura: inicializar, custodiar unseal fuera del host,
 crear identidad de operador de infraestructura y AppRole para la CLI. Propuesta solo
-dev: Shamir 1 de 1, acorde con un único operador y datos sintéticos. La ubicación de
-custodia y copia protegida se confirman antes de inicializar; no se generan claves
-hasta entonces. No conservar unseal en el contenedor, Git, chat, logs ni junto a Raft.
+dev: Shamir 1 de 1, acorde con un único operador y datos sintéticos.
+Diego aprobó el 2026-10-30 la custodia de esa única clave en su gestor de contraseñas
+y una copia fuera de línea (USB cifrado o papel protegido), en ubicaciones separadas
+y fuera de ragdev01. Son dos copias de la misma clave, no fragmentos ni un umbral 2/2.
+El acceso al gestor debe ser independiente de OpenBao y de la VM.
+Antes de inicializar, Diego confirma que dispone de ambos destinos y del medio para
+recuperar la copia; no registrar proveedor, ubicación física ni valores secretos.
+No se generan claves hasta confirmar esa preparación. No conservar unseal en el
+contenedor, Git, chat, logs ni junto a Raft. Esta aprobación de custodia no ratifica
+por sí sola el resto de ADR-0004 ni autoriza la implementación F01.
+La clave no sustituye el respaldo de los datos Raft: backup externo y restauración
+siguen pendientes; no se declaran resueltos por conservar dos copias de la clave.
 Cada reinicio requiere desbloqueo manual. Root token inicial se revoca tras configurar
 políticas y comprobar acceso/revocación; no queda como credencial de runtime.
 

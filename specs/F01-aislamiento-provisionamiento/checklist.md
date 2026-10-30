@@ -6,7 +6,8 @@
 
 - [x] Dependencia F00 aprobada y cerrada; PR #6 integrado y postmerge comprobado.
 - [ ] Spec/plan/tasks F01 y ADR-0004 ratificados por Diego.
-- [ ] Custodia externa de unseal/password de operador acordada antes de inicialización.
+- [x] Esquema de custodia de unseal aprobado por Diego el 2026-10-30: gestor de contraseñas y copia fuera de línea, fuera de ragdev01, Shamir 1/1.
+- [ ] Ambos destinos de custodia disponibles y recuperación de la copia confirmada por Diego antes de inicialización; credencial de operador establecida de forma segura.
 - [ ] Perfil F01 separado, límites, TLS, bootstrap SQL y políticas de acceso revisados.
 - [ ] Versiones exactas nuevas fijadas y verificadas; no upgrades fuera de alcance.
 

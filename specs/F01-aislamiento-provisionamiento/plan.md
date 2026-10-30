@@ -171,8 +171,12 @@ cuotas y restore de tenants con documentos permanecen en sus fases, sin marcarse
 
 ## Operación y puertas previas
 
-Aprobar spec/plan/tasks y ADR-0004 antes de código. Confirmar custodia de unseal y
-material de bootstrap antes de inicializar OpenBao. No guardar esos valores en chat.
+Aprobar spec/plan/tasks y ADR-0004 antes de código. El esquema de custodia de unseal
+fue aprobado por Diego el 2026-10-30: Shamir 1/1, clave en gestor de contraseñas
+independiente de la VM y copia fuera de línea, ambas fuera de ragdev01.
+Antes de inicializar OpenBao, confirmar que ambos destinos están preparados y que
+Diego puede recuperar la copia; asegurar también la entrega del material de bootstrap.
+No guardar esos valores en chat. Custodia no equivale a backup/restore de Raft.
 Propuesta de recursos F01: runtime hasta 5 GiB en conjunto, pruebas seriales salvo
 concurrencia deliberada; verificar al menos 7 GiB disponibles y 20 GiB de disco antes
 de arrancar. F00 se conserva activo; medir CPU real en 2 vCPU. Los límites de contenedor

@@ -17,7 +17,7 @@ Seguimiento: [Issue #7](https://github.com/dlalvarez/rag-platform/issues/7).
 | Decisión | Propuesta concreta | Estado |
 |---|---|---|
 | Secret manager dev | OpenBao 2.7.2 por digest, KV v2, Raft un nodo y TLS | Preferido para la propuesta; ratificación pendiente |
-| Custodia | Shamir 1/1 solo dev, unseal/password operador fuera de host, root inicial revocado | Diego debe confirmar destino protegido antes de inicializar |
+| Custodia de desbloqueo | Shamir 1/1 solo dev; clave en gestor de contraseñas independiente de la VM y copia fuera de línea, ambas fuera de ragdev01 | Esquema aprobado por Diego el 2026-10-30; disponibilidad efectiva de ambos destinos pendiente antes de inicializar |
 | Identidad del gestor | Operador userpass de infraestructura + AppRole CLI de TTL corto | Propuesto, sin usuarios SaaS/F02 |
 | SQL/objetos | PostgreSQL 17/pgvector 0.8.7 y MinIO fijados como F00, nuevas instancias/datos F01 | Propuesto; riesgo MinIO conservado |
 | Provisionador | Bootstrap manual del template vector; cuenta CREATEDB/CREATEROLE separada, ningún app superuser | Propuesto; privilegios de clúster reconocidos |
@@ -27,9 +27,12 @@ Seguimiento: [Issue #7](https://github.com/dlalvarez/rag-platform/issues/7).
 | Ejecución | Solo ragdev01, rama feat/F01-* y PR hacia develop después de aprobación | No iniciada |
 | Merge | Revisión y autorización humana por PR | Pendiente |
 
-La aprobación del PR documental puede ratificar las propuestas de diseño, pero
-la custodia efectiva y entrega segura de material de bootstrap deben confirmarse
-antes de inicializar servicios. No pedir valores por chat ni guardarlos en Git.
+La aprobación de custodia se limita al esquema descrito: no ratifica por sí sola el
+PR ni el resto del diseño F01. Antes de inicializar, Diego confirma que ambos
+destinos están preparados y que puede recuperar la copia fuera de línea. La
+credencial de operador se establece en terminal y queda protegida fuera del host;
+el root inicial se revoca según ADR-0004. No pedir valores por chat ni guardarlos en Git.
+La custodia de la clave no acredita backup externo de Raft ni restauración.
 
 ## Límites y fuentes
 

@@ -33,6 +33,15 @@ de OpenBao ni se inició el servicio o generaron sus credenciales.
 Los tres servicios F00 se observaron saludables al comenzar. En este PR no se crean
 tenants, BD, roles, buckets, certificados ni políticas, ni se cambian servicios.
 
+## Decisión de custodia registrada el 2026-10-30
+
+Diego respondió «Ok, estoy deacuerdo con tu propuesta» a la recomendación de Shamir
+1/1 con clave en gestor de contraseñas y copia fuera de línea, ambas fuera de
+ragdev01. Se registra aprobación del esquema, no prueba de que las copias existan
+ni de recuperación. La preparación de destinos, inicialización, generación/entrega
+de claves, backup Raft y restauración siguen pendientes. No se generan secretos ni
+se ejecutan servicios como parte de este cambio documental.
+
 ## Cómo completar la evidencia técnica
 
 Por prueba: requisito → AC → tarea → V-ID → ruta/test real, commit, ambiente/fecha,
