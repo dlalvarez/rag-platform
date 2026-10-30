@@ -58,3 +58,19 @@ Probe independiente con SESSION AUTHORIZATION a roles reales A/B:
 PASS vector migrator/app/readonly y restauración de rol.
 84 pruebas offline correctas; tools reconstruida.
 Pendiente confirmación de la batería completa con credenciales reales.
+
+BATERÍA REAL COMPLETA — reporte final de Diego
+Código probado: 0b297240d15a1c1b5acd2cfc30581d3938de1aea.
+PASS T002: tres bases distintas; roles limitados; TLS/vector y migración repetible.
+PASS T002: CRUD propio; readonly sin escritura; CONNECT/SET ROLE cruzados denegados.
+PASS T002: secretos OpenBao; reintento sin rotación; colisión conservada.
+Tenants sintéticos PROVISIONING; sin READY, bucket, saga ni cierre de F01.
+
+Corroboración independiente, solo contadores y booleanos:
+control f01_control_0003; dos tenants PROVISIONING/observed_version NULL;
+dos ubicaciones y bases distintas, verify-full y readonly versionado;
+nueve roles con prefijo tenant, cero con privilegios globales.
+Las anotaciones PENDIENTE anteriores registran intentos históricos.
+84 pruebas offline. Revisión humana/aceptación del PR #10 pendientes.
+
+Regresión posterior: F00 API/PostgreSQL/vector/S3 sintético, PASS.

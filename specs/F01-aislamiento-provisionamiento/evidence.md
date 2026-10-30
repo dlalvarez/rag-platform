@@ -1,8 +1,8 @@
-# Evidencia F01 — T001 aceptada; T002 en curso
+# Evidencia F01 — T001 aceptada; T002 ensayada, revisión pendiente
 
 **Estado:** T001 aceptada, con checks del HEAD y postmerge correctos, integrada
 mediante PR #9 en develop@a1568375164627f4be2b10d0cb9285fab92ce685.
-T002 en implementación; integración completa y revisión pendientes.
+T002 implementada y batería real completada por Diego; revisión/aceptación pendientes.
 F01 e Issue #7 permanecen abiertos. Ningún AC-F01-01..07 completo.
 
 Plan ratificado: [PR #8](https://github.com/dlalvarez/rag-platform/pull/8),
@@ -40,17 +40,17 @@ y rechazos con token ficticio; no recibió valores.
 
 ## Aceptación de la fase pendiente
 
-| AC | Cobertura de T001 | Pendiente para F01 |
+| AC | Cobertura hasta T002 | Pendiente para F01 |
 |---|---|---|
-| AC-F01-01 | Control/migración/contrato | Dos bases tenant reales y migraciones tenant |
-| AC-F01-02 | Sin aislamiento tenant acreditado | Roles y SQL A↔B reales |
+| AC-F01-01 | Control y A/B distintos, contrato/migración inicial | Batería ampliada T006 y aceptación |
+| AC-F01-02 | SQL A↔B y roles reales, PASS en T002 | Batería ampliada T006 y aceptación |
 | AC-F01-03 | Sin MinIO F01 | Objetos privados y cruces A↔B |
-| AC-F01-04 | Constraints de unicidad | Saga/reintento/concurrencia reales |
+| AC-F01-04 | Constraints y repetición SQL sin rotación | Saga/reintento/concurrencia completos |
 | AC-F01-05 | Sin saga de objetos | Fallo bucket, no READY y recuperación |
 | AC-F01-06 | SecretStore/refs probados | Resolver, pools y dos endpoints reales |
-| AC-F01-07 | Revisión control repetible | Migraciones tenant, locks y fallos cruzados |
+| AC-F01-07 | Control y contrato tenant inicial repetibles | Locks, fallos y coordinación de migraciones T006 |
 
-T002 en curso; T003–T007 no implementadas. No users/memberships/jobs, OIDC/F02, alta HTTP,
+T002 ensayada en PR #10; T003–T007 no implementadas. No users/memberships/jobs, OIDC/F02, alta HTTP,
 documentos, chunks, embeddings de negocio, RAG o chat.
 
 ## CI, revisión y límites
@@ -86,10 +86,11 @@ Resultados ejecutados en ragdev01:
 - HBA F01: cero errores de sintaxis, recarga aceptada, sin reinicio de servicios.
 - Regresión F00 real: API, PostgreSQL/vector y roundtrip S3 sintético, PASS.
 
-Pendiente: sql-check real con sesión AppRole emitida desde la terminal del operador.
-No se marcan PASS SQL A/B, readonly, SET ROLE ni colisión hasta ejecutar esa prueba.
-CI de este nuevo HEAD y revisión humana pendientes. No usar las 71 pruebas offline
-como sustituto de la integración. AC completos y casilla T002 siguen abiertos.
+Estado actualizado: sql-check real completado por Diego tras las correcciones
+documentadas abajo. Ver cierre técnico T002 al final. Las entradas pendientes de
+las subsecciones de diagnóstico son históricas, anteriores al ensayo completo.
+CI se comprueba por HEAD en PR #10; revisión humana pendiente. AC de fase y casilla
+T002 siguen abiertos hasta las puertas de aceptación correspondientes.
 
 
 ### Corrección de RESERVE
@@ -173,3 +174,40 @@ de la batería completa del operador.
 
 84 pruebas offline, incluidas restauración de rol ante error; Ruff/formato correctos.
 Imagen reconstruida y ensayo completo solicitado al operador.
+
+
+## Cierre técnico T002 — revisión humana pendiente
+
+Diego ejecutó en su propia terminal scripts/f01_host.py run --rm sql-check.
+Código probado: 0b297240d15a1c1b5acd2cfc30581d3938de1aea.
+[PR #10](https://github.com/dlalvarez/rag-platform/pull/10),
+[log saneado](../../docs/evidence/f01-t002-2026-10-30.txt) y
+[manifiesto de fuentes](../../docs/evidence/f01-t002-source-sha256.txt).
+No recibió Codex contraseña, token, SecretID ni credencial SQL.
+
+| Trazabilidad | Resultado real | Fuente |
+|---|---|---|
+| R02 → AC01 parcial → P2/T002/V01 | rag_control y dos bases UUID distintas; TLS/vector, contrato tenant 0001 y upgrade repetido, PASS | sql-check del operador |
+| R02 → AC02 parcial → P2/T002/V02 | CRUD propio, readonly sin escritura, app/migrator/readonly A↔B CONNECT denegado, SET ROLE cruzado prohibido, PASS | sql-check con credenciales reales |
+| R02/R03 → P2/T002 | Secretos versionados OpenBao, referencias opacas, repetición sin rotación, PASS | sql-check del operador |
+| R02 → P2/T002/V02 | Recurso coincidente sin ownership rechazado; rol NOLOGIN conservado y BD/roles restantes ausentes, PASS | fixture real de colisión |
+| R01 → P1/T001-T002/V01 | Control 0003, reserva verify-full válida y rollback, concesiones owner sin ciclo ADMIN y rollback, PASS | control-check real |
+| Regresión | 84 pruebas offline; Ruff/formato/documentación correctos | ejecución en servidor |
+
+Corroboración independiente de metadatos: control en f01_control_0003; dos tenants
+PROVISIONING con observed_version ausente; dos ubicaciones/distintos db_name,
+verify-full y referencias readonly versionadas; dos bases tenant. Nueve roles
+con prefijo tenant (ocho propios y fixture NOLOGIN ajena), ninguno con SUPERUSER,
+CREATEDB, CREATEROLE, REPLICATION o BYPASSRLS. No se consultaron valores de secretos.
+
+CONNECT rechazado impide ejecutar SELECT en la base ajena: no se presenta como
+una consulta SELECT cruzada ejecutada. SET ROLE y denegaciones DDL/escritura se
+probaron dentro de conexiones propias. Se conserva el límite administrativo del
+provisionador CREATEDB/CREATEROLE; no se declara sandbox de clúster.
+
+T002 entrega el paso SQL y contrato inicial. No publica READY ni observed_version,
+no acredita saga/concurrencia/compensación T004, buckets T003, resolver/pools T005
+o batería de dos instancias y migraciones coordinadas T006. T002 pendiente de
+aceptación humana; F01 e Issue #7 permanecen abiertos. Sin merge automático.
+
+Regresión posterior a la batería T002: F00 API, PostgreSQL/vector y roundtrip S3 sintético, PASS.

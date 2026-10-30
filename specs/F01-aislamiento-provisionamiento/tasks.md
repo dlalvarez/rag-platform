@@ -2,7 +2,7 @@
 
 **Estado:** ratificadas en PR #8; T001 aceptada e integrada en develop mediante
 [PR #9](https://github.com/dlalvarez/rag-platform/pull/9), con checks y postmerge correctos.
-T002 en implementación; integración completa y aceptación pendientes. T003–T007 no iniciadas.
+T002 implementada y ensayada en PR #10; aceptación humana pendiente. T003–T007 no iniciadas.
 No se cierra F01.
 Referencias: [plan P1–P7 y pruebas V01–V07](plan.md), [ratificación](ratification.md).
 Se conservan los IDs T001–T007 originales. Orden: T001 → T002/T003 → T004 → T005 → T006 → T007;
@@ -20,3 +20,7 @@ T002/T003 pueden dividirse en PR pequeños manteniendo las puertas y dependencia
 esta lista no autoriza ejecución paralela ni agentes adicionales. Ninguna casilla
 se cierra por crear scaffolding. Guardar evidencias de éxitos, denegaciones, fallos
 y recuperación; pruebas omitidas bloquean el AC correspondiente.
+
+T002: batería real completada por Diego y corroborada mediante metadatos saneados.
+[PR #10](https://github.com/dlalvarez/rag-platform/pull/10) pendiente de revisión/aceptación;
+la casilla permanece abierta hasta esa puerta. No iniciar T003 todavía.
