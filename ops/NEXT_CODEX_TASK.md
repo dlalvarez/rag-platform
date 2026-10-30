@@ -1,6 +1,7 @@
 # Siguiente tarea Codex — F01 tras ratificación
 
-**Estado:** preparada para revisión, no iniciada.
+**Estado:** planificación ratificada en PR #8; T001 en curso, bootstrap/V03 reales pendientes.
+Destinos de custodia confirmados preparados por Diego. Continuar según [runbook T001](f01/README.md).
 Fuente: [ratificación F01](../specs/F01-aislamiento-provisionamiento/ratification.md),
 [Issue #7](https://github.com/dlalvarez/rag-platform/issues/7).
 

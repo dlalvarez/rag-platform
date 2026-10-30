@@ -1,7 +1,16 @@
-# Evidencia F01 — sin ejecución técnica
+# Evidencia F01 — T001 parcial
 
-**Estado:** planificación para ratificación. Ningún AC-F01-01..07 ni tarea T001..T007
-se declara completado. La revisión documental no demuestra aislamiento.
+**Estado:** planificación ratificada en PR #8; T001 en curso con V01/V03 parciales.
+Ningún AC-F01-01..07 ni tarea T001..T007 se declara completado.
+[Runbook](../../ops/f01/README.md). Log actual:
+[validación T001](../../docs/evidence/f01-t001-2026-10-30.txt).
+
+Resultados T001 en ragdev01: migración control real repetida con PostgreSQL/TLS y
+migrador no-superuser; constraints y rechazos de contraseña/CA/TLS comprobados.
+Adaptador OpenBao con referencias UUID/versiones, CAS y errores saneados probado offline.
+OpenBao arrancado con TLS, sellado, initialized=false: aún no hay claves de desbloqueo.
+Bootstrap humano, root revocado real, restart/unseal y token caducado real pendientes.
+Las notas siguientes describen preparación histórica del PR #8, no el estado runtime actual.
 
 Base revisada: develop@85cd39f401b48e312c1e4fd61906543a4ff588fe; PR #6 integrado,
 Issue #4 cerrado. Trabajo documental en ragdev01, rama docs/F01-planning.

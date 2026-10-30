@@ -1,15 +1,16 @@
 # Checklist F01 — aceptación pendiente
 
-**Estado:** preparación documental; sin pruebas técnicas F01 ejecutadas.
+**Estado:** planificación ratificada; T001 en curso con pruebas parciales V01/V03. Ningún AC F01 completo.
 
 ## Antes de implementar
 
 - [x] Dependencia F00 aprobada y cerrada; PR #6 integrado y postmerge comprobado.
-- [ ] Spec/plan/tasks F01 y ADR-0004 ratificados por Diego.
+- [x] Spec/plan/tasks F01 y ADR-0004 ratificados por Diego en PR #8.
 - [x] Esquema de custodia de unseal aprobado por Diego el 2026-10-30: gestor de contraseñas y copia fuera de línea, fuera de ragdev01, Shamir 1/1.
-- [ ] Ambos destinos de custodia disponibles y recuperación de la copia confirmada por Diego antes de inicialización; credencial de operador establecida de forma segura.
+- [x] Diego confirmó preparados los destinos de custodia el 2026-10-30; aún no existen copias de una clave generada.
+- [ ] Clave entregada y guardada en ambas copias; credencial de operador establecida de forma segura durante bootstrap.
 - [ ] Perfil F01 separado, límites, TLS, bootstrap SQL y políticas de acceso revisados.
-- [ ] Versiones exactas nuevas fijadas y verificadas; no upgrades fuera de alcance.
+- [x] T001: SQLAlchemy 2.1.6/Alembic 1.20.1 fijados con hashes; psycopg/httpx conservados, sin upgrades ajenos. Las dependencias futuras se revisan en sus tareas.
 
 ## Pruebas obligatorias de F01
 
