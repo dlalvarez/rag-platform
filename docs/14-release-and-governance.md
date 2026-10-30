@@ -1,20 +1,41 @@
 # 14 — Política de ramas, releases y cambios
 
-- **Política propuesta para ratificación F00 mediante [ADR-0006](adr/0006-branch-policy.md):** `main` para releases aprobadas, `develop` para integración estable, `feat/Fxx-*` para PR de alcance acotado. A fecha de esta realineación solo existe el flujo de PR hacia `main`; no asumir que `develop` ni su protección están configurados. Aprobación formal y ajustes por ADR antes del desarrollo de F00.
-- Todo PR exige checklist y evidencia; aprobación humana para merge. Codex no puede promover ambientes por iniciativa propia.
-- Versionado semántico de APIs, eventos y migraciones; tags para hitos aprobados.
-- Cambio incompatible de datos requiere plan expand/migrate/contract, estrategia backup y recuperación y prueba en dos tenants.
-- No se considera "terminado" un módulo con interfaces ficticias, tests omitidos o simulaciones que el usuario no pueda ejecutar en entorno real.
-- La propia documentación cambia mediante PR; si afecta decisiones rectoras, se crea ADR con plan de compatibilidad y autorización previa.
+**Estado:** adoptada por aprobación del responsable en PR #5 (2026-10-30).
+Main es la rama predeterminada y contiene hitos/releases aprobados; develop es integración
+estable; feat/Fxx-* contiene cambios acotados de una fase. Referencia: [ADR-0006](adr/0006-branch-policy.md).
 
-## Aplicación propuesta
+## Ramas y revisión
 
-1. Revisar y aprobar el PR documental F00 hacia main. La autorización de prepararlo no constituye ratificación.
-2. Tras merge humano, crear develop desde ese main aprobado. No cambiar la rama predeterminada.
-3. Abrir ramas feat/F00-* desde develop; PR de implementación hacia develop. Promover hitos a main mediante PR develop → main con pruebas y decisión humana.
-4. Antes de ampliar CI, decidir y registrar protecciones para ambas ramas: PR obligatorio, checks exactos existentes, conversaciones resueltas, sin force-push ni borrado y política de permisos/excepciones.
-5. Añadir lint/tests a los checks obligatorios cuando existan y se hayan verificado. No configurar nombres previstos que bloqueen todos los PR.
+- Las ramas de implementación parten de develop y abren PR hacia develop.
+- Los hitos aprobados se promueven mediante PR develop → main.
+- Todo PR referencia spec, plan, tareas, requisitos/AC y evidencia real. Diego es el único
+  responsable y revisa/autoriza explícitamente cada merge; Codex no fusiona por iniciativa propia.
+- No hay auto-merge, despliegue ni promoción automática de ambientes.
+- Los cambios documentales también pasan por PR. Cambios rectores requieren ADR y autorización.
 
-Debe acordarse quién revisa. Si hay un único responsable, documentar la revisión humana y el mecanismo viable; no presentar una aprobación propia como revisión independiente. Codex no hace merge ni configura bypass por su cuenta.
+Develop se creó desde main@53004ec218074b0fbf36359e437f22bee3f3924a, tras integrar PR #5.
+El repositorio sigue siendo público; cambiar su visibilidad requiere decisión expresa.
 
-**Estado observado al 2026-10-30:** main predeterminada, repositorio público, develop ausente en el listado de ramas. Protecciones no verificadas ni modificadas; no afirmar que están activas. Ver [registro de ratificación](../specs/F00-fundacion-repositorio/ratification.md). La visibilidad pública se conserva.
+## Protección aplicada
+
+Ruleset [26218280](https://github.com/dlalvarez/rag-platform/settings/rules/26218280),
+main-develop-pr-quality, activo para los nombres exactos main y develop:
+PR obligatorio, conversaciones resueltas, check docs con fuente GitHub Actions,
+bloqueo de borrado y force-push. Lista de bypass vacía, también para administradores.
+Se exigen 0 aprobaciones externas porque solo hay un responsable; esto no elimina
+su revisión ni convierte a Codex en revisor independiente.
+[Registro de aplicación](https://github.com/dlalvarez/rag-platform/issues/4#issuecomment-6527049209).
+
+Lint y tests se añaden a los checks obligatorios cuando existan y sus ejecuciones
+se hayan verificado. No exigir nombres inexistentes ni omitir checks fallidos para fusionar.
+
+## Releases y cambios
+
+Versionado semántico de APIs, eventos y migraciones; tags para hitos aprobados.
+Cambios incompatibles de datos requieren expand/migrate/contract, backup/recuperación
+y pruebas en dos tenants cuando corresponda a su fase. No adelantar tenancy a F00.
+
+No declarar terminado un módulo con tests omitidos, interfaces ficticias o simulaciones
+que no se puedan ejecutar. Un placeholder es únicamente el entregable limitado de F00;
+no acredita funcionalidades de fases posteriores. Las evidencias y la revisión humana
+determinan el cierre de cada fase.

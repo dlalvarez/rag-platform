@@ -1,0 +1,33 @@
+name: F00 quality
+on:
+  push:
+    branches: [main, develop, 'feat/F00-*']
+  pull_request:
+    branches: [main, develop]
+permissions:
+  contents: read
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12.12'
+      - run: python -m pip install uv==0.13.6
+      - run: uv sync --locked
+      - run: uv run --frozen ruff check .
+      - run: uv run --frozen ruff format --check .
+  tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12.12'
+      - run: python -m pip install uv==0.13.6
+      - run: uv sync --locked
+      - run: uv run --frozen --offline pytest -q
+      - run: uv run --frozen --offline python scripts/f00_negative_checks.py

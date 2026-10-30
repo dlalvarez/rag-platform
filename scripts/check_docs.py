@@ -65,14 +65,14 @@ for path, canonical in [
 
 adr_dir = ROOT / 'docs/adr'
 if adr_dir.is_dir():
-    for i in range(1, 6):
+    for i in range(1, 7):
         if len(list(adr_dir.glob(f'{i:04d}-*.md'))) != 1:
             errors.append(f'ADR {i:04d}: expected one uniquely numbered file')
 
 # Las copias en history son registros históricos, no contratos actuales.
 md_link = re.compile(r'(?<!!)\[[^\]]+\]\(([^)]+)\)')
 for file in ROOT.rglob('*.md'):
-    if 'history' in file.relative_to(ROOT).parts:
+    if set(file.relative_to(ROOT).parts) & {'history', '.git', '.venv', '.local', '__pycache__'}:
         continue
     text = file.read_text(encoding='utf-8')
     for match in md_link.finditer(text):

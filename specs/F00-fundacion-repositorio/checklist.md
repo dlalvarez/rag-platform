@@ -1,29 +1,21 @@
-# Checklist F00 — fundación técnica del repositorio
+# Checklist F00 — implementación en revisión
 
-**Estado:** pendiente. Este documento se prepara para las futuras pruebas de aceptación; las casillas no indican trabajo realizado.
+- [x] Planificación, ADR-0002/0006 y ejecución en ragdev01 autorizados; ver ratification.
+- [x] Develop creada y protecciones aplicadas; Diego es único responsable de revisión/merge.
+- [x] Paquete/configuración tipada/API placeholder, lockfile y pins preparados.
+- [x] Tests unitarios offline, lint/formato y fallos controlados ejecutados en ragdev01.
+- [x] Constitución, roadmap, AGENTS y ADRs canónicos localizables; validador pasa.
+- [x] Secretos efímeros fuera de Git; revisión de archivos candidatos sin coincidencias.
+- [ ] AC-F00-01: clon limpio instala entorno y ejecuta pytest/lint offline.
+- [ ] AC-F00-02: build, salud y datos sintéticos PostgreSQL/pgvector, MinIO y API.
+- [ ] Persistencia SQL/S3 comprobada tras recreación de contenedores.
+- [ ] Fallo de dependencia y recuperación comprobados.
+- [ ] AC-F00-03: CI del PR docs/lint/tests verde; checks obligatorios actualizados.
+- [x] AC-F00-04: referencias canónicas y AGENTS comprobados por validador.
+- [ ] Evidencia final con commit, entorno, comandos y resultados reales.
+- [ ] PR revisado y aprobación humana para merge; postmerge en develop pendiente.
+- [x] Sin F01, tenants, endpoints de negocio ni migraciones prematuras.
+- [x] Pruebas tenant/ACL no aplicables a F00 justificadas, pendientes para sus fases.
 
-- [ ] AC-F00-01: clon limpio instala entorno Python y ejecuta pytest/lint offline.
-- [ ] AC-F00-02: Compose con versiones fijadas, PostgreSQL/pgvector, MinIO y API placeholder; pruebas de salud y datos sintéticos.
-- [ ] AC-F00-03: CI valida docs, estilo, tests y falla si faltan fuentes rectoras.
-- [ ] AC-F00-04: AGENTS, constitución P01–P14 y roadmap canónico localizables.
-- [ ] No hay llaves, tokens, contraseñas reales ni documentos privados en git.
-- [ ] Persistencia bajo ruta configurable de datos SSD; montaje validado, sin llenar el disco raíz.
-- [ ] Registros reales de comandos, versiones, pruebas y resultados en `evidence.md`.
-- [ ] PR F00 sometido a revisión, sin adelantar F01 y sin merge automático.
-
-## Antes de implementar
-
-- [ ] Decisión humana registrada sobre spec/plan/tareas y ADR-0006 en [ratificación](ratification.md).
-- [ ] ADR-0002 revisado y ratificado antes de usarlo como aprobado.
-- [ ] Develop creada desde main aprobado; protección/checks/revisión acordados y estado efectivo registrado.
-- [ ] Versiones exactas compatibles seleccionadas y justificadas en T001/T002.
-- [ ] Matriz F00-R01..05 → AC → P1..P6 → T001..T006 → V01..V05 mantenida; IDs previstos sustituidos o vinculados a tests reales al implementarlos.
-
-## Al cerrar F00 técnica
-
-- [ ] V01..V05 ejecutadas; fallos controlados y sus códigos de salida registrados.
-- [ ] Integración Compose ejecutada aparte; no se confunde suite offline verde con AC-F00-02 aprobado.
-- [ ] Clon limpio, commit y comandos exactos documentados; logs saneados.
-- [ ] No hay F01, tenants, endpoints de negocio ni migraciones prematuras.
-- [ ] Pruebas tenant/ACL no aplicables a F00 justificadas; permanecen pendientes para sus fases.
-- [ ] Revisión y decisión humana de merge registradas; postmerge en develop verificado.
+Los artefactos existentes no sustituyen las casillas de aceptación pendientes.
+Ver [evidence](evidence.md) y [runbook](../../ops/F00_RUNBOOK.md).

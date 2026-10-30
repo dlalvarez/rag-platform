@@ -1,6 +1,6 @@
 # Plan F00 — propuesta de ratificación
 
-**Estado:** pendiente de aprobación humana. Referencias: [spec](spec.md), [tareas](tasks.md), [ratificación](ratification.md), [Issue #4](https://github.com/dlalvarez/rag-platform/issues/4).
+**Estado:** planificación aprobada en PR #5 (2026-10-30); implementación en revisión. Referencias: [spec](spec.md), [tareas](tasks.md), [ratificación](ratification.md), [Issue #4](https://github.com/dlalvarez/rag-platform/issues/4).
 Este plan desarrolla F00-R01..05 y AC-F00-01..04 sin cambiar su alcance. No implementa F01 ni tenancy.
 
 ## Secuencia y archivos previstos
@@ -32,10 +32,14 @@ Comandos objetivo: `uv sync --frozen`, `uv run pytest -m "not integration"`, `uv
 
 Contexto comunicado por el responsable: `ragdev01`, Ubuntu 24.04.5, 2 vCPU, 16 GB RAM, ext4 120 GiB en `/srv/rag-data`, Docker/Compose instalados. No se verificó acceso al host en este PR.
 
-Persistencia configurable: ruta local aislada en sandbox; perfil de host bajo `/srv/rag-data`. Antes de cualquier arranque autorizado en la VM, validar montaje ext4, espacio, permisos/UID y puertos; fallar si falta el montaje. Documentar límites de recursos compatibles con 2 vCPU/16 GB, sin reservar toda la capacidad ni publicar servicios de datos a Internet. Este plan no autoriza ejecutar nada en la VM.
+Persistencia configurable: ruta local aislada en sandbox; perfil de host bajo `/srv/rag-data`. Antes de cualquier arranque autorizado en la VM, validar montaje ext4, espacio, permisos/UID y puertos; fallar si falta el montaje. Documentar límites de recursos compatibles con 2 vCPU/16 GB, sin reservar toda la capacidad ni publicar servicios de datos a Internet. El responsable autorizó posteriormente implementar y probar F00 por SSH en ragdev01; ver ops/F00_RUNBOOK.md. No se autoriza producción ni F01.
 
 Pruebas solo con datos sintéticos y secretos efímeros externos a Git. Detener el proyecto Compose de ensayo sin borrar volúmenes ajenos; limpieza destructiva solo del entorno desechable identificado. Rollback de código por revert mediante PR. Sin migraciones ni datos de negocio en F00. Snapshot local no equivale a backup externo/restauración validada.
 
 ## Puertas pendientes
 
-Ratificar spec/plan/tareas y [política de ramas](../../docs/14-release-and-governance.md) antes de código. Registrar versiones verificadas y resolver ADR-0002 antes de usarlo como decisión aprobada. ADR-0004 y secret manager corresponden a F01. Ninguna casilla técnica se cierra en este PR documental.
+Ratificados spec/plan/tareas y [política de ramas](../../docs/14-release-and-governance.md) antes de código. Registrar versiones verificadas y resolver ADR-0002 antes de usarlo como decisión aprobada. ADR-0004 y secret manager corresponden a F01. Ninguna casilla técnica se cierra en este PR documental.
+
+## Ejecución autorizada
+
+PR #5 ratificado; ADR-0002/0006 aprobados y reglas aplicadas. El responsable autorizó ejecución exclusivamente en ragdev01. Ver [runbook](../../ops/F00_RUNBOOK.md). Python host 3.12.3, CI/imagen 3.12.12, uv 0.13.6. Tests y dependencias exactas en pyproject/lock; resultados en evidence. El estado final depende de pruebas, revisión y merge.

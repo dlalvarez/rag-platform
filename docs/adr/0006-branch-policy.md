@@ -1,6 +1,6 @@
 # ADR 0006 — Formalización del flujo main/develop
 
-**Estado:** propuesto para ratificación F00 (2026-10-30). No aplicado automáticamente.
+**Estado:** Aprobado por el responsable el 2026-10-30; registro en https://github.com/dlalvarez/rag-platform/pull/5#issuecomment-6526924875.
 **Referencias:** ADR-0003, [política](../14-release-and-governance.md), [ratificación F00](../../specs/F00-fundacion-repositorio/ratification.md).
 
 ## Contexto y decisión propuesta
@@ -20,3 +20,7 @@ Protecciones propuestas: PR obligatorio, sin force-push ni borrado, checks vigen
 No se crean reglas desde este PR. Registrar configuración efectiva, nombres exactos de checks y permisos tras aprobación; evitar exigir checks inexistentes. Mientras no estén aplicadas, la política documental no es enforcement de GitHub.
 
 Sin migración de datos ni cambio de API. Si el flujo no resulta viable, proponer ajuste por ADR/PR con aprobación humana, preservando commits y PRs; no borrar ramas ni reescribir historia automáticamente. No se modifica ADR aprobado ni la constitución.
+
+## Aplicación verificada (2026-10-30)
+
+Develop creada desde 53004ec218074b0fbf36359e437f22bee3f3924a. Ruleset activo 26218280, targets main/develop, PR obligatorio, conversaciones resueltas, docs (GitHub Actions), bloqueo de borrado y force-push. Sin bypass; 0 aprobaciones externas requeridas al existir un único responsable. Diego revisa y autoriza cada merge. Registro: https://github.com/dlalvarez/rag-platform/issues/4#issuecomment-6527049209. Los párrafos anteriores describen la propuesta histórica; la política efectiva es este registro y docs/14-release-and-governance.md.

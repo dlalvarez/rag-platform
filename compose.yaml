@@ -1,0 +1,76 @@
+name: rag-f00
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.7-pg17-bookworm@sha256:ac08538c6f8b9904c33c8224c5e5706dbe760aca29db1d096972b4052c22a75d
+    environment:
+      POSTGRES_USER: f00_dev
+      POSTGRES_DB: f00_scratch
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets: [postgres_password]
+    volumes:
+      - type: bind
+        source: ${RAG_DATA_ROOT:?Run f00_prepare.py}/postgres
+        target: /var/lib/postgresql/data
+        bind:
+          create_host_path: false
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U f00_dev -d f00_scratch"]
+      interval: 5s
+      timeout: 3s
+      retries: 24
+    cpus: 0.75
+    mem_limit: 2g
+  minio:
+    image: rag-f00-minio:RELEASE.2025-10-15T17-29-55Z
+    build:
+      context: .
+      dockerfile: ops/minio.Dockerfile
+    user: "${RAG_UID:?Set RAG_UID}:${RAG_GID:?Set RAG_GID}"
+    environment:
+      MINIO_ROOT_USER_FILE: /run/secrets/minio_user
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_password
+    secrets: [minio_user, minio_password]
+    volumes:
+      - type: bind
+        source: ${RAG_DATA_ROOT:?Run f00_prepare.py}/minio
+        target: /data
+        bind:
+          create_host_path: false
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:9000/minio/health/ready', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 24
+    cpus: 0.75
+    mem_limit: 2g
+  api:
+    image: rag-f00-api:0.0.1
+    build:
+      context: .
+      target: runtime
+    environment:
+      RAG_LOG_LEVEL: ${RAG_LOG_LEVEL:-info}
+    ports: ["127.0.0.1:${RAG_API_PORT:-8000}:8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 24
+    cpus: 0.25
+    mem_limit: 512m
+  smoke:
+    profiles: [test]
+    image: rag-f00-smoke:0.0.1
+    build:
+      context: .
+      target: smoke
+    secrets: [postgres_password, minio_user, minio_password]
+    cpus: 0.25
+    mem_limit: 512m
+secrets:
+  postgres_password:
+    file: ${RAG_DATA_ROOT:?Run f00_prepare.py}/secrets/postgres_password
+  minio_user:
+    file: ${RAG_DATA_ROOT:?Run f00_prepare.py}/secrets/minio_user
+  minio_password:
+    file: ${RAG_DATA_ROOT:?Run f00_prepare.py}/secrets/minio_password
