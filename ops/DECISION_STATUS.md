@@ -21,7 +21,7 @@ Este paquete documenta decisiones expresadas en la conversación y propuestas de
 - Repositorio GitHub `dlalvarez/rag-platform` creado y PR #2 documental fusionado. El PR #2 **no completó la F00 técnica** del kit.
 - Servidor dev `ragdev01` listo: Ubuntu 24.04.5, Docker Engine 29.9.2, Compose 5.6.1, SSD de 120 GiB montado en `/srv/rag-data` y snapshot VMM local. Ver `docs/operations/development-host.md`.
 - **Pendiente:** F00-R01..05/AC-F00-01..04 (bootstrap Python/CI/Compose real); F01 y fases siguientes, backups externos y restauración verificada. No se ha desplegado PostgreSQL/pgvector ni MinIO para el producto.
-- Existe una rama de realineación documental para revisar el retorno al kit rector. Ninguna elección futura del stack queda aprobada por el solo hecho de haber restaurado archivos.
+- PR #3 de realineación integrado el 2026-10-29. Ninguna elección futura del stack queda aprobada por el solo hecho de haber restaurado archivos.
 - GitHub está actualmente configurado como **repositorio público**; el kit inicial proponía privado. Decidir formalmente política de visibilidad antes de incorporar material sensible; nunca guardar secretos en Git.
 
 ## Jerarquía y conflicto resuelto
@@ -29,3 +29,8 @@ Este paquete documenta decisiones expresadas en la conversación y propuestas de
 `docs/01-constitution.md` es la única constitución normativa y `docs/10-roadmap.md` el roadmap canónico. `CONSTITUTION.md` y `docs/roadmap.md` son enlaces de referencia. Documentos anteriores del PR #2 archivados en `docs/history/pr2/`.
 
 **Pendiente de ratificar:** ADR 0002 (monolito modular) y ADR 0004 (gestión concreta de secretos/objetos) conservan su condición de propuesta. ADR 0001 y ADR 0003 reflejan decisiones ya acordadas.
+
+## Propuesta de ratificación F00 (2026-10-30)
+
+Preparación autorizada de planificación y gobierno; revisión y aprobación del contenido pendientes. Ver [registro F00](../specs/F00-fundacion-repositorio/ratification.md) y [ADR-0006](../docs/adr/0006-branch-policy.md).
+Develop se propone crear desde main después del merge humano del PR documental. Protección no verificada ni modificada; deben decidirse checks, revisores y excepciones antes de ampliar CI. F00 técnica e Issue #4 siguen pendientes. Repositorio público sin cambio de visibilidad. No se ejecutó ningún servicio en ragdev01.

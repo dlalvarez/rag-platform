@@ -1,8 +1,10 @@
 # F00 — Fundación del repositorio y calidad SDD
 
-**Estado:** BORRADOR RECTOR, pendiente de aprobación humana para ejecutar.  
+**Estado:** propuesta de ratificación F00; pendiente de revisión humana en PR. Esta entrega solo formaliza la planificación; no acredita implementación ni autoriza despliegue.  
 **Dependencia:** ninguna.  
 **Meta:** Repositorio reproducible y listo para que Codex desarrolle F01.
+
+**Plan y pruebas:** [plan.md](plan.md). **Tareas:** [tasks.md](tasks.md). **Control de aprobación:** [ratification.md](ratification.md). Requisitos y AC originales conservados.
 
 ## Problema y resultado esperado
 
