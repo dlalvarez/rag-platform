@@ -86,7 +86,7 @@ services:
     memswap_limit: 1536m
   tools:
     profiles: [tools]
-    image: rag-f01-tools:t002
+    image: rag-f01-tools:t003
     build:
       context: ../..
       dockerfile: ops/f01/tools.Dockerfile
@@ -117,6 +117,58 @@ services:
     profiles: [test]
     secrets: [postgres_password, control_migrator_password]
     command: [python, scripts/f01_sql_check.py]
+  minio:
+    image: rag-f00-minio:RELEASE.2025-10-15T17-29-55Z
+    user: "${RAG_F01_UID:?Prepare F01}:${RAG_F01_GID:?Prepare F01}"
+    command: ["--quiet", "--anonymous", "--certs-dir", "/certs", "server", "/data"]
+    environment:
+      MINIO_ROOT_USER_FILE: /run/secrets/storage_admin_user
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/storage_admin_password
+      MINIO_BROWSER: "off"
+    secrets: [storage_admin_user, storage_admin_password]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    volumes:
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/minio
+        target: /data
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/tls/minio/public.crt
+        target: /certs/public.crt
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/tls/minio/private.key
+        target: /certs/private.key
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/tls/ca.crt
+        target: /run/f01-ca.crt
+        read_only: true
+        bind: {create_host_path: false}
+    healthcheck:
+      test: [CMD, python, -c, "import ssl,urllib.request; urllib.request.urlopen('https://minio:9000/minio/health/ready',context=ssl.create_default_context(cafile='/run/f01-ca.crt'),timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 30
+    networks: [f01]
+    cpus: 0.5
+    mem_limit: 1536m
+    memswap_limit: 1536m
+    ulimits:
+      core: {soft: 0, hard: 0}
+  s3-compat:
+    extends: tools
+    profiles: [test]
+    secrets: [storage_admin_user, storage_admin_password]
+    command: [python, scripts/f01_storage_check.py, compatibility]
+  s3-check:
+    extends: tools
+    profiles: [test]
+    secrets: [storage_admin_user, storage_admin_password, control_migrator_password]
+    command: [python, scripts/f01_storage_check.py, tenants]
 networks:
   f01:
     internal: true
@@ -125,3 +177,8 @@ secrets:
     file: ${RAG_F01_ROOT:?Prepare F01}/secrets/postgres_password
   control_migrator_password:
     file: ${RAG_F01_ROOT:?Prepare F01}/secrets/control_migrator_password
+
+  storage_admin_user:
+    file: ${RAG_F01_ROOT:?Prepare F01}/secrets/storage_admin_user
+  storage_admin_password:
+    file: ${RAG_F01_ROOT:?Prepare F01}/secrets/storage_admin_password

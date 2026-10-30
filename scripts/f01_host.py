@@ -114,6 +114,78 @@ def prepare() -> None:
     print("F01 paths/TLS/SQL bootstrap prepared; no OpenBao initialization or unseal keys.")
 
 
+def prepare_storage() -> None:
+    """Add only isolated T003 storage bootstrap; never overwrite existing inputs."""
+    validate_host(starting=True)
+    for parent in (DATA, DATA / "tls", DATA / "secrets"):
+        if not parent.is_dir() or parent.is_symlink():
+            raise ValueError("Existing F01 preparation is required")
+    targets = [
+        DATA / "minio",
+        DATA / "tls/minio",
+        DATA / "secrets/storage_admin_user",
+        DATA / "secrets/storage_admin_password",
+    ]
+    if any(path.exists() or path.is_symlink() for path in targets):
+        raise ValueError("Existing or partial storage bootstrap will not be overwritten")
+    for name in ("ca.crt", "ca.key"):
+        path = DATA / "tls" / name
+        if not path.is_file() or path.is_symlink():
+            raise ValueError("Existing trusted CA is required")
+    old_umask = os.umask(0o077)
+    try:
+        (DATA / "minio").mkdir(mode=0o700)
+        tls = DATA / "tls/minio"
+        tls.mkdir(mode=0o700)
+        with (DATA / "secrets/storage_admin_user").open("x") as output:
+            output.write("f01-admin-" + secrets.token_hex(16))
+        with (DATA / "secrets/storage_admin_password").open("x") as output:
+            output.write(secrets.token_urlsafe(36))
+        (tls / "server.ext").write_text(
+            "subjectAltName=DNS:minio\nbasicConstraints=critical,CA:FALSE\n"
+            "keyUsage=critical,digitalSignature,keyEncipherment\n"
+            "extendedKeyUsage=serverAuth\n"
+        )
+
+        def openssl(*args):
+            subprocess.run(["openssl", *args], cwd=tls, check=True, capture_output=True)
+
+        openssl(
+            "req",
+            "-new",
+            "-newkey",
+            "rsa:3072",
+            "-nodes",
+            "-subj",
+            "/CN=minio",
+            "-keyout",
+            "private.key",
+            "-out",
+            "server.csr",
+        )
+        openssl(
+            "x509",
+            "-req",
+            "-in",
+            "server.csr",
+            "-CA",
+            "../ca.crt",
+            "-CAkey",
+            "../ca.key",
+            "-CAcreateserial",
+            "-days",
+            "90",
+            "-extfile",
+            "server.ext",
+            "-out",
+            "public.crt",
+        )
+        (tls / "public.crt").chmod(0o444)
+    finally:
+        os.umask(old_umask)
+    print("F01 storage prepared: isolated data/TLS/bootstrap; existing services preserved.")
+
+
 def compose(arguments: list[str]) -> None:
     if not arguments or arguments[0] not in {
         "config",
@@ -152,6 +224,24 @@ def compose(arguments: list[str]) -> None:
         path = DATA / name
         if path.is_symlink() or not path.is_file():
             raise ValueError("Missing or symlinked F01 input")
+    if any(arg in {"minio", "s3-check", "s3-compat"} for arg in arguments):
+        for name in ("minio", "tls/minio"):
+            path = DATA / name
+            if path.is_symlink() or not path.is_dir():
+                raise ValueError("Explicit storage preparation required")
+        for name in (
+            "tls/minio/public.crt",
+            "tls/minio/private.key",
+            "secrets/storage_admin_user",
+            "secrets/storage_admin_password",
+        ):
+            path = DATA / name
+            if path.is_symlink() or not path.is_file():
+                raise ValueError("Missing or symlinked storage input")
+            if name != "tls/minio/public.crt":
+                stat = path.stat()
+                if stat.st_uid != os.getuid() or stat.st_mode & 0o077:
+                    raise ValueError("Storage bootstrap requires private owner-only files")
     result = subprocess.run(
         [
             "docker",
@@ -176,6 +266,8 @@ def main() -> None:
     try:
         if args.command == ["prepare"]:
             prepare()
+        elif args.command == ["prepare-storage"]:
+            prepare_storage()
         else:
             compose(args.command)
     except (ValueError, OSError, subprocess.SubprocessError, KeyError):

@@ -1,8 +1,8 @@
-# Evidencia F01 — T001 aceptada; T002 ensayada, revisión pendiente
+# Evidencia F01 — T001/T002 aceptadas; T003 ensayada, revisión pendiente
 
 **Estado:** T001 aceptada, con checks del HEAD y postmerge correctos, integrada
 mediante PR #9 en develop@a1568375164627f4be2b10d0cb9285fab92ce685.
-T002 implementada y batería real completada por Diego; revisión/aceptación pendientes.
+T002 aceptada e integrada mediante PR #10; T003 con batería real completa, revisión pendiente.
 F01 e Issue #7 permanecen abiertos. Ningún AC-F01-01..07 completo.
 
 Plan ratificado: [PR #8](https://github.com/dlalvarez/rag-platform/pull/8),
@@ -44,13 +44,13 @@ y rechazos con token ficticio; no recibió valores.
 |---|---|---|
 | AC-F01-01 | Control y A/B distintos, contrato/migración inicial | Batería ampliada T006 y aceptación |
 | AC-F01-02 | SQL A↔B y roles reales, PASS en T002 | Batería ampliada T006 y aceptación |
-| AC-F01-03 | Sin MinIO F01 | Objetos privados y cruces A↔B |
-| AC-F01-04 | Constraints y repetición SQL sin rotación | Saga/reintento/concurrencia completos |
+| AC-F01-03 | MinIO F01 A/B privados y cruces/anónimo, PASS T003 | Batería ampliada T006 y aceptación |
+| AC-F01-04 | Constraints y repetición SQL/S3 sin rotación | Saga/reintento/concurrencia completos |
 | AC-F01-05 | Sin saga de objetos | Fallo bucket, no READY y recuperación |
 | AC-F01-06 | SecretStore/refs probados | Resolver, pools y dos endpoints reales |
 | AC-F01-07 | Control y contrato tenant inicial repetibles | Locks, fallos y coordinación de migraciones T006 |
 
-T002 ensayada en PR #10; T003–T007 no implementadas. No users/memberships/jobs, OIDC/F02, alta HTTP,
+T002 aceptada mediante PR #10; T003 ensayada; T004–T007 no implementadas. No users/memberships/jobs, OIDC/F02, alta HTTP,
 documentos, chunks, embeddings de negocio, RAG o chat.
 
 ## CI, revisión y límites
@@ -65,7 +65,7 @@ upgrades ajenos. Main y visibilidad pública sin cambios.
 
 Raft de un nodo no aporta HA; backup externo/restore no acreditados. CA de desarrollo
 de 90 días requiere renovación. SQL bootstrap separado del runtime.
-Riesgo MinIO upstream archivado conservado; MinIO F01 no instalado.
+Riesgo MinIO upstream archivado conservado; MinIO F01 incorporado en T003.
 Rollback conserva PostgreSQL/Raft; sin downgrade destructivo automático.
 
 La puerta de T001 ya se satisfizo. Siguiente puerta: integración real, CI y
@@ -211,3 +211,58 @@ o batería de dos instancias y migraciones coordinadas T006. T002 pendiente de
 aceptación humana; F01 e Issue #7 permanecen abiertos. Sin merge automático.
 
 Regresión posterior a la batería T002: F00 API, PostgreSQL/vector y roundtrip S3 sintético, PASS.
+
+
+## Aceptación de T002 y entrega técnica T003
+
+T002 aceptada por Diego e integrada en develop@ff24f439c75e93477df0a99835635d0fb00538d5;
+[cierre PR #10](https://github.com/dlalvarez/rag-platform/pull/10#issuecomment-6535497540).
+Las anotaciones de revisión pendiente en las entradas T002 anteriores son históricas.
+
+F01-R04/R03 → AC-F01-03 / P3 / T003 / V03-V04.
+[Runbook T003](../../ops/f01/T003.md),
+[log saneado](../../docs/evidence/f01-t003-2026-10-30.txt) y
+[manifiesto de fuentes](../../docs/evidence/f01-t003-source-sha256.txt).
+
+| Prueba | Resultado observado | Fuente |
+|---|---|---|
+| Compatibilidad MinioAdmin | user_add, policy_add, attach_policy e inspección funcionan por HTTPS en la release fijada; sin mc | calibración real |
+| Política/propiedad | bucket/ref/tenant en tags, política exacta y principal sin grupos; bucket ajeno intacto | storage.py y fixture real |
+| V04 acceso propio | get/put/list/delete de A/B, PASS | s3-check del operador |
+| V04 acceso cruzado | get/put/list/delete A→B y B→A rechazados AccessDenied; canaries conservados | credenciales reales A/B |
+| V04 anónimo/admin | get/put/list anónimos denegados; user_list administrativo denegado | s3-check |
+| ListBuckets | Respuesta filtrada contiene exactamente el bucket propio; no ListAllMyBuckets concedido | fuente de release y prueba real |
+| V03 secretos | Credenciales versionadas en OpenBao, referencias en control, repetición sin rotación | s3-check del operador |
+| TLS | CA propia correcta y CA ajena rechazada sin fallback | probe independiente sin credenciales |
+| Regresión | 107 pruebas offline; Ruff/formato/documentos; control-check y F00 real correctos | ejecución en servidor |
+
+Diego ejecutó s3-check en su propia terminal y comunicó tres PASS T003.
+No se solicitaron ni mostraron valores de credenciales/tokens. Bootstrap MinIO está
+separado del root OpenBao, que sigue revocado; el administrador no simula aislamiento.
+
+Corroboración independiente: dos storage_locations, dos buckets tenant distintos,
+versiones positivas y endpoint HTTPS. Dos tenants PROVISIONING con observed_version
+ausente. IAM: ocho usuarios, dos habilitados (tenants) y seis de calibración deshabilitados.
+Diez buckets: dos tenant, seis de calibración y dos fixtures ajenas; todos sintéticos,
+conservados sin limpieza automática. No procesos de prueba persistentes tras --rm.
+
+Minio 7.2.20 se promueve de dev a runtime; uv.lock solo cambia pertenencia de grupo.
+No cambios de versiones/hashes de paquetes ni nuevas migraciones de catálogo.
+MinIO usa la receta/imágenes fijadas de F00 con datos/TLS F01 separados, sin puertos
+publicados. Límites F01: 3.75 GiB de servicios y 768 MiB de herramienta serial,
+4.5 GiB en conjunto; límites no son consumo garantizado ni prueba de capacidad.
+Observación durante la batería: servicios y herramienta por debajo de esos límites.
+
+La calibración inicial esperaba rechazo total de ListBuckets; la implementación
+upstream filtra por permisos de bucket. Se ajustó la prueba a exigir únicamente el
+bucket propio, sin ampliar política. No se aceptaron errores de firma/red como
+aislamiento ni se usaron respuestas simuladas para acreditar las denegaciones.
+
+T003 pendiente de CI/revisión/aceptación. No se cierra AC de fase ni Issue #7.
+T004–T007 pendientes: saga, concurrencia, compensación, pools, dos instancias y
+migraciones coordinadas. No READY, producción, documentos reales, HA o restore.
+
+Código T003 probado y manifiesto verificado:
+ba91e1fb2fc590cf4c7e81794409855e2d3f6694,
+[PR #11](https://github.com/dlalvarez/rag-platform/pull/11).
+Las revisiones posteriores de documentación no alteran las fuentes ejecutadas.
