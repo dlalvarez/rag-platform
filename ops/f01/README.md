@@ -89,7 +89,8 @@ Tras completar bootstrap, la prueba de recuperación de canary se ejecuta con:
 
 Check pide únicamente la contraseña del operador y verifica el canary sintético
 en UUID e2fc03f9-a253-4b02-8592-ff00409567b5, versionado/CAS y SecretID de un uso.
-No es una cuenta SQL/S3 real ni contiene datos de negocio. Conserva ese canary para
+No es una cuenta SQL/S3 real ni contiene datos de negocio. Check exige el canary existente
+y falla si desaparece; solo init/resume permiten crearlo. Conserva ese canary para
 la prueba posterior a reinicio. No se habilita listado/borrado general de secretos.
 
 Para demostrar persistencia: check, restart solo openbao, status sellado, comprobar

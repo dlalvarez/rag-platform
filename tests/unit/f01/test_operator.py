@@ -59,7 +59,7 @@ def test_root_is_not_revoked_if_runtime_validation_fails(monkeypatch):
     monkeypatch.setattr(operator, "call", fake_call)
     monkeypatch.setattr(operator, "login_operator", lambda http: "synthetic-operator")
 
-    def runtime_failure(http, token):
+    def runtime_failure(http, token, **kwargs):
         raise RuntimeError("Synthetic runtime verification failure")
 
     monkeypatch.setattr(operator, "check_runtime", runtime_failure)
@@ -90,3 +90,51 @@ def test_password_mismatch_allows_retry_without_echo(monkeypatch, capsys):
     assert "no coinciden" in output
     assert valid not in output
     assert different not in output
+
+
+def test_recovery_check_cannot_recreate_missing_canary(monkeypatch):
+    from rag_platform.providers.secrets import SecretErrorCode, SecretStoreError
+
+    class MissingCanary:
+        def __init__(self, *args):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def login(self, *args):
+            pass
+
+        def read(self, ref):
+            raise SecretStoreError(SecretErrorCode.NOT_FOUND)
+
+        def write(self, *args, **kwargs):
+            raise AssertionError("Recovery must never recreate a missing canary")
+
+    class DeniedResponse:
+        status_code = 403
+
+    class Http:
+        def get(self, *args, **kwargs):
+            return DeniedResponse()
+
+        def post(self, *args, **kwargs):
+            return DeniedResponse()
+
+    def fake_call(http, method, path, token=None, payload=None):
+        if path == "auth/token/lookup-self":
+            return {"data": {"policies": ["default", "f01-operator"]}}
+        if path.endswith("role-id"):
+            return {"data": {"role_id": "synthetic-role"}}
+        if path.endswith("secret-id"):
+            return {"data": {"secret_id": "synthetic-one-use-id"}}
+        raise AssertionError("Unexpected recovery request")
+
+    monkeypatch.setattr(operator, "OpenBaoSecretStore", MissingCanary)
+    monkeypatch.setattr(operator, "call", fake_call)
+    with pytest.raises(SecretStoreError) as error:
+        operator.check_runtime(Http(), "synthetic-operator")
+    assert error.value.code == SecretErrorCode.NOT_FOUND

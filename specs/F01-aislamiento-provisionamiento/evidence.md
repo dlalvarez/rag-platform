@@ -8,8 +8,12 @@ Ningún AC-F01-01..07 ni tarea T001..T007 se declara completado.
 Resultados T001 en ragdev01: migración control real repetida con PostgreSQL/TLS y
 migrador no-superuser; constraints y rechazos de contraseña/CA/TLS comprobados.
 Adaptador OpenBao con referencias UUID/versiones, CAS y errores saneados probado offline.
-OpenBao arrancado con TLS, sellado, initialized=false: aún no hay claves de desbloqueo.
-Bootstrap humano, root revocado real, restart/unseal y token caducado real pendientes.
+Diego ejecutó bootstrap y reportó PASS de operador limitado/AppRole/KV/CAS y root
+inicial revocado, sin proporcionar valores secretos. Estado independiente TLS antes
+de restart: initialized=true, sealed=false, umbral 1/1. Restart solo OpenBao: salida 0;
+después initialized=true, sealed=true; acceso con token ficticio HTTP 503.
+44 pruebas offline correctas. Check exige el canary existente y falla sin recrearlo.
+Pendientes: unseal manual y lectura del canary tras restart, y token caducado real.
 Las notas siguientes describen preparación histórica del PR #8, no el estado runtime actual.
 
 Base revisada: develop@85cd39f401b48e312c1e4fd61906543a4ff588fe; PR #6 integrado,

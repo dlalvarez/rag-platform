@@ -71,7 +71,7 @@ def login_operator(http: httpx.Client) -> str:
     return result["auth"]["client_token"]
 
 
-def check_runtime(http: httpx.Client, operator: str) -> None:
+def check_runtime(http: httpx.Client, operator: str, *, initialize_canary: bool = False) -> None:
     own = call(http, "GET", "auth/token/lookup-self", operator)["data"]
     if set(own["policies"]) != {"default", "f01-operator"}:
         raise RuntimeError("Unexpected operator policies")
@@ -98,7 +98,7 @@ def check_runtime(http: httpx.Client, operator: str) -> None:
                 raise RuntimeError("Unexpected canary ownership; stop for review")
             version = SecretRef(CANARY, 1)
         except SecretStoreError as error:
-            if error.code.value != "SECRET_NOT_FOUND":
+            if error.code.value != "SECRET_NOT_FOUND" or not initialize_canary:
                 raise
             version = store.write(
                 CANARY, Credential("f01-canary", "synthetic-not-an-account"), expected_version=0
@@ -203,7 +203,7 @@ def bootstrap(http: httpx.Client, *, resume: bool) -> None:
         },
     )
     del password
-    check_runtime(http, login_operator(http))
+    check_runtime(http, login_operator(http), initialize_canary=True)
     call(http, "POST", "auth/token/revoke-self", root_token, {})
     revoked = http.get("/v1/auth/token/lookup-self", headers={"X-Vault-Token": root_token})
     if revoked.status_code != 403:

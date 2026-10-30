@@ -8,7 +8,7 @@
 - [x] Spec/plan/tasks F01 y ADR-0004 ratificados por Diego en PR #8.
 - [x] Esquema de custodia de unseal aprobado por Diego el 2026-10-30: gestor de contraseñas y copia fuera de línea, fuera de ragdev01, Shamir 1/1.
 - [x] Diego confirmó preparados los destinos de custodia el 2026-10-30; aún no existen copias de una clave generada.
-- [ ] Clave entregada y guardada en ambas copias; credencial de operador establecida de forma segura durante bootstrap.
+- [x] Diego confirmó credenciales custodiadas y bootstrap con operador limitado y root inicial revocado; no se solicitaron ni leyeron valores.
 - [ ] Perfil F01 separado, límites, TLS, bootstrap SQL y políticas de acceso revisados.
 - [x] T001: SQLAlchemy 2.1.6/Alembic 1.20.1 fijados con hashes; psycopg/httpx conservados, sin upgrades ajenos. Las dependencias futuras se revisan en sus tareas.
 

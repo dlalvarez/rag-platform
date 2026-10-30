@@ -131,3 +131,12 @@ Resume stopped before confirmation prompt: prior script rejected passwords under
 New validation explains minimum length/mismatch and permits retry without echo or credential writes before valid confirmation.
 ruff check . exit=0; ruff format --check . exit=0; pytest -q: 43 passed, 1 pre-existing Starlette warning; check_docs.py exit=0; git diff --check exit=0.
 Tools image rebuilt successfully; OpenBao not restarted/reinitialized. Root revocation and completed bootstrap still pending.
+
+Bootstrap and controlled restart 2026-10-30T17:43:21.802495+00:00
+Operator reported PASS: limited operator, non-root AppRole, one-use SecretID, KV versioning/CAS, initial root revoked. No credential values supplied to Codex.
+Independent TLS status before restart: initialized=true, sealed=false, threshold=1/1.
+Command: python3 scripts/f01_host.py restart openbao; exit=0. Only OpenBao F01 restarted; F00 untouched.
+Independent TLS status after restart: initialized=true, sealed=true, threshold=1/1. GET canary with synthetic invalid token: HTTP 503, body not read/printed.
+Recovery check hardened: missing canary must fail; init/resume alone may initialize it. Regression test verifies no write on missing recovery canary.
+ruff check . exit=0; ruff format --check . exit=0; pytest -q: 44 passed, 1 existing Starlette warning; check_docs.py exit=0; git diff --check exit=0; tools rebuild exit=0.
+Pending: operator unseal plus strict check of existing canary after restart, and real token expiration. No completed T001/AC claim.
