@@ -1,6 +1,6 @@
 # Checklist F01 — aceptación pendiente
 
-**Estado:** pruebas técnicas T001 demostradas; checks CI y aceptación de PR #9 pendientes. Ningún AC F01 completo.
+**Estado:** T001 aceptada mediante PR #9; T002 en implementación y pendiente de integración completa/revisión. Ningún AC F01 completo.
 
 ## Antes de implementar
 

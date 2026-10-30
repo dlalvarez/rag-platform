@@ -70,9 +70,18 @@ class DbLocation(Base):
     app_secret_version: Mapped[int]
     migrator_secret_ref: Mapped[uuid.UUID] = mapped_column(unique=True)
     migrator_secret_version: Mapped[int]
+    readonly_secret_ref: Mapped[uuid.UUID | None] = mapped_column(unique=True)
+    readonly_secret_version: Mapped[int | None]
     ssl_mode: Mapped[str] = mapped_column(sa.String(10), default="verify-full")
     __table_args__ = (
         sa.UniqueConstraint("instance_id", "db_name"),
+        sa.CheckConstraint(
+            "(readonly_secret_ref IS NULL AND readonly_secret_version IS NULL) OR "
+            "(readonly_secret_ref IS NOT NULL AND readonly_secret_version IS NOT NULL "
+            "AND readonly_secret_version > 0 AND readonly_secret_ref <> app_secret_ref "
+            "AND readonly_secret_ref <> migrator_secret_ref)",
+            name="readonly_secret_pair",
+        ),
         sa.CheckConstraint("ssl_mode = 'verify-full'", name="db_tls"),
         sa.CheckConstraint(
             "app_secret_version > 0 AND migrator_secret_version > 0", name="db_secret_versions"

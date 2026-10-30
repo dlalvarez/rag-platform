@@ -26,7 +26,7 @@ Seguimiento: [Issue #7](https://github.com/dlalvarez/rag-platform/issues/7).
 | Pools | 2 conexiones por tenant/engine, 4 engines y 8 conexiones tenant por proceso; control 2; admin serial | Aprobado para probar, sin prometer límite multiproceso |
 | Topología de prueba | A/B misma instancia y A2/B2 en dos endpoints reales | Aprobado; sin migrar datos entre instancias |
 | Rollback/recuperación | Conservar datos, no borrar recursos ajenos ni ejecutar DROP/borrados automáticos | Aprobado; backup externo/HA/producción no acreditados |
-| Ejecución | Solo ragdev01, rama feat/F01-* y PR hacia develop después de aprobación | T001 implementada y ensayada, aceptación del PR #9 pendiente, nueva rama técnica |
+| Ejecución | Solo ragdev01, rama feat/F01-* y PR hacia develop después de aprobación | T001 aceptada mediante PR #9; T002 en nueva rama técnica, revisión pendiente |
 | Merge | Revisión y autorización humana por PR | PR #8 autorizado e integrado; futuros PR requieren revisión |
 
 La aprobación inicial de custodia fue seguida por la ratificación completa del PR #8.

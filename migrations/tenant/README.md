@@ -1,5 +1,9 @@
 # Pista tenant
 
-T001 fija el contrato interno en `src/rag_platform/tenancy/contracts.py`.
-La revisión Alembic tenant, vector y locks se implementan en T002/T006; esta carpeta
-no acredita migración ni aislamiento de ninguna base tenant. No crear tablas de negocio.
+T002 añade la revisión f01_tenant_0001: identidad operativa mínima y versión Alembic,
+sin esquemas de negocio. Vector procede de la plantilla propia preparada por bootstrap;
+la migración usa migrator/owner limitados, sin instalar extensiones como superusuario.
+
+Ver [runbook T002](../../ops/f01/T002.md). Locks, canary, fallos/reversión y coordinación
+con el catálogo se completan en T006. Crear esta pista no acredita aislamiento real:
+la prueba correspondiente es scripts/f01_sql_check.py con credenciales de cada tenant.

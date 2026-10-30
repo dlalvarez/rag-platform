@@ -1,7 +1,8 @@
-# Evidencia F01 — resultados técnicos de T001
+# Evidencia F01 — T001 aceptada; T002 en curso
 
-**Estado:** implementación y pruebas previstas de T001 demostradas en ragdev01;
-aceptación humana, checks de GitHub Actions y merge del PR #9 pendientes.
+**Estado:** T001 aceptada, con checks del HEAD y postmerge correctos, integrada
+mediante PR #9 en develop@a1568375164627f4be2b10d0cb9285fab92ce685.
+T002 en implementación; integración completa y revisión pendientes.
 F01 e Issue #7 permanecen abiertos. Ningún AC-F01-01..07 completo.
 
 Plan ratificado: [PR #8](https://github.com/dlalvarez/rag-platform/pull/8),
@@ -49,14 +50,14 @@ y rechazos con token ficticio; no recibió valores.
 | AC-F01-06 | SecretStore/refs probados | Resolver, pools y dos endpoints reales |
 | AC-F01-07 | Revisión control repetible | Migraciones tenant, locks y fallos cruzados |
 
-T002–T007 no implementadas. No users/memberships/jobs, OIDC/F02, alta HTTP,
+T002 en curso; T003–T007 no implementadas. No users/memberships/jobs, OIDC/F02, alta HTTP,
 documentos, chunks, embeddings de negocio, RAG o chat.
 
 ## CI, revisión y límites
 
-53 pruebas ejecutadas en ragdev01. CI del primer commit del PR fue exitosa; los
-commits posteriores se observaron queued sin runner. No extrapolar ese éxito al HEAD.
-Comprobar docs/lint/tests del HEAD antes de merge, sin omitirlos ni cambiar protección.
+T001: 53 pruebas ejecutadas en ragdev01. Docs/lint/tests del HEAD aprobado y
+postmerge correctos; [registro de cierre](https://github.com/dlalvarez/rag-platform/pull/9#issuecomment-6530152704).
+Para cada PR posterior se comprueba su propio HEAD, sin extrapolar este resultado.
 
 Advertencia preexistente Starlette/httpx conservada. Constitución, roadmap, ADR-0001,
 requisitos/AC y fuentes runtime F00 preservados. Dependencias fijadas con hashes, sin
@@ -67,5 +68,24 @@ de 90 días requiere renovación. SQL bootstrap separado del runtime.
 Riesgo MinIO upstream archivado conservado; MinIO F01 no instalado.
 Rollback conserva PostgreSQL/Raft; sin downgrade destructivo automático.
 
-Siguiente puerta: revisar PR #9/checks del HEAD, autorizar merge y comprobar
-postmerge. Solo después continuar T002 desde develop aprobada.
+La puerta de T001 ya se satisfizo. Siguiente puerta: integración real, CI y
+revisión del PR T002; no merge automático.
+
+
+## T002 — F01-R02 / AC-F01-01/02 parciales / P2 / V01-V02
+
+Código: provisioning/postgres, credentials y migrations; control 0002,
+tenant 0001, scripts/f01_sql_check.py. [Manual](../../ops/f01/T002.md).
+
+Resultados ejecutados en ragdev01:
+- 71 pruebas offline correctas; Ruff y formato correctos.
+- Documentos SDD y pruebas negativas F00 correctos.
+- Imagen tools T002 construida con lock e imágenes fijadas, sin dependencias nuevas.
+- Control-check real: PostgreSQL/TLS, constraints y migración 0002 aplicada/repetida, PASS.
+- HBA F01: cero errores de sintaxis, recarga aceptada, sin reinicio de servicios.
+- Regresión F00 real: API, PostgreSQL/vector y roundtrip S3 sintético, PASS.
+
+Pendiente: sql-check real con sesión AppRole emitida desde la terminal del operador.
+No se marcan PASS SQL A/B, readonly, SET ROLE ni colisión hasta ejecutar esa prueba.
+CI de este nuevo HEAD y revisión humana pendientes. No usar las 71 pruebas offline
+como sustituto de la integración. AC completos y casilla T002 siguen abiertos.

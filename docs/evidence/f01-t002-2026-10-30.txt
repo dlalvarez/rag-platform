@@ -1,0 +1,17 @@
+F01 T002 — evidencia parcial, 2026-10-30
+Base aprobada: develop a1568375164627f4be2b10d0cb9285fab92ce685.
+Ejecución: entorno de desarrollo autorizado, sin pruebas en el equipo local.
+
+ruff check .: PASS
+ruff format --check .: PASS (36 archivos)
+pytest -q: 71 passed; advertencia preexistente Starlette/httpx.
+scripts/check_docs.py: PASS.
+scripts/f00_negative_checks.py: PASS (fallos controlados esperados).
+tools T002: build PASS con versiones fijadas existentes.
+control-check: PASS V01 parcial PostgreSQL/TLS, constraints y Alembic 0002 repetible.
+HBA: cero errores, recarga aceptada; no reinicio de OpenBao/PostgreSQL/F00.
+f00_compose.py run --rm smoke: PASS API, PostgreSQL/vector, S3 sintético.
+
+Prueba sql-check real con OpenBao: PENDIENTE del operador.
+No afirmar aislamiento SQL, colisión ni permisos reales como PASS sin esa ejecución.
+No declarar T002/AC/F01 completos ni autorizar merge por este log.
