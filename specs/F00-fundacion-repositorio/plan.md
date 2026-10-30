@@ -36,9 +36,9 @@ Persistencia configurable: ruta local aislada en sandbox; perfil de host bajo `/
 
 Pruebas solo con datos sintéticos y secretos efímeros externos a Git. Detener el proyecto Compose de ensayo sin borrar volúmenes ajenos; limpieza destructiva solo del entorno desechable identificado. Rollback de código por revert mediante PR. Sin migraciones ni datos de negocio en F00. Snapshot local no equivale a backup externo/restauración validada.
 
-## Puertas pendientes
+## Puertas de aceptación
 
-Ratificados spec/plan/tareas y [política de ramas](../../docs/14-release-and-governance.md) antes de código. Registrar versiones verificadas y resolver ADR-0002 antes de usarlo como decisión aprobada. ADR-0004 y secret manager corresponden a F01. Ninguna casilla técnica se cierra en este PR documental.
+Spec/plan/tareas, ADR-0002/0006 y política de ramas ratificados en PR #5. Versiones y resultados registrados en el PR técnico. ADR-0004 y secret manager corresponden a F01. Quedan la revisión humana, decisión de merge y comprobación postmerge. No declarar F00 cerrada antes de esos pasos.
 
 ## Ejecución autorizada
 

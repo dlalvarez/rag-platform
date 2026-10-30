@@ -14,4 +14,5 @@ USER root
 RUN uv sync --frozen --no-editable
 COPY scripts/f00_smoke.py /app/smoke.py
 USER 10001:10001
-CMD ["python", "/app/smoke.py"]
+ENTRYPOINT ["python", "/app/smoke.py"]
+CMD []

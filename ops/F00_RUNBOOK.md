@@ -94,5 +94,14 @@ Si un build falla, revisar solo el error saneado, corregir y repetir. Un fallo d
 o smoke impide declarar AC-F00-02 completado. Snapshot VMM no sustituye backup externo.
 
 Recrear credenciales requiere detener F00 y planificar recreación de sus datos
-sintéticos; no sobrescribir claves con PostgreSQL ya inicializado. Para persistencia,
-repetir down/up sin borrar directorios y verificar una fixture sintética conservada.
+sintéticos; no sobrescribir claves con PostgreSQL ya inicializado. Para comprobar persistencia sin datos reales:
+
+```bash
+python3 scripts/f00_compose.py run --rm --no-deps smoke seed
+python3 scripts/f00_compose.py down
+python3 scripts/f00_compose.py up -d --wait --wait-timeout 180 postgres minio api
+python3 scripts/f00_compose.py run --rm --no-deps smoke verify
+python3 scripts/f00_compose.py run --rm --no-deps smoke clean
+```
+
+Seed crea solo f00_probe y un bucket f00-persistence-fixture sintéticos en F00; clean elimina esas fixtures, no volúmenes.

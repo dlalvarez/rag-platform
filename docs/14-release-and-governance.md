@@ -20,14 +20,15 @@ El repositorio sigue siendo público; cambiar su visibilidad requiere decisión 
 
 Ruleset [26218280](https://github.com/dlalvarez/rag-platform/settings/rules/26218280),
 main-develop-pr-quality, activo para los nombres exactos main y develop:
-PR obligatorio, conversaciones resueltas, check docs con fuente GitHub Actions,
+PR obligatorio, conversaciones resueltas, checks docs/lint/tests con fuente GitHub Actions,
 bloqueo de borrado y force-push. Lista de bypass vacía, también para administradores.
 Se exigen 0 aprobaciones externas porque solo hay un responsable; esto no elimina
 su revisión ni convierte a Codex en revisor independiente.
 [Registro de aplicación](https://github.com/dlalvarez/rag-platform/issues/4#issuecomment-6527049209).
 
-Lint y tests se añaden a los checks obligatorios cuando existan y sus ejecuciones
-se hayan verificado. No exigir nombres inexistentes ni omitir checks fallidos para fusionar.
+Lint y tests se incorporaron después de verificar las ejecuciones del PR #6:
+https://github.com/dlalvarez/rag-platform/actions/runs/41088646426.
+No omitir checks fallidos para fusionar.
 
 ## Releases y cambios
 
