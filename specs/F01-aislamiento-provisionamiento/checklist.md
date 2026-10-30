@@ -1,6 +1,6 @@
 # Checklist F01 — aceptación pendiente
 
-**Estado:** T001 aceptada mediante PR #9; T002 implementada y batería real completada en PR #10; revisión pendiente. Ningún AC F01 completo.
+**Estado:** T001 aceptada mediante PR #9; T002 aceptada mediante PR #10; T003 con batería real completa y revisión pendiente. Ningún AC F01 completo.
 
 ## Antes de implementar
 
@@ -29,3 +29,14 @@
 - [ ] Revisión humana del PR técnico, decisión de merge y comprobación postmerge.
 
 No marcar funcionalidades F02+ como probadas. Ver [matriz](plan.md) y [evidence](evidence.md).
+
+
+## Evidencia técnica T003, pendiente de aceptación
+
+- [x] MinioAdmin 7.2.20 compatible con la receta fijada; calibración real.
+- [x] Credenciales tenant versionadas en OpenBao y referencias en control.
+- [x] Acceso propio y rechazos cruzados/anónimos reales A/B; sin administración IAM.
+- [x] Repetición sin rotación y fixture ajena conservada; no READY.
+- [ ] CI del HEAD y revisión/aceptación humana del PR T003.
+
+Esto no cierra AC de fase ni acredita saga, pools, dos instancias o migraciones T006.

@@ -1,0 +1,36 @@
+F01 T003 — evidencia técnica, 2026-10-30
+Base aprobada: develop ff24f439c75e93477df0a99835635d0fb00538d5.
+Ejecución exclusiva en el servidor de desarrollo autorizado.
+
+107 pruebas offline correctas; Ruff/formato/documentación correctos.
+minio 7.2.20 pasa de dev a runtime; mismas versiones/hashes de todos los paquetes.
+MinIO reutiliza imagen local F00:
+sha256:6a0862d4d535a8bd528438904f00f306501824fa2a010e90ebac04aab7ab72aa.
+No modificación de F00 ni reinicio de SQL/OpenBao.
+
+Calibración API MinioAdmin real: PASS, incluidos IAM/políticas/objetos/cruces.
+Los usuarios atribuidos de calibración se deshabilitaron; fixtures conservadas.
+Se corrigió una expectativa: ListBuckets devuelve lista filtrada del bucket propio
+en esta release. Se exige ese único bucket, sin conceder ListAllMyBuckets.
+
+TLS: CA propia y health correctos; CA ajena rechazada, sin fallback, PASS.
+Regresión control-check: control 0003, verify-full y concesiones owner con rollback, PASS.
+Regresión F00: API, PostgreSQL/vector y roundtrip S3 sintético, PASS.
+
+BATERÍA REAL T003 — ejecutada por Diego con contraseña oculta en terminal propia:
+PASS T003: buckets privados A/B, credenciales OpenBao y referencias versionadas.
+PASS T003: get/put/list/delete propios; cruces y anónimo denegados; sin admin.
+PASS T003: repetición sin rotación y recurso ajeno conservado.
+Tenants PROVISIONING; sin READY, saga ni cierre de F01.
+
+Corroboración independiente del catálogo, solo contadores/booleanos:
+dos storage_locations, dos buckets distintos; versiones positivas y endpoint HTTPS;
+dos tenants PROVISIONING, observed_version ausente.
+Ningún password, token, SecretID ni valor de credencial se recibió/publicó.
+
+CI/PR y revisión humana pendientes; T003 y F01 no se cierran por este log.
+
+Corroboración IAM/almacenamiento (solo contadores):
+8 usuarios: 2 habilitados tenant y 6 deshabilitados de calibración.
+10 buckets: 2 tenant, 6 calibración, 2 fixtures ajenas conservadas.
+Límites F01 con herramienta serial: 4.5 GiB; observación por debajo de los límites.
