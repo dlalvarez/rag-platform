@@ -1,23 +1,35 @@
-# Primera tarea lista para dar a Codex — F00
+# Siguiente tarea para Codex — implementación F00
 
-**Objetivo:** preparar infraestructura mínima de desarrollo, sin construir todavía RAG ni aprovisionamiento.
-
-Copiar este mensaje a Codex Cloud apuntando al repositorio con este paquete versionado:
+**Antes de ejecutar:** aprobación humana explícita de [ratificación F00](../specs/F00-fundacion-repositorio/ratification.md), spec/plan/tareas y política de ramas. Este documento prepara la tarea; no la inicia. ADR-0002 requiere decisión explícita. Crear develop desde main tras el merge aprobado del PR de planificación y registrar protección efectiva antes de ampliar CI.
 
 ```text
-Implementa la fase F00-fundacion-repositorio, únicamente F00.
-Lee primero AGENTS.md, docs/01-constitution.md, docs/02-architecture.md,
-docs/03-tenancy-security.md, docs/09-nfr-quality.md y docs/10-roadmap.md.
-La especificación es specs/F00-fundacion-repositorio/spec.md; el plan y
-las tareas preliminares están en esa carpeta y deben revisarse por consistencia.
-NO desarrolles autenticación, tenants, ingesta, búsqueda o conversación (F01+).
+Implementa únicamente F00-fundacion-repositorio, relacionada con Issue #4.
+Verifica aprobación de spec/plan/tareas y decisiones pendientes en ratification.md.
+Lee AGENTS.md, CONSTITUTION.md, docs/01-constitution.md, docs/02-architecture.md,
+docs/03-tenancy-security.md, docs/09-nfr-quality.md, docs/10-roadmap.md,
+docs/14-release-and-governance.md y ADRs aplicables.
+Lee los seis documentos de specs/F00-fundacion-repositorio, incluido ratification.md.
+Trabaja desde develop aprobada en feat/F00-bootstrap; abre PR hacia develop.
+Si falta aprobación o develop, informa el requisito pendiente antes de código.
 
-Entregables: pyproject y package mínimo, pytest/linters y tests smoke offline,
-Docker Compose reproducible PostgreSQL+pgvector/MinIO con imágenes versionadas,
-.env.example sin secretos y GitHub Actions básico. Reutiliza sin destruir esta
-documentación y mantenla alineada. Expón los comandos probados y sus resultados.
-No hagas merge ni deploy; abre PR con matriz AC-F00-01..04 y riesgos.
-Si encuentras contradicción con arquitectura, detente y propón ADR.
+Sigue T001 → T003 → T002 → T004 → T005 → T006 y la matriz R→AC→P→T→V.
+Entrega paquete Python mínimo/configuración tipada, pyproject/lock, pytest y Ruff,
+Compose PostgreSQL/pgvector + MinIO + API placeholder verificable, pins exactos
+verificados, .env.example sin secretos, CI documental/lint/tests y manual reproducible.
+Conserva scripts/check_docs.py y el roadmap existente.
+La suite offline no usa Docker ni APIs de pago; integración Compose aparte con
+datos sintéticos y credenciales efímeras externas a Git. Registra fallos controlados.
+No ejecutes ni instales servicios en ragdev01. Diseña la persistencia configurable
+para /srv/rag-data (ext4 120 GiB), Ubuntu 24.04.5, 2 vCPU y 16 GB RAM.
+Valida montaje antes de escribir en el perfil de host cuando se autorice su prueba.
+No F01, tenants, autenticación definitiva, RAG ni migraciones de negocio.
+No secretos, datos privados, cambios de visibilidad, merge, auto-merge ni deploy.
+No cierres Issue #4 sin evidencia completa y aceptación humana.
+
+En el PR entrega pruebas ejecutadas/no ejecutadas, comandos, versiones, commit,
+logs saneados, matriz de AC, checklist, riesgos y rollback. No marques un AC
+aprobado por haber creado archivos. Si hay conflicto rector, detén ese cambio
+y propón ADR; no redefinas el alcance.
 ```
 
-**Antes de lanzarlo:** asegurar que el repo está en GitHub y las specs están commiteadas. Revisar manualmente versiones de librerías/imágenes, puertos y límites del host de desarrollo.
+La integración que no pueda ejecutarse queda pendiente y bloquea cerrar AC-F00-02. La aprobación de F00 no autoriza iniciar F01.
