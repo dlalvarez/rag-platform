@@ -1,6 +1,7 @@
 """Operator-only T002 integration. SQL/Bao secrets remain inside this process."""
 
 import logging
+import re
 from pathlib import Path
 from uuid import UUID, uuid4, uuid5
 
@@ -47,12 +48,38 @@ COLLISION = Names(uuid5(NAMESPACE, "sql-foreign-role-fixture"))
 PHASE = "START"
 
 
-def denied(target, database, credential, *, state="42501"):
+def expected_startup_rejection(error, database, username, state):
+    """libpq startup failures may lack SQLSTATE. Never print their raw messages."""
+    if error.sqlstate not in (None, state):
+        return False
+    if state == "42501":
+        signature = r'FATAL:\s+permission denied for database "' + re.escape(database) + r'"'
+    elif state == "28000":
+        signature = (
+            r'FATAL:\s+pg_hba.conf rejects connection for host "[^"]+", user "'
+            + re.escape(username)
+            + r'", database "'
+            + re.escape(database)
+            + r'", SSL encryption'
+        )
+    else:
+        return False
+    return re.search(signature, str(error)) is not None
+
+
+def denied(target, database, credential, *, source_database, state="42501"):
+    # Prove the exact credential/target/TLS works first, then verify the negative path.
+    with target.connect(source_database, credential) as own:
+        assert own.execute("SELECT current_user").fetchone() == (credential.username,)
+        if state == "42501":
+            assert own.execute(
+                "SELECT has_database_privilege(current_user,%s,'CONNECT')", (database,)
+            ).fetchone() == (False,)
     try:
         with target.connect(database, credential):
             pass
-    except psycopg.Error as error:
-        if error.sqlstate != state:
+    except psycopg.OperationalError as error:
+        if not expected_startup_rejection(error, database, credential.username, state):
             raise SqlProvisioningError("WRONG_DENIAL") from None
     else:
         raise SqlProvisioningError("CROSS_CONNECT_ALLOWED")
@@ -116,10 +143,14 @@ def own_probes(target, names, credentials, other):
                 assert connection.execute("SELECT current_user").fetchone() == (
                     names.role("owner"),
                 )
-        denied(target, other.database, credentials[kind])
-        denied(target, "rag_control", credentials[kind], state="28000")
-        denied(target, "postgres", credentials[kind], state="28000")
-        denied(target, "template1", credentials[kind], state="28000")
+        denied(target, other.database, credentials[kind], source_database=names.database)
+        denied(
+            target, "rag_control", credentials[kind], source_database=names.database, state="28000"
+        )
+        denied(target, "postgres", credentials[kind], source_database=names.database, state="28000")
+        denied(
+            target, "template1", credentials[kind], source_database=names.database, state="28000"
+        )
 
 
 def integration(store):

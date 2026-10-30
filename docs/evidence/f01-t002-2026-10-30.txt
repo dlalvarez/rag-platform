@@ -40,3 +40,13 @@ PASS SET permitido y sin herencia; roles NOLOGIN de prueba revertidos.
 PASS reserva verify-full y migración control 0003 repetible.
 74 pruebas offline correctas; herramientas reconstruidas.
 Integración completa aún pendiente; sin cierre de T002/F01.
+
+Comprobador de rechazos iniciales:
+Reporte: SQL_PROBES WRONG_DENIAL.
+Clasificación independiente de logs: FATAL de CONNECT denegado presente.
+No se publicaron mensajes originales de logs.
+Validación corregida: credencial propia válida + ACL CONNECT falsa para A/B +
+rechazo de destino específico, incluso cuando libpq no entrega SQLSTATE.
+Errores de red/CA/password no cuentan como aislamiento.
+81 pruebas offline correctas; Ruff/formato y tools reconstruida.
+Ensayo completo del operador todavía pendiente.

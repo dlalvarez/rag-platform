@@ -220,3 +220,44 @@ def test_operator_diagnostic_remains_actionable_and_redacted(monkeypatch, stage,
     monkeypatch.setattr(module, "login_operator", fail_login)
     with pytest.raises(SystemExit, match=expected):
         module.main()
+
+
+@pytest.mark.parametrize(
+    "message,state,expected",
+    [
+        ('connection failed: FATAL:  permission denied for database "synthetic_b"', "42501", True),
+        ('FATAL:  permission denied for database "other"', "42501", False),
+        ("connection refused", "42501", False),
+        ("certificate verify failed", "42501", False),
+        ('FATAL: password authentication failed for user "synthetic_app"', "42501", False),
+        (
+            'FATAL: pg_hba.conf rejects connection for host "synthetic", '
+            'user "synthetic_app", database "synthetic_b", SSL encryption',
+            "28000",
+            True,
+        ),
+        (
+            'FATAL: pg_hba.conf rejects connection for host "synthetic", '
+            'user "other", database "synthetic_b", SSL encryption',
+            "28000",
+            False,
+        ),
+    ],
+)
+def test_startup_rejection_is_specific_when_libpq_has_no_sqlstate(
+    monkeypatch, capsys, message, state, expected
+):
+    import psycopg
+
+    monkeypatch.syspath_prepend(str(ROOT / "scripts"))
+    spec = importlib.util.spec_from_file_location(
+        "f01_sql_denial", ROOT / "scripts/f01_sql_check.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    error = psycopg.OperationalError(message)
+    assert error.sqlstate is None
+    assert (
+        module.expected_startup_rejection(error, "synthetic_b", "synthetic_app", state) is expected
+    )
+    assert capsys.readouterr().out == ""

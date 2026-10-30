@@ -78,7 +78,7 @@ Código: provisioning/postgres, credentials y migrations; control 0002/0003,
 tenant 0001, scripts/f01_sql_check.py. [Manual](../../ops/f01/T002.md).
 
 Resultados ejecutados en ragdev01:
-- 74 pruebas offline correctas; Ruff y formato correctos.
+- 81 pruebas offline correctas; Ruff y formato correctos.
 - Documentos SDD y pruebas negativas F00 correctos.
 - Imagen tools T002 construida con lock e imágenes fijadas, sin dependencias nuevas.
 - Control-check real: PostgreSQL/TLS, constraints y migración 0003 aplicada/repetida, PASS.
@@ -137,3 +137,22 @@ NOLOGIN y rollback, sin pedir credenciales OpenBao ni persistir roles de prueba.
 Resultado: PASS de reserva válida y concesiones owner, control 0003 repetible,
 74 pruebas offline, Ruff/formato y reconstrucción correctos. No se regeneraron
 secretos ni eliminaron recursos. Integración completa todavía pendiente de repetir.
+
+
+### Comprobación de rechazos de conexión inicial
+
+El operador alcanzó SQL_PROBES y obtuvo WRONG_DENIAL. Clasificación independiente
+de registros del servidor: hubo un FATAL de permiso CONNECT denegado; no se publicaron
+mensajes ni valores de esos registros. La comprobación anterior exigía SQLSTATE
+exacto incluso en errores de conexión inicial, donde libpq puede no conservarlo.
+
+La nueva prueba primero conecta con la misma credencial a su propia base.
+Para el cruce A/B exige además has_database_privilege(CONNECT)=false. El intento
+cruzado debe fallar con la firma FATAL específica de la base; para HBA exige usuario,
+base y cifrado SSL esperados. Un código incompatible, base/usuario diferentes,
+fallo de red, CA o password no cuenta como aislamiento. Nunca se imprime el mensaje
+original. La firma depende del mensaje inglés del perfil fijado; un mensaje desconocido
+detiene la prueba en vez de aceptarse.
+
+81 pruebas offline, incluidas siete variantes de rechazo/casos falsos; Ruff/formato
+y reconstrucción correctos. Integración completa pendiente de repetir por el operador.
