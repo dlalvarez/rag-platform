@@ -148,3 +148,10 @@ OperatorFailure now exposes only closed static codes and numeric HTTP status. Se
 check now checks seal state before requesting operator password. No init/resume, credential read/reset, data deletion or service restart performed in this correction.
 ruff check/format, check_docs.py and git diff --check correct; pytest: 50 passed, 1 existing Starlette warning. Tools image rebuilt; final state still initialized=true, sealed=true, threshold=1/1.
 Pending: operator retries unseal and reports only safe message/code. Actual persistence read and token-expiry test still pending; T001 incomplete.
+
+Recovery success and real expiry preparation 2026-10-30T17:54:44.183552+00:00
+Operator reported successful unseal and PASS from strict check after restart; missing canary cannot be recreated in check mode. Operator/AppRole policies, one-use SecretID, exact-version KV read and CAS confirmed by that execution.
+Independent TLS status: initialized=true, sealed=false, threshold=1/1. Checkout initially ec2efe344fa6ec39275c70eda292238397020837 and clean.
+check-expiry added for operator's own terminal: separate AppRole session, canary read, operator logout, renew-self increment 2s, wait for actual server TTL plus 2s, require HTTP 403 while still unsealed. AppRole token is not revoked to avoid confusing revocation with expiry. No policies/roles changed.
+53 offline tests passed (one existing Starlette warning); Ruff, documentation and diff checks correct; tools image rebuilt. Real expiry execution still pending.
+GitHub Actions for ec2efe344fa6ec39275c70eda292238397020837 were queued; job metadata showed no assigned runner. Do not report CI success for that commit or merge while checks remain pending.

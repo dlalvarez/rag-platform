@@ -6,6 +6,7 @@ import logging
 import os
 import ssl
 import sys
+import time
 from pathlib import Path
 from uuid import UUID
 
@@ -34,6 +35,7 @@ class OperatorFailure(RuntimeError):
         "AUTH": "OpenBao rechazó la autenticación; no se muestran valores ni respuestas.",
         "API": "OpenBao rechazó la operación; no se muestra el cuerpo de respuesta.",
         "RESPONSE": "OpenBao devolvió una respuesta inesperada.",
+        "EXPIRY": "No se pudo demostrar la caducidad real del token. No se marca PASS.",
     }
 
     def __init__(self, code: str, status: int | None = None) -> None:
@@ -194,6 +196,67 @@ def check_runtime(http: httpx.Client, operator: str, *, initialize_canary: bool 
     call(http, "POST", "auth/token/revoke-self", operator, {})
 
 
+def check_expiry(http: httpx.Client) -> None:
+    """Shorten only this test session via renew-self; never change roles or policies."""
+    tty_required()
+    require_unsealed(http)
+    operator = login_operator(http)
+    own = call(http, "GET", "auth/token/lookup-self", operator)["data"]
+    if set(own["policies"]) != {"default", "f01-operator"}:
+        raise OperatorFailure("AUTH")
+    role = call(http, "GET", "auth/approle/role/f01-cli/role-id", operator)["data"]["role_id"]
+    secret_id = call(http, "POST", "auth/approle/role/f01-cli/secret-id", operator, {})["data"][
+        "secret_id"
+    ]
+    auth = call(
+        http, "POST", "auth/approle/login", payload={"role_id": role, "secret_id": secret_id}
+    )["auth"]
+    del secret_id
+    if (
+        set(auth["policies"]) != {"default", "f01-provisioner"}
+        or not isinstance(auth["client_token"], str)
+        or not auth["client_token"]
+    ):
+        raise OperatorFailure("AUTH")
+    token = auth["client_token"]
+    del auth
+    response = http.get(
+        f"/v1/f01/data/{CANARY}", params={"version": 1}, headers={"X-Vault-Token": token}
+    )
+    if response.status_code != 200:
+        raise OperatorFailure("EXPIRY", response.status_code)
+    data = response.json()["data"]
+    if data["metadata"]["version"] != 1 or data["data"] != {
+        "username": "f01-canary",
+        "password": "synthetic-not-an-account",
+    }:
+        raise OperatorFailure("EXPIRY")
+    # Remove operator session before waiting. AppRole login was a separate, unauthenticated
+    # request, so this is not revoking the AppRole token whose natural expiry is tested.
+    call(http, "POST", "auth/token/revoke-self", operator, {})
+    del operator
+    renewed = call(http, "POST", "auth/token/renew-self", token, {"increment": "2s"})["auth"]
+    ttl = renewed["lease_duration"]
+    if (
+        type(ttl) is not int
+        or not 0 < ttl <= 900
+        or renewed["client_token"] != token
+        or set(renewed["policies"]) != {"default", "f01-provisioner"}
+    ):
+        raise OperatorFailure("EXPIRY")
+    del renewed
+    print(f"Lectura previa correcta. Esperando caducidad real: {ttl + 2} segundos.", flush=True)
+    time.sleep(ttl + 2)
+    expired = http.get(
+        f"/v1/f01/data/{CANARY}", params={"version": 1}, headers={"X-Vault-Token": token}
+    )
+    del token
+    require_unsealed(http)
+    if expired.status_code != 403:
+        raise OperatorFailure("EXPIRY", expired.status_code)
+    print("PASS: token AppRole caducado rechazado por OpenBao (HTTP 403); nodo desbloqueado.")
+
+
 def bootstrap(http: httpx.Client, *, resume: bool) -> None:
     tty_required()
     status = call(http, "GET", "sys/seal-status")
@@ -294,7 +357,9 @@ def bootstrap(http: httpx.Client, *, resume: bool) -> None:
 def main() -> None:
     logging.disable(logging.CRITICAL)
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("status", "init", "resume", "unseal", "check"))
+    parser.add_argument(
+        "command", choices=("status", "init", "resume", "unseal", "check", "check-expiry")
+    )
     args = parser.parse_args()
     try:
         with client() as http:
@@ -305,6 +370,8 @@ def main() -> None:
                 bootstrap(http, resume=args.command == "resume")
             elif args.command == "unseal":
                 unseal_operator(http)
+            elif args.command == "check-expiry":
+                check_expiry(http)
             else:
                 check_existing(http)
     except OperatorFailure as error:

@@ -97,6 +97,28 @@ Para demostrar persistencia: check, restart solo openbao, status sellado, compro
 rechazo de acceso sellado, unseal por Diego y check de nuevo. El restart y la prueba
 de token expirado real se coordinarán después del bootstrap; no están acreditados todavía.
 
+## Caducidad real de una sesión temporal
+
+Después de completar check y con el nodo desbloqueado, desde la terminal propia:
+
+    python3 scripts/f01_host.py run --rm tools python scripts/f01_operator.py check-expiry
+
+Pide la contraseña del operador. Verifica identidad limitada y obtiene una sesión
+AppRole independiente, lee el canary existente sin crearlo y revoca solo la sesión
+del operador. Solicita renew-self con incremento 2s para la sesión de prueba, sin
+modificar la configuración de roles/políticas ni revocar el token AppRole.
+
+Usa el TTL realmente devuelto por el servicio, no supone que acepte 2s: lo muestra,
+espera ese plazo más 2s y exige HTTP 403 al leer con el token caducado. Verifica que
+OpenBao sigue desbloqueado para no confundir caducidad con indisponibilidad.
+Una lectura todavía permitida o un HTTP 503 no cuentan como PASS.
+Si el TTL concedido supera 900s, no espera ni acredita la prueba. No imprime ni
+guarda passwords, SecretID o tokens. Informar únicamente el resultado seguro.
+
+Referencia: [renew-self y duración solicitada](https://openbao.org/docs/commands/token/renew/).
+Los tokens periódicos pueden ignorar el incremento; el perfil F01 no configura periodo.
+Los tests offline simulan el tiempo/transporte, y no sustituyen la ejecución real de este comando.
+
 ## Diagnóstico de desbloqueo sin secretos
 
 Unseal informa códigos cerrados y, si corresponde, estado HTTP. Nunca imprime

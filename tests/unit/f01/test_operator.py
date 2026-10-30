@@ -221,3 +221,76 @@ def test_unseal_trims_only_surrounding_copy_whitespace(monkeypatch, capsys):
     operator.unseal_operator(object())
     assert calls == ["sys/seal-status", "sys/unseal"]
     assert capsys.readouterr().out == "Desbloqueado.\n"
+
+
+@pytest.mark.parametrize("expired_status", [403, 200, 503])
+def test_expiry_requires_real_service_denial_without_app_token_revocation(
+    monkeypatch, capsys, expired_status
+):
+    monkeypatch.setattr(operator, "tty_required", lambda: None)
+    monkeypatch.setattr(operator, "require_unsealed", lambda http: None)
+    monkeypatch.setattr(operator, "login_operator", lambda http: "synthetic-operator-token")
+    slept = []
+    revoked = []
+    monkeypatch.setattr(operator.time, "sleep", slept.append)
+
+    def fake_call(http, method, path, token=None, payload=None):
+        if path == "auth/token/lookup-self":
+            return {"data": {"policies": ["default", "f01-operator"]}}
+        if path.endswith("role-id"):
+            return {"data": {"role_id": "synthetic-role"}}
+        if path.endswith("secret-id"):
+            return {"data": {"secret_id": "synthetic-secret-id"}}
+        if path == "auth/approle/login":
+            assert token is None
+            return {
+                "auth": {
+                    "policies": ["default", "f01-provisioner"],
+                    "client_token": "synthetic-app-token",
+                }
+            }
+        if path == "auth/token/revoke-self":
+            revoked.append(token)
+            return {}
+        if path == "auth/token/renew-self":
+            assert payload == {"increment": "2s"}
+            assert token == "synthetic-app-token"
+            return {
+                "auth": {
+                    "policies": ["default", "f01-provisioner"],
+                    "client_token": token,
+                    "lease_duration": 2,
+                }
+            }
+        raise AssertionError("Unexpected expiry request")
+
+    class Response:
+        def __init__(self, status):
+            self.status_code = status
+
+        def json(self):
+            return {
+                "data": {
+                    "metadata": {"version": 1},
+                    "data": {"username": "f01-canary", "password": "synthetic-not-an-account"},
+                }
+            }
+
+    class Http:
+        def __init__(self):
+            self.statuses = iter((200, expired_status))
+
+        def get(self, *args, **kwargs):
+            return Response(next(self.statuses))
+
+    monkeypatch.setattr(operator, "call", fake_call)
+    if expired_status == 403:
+        operator.check_expiry(Http())
+        assert "PASS:" in capsys.readouterr().out
+    else:
+        with pytest.raises(operator.OperatorFailure) as error:
+            operator.check_expiry(Http())
+        assert error.value.code == "EXPIRY"
+        assert "PASS:" not in capsys.readouterr().out
+    assert revoked == ["synthetic-operator-token"]
+    assert slept == [4]

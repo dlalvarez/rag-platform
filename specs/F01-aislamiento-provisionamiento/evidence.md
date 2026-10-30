@@ -13,7 +13,10 @@ inicial revocado, sin proporcionar valores secretos. Estado independiente TLS an
 de restart: initialized=true, sealed=false, umbral 1/1. Restart solo OpenBao: salida 0;
 después initialized=true, sealed=true; acceso con token ficticio HTTP 503.
 44 pruebas offline correctas. Check exige el canary existente y falla sin recrearlo.
-Pendientes: unseal manual y lectura del canary tras restart, y token caducado real.
+Diego reportó unseal correcto y PASS de check después del restart con la comprobación
+estricta que no recrea canary. Estado TLS independiente: initialized=true, sealed=false,
+umbral 1/1. Persistencia tras reinicio/desbloqueo acreditada por ejecución del operador.
+Pendiente: caducidad real; comando check-expiry preparado, todavía sin ejecutar.
 Las notas siguientes describen preparación histórica del PR #8, no el estado runtime actual.
 
 Base revisada: develop@85cd39f401b48e312c1e4fd61906543a4ff588fe; PR #6 integrado,
