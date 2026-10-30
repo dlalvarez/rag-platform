@@ -1,6 +1,6 @@
 # Evidencias F00 — implementación en revisión
 
-**Estado:** pruebas técnicas ejecutadas satisfactoriamente en ragdev01 y CI verificada; pendiente de revisión humana y merge.
+**Estado:** fase aceptada y cerrada; aprobación humana y postmerge verificados el 2026-10-30.
 No se declara la fase cerrada ni se autoriza F01.
 
 Fecha: 2026-10-30. Base: develop@53004ec218074b0fbf36359e437f22bee3f3924a.
@@ -74,3 +74,9 @@ main/develop, sin bypass ni segundo revisor exigido. API solo 127.0.0.1:8000; da
 puertos de host. Estado postpruebas: tres servicios saludables; 112 GiB libres en datos.
 Fixtures de persistencia retiradas por smoke clean; no se borran volúmenes.
 Aprobación humana del PR técnico y comprobación postmerge en develop: pendientes.
+
+## Cierre confirmado posterior a la entrega
+
+PR #6 aprobado por Diego e integrado en develop@85cd39f401b48e312c1e4fd61906543a4ff588fe. Checkout limpio, hashes coincidentes, instalación locked offline, 11 tests, Ruff/docs y smoke SQL/vector/S3/API pasan en ragdev01; tres servicios saludables.
+[Registro postmerge](https://github.com/dlalvarez/rag-platform/pull/6#issuecomment-6527912972), [Issue #4 cerrado](https://github.com/dlalvarez/rag-platform/issues/4), [CI docs del merge](https://github.com/dlalvarez/rag-platform/actions/runs/41090511694), [CI lint/tests del merge](https://github.com/dlalvarez/rag-platform/actions/runs/41090511766).
+Este registro completa los estados pendientes del informe entregado arriba, conservado como evidencia histórica. F01 no se inicia por este cierre.

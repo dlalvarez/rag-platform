@@ -47,6 +47,6 @@ Realizar **F00**, que genera el repositorio ejecutable y el entorno de pruebas *
 
 La jerarquía de referencia es: `docs/01-constitution.md` > ADRs aprobados > arquitectura y contratos > spec de fase aprobada > plan > tareas > código. En caso de conflicto, **detener cambios de arquitectura** y elevar propuesta por ADR para aprobación humana.
 
-## F00 técnica en revisión
+## Estado de fases
 
-Implementación y pruebas exclusivamente en ragdev01. [Runbook F00](ops/F00_RUNBOOK.md), [plan y trazabilidad](specs/F00-fundacion-repositorio/plan.md), [evidencias](specs/F00-fundacion-repositorio/evidence.md). Solo paquete Python, API placeholder /healthz, PostgreSQL/pgvector y MinIO sintéticos; no tenants ni RAG. PR hacia develop, revisión humana antes de merge.
+F00 aceptada en PR #6 e Issue #4, con postmerge verificado en develop. Implementación y pruebas exclusivamente en ragdev01. [Runbook F00](ops/F00_RUNBOOK.md), [plan y trazabilidad](specs/F00-fundacion-repositorio/plan.md), [evidencias](specs/F00-fundacion-repositorio/evidence.md). Solo paquete Python, API placeholder /healthz, PostgreSQL/pgvector y MinIO sintéticos; no tenants ni RAG. F01 está en planificación para ratificación: [propuesta](specs/F01-aislamiento-provisionamiento/ratification.md), sin implementación ni tenants. Las entregas van por PR hacia develop y revisión humana antes de merge.

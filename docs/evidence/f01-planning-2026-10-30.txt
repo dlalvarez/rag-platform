@@ -1,0 +1,34 @@
+F01 planning validation only; ragdev01
+2026-10-30T16:49:41.199708+00:00
+Base: 85cd39f401b48e312c1e4fd61906543a4ff588fe
+$ python3 scripts/check_docs.py
+OK: SDD baseline, 12 phases, P01-P14, canonical references, ADRs and links.
+exit=0
+F00: original requirements and AC lines preserved exactly (9 lines)
+F01: original requirements and AC lines preserved exactly (14 lines)
+F01: 7 requirements, 7 AC, 7 task IDs and V01-V07 mapped; tasks unchecked.
+Scope: documentation (Markdown and this text log) only; no implementation, migration, dependency or Compose changes.
+Constitution, roadmap and approved ADR-0001 unchanged.
+$ sha256sum --check docs/evidence/f00-source-sha256.txt
+Dockerfile: OK
+compose.yaml: OK
+ops/minio.Dockerfile: OK
+pyproject.toml: OK
+scripts/check_docs.py: OK
+scripts/f00_compose.py: OK
+scripts/f00_negative_checks.py: OK
+scripts/f00_prepare.py: OK
+scripts/f00_smoke.py: OK
+src/rag_platform/__init__.py: OK
+src/rag_platform/api.py: OK
+src/rag_platform/config.py: OK
+tests/unit/conftest.py: OK
+tests/unit/test_api.py: OK
+tests/unit/test_compose_contract.py: OK
+tests/unit/test_prepare.py: OK
+uv.lock: OK
+exit=0
+$ docker ps --format <names/status>
+rag-f00-dev-postgres-1 Up 27 minutes (healthy)
+rag-f00-dev-api-1 Up 27 minutes (healthy)
+rag-f00-dev-minio-1 Up 27 minutes (healthy)

@@ -1,6 +1,6 @@
 # Tareas F00 — propuestas para ratificación
 
-**Estado:** tareas implementadas y probadas; PR técnico pendiente de revisión humana. Ver [plan y matriz V01–V05](plan.md) y [ratificación](ratification.md).
+**Estado:** tareas implementadas, probadas, revisadas y aceptadas en PR #6; postmerge verificado, Issue #4 cerrado. Ver [plan y matriz V01–V05](plan.md) y [ratificación](ratification.md).
 Se conservan los IDs T001–T006 originales; orden de ejecución: T001 → T003 → T002 → T004 → T005 → T006.
 
 - [x] T001 [F00-R01/R03; AC-F00-01; P1; V01/V03] Crear `pyproject.toml`, lock, paquete mínimo en `src/rag_platform/`, configuración tipada y tests unitarios/smoke. Fijar Python/uv/dependencias compatibles. Verificar instalación congelada, import y configuración inválida sin secretos.
@@ -12,4 +12,4 @@ Se conservan los IDs T001–T006 originales; orden de ejecución: T001 → T003 
 
 Cada resultado debe enlazar requisito, AC, tarea y test real. Los tests de aislamiento tenant/ACL se mantienen para F01+ y no se simulan como aprobados en F00.
 
-Las casillas registran artefactos y pruebas entregados, no aprobación de merge ni cierre de fase. Ver evidence y PR #6.
+Las casillas registran artefactos y pruebas entregados, el cierre de fase fue aprobado y consta en evidence, PR #6 e Issue #4.

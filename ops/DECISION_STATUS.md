@@ -38,3 +38,7 @@ Develop se propone crear desde main después del merge humano del PR documental.
 ## Actualización F00 autorizada (2026-10-30)
 
 PR #5 aprobado e integrado; ADR-0002 y ADR-0006 ratificados, develop creada y ruleset 26218280 activo. Diego es único revisor/responsable de merge. Desarrollo y pruebas F00 autorizados por SSH exclusivamente en ragdev01, con datos sintéticos. Checkout /home/diego/proyectos/rag-platform; datos /srv/rag-data/rag-platform/f00. Ver F00_RUNBOOK.md y evidence F00 para resultados. F00 no se declara cerrada hasta su revisión; ADR-0004/F01 y backups externos permanecen pendientes.
+
+## Estado vigente tras cierre F00 y preparación F01 (2026-10-30)
+
+F00 aceptada y cerrada en PR #6/Issue #4, con pruebas y CI postmerge exitosas; develop@85cd39f401b48e312c1e4fd61906543a4ff588fe. Las menciones anteriores de revisión pendiente corresponden al momento de entrega. F01 se planifica en Issue #7 y specs/F01-aislamiento-provisionamiento, sin implementación. Diego eligió incluir OpenBao en la propuesta; ADR-0004, spec/plan/tasks y custodia de unseal siguen pendientes de ratificación/preparación. No se crearon tenants ni cambió ningún servicio por el trabajo documental F01. Ver ops/NEXT_CODEX_TASK.md.
