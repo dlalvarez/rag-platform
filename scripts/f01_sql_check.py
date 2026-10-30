@@ -9,6 +9,7 @@ import sqlalchemy as sa
 from f01_operator import (
     CA,
     ENDPOINT,
+    OperatorFailure,
     call,
     client,
     login_operator,
@@ -268,17 +269,22 @@ def integration(store):
 
 
 def main():
+    global PHASE
     logging.disable(logging.CRITICAL)
     try:
         # Require a real operator terminal BEFORE any secret/API/SQL action.
         tty_required()
+        PHASE = "BAO_STATUS"
         with client() as http:
             require_unsealed(http)
+            PHASE = "OPERATOR_LOGIN"
             operator = login_operator(http)
             try:
+                PHASE = "OPERATOR_POLICY"
                 own = call(http, "GET", "auth/token/lookup-self", operator)["data"]
                 if set(own["policies"]) != {"default", "f01-operator"}:
                     raise SqlProvisioningError("OPERATOR_POLICY")
+                PHASE = "APPROLE_ISSUE"
                 role = call(http, "GET", "auth/approle/role/f01-cli/role-id", operator)["data"][
                     "role_id"
                 ]
@@ -286,11 +292,26 @@ def main():
                     "data"
                 ]["secret_id"]
                 with OpenBaoSecretStore(ENDPOINT, CA) as store:
+                    PHASE = "APPROLE_LOGIN"
                     store.login(role, secret_id)
                     del secret_id
                     integration(store)
             finally:
                 call(http, "POST", "auth/token/revoke-self", operator, {})
+    except OperatorFailure as error:
+        raise SystemExit(f"F01-T002 {PHASE}: F01-{error.code}; sin detalles sensibles.") from None
+    except SqlProvisioningError as error:
+        allowed = {
+            "OWNERSHIP_CONFLICT",
+            "TEMPLATE_INCOMPATIBLE",
+            "OPERATOR_POLICY",
+            "WRONG_DENIAL",
+            "CROSS_CONNECT_ALLOWED",
+            "PRIVILEGE_ALLOWED",
+            "COLLISION_ACCEPTED",
+        }
+        code = str(error) if str(error) in allowed else "SQL_FAILED"
+        raise SystemExit(f"F01-T002 {PHASE}: {code}; recursos conservados.") from None
     except SecretStoreError as error:
         raise SystemExit(f"F01-T002 {PHASE}: {error.code.value}; recursos conservados.") from None
     except (psycopg.Error, DBAPIError) as error:

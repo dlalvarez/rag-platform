@@ -78,7 +78,7 @@ Código: provisioning/postgres, credentials y migrations; control 0002/0003,
 tenant 0001, scripts/f01_sql_check.py. [Manual](../../ops/f01/T002.md).
 
 Resultados ejecutados en ragdev01:
-- 72 pruebas offline correctas; Ruff y formato correctos.
+- 74 pruebas offline correctas; Ruff y formato correctos.
 - Documentos SDD y pruebas negativas F00 correctos.
 - Imagen tools T002 construida con lock e imágenes fijadas, sin dependencias nuevas.
 - Control-check real: PostgreSQL/TLS, constraints y migración 0003 aplicada/repetida, PASS.
@@ -109,3 +109,31 @@ SQLAlchemy, sin mostrar SQL, parámetros o mensajes del servidor.
 72 pruebas offline correctas y control-check real PASS. Imagen tools reconstruida.
 La integración completa SQL A/B sigue pendiente de repetir por el operador;
 esta corrección no acredita su éxito ni cierra T002.
+
+
+### Diagnóstico previo a SQL
+
+Tras corregir RESERVE, Diego reportó una detención START. No se atribuye una causa
+sin evidencia. Consulta independiente de status: initialized=true, sealed=false.
+El comando ahora conserva códigos cerrados de OperatorFailure y distingue BAO_STATUS,
+OPERATOR_LOGIN, OPERATOR_POLICY, APPROLE_ISSUE y APPROLE_LOGIN. No muestra cuerpos
+HTTP ni contraseñas. Dos pruebas offline verifican diagnóstico de sellado y autenticación.
+74 pruebas offline correctas; imagen reconstruida. Pendiente repetir integración.
+
+
+### Corrección de concesión ADMIN
+
+El siguiente intento del operador alcanzó TENANT_SQL y recibió SQLSTATE 0LP01.
+Reproducción SQL independiente en transacción revertida: auto-concesión ADMIN TRUE
+del owner al provisionador rechazada por ciclo de grantor. ADMIN FALSE en esa
+auto-concesión pasó; el ADMIN original concedido por bootstrap se conserva.
+
+El helper grant_owner_memberships concede SET TRUE e INHERIT FALSE, sin repetir
+ADMIN TRUE en la auto-concesión. Inspección real: SET permitido, USAGE/herencia
+deshabilitada. También concede al migrator solo su owner, sin ADMIN ni herencia.
+control-check reproduce esa concesión como provisionador NOSUPERUSER con fixtures
+NOLOGIN y rollback, sin pedir credenciales OpenBao ni persistir roles de prueba.
+
+Resultado: PASS de reserva válida y concesiones owner, control 0003 repetible,
+74 pruebas offline, Ruff/formato y reconstrucción correctos. No se regeneraron
+secretos ni eliminaron recursos. Integración completa todavía pendiente de repetir.

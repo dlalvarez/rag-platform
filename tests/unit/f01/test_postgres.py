@@ -184,3 +184,39 @@ def test_sql_check_requires_own_terminal_before_any_secret_read(monkeypatch):
     monkeypatch.setattr(module, "client", lambda: pytest.fail("Must not contact OpenBao"))
     with pytest.raises(SystemExit, match="START"):
         module.main()
+
+
+@pytest.mark.parametrize(
+    "stage,expected",
+    [("status", "BAO_STATUS: F01-SEALED"), ("login", "OPERATOR_LOGIN: F01-AUTH")],
+)
+def test_operator_diagnostic_remains_actionable_and_redacted(monkeypatch, stage, expected):
+    monkeypatch.syspath_prepend(str(ROOT / "scripts"))
+    spec = importlib.util.spec_from_file_location(
+        "f01_sql_diagnostic", ROOT / "scripts/f01_sql_check.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    class Http:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+    monkeypatch.setattr(module, "tty_required", lambda: None)
+    monkeypatch.setattr(module, "client", Http)
+
+    def fail_status(http):
+        raise module.OperatorFailure("SEALED")
+
+    def fail_login(http):
+        raise module.OperatorFailure("AUTH", 400)
+
+    monkeypatch.setattr(
+        module, "require_unsealed", fail_status if stage == "status" else lambda http: None
+    )
+    monkeypatch.setattr(module, "login_operator", fail_login)
+    with pytest.raises(SystemExit, match=expected):
+        module.main()

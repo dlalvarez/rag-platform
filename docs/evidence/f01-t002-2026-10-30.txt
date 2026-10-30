@@ -24,3 +24,19 @@ Migración compatible f01_control_0003 aplicada y upgrade repetido.
 Regresión real: reserva válida verify-full insertada/revertida, PASS.
 Suite actual: 72 passed; Ruff/formato correctos.
 tools T002 reconstruida. Integración completa pendiente de repetir por operador.
+
+Diagnóstico previo a SQL:
+Reporte del operador: detención START, sin causa inferida.
+Consulta independiente status: initialized=true, sealed=false.
+Se conserva el código cerrado del operador y la fase de autenticación/AppRole.
+Suite actual: 74 passed; Ruff/formato correctos; tools reconstruida.
+Prueba completa SQL/OpenBao todavía pendiente; sin declaración de éxito.
+
+Corrección de concesiones:
+Reporte: TENANT_SQL, SQLSTATE 0LP01.
+Reproducción en rollback: auto-concesión ADMIN TRUE rechazada; ADMIN FALSE correcta.
+Helper compartido y prueba real control-check:
+PASS SET permitido y sin herencia; roles NOLOGIN de prueba revertidos.
+PASS reserva verify-full y migración control 0003 repetible.
+74 pruebas offline correctas; herramientas reconstruidas.
+Integración completa aún pendiente; sin cierre de T002/F01.

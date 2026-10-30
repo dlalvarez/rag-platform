@@ -218,6 +218,29 @@ def inspect_resources(connection, names: Names):
         raise SqlProvisioningError("TEMPLATE_INCOMPATIBLE")
 
 
+def grant_owner_memberships(connection, names: Names):
+    # CREATEROLE already receives ADMIN from bootstrap. A self-grant must not
+    # grant ADMIN back to its own grantor (PostgreSQL rejects that cycle).
+    execute(
+        connection,
+        "GRANT {} TO {} WITH ADMIN FALSE, INHERIT FALSE, SET TRUE",
+        names.role("owner"),
+        PROVISIONER,
+    )
+    execute(
+        connection,
+        "GRANT {} TO {} WITH ADMIN FALSE, INHERIT FALSE, SET TRUE",
+        names.role("owner"),
+        names.role("migrator"),
+    )
+    permissions = connection.execute(
+        "SELECT pg_has_role(%s,%s,'SET'), pg_has_role(%s,%s,'USAGE')",
+        (PROVISIONER, names.role("owner"), PROVISIONER, names.role("owner")),
+    ).fetchone()
+    if permissions != (True, False):
+        raise SqlProvisioningError()
+
+
 def provision_sql(
     target: Target, admin: Credential, names: Names, credentials: dict[str, Credential]
 ):
@@ -238,19 +261,7 @@ def provision_sql(
                         names.marker,
                         credentials[kind].password if kind != "owner" else None,
                     )
-            # Explicit membership, no inheritance. CREATEROLE is administrative.
-            execute(
-                connection,
-                "GRANT {} TO {} WITH ADMIN TRUE, INHERIT FALSE, SET TRUE",
-                names.role("owner"),
-                PROVISIONER,
-            )
-            execute(
-                connection,
-                "GRANT {} TO {} WITH ADMIN FALSE, INHERIT FALSE, SET TRUE",
-                names.role("owner"),
-                names.role("migrator"),
-            )
+            grant_owner_memberships(connection, names)
         if database_record(connection, names.database) is None:
             execute(
                 connection,

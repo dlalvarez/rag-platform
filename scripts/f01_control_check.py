@@ -13,6 +13,15 @@ from sqlalchemy.pool import NullPool
 
 from rag_platform.control.migrations import upgrade_control
 from rag_platform.control.models import Base
+from rag_platform.providers.secrets import Credential
+from rag_platform.provisioning.postgres import (
+    PROVISIONER,
+    Names,
+    Target,
+    create_role,
+    execute,
+    grant_owner_memberships,
+)
 
 REPOSITORY = Path(__file__).resolve().parents[1]
 
@@ -153,6 +162,22 @@ def run() -> None:
             pass
         else:
             raise AssertionError("PostgreSQL accepted an invalid credential or CA")
+    # When T002 bootstrap exists, prove non-superuser owner grants using only
+    # NOLOGIN fixtures and rollback. No OpenBao credentials or persistent roles.
+    target = Target("postgres", 5432, Path("/run/f01-ca.crt"))
+    with target.connect(
+        "rag_control", Credential("f01_bootstrap", admin), autocommit=True
+    ) as connection:
+        if connection.execute("SELECT 1 FROM pg_roles WHERE rolname=%s", (PROVISIONER,)).fetchone():
+            execute(connection, "SET SESSION AUTHORIZATION {}", PROVISIONER)
+            with connection.transaction(force_rollback=True):
+                names = Names(uuid.uuid4())
+                create_role(connection, names.role("owner"), names.marker)
+                create_role(connection, names.role("migrator"), names.marker)
+                grant_owner_memberships(connection, names)
+            print(
+                "PASS: concesiones owner sin ciclo ADMIN; SET permitido y sin herencia; rollback."
+            )
     engine.dispose()
     print("PASS V01 parcial: PostgreSQL/TLS, migrador limitado, constraints y Alembic repetible.")
     print("No tenants/roles tenant creados. AC-F01-01/06 siguen pendientes.")
