@@ -1,4 +1,4 @@
-# Checklist F00 — implementación en revisión
+# Checklist F00 — fase aceptada
 
 - [x] Planificación, ADR-0002/0006 y ejecución en ragdev01 autorizados; ver ratification.
 - [x] Develop creada y protecciones aplicadas; Diego es único responsable de revisión/merge.
@@ -13,9 +13,9 @@
 - [x] AC-F00-03: CI del PR docs/lint/tests verde; checks obligatorios actualizados.
 - [x] AC-F00-04: referencias canónicas y AGENTS comprobados por validador.
 - [x] Evidencia de ejecución con commit base, hashes de fuentes, entorno, comandos y resultados reales; verificación final en PR.
-- [ ] PR revisado y aprobación humana para merge; postmerge en develop pendiente.
+- [x] PR #6 revisado y aprobado por Diego, integrado y verificado en develop; Issue #4 cerrado.
 - [x] Sin F01, tenants, endpoints de negocio ni migraciones prematuras.
 - [x] Pruebas tenant/ACL no aplicables a F00 justificadas, pendientes para sus fases.
 
-Las casillas técnicas registran pruebas observadas; la aceptación final, merge y postmerge siguen pendientes.
+Las casillas técnicas registran pruebas observadas; aceptación final, merge y postmerge constan en Issue #4 y el registro de evidence.
 Ver [evidence](evidence.md) y [runbook](../../ops/F00_RUNBOOK.md).

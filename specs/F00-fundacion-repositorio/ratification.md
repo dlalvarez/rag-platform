@@ -20,7 +20,7 @@ recuperados en PR #3; este trabajo no repite la comparación contra el ZIP origi
 | Ejecución de F00 | Autorizada expresamente por SSH en ragdev01; código, dependencias y servicios allí |
 | Visibilidad | Público, sin cambio autorizado |
 | Versiones y validación | pyproject/uv.lock, Dockerfiles y [evidence](evidence.md) |
-| Merge del PR técnico | Pendiente de revisión y autorización posterior |
+| Merge del PR técnico | PR #6 aprobado, integrado y verificado en develop; Issue #4 cerrado |
 | F01, producción y backup externo/restore | No ejecutados ni aprobados por esta entrega |
 
 ## Alcance de la ejecución
@@ -33,3 +33,5 @@ Ver [runbook](../../ops/F00_RUNBOOK.md) y [checklist](checklist.md).
 La autorización de ejecución no sustituye pruebas ni aceptación. El PR técnico va
 hacia develop; promoción a main mediante otro PR revisado para un hito aprobado.
 Ninguna fusión ni despliegue de producción automático.
+
+Cierre F00: [registro postmerge de PR #6](https://github.com/dlalvarez/rag-platform/pull/6#issuecomment-6527912972).

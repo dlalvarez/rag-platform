@@ -1,6 +1,6 @@
 # F00 — Fundación del repositorio y calidad SDD
 
-**Estado:** planificación aprobada el 2026-10-30 en PR #5; implementación en revisión, no fase completada.
+**Estado:** fase aceptada y cerrada el 2026-10-30 tras aprobación humana de PR #6 y validación postmerge en develop. Registro: Issue #4.
 **Dependencia:** ninguna.  
 **Meta:** Repositorio reproducible y listo para que Codex desarrolle F01.
 

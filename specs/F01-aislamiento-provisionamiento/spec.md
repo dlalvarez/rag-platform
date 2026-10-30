@@ -1,8 +1,10 @@
 # F01 — Plano de control y aprovisionamiento aislado
 
-**Estado:** BORRADOR RECTOR, pendiente de aprobación humana para ejecutar.  
-**Dependencia:** F00.  
+**Estado:** propuesta de ratificación F01; planificación detallada en PR, pendiente de aprobación humana para ejecutar.
+**Dependencia:** F00 aprobada y cerrada en Issue #4 (PR #6 integrado en develop).
 **Meta:** Prueba técnica de aislamiento antes de datos de negocio.
+
+Referencias: [plan](plan.md), [tareas](tasks.md), [ratificación](ratification.md), [checklist](checklist.md) y [evidencia](evidence.md). Requisitos y AC originales conservados.
 
 ## Problema y resultado esperado
 

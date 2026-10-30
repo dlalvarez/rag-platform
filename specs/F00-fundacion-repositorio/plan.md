@@ -1,6 +1,6 @@
 # Plan F00 — propuesta de ratificación
 
-**Estado:** planificación aprobada en PR #5 (2026-10-30); implementación en revisión. Referencias: [spec](spec.md), [tareas](tasks.md), [ratificación](ratification.md), [Issue #4](https://github.com/dlalvarez/rag-platform/issues/4).
+**Estado:** planificación aprobada en PR #5 (2026-10-30); implementación aceptada en PR #6, con postmerge verificado e Issue #4 cerrado. Referencias: [spec](spec.md), [tareas](tasks.md), [ratificación](ratification.md), [Issue #4](https://github.com/dlalvarez/rag-platform/issues/4).
 Este plan desarrolla F00-R01..05 y AC-F00-01..04 sin cambiar su alcance. No implementa F01 ni tenancy.
 
 ## Secuencia y archivos previstos

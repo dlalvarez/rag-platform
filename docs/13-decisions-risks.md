@@ -4,23 +4,24 @@
 
 - ADR-0001: un PostgreSQL database por tenant + base control.
 - ADR-0003: SDD, Codex, GitHub y aprobaciones por PR.
+- ADR-0002: monolito modular, ratificado en PR #5.
+- ADR-0006: main/develop y PRs; protecciones aplicadas, verificadas en F00.
 
 ## Propuestas de ADR pendientes de ratificación
 
-- ADR-0002: monolito modular + workers y proveedores desacoplados (propuesto F00).
-- ADR-0004: secret manager y bucket por tenant (propuesto F01).
+- ADR-0004: gestor de secretos y bucket por tenant. Propuesta F01 con OpenBao de desarrollo, elegida para revisión por Diego; pendiente de ratificación.
 
 ## Decisión operacional ya ejecutada
 
-- ADR-0005: VM Synology VMM con Ubuntu y Docker como host de desarrollo. No supone que F00 del paquete haya terminado.
+- ADR-0005: VM Synology VMM con Ubuntu y Docker como host de desarrollo. F00 técnica fue aprobada y verificada posteriormente en PR #6/Issue #4, sin iniciar F01.
 
 ## Decisiones técnicas a confirmar antes de su fase (no bloquean la documentación)
 
 | ID | Decisión | Límite temporal | Criterio de elección |
 |---|---|---|---|
 | D-01 | Nombre/branding y dominio | Antes de comercializar | Disponibilidad y marca |
-| D-02 | Postgres/pgvector, Python y librerías versionadas | F00/F01 | Compatibilidad, seguridad y pruebas |
-| D-03 | Secret manager para dev/prod | F01 | Referencias, rotación, mínimo privilegio |
+| D-02 | F00 fija PG 17/pgvector 0.8.7, Python/uv y dependencias; F01 fijará nuevas bibliotecas compatibles | Antes de implementar F01 | Conservar pins y probar compatibilidad, sin upgrade de clúster |
+| D-03 | OpenBao 2.7.2 propuesto para dev; custodia de unseal pendiente. Producción requiere otra decisión de operación/HA | Ratificar F01; custodiar antes de inicializar | Refs opacas, políticas, TLS y recuperación sin secretos en Git/control |
 | D-04 | IdP OIDC concreto | F02 | Seguridad, operación, coste |
 | D-05 | Parser PDF/DOCX y límites | F04 | Calidad texto/tablas y resiliencia |
 | D-06 | Modelo embedding inicial + dimensiones | F05 | Evaluación español/inglés, coste y pgvector |
@@ -41,6 +42,8 @@
 | Calidad variable en español/términos técnicos | Media | Alta | Dataset evaluado, búsqueda híbrida, ajustes medidos |
 | Proveedores LLM cambian términos/precios | Alta | Media | Adaptadores y versionado de perfiles |
 | SDD se convierte en burocracia | Media | Media | Fases pequeñas, plantillas ligeras y gates basados en riesgo |
+| MinIO upstream archivado | Alta | Alta | Mantener receta F00 solo con datos sintéticos; revisar mantenimiento/proveedor antes de promover, sin cambio unilateral |
+| Pérdida de unseal en un único host/operador | Media | Alta | Custodia protegida fuera del host antes de inicializar; no prometer HA/backup externo por tener Raft |
 
 ## Gestión de cambios
 
