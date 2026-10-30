@@ -261,3 +261,8 @@ aislamiento ni se usaron respuestas simuladas para acreditar las denegaciones.
 T003 pendiente de CI/revisión/aceptación. No se cierra AC de fase ni Issue #7.
 T004–T007 pendientes: saga, concurrencia, compensación, pools, dos instancias y
 migraciones coordinadas. No READY, producción, documentos reales, HA o restore.
+
+Código T003 probado y manifiesto verificado:
+ba91e1fb2fc590cf4c7e81794409855e2d3f6694,
+[PR #11](https://github.com/dlalvarez/rag-platform/pull/11).
+Las revisiones posteriores de documentación no alteran las fuentes ejecutadas.

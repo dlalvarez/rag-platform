@@ -34,3 +34,6 @@ Corroboración IAM/almacenamiento (solo contadores):
 8 usuarios: 2 habilitados tenant y 6 deshabilitados de calibración.
 10 buckets: 2 tenant, 6 calibración, 2 fixtures ajenas conservadas.
 Límites F01 con herramienta serial: 4.5 GiB; observación por debajo de los límites.
+
+Código probado: ba91e1fb2fc590cf4c7e81794409855e2d3f6694 (PR #11).
+Checkout sin cambios y sha256sum del manifiesto: todos OK.

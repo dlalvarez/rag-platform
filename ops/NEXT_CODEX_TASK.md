@@ -2,7 +2,8 @@
 
 T001/T002 aceptadas e integradas mediante PR #9/#10. Base T003:
 develop@ff24f439c75e93477df0a99835635d0fb00538d5.
-T003 implementada: calibración MinIO y batería A/B con OpenBao completadas.
+T003 implementada en [PR #11](https://github.com/dlalvarez/rag-platform/pull/11):
+calibración MinIO y batería A/B con OpenBao completadas.
 [Runbook](f01/T003.md) y [evidence](../specs/F01-aislamiento-provisionamiento/evidence.md).
 
 Puerta actual: comprobar docs/lint/tests del HEAD del PR T003, revisar evidencia
