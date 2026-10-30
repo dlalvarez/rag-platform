@@ -1,48 +1,46 @@
-# Siguiente tarea Codex — F01 tras ratificación
+# Siguiente tarea Codex — F01 T002 después de aceptar T001
 
-**Estado:** preparada para revisión, no iniciada.
-Fuente: [ratificación F01](../specs/F01-aislamiento-provisionamiento/ratification.md),
-[Issue #7](https://github.com/dlalvarez/rag-platform/issues/7).
+**Estado:** T001 implementada y ensayada en [PR #9](https://github.com/dlalvarez/rag-platform/pull/9);
+pendientes checks de GitHub, revisión humana y merge. No iniciar T002 por este documento.
+Plan ratificado en PR #8; [Issue #7](https://github.com/dlalvarez/rag-platform/issues/7)
+abierto. [Evidencia T001](../specs/F01-aislamiento-provisionamiento/evidence.md).
 
-Antes de código, comprobar aprobación humana de spec/plan/tasks y ADR-0004.
-Custodia de desbloqueo aprobada por Diego el 2026-10-30: Shamir 1/1, una clave en su
-gestor de contraseñas y una copia fuera de línea, ambas fuera de ragdev01. El gestor
-debe poder abrirse sin depender de esta VM/OpenBao. Antes de inicializar, Diego
-confirma que ambos destinos están preparados y que puede recuperar la copia.
-Establece/introduce sus credenciales de operador en terminal. No pedir secretos por
-chat ni capturarlos en logs de automatización. No generar ni capturar material de
-inicialización hasta disponer de entrega segura al operador. La aprobación de
-custodia no equivale a ratificación del PR ni a permiso de implementación.
+Puerta previa: aprobación explícita de Diego del PR #9, docs/lint/tests del HEAD
+correctos, integración a develop y comprobación postmerge. Sin auto-merge/bypass.
+Trabajo únicamente por SSH en ragdev01. No instalar ni probar en el Mac.
 
-```text
-Implementa exclusivamente F01-aislamiento-provisionamiento, según planificación
-aprobada y Issue #7. Lee AGENTS, constitución, arquitectura/tenancy, modelo de datos,
-operaciones, NFR, roadmap, gobierno y ADRs aplicables; luego los seis documentos F01.
-Trabaja únicamente en ragdev01, /home/diego/proyectos/rag-platform.
-Crea feat/F01-* desde develop aprobada y abre PR hacia develop. No merge.
+OpenBao ya inicializado, bootstrap comprobado, root inicial revocado y credenciales
+bajo custodia de Diego. No ejecutar init/resume ni pedir claves/passwords por chat.
+Tras reiniciar OpenBao, Diego introduce unseal en su terminal; seguir runbook.
+No regenerar credenciales para resolver errores.
 
-Sigue T001..T007 y la matriz R→AC→P→T→V. Usa fixtures sintéticas.
-No toques servicios/datos F00 ni aprovisiones producción. Prepara perfil F01 separado
-bajo /srv/rag-data/rag-platform/f01 después de comprobar montaje, espacio y recursos.
-OpenBao solo según ADR-0004 aprobado: pins, TLS, KV v2 persistente, unseal manual
-y políticas; root no es runtime. Sin fallback a .env para credenciales de tenant.
+## Instrucción de implementación, solo después de esa puerta
 
-Entrega catálogo rag_control sin contenido/credenciales, Alembic control/tenant,
-CLI idempotente, DB/roles y buckets privados por tenant, resolver y pools limitados.
-Bootstrap de vector separado del rol app. No SQL por interpolación ni grants globales
-al tenant. No basta con crear una BD o un bucket para declarar READY.
+Implementa solo F01 T002 (F01-R02; AC-F01-01/02; P2; V01/V02).
+Lee AGENTS, documentos rectores y seis documentos F01; respeta ADR-0001/0004/0006.
 
-Demuestra aislamiento A↔B SQL/S3, reintento/fallo de bucket, recuperación, migración
-con locks y dos endpoints PostgreSQL reales. Registra versión real y recursos ajenos
-intactos. Las pruebas offline no requieren servicios ni APIs de pago; integración
-real corre en ragdev01. Mantén regresión F00 y CI docs/lint/tests.
+Trabaja en /home/diego/proyectos/rag-platform de ragdev01. Parte de develop
+sincronizada tras PR #9, crea feat/F01-T002-* y abre PR hacia develop. No merge.
+Conserva F00 y recursos/secretos F01; comprueba montaje y presupuesto.
 
-No OIDC/F02, usuarios/membresías de producto, alta HTTP pública, documentos,
-ingesta, retrieval ni chat. Sin borrar automáticamente BD/buckets con datos,
-sin exportar secretos, sin cambios de visibilidad ni promoción a main.
-Reporta límites, pruebas omitidas, comandos/versiones/resultados y rollback.
-No cierres Issue #7 ni F01 sin evidencia completa y aceptación humana.
-```
+Prepara bootstrap explícito de instancia/plantilla vector propia y provisionador
+NOSUPERUSER con CREATEDB/CREATEROLE; reconoce su alcance administrativo.
+No modificar template0/template1. Mantener pins PostgreSQL/pgvector y TLS verificado.
+Owner tenant NOLOGIN; migrator/app/readonly propios sin privilegios globales.
+UUID internos, identificadores citados del driver y parámetros para valores.
+Crear BD con conexiones bloqueadas, reaplicar REVOKE PUBLIC/grants antes de habilitar.
 
-Si una decisión aprobada no resulta viable, registrar el bloqueo y proponer ajuste
-por PR/ADR; no cambiar secret manager, aislamiento o alcance silenciosamente.
+Usa SecretStore para credenciales tenant y refs/versiones en control.
+No registrar DSN/passwords, usar root OpenBao ni conservar tokens en Git/.env/logs.
+Demuestra control y A/B como bases distintas, privilegios reales, SQL A↔B denegado
+y SET ROLE cruzado prohibido. Conservar recursos ante colisión/ownership incierto.
+No DROP ni borrar para reintentar. No publicar READY sin probes futuros SQL/S3
+y migración coordinada.
+
+Mantén distinción entre contrato/migración inicial T002 y locks, canary y baterías
+completas T006. No cerrar AC-F01-01/02 o fase solo por DDL.
+No iniciar MinIO F01/T003, saga/T004, resolver/pools/T005, F02 o datos de negocio.
+
+Entrega código y pruebas offline/integración, evidencia saneada R→AC→P→T→V,
+regresión F00/T001, rollback conservador y limitaciones.
+Si una decisión no resulta viable, proponer ajuste sin cambiar alcance/tenancy.

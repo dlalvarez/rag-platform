@@ -42,3 +42,25 @@ PR #5 aprobado e integrado; ADR-0002 y ADR-0006 ratificados, develop creada y ru
 ## Estado vigente tras cierre F00 y preparación F01 (2026-10-30)
 
 F00 aceptada y cerrada en PR #6/Issue #4, con pruebas y CI postmerge exitosas; develop@85cd39f401b48e312c1e4fd61906543a4ff588fe. Las menciones anteriores de revisión pendiente corresponden al momento de entrega. F01 se planifica en Issue #7 y specs/F01-aislamiento-provisionamiento, sin implementación. Diego eligió incluir OpenBao en la propuesta; ADR-0004, spec/plan/tasks y custodia de unseal siguen pendientes de ratificación/preparación. No se crearon tenants ni cambió ningún servicio por el trabajo documental F01. Ver ops/NEXT_CODEX_TASK.md.
+
+
+## Estado vigente F01 T001 (2026-10-30)
+
+PR #8 ratificado por Diego e integrado en develop@f2c74400d2cafb5fce065b6eb0db23243731f8cf.
+Spec/plan/tasks y ADR-0004 aprobados; destinos de custodia confirmados preparados.
+T001 en curso en feat/F01-T001-control-secrets, exclusivamente en ragdev01.
+Catálogo control con Alembic y prueba PostgreSQL/TLS real; OpenBao arrancado sin
+inicializar. Ninguna clave de desbloqueo generada; ningún AC F01 completo.
+Bootstrap solo en terminal de Diego, sin capturar secretos; ver [runbook](f01/README.md).
+Las menciones anteriores de propuestas pendientes son históricas.
+
+
+## Resultado técnico T001 (2026-10-30)
+
+PR #9: catálogo/control Alembic y SecretStore implementados y ensayados en ragdev01.
+Diego completó bootstrap, confirmó root inicial revocado, recuperación de canary tras
+restart/unseal y token AppRole caducado rechazado HTTP 403 con nodo desbloqueado.
+Token ficticio rechazado HTTP 403; F00 saludable e integración correcta. 53 tests offline.
+Checks GitHub Actions recientes observados queued sin runner; no declararlos exitosos.
+Revisión/aceptación/merge de PR #9 pendientes. No se inicia T002 ni se cierra F01/Issue #7.
+Ver evidence F01 y NEXT_CODEX_TASK.md. Las notas anteriores son históricas.

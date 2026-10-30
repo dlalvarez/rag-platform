@@ -1,6 +1,7 @@
 # F01 — Plano de control y aprovisionamiento aislado
 
-**Estado:** propuesta de ratificación F01; planificación detallada en PR, pendiente de aprobación humana para ejecutar.
+**Estado:** spec/plan/tasks ratificados por Diego en PR #8 el 2026-10-30; T001 implementada y ensayada, pendiente de aceptación del PR #9, aceptación técnica de F01 pendiente.
+[Registro de aprobación](https://github.com/dlalvarez/rag-platform/pull/8#issuecomment-6528543252).
 **Dependencia:** F00 aprobada y cerrada en Issue #4 (PR #6 integrado en develop).
 **Meta:** Prueba técnica de aislamiento antes de datos de negocio.
 

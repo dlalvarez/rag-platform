@@ -1,13 +1,15 @@
-# Plan F01 — propuesta para ratificación
+# Plan F01 — ratificado en PR #8
 
-**Estado:** pendiente de aprobación humana. Esta entrega es documental.
+**Estado:** ratificado por Diego el 2026-10-30; T001 implementada y ensayada, pendiente de aceptación del PR #9. [Aprobación](https://github.com/dlalvarez/rag-platform/pull/8#issuecomment-6528543252).
+Las propuestas de diseño de este plan quedaron aprobadas; cada PR técnico requiere revisión posterior.
 Dependencia satisfecha: [F00 aceptada, Issue #4](https://github.com/dlalvarez/rag-platform/issues/4),
 PR #6 integrado en develop@85cd39f401b48e312c1e4fd61906543a4ff588fe.
 Seguimiento: [Issue #7](https://github.com/dlalvarez/rag-platform/issues/7).
 Fuentes: [spec](spec.md), [ADR-0001](../../docs/adr/0001-tenancy-db-per-tenant.md),
-[ADR-0004 propuesto](../../docs/adr/0004-secrets-storage.md).
-La elección de OpenBao fue preferida por Diego para incluirla en esta propuesta; no
-equivale a aprobar este plan ni a autorizar instalarlo.
+[ADR-0004 aprobado](../../docs/adr/0004-secrets-storage.md).
+OpenBao de desarrollo y ADR-0004 ratificados en PR #8. Diego confirmó preparados
+los destinos de custodia el 2026-10-30; el bootstrap se ejecutará exclusivamente
+en su terminal. Ver [runbook T001](../../ops/f01/README.md).
 
 ## Resultado y límites
 

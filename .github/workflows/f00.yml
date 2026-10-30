@@ -1,7 +1,7 @@
 name: F00 quality
 on:
   push:
-    branches: [main, develop, 'feat/F00-*']
+    branches: [main, develop, 'feat/F00-*', 'feat/F01-*']
   pull_request:
     branches: [main, develop]
 permissions:

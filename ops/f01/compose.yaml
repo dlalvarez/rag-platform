@@ -1,0 +1,122 @@
+name: rag-f01-dev
+services:
+  openbao:
+    image: ghcr.io/openbao/openbao:2.7.2@sha256:5046911075e137e154ce49ab051502f4ec7cf367d484ae4a4dce665d9b90561f
+    user: "${RAG_F01_UID:?Prepare F01}:${RAG_F01_GID:?Prepare F01}"
+    entrypoint: ["/usr/bin/bao"]
+    command: ["server", "-config=/bao/config/openbao.hcl"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    environment:
+      BAO_ADDR: https://openbao:8200
+      BAO_CACERT: /bao/tls/ca.crt
+    volumes:
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/raft
+        target: /bao/data
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/config/openbao.hcl
+        target: /bao/config/openbao.hcl
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/tls/openbao.crt
+        target: /bao/tls/server.crt
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/tls/openbao.key
+        target: /bao/tls/server.key
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/tls/ca.crt
+        target: /bao/tls/ca.crt
+        read_only: true
+        bind: {create_host_path: false}
+    networks: [f01]
+    cpus: 0.5
+    mem_limit: 768m
+    memswap_limit: 768m
+    ulimits:
+      core: {soft: 0, hard: 0}
+    # Sealed/uninitialized is never considered an available secret store.
+  postgres:
+    image: pgvector/pgvector:0.8.7-pg17-bookworm@sha256:ac08538c6f8b9904c33c8224c5e5706dbe760aca29db1d096972b4052c22a75d
+    environment:
+      POSTGRES_USER: f01_bootstrap
+      POSTGRES_DB: rag_control
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        install -o postgres -g postgres -m 600 /tls/server.key /tmp/f01-postgres.key
+        exec /usr/local/bin/docker-entrypoint.sh postgres -c ssl=on -c ssl_min_protocol_version=TLSv1.3 -c ssl_cert_file=/tls/server.crt -c ssl_key_file=/tmp/f01-postgres.key -c hba_file=/tls/pg_hba.conf -c max_connections=30 -c shared_buffers=128MB
+    secrets: [postgres_password]
+    volumes:
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/postgres
+        target: /var/lib/postgresql/data
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/tls/postgres.crt
+        target: /tls/server.crt
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/tls/postgres.key
+        target: /tls/server.key
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/config/pg_hba.conf
+        target: /tls/pg_hba.conf
+        read_only: true
+        bind: {create_host_path: false}
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U f01_bootstrap -d rag_control"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    networks: [f01]
+    cpus: 0.5
+    mem_limit: 1536m
+    memswap_limit: 1536m
+  tools:
+    profiles: [tools]
+    image: rag-f01-tools:t001
+    build:
+      context: ../..
+      dockerfile: ops/f01/tools.Dockerfile
+    user: "${RAG_F01_UID:?Prepare F01}:${RAG_F01_GID:?Prepare F01}"
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+      BAO_ADDR: https://openbao:8200
+      BAO_CACERT: /run/f01-ca.crt
+    volumes:
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/tls/ca.crt
+        target: /run/f01-ca.crt
+        read_only: true
+        bind: {create_host_path: false}
+    networks: [f01]
+    cpus: 0.5
+    mem_limit: 768m
+    memswap_limit: 768m
+    ulimits:
+      core: {soft: 0, hard: 0}
+  control-check:
+    extends: tools
+    profiles: [test]
+    secrets: [postgres_password, control_migrator_password]
+    command: [python, scripts/f01_control_check.py]
+networks:
+  f01:
+    internal: true
+secrets:
+  postgres_password:
+    file: ${RAG_F01_ROOT:?Prepare F01}/secrets/postgres_password
+  control_migrator_password:
+    file: ${RAG_F01_ROOT:?Prepare F01}/secrets/control_migrator_password

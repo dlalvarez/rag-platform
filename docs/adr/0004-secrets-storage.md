@@ -1,11 +1,12 @@
 # ADR 0004 — Separación de secretos y almacenamiento de objetos
 
-**Estado:** propuesto para ratificación F01; ampliado el 2026-10-30.
-El responsable eligió incluir OpenBao en la propuesta. No está instalado ni aprobado
-por este documento. Referencias: [plan F01](../../specs/F01-aislamiento-provisionamiento/plan.md)
+**Estado:** aprobado por Diego en PR #8 el 2026-10-30.
+[Registro de ratificación](https://github.com/dlalvarez/rag-platform/pull/8#issuecomment-6528543252).
+OpenBao inicializado por Diego durante T001; bootstrap, revocación de root y pruebas
+reales de recuperación/caducidad demostradas. Aceptación del PR #9 y checks CI pendientes. Referencias: [plan F01](../../specs/F01-aislamiento-provisionamiento/plan.md)
 y [decisiones de ratificación](../../specs/F01-aislamiento-provisionamiento/ratification.md).
 
-## Decisión propuesta
+## Decisión aprobada
 
 Credenciales propias por tenant en un secret manager; rag_control conserva únicamente
 referencias opacas y versiones no secretas. Bucket privado y principal/política propia
@@ -33,9 +34,10 @@ y fuera de ragdev01. Son dos copias de la misma clave, no fragmentos ni un umbra
 El acceso al gestor debe ser independiente de OpenBao y de la VM.
 Antes de inicializar, Diego confirma que dispone de ambos destinos y del medio para
 recuperar la copia; no registrar proveedor, ubicación física ni valores secretos.
-No se generan claves hasta confirmar esa preparación. No conservar unseal en el
-contenedor, Git, chat, logs ni junto a Raft. Esta aprobación de custodia no ratifica
-por sí sola el resto de ADR-0004 ni autoriza la implementación F01.
+Diego confirmó preparados ambos destinos el 2026-10-30. No conservar unseal en el
+contenedor, Git, chat, logs ni junto a Raft. La ratificación completa de ADR-0004 y
+del diseño F01 se registró posteriormente en PR #8. La clave se genera y entrega
+solo en el bootstrap interactivo del operador; no por herramientas de Codex.
 La clave no sustituye el respaldo de los datos Raft: backup externo y restauración
 siguen pendientes; no se declaran resueltos por conservar dos copias de la clave.
 Cada reinicio requiere desbloqueo manual. Root token inicial se revoca tras configurar
