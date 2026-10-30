@@ -1,0 +1,76 @@
+F01 T002 — evidencia parcial, 2026-10-30
+Base aprobada: develop a1568375164627f4be2b10d0cb9285fab92ce685.
+Ejecución: entorno de desarrollo autorizado, sin pruebas en el equipo local.
+
+ruff check .: PASS
+ruff format --check .: PASS (36 archivos)
+pytest -q: 71 passed; advertencia preexistente Starlette/httpx.
+scripts/check_docs.py: PASS.
+scripts/f00_negative_checks.py: PASS (fallos controlados esperados).
+tools T002: build PASS con versiones fijadas existentes.
+control-check: PASS V01 parcial PostgreSQL/TLS, constraints y Alembic 0002 repetible.
+HBA: cero errores, recarga aceptada; no reinicio de OpenBao/PostgreSQL/F00.
+f00_compose.py run --rm smoke: PASS API, PostgreSQL/vector, S3 sintético.
+
+Prueba sql-check real con OpenBao: PENDIENTE del operador.
+No afirmar aislamiento SQL, colisión ni permisos reales como PASS sin esa ejecución.
+No declarar T002/AC/F01 completos ni autorizar merge por este log.
+
+Corrección posterior — RESERVE:
+Reporte del operador: dos intentos detenidos en RESERVE.
+Diagnóstico con rollback: DataError/SQLSTATE 22001; ningún valor secreto mostrado.
+Causa: ssl_mode VARCHAR(10), verify-full requiere 11 caracteres.
+Migración compatible f01_control_0003 aplicada y upgrade repetido.
+Regresión real: reserva válida verify-full insertada/revertida, PASS.
+Suite actual: 72 passed; Ruff/formato correctos.
+tools T002 reconstruida. Integración completa pendiente de repetir por operador.
+
+Diagnóstico previo a SQL:
+Reporte del operador: detención START, sin causa inferida.
+Consulta independiente status: initialized=true, sealed=false.
+Se conserva el código cerrado del operador y la fase de autenticación/AppRole.
+Suite actual: 74 passed; Ruff/formato correctos; tools reconstruida.
+Prueba completa SQL/OpenBao todavía pendiente; sin declaración de éxito.
+
+Corrección de concesiones:
+Reporte: TENANT_SQL, SQLSTATE 0LP01.
+Reproducción en rollback: auto-concesión ADMIN TRUE rechazada; ADMIN FALSE correcta.
+Helper compartido y prueba real control-check:
+PASS SET permitido y sin herencia; roles NOLOGIN de prueba revertidos.
+PASS reserva verify-full y migración control 0003 repetible.
+74 pruebas offline correctas; herramientas reconstruidas.
+Integración completa aún pendiente; sin cierre de T002/F01.
+
+Comprobador de rechazos iniciales:
+Reporte: SQL_PROBES WRONG_DENIAL.
+Clasificación independiente de logs: FATAL de CONNECT denegado presente.
+No se publicaron mensajes originales de logs.
+Validación corregida: credencial propia válida + ACL CONNECT falsa para A/B +
+rechazo de destino específico, incluso cuando libpq no entrega SQLSTATE.
+Errores de red/CA/password no cuentan como aislamiento.
+81 pruebas offline correctas; Ruff/formato y tools reconstruida.
+Ensayo completo del operador todavía pendiente.
+
+Corrección del probe vector:
+Reporte SQL_PROBES 42501; clasificación saneada VECTOR_CAST/SCHEMA_PUBLIC.
+El migrator requiere asumir su owner; no se ampliaron permisos.
+Probe independiente con SESSION AUTHORIZATION a roles reales A/B:
+PASS vector migrator/app/readonly y restauración de rol.
+84 pruebas offline correctas; tools reconstruida.
+Pendiente confirmación de la batería completa con credenciales reales.
+
+BATERÍA REAL COMPLETA — reporte final de Diego
+Código probado: 0b297240d15a1c1b5acd2cfc30581d3938de1aea.
+PASS T002: tres bases distintas; roles limitados; TLS/vector y migración repetible.
+PASS T002: CRUD propio; readonly sin escritura; CONNECT/SET ROLE cruzados denegados.
+PASS T002: secretos OpenBao; reintento sin rotación; colisión conservada.
+Tenants sintéticos PROVISIONING; sin READY, bucket, saga ni cierre de F01.
+
+Corroboración independiente, solo contadores y booleanos:
+control f01_control_0003; dos tenants PROVISIONING/observed_version NULL;
+dos ubicaciones y bases distintas, verify-full y readonly versionado;
+nueve roles con prefijo tenant, cero con privilegios globales.
+Las anotaciones PENDIENTE anteriores registran intentos históricos.
+84 pruebas offline. Revisión humana/aceptación del PR #10 pendientes.
+
+Regresión posterior: F00 API/PostgreSQL/vector/S3 sintético, PASS.

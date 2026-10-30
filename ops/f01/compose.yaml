@@ -86,7 +86,7 @@ services:
     memswap_limit: 1536m
   tools:
     profiles: [tools]
-    image: rag-f01-tools:t001
+    image: rag-f01-tools:t002
     build:
       context: ../..
       dockerfile: ops/f01/tools.Dockerfile
@@ -112,6 +112,11 @@ services:
     profiles: [test]
     secrets: [postgres_password, control_migrator_password]
     command: [python, scripts/f01_control_check.py]
+  sql-check:
+    extends: tools
+    profiles: [test]
+    secrets: [postgres_password, control_migrator_password]
+    command: [python, scripts/f01_sql_check.py]
 networks:
   f01:
     internal: true

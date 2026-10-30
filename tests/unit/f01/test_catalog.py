@@ -31,7 +31,7 @@ def test_repeatable_frozen_migration(database):
     }
     assert (
         database.scalar(sa.text("SELECT version_num FROM alembic_version_control"))
-        == "f01_control_0001"
+        == "f01_control_0003"
     )
     assert not any(
         isinstance(c.type, (sa.JSON, sa.LargeBinary, sa.Text))
@@ -127,3 +127,9 @@ def test_internal_contract_refuses_client_paths_and_shared_sql_secret():
         TenantDatabase(
             tenant, instance, f"rag_t_{tenant.hex}", SecretRef(ref, 1), SecretRef(ref, 2)
         )
+
+
+def test_migrated_tls_column_fits_the_required_mode(database):
+    columns = {c["name"]: c for c in sa.inspect(database).get_columns("db_locations")}
+    assert columns["ssl_mode"]["type"].length >= len("verify-full")
+    assert Base.metadata.tables["db_locations"].c.ssl_mode.type.length >= len("verify-full")

@@ -1,12 +1,14 @@
 # Tareas F01 — planificación ratificada
 
-**Estado:** ratificadas en PR #8; T001 implementada y pruebas técnicas demostradas. Checks CI y aceptación humana del PR #9 pendientes; T002–T007 no iniciadas.
-[Registro de aprobación](https://github.com/dlalvarez/rag-platform/pull/8#issuecomment-6528543252). La casilla T001 permanece abierta hasta checks/revisión/aceptación del PR #9; no se cierra F01.
+**Estado:** ratificadas en PR #8; T001 aceptada e integrada en develop mediante
+[PR #9](https://github.com/dlalvarez/rag-platform/pull/9), con checks y postmerge correctos.
+T002 implementada y ensayada en PR #10; aceptación humana pendiente. T003–T007 no iniciadas.
+No se cierra F01.
 Referencias: [plan P1–P7 y pruebas V01–V07](plan.md), [ratificación](ratification.md).
 Se conservan los IDs T001–T007 originales. Orden: T001 → T002/T003 → T004 → T005 → T006 → T007;
 cada tarea comienza solo después de ratificar la planificación y sus decisiones.
 
-- [ ] T001 [F01-R01/R03; AC-F01-01/06; P1; V01/V03] Fijar SQLAlchemy/psycopg/Alembic y cliente secreto; crear catálogo mínimo y pista control, contrato tenant, SecretStore y perfil OpenBao aprobado. Artefactos: migrations/control, configuración Alembic separada, control/ y providers/secrets. Probar constraints, refs opacas, bootstrap sin root de runtime, secretos conservados tras restart/unseal, token caducado/denegado y logs saneados. La inicialización requiere que Diego confirme disponibles el gestor y la copia fuera de línea del esquema Shamir 1/1 aprobado; no confundir aprobación del esquema con custodia ya materializada.
+- [x] T001 [F01-R01/R03; AC-F01-01/06; P1; V01/V03] Fijar SQLAlchemy/psycopg/Alembic y cliente secreto; crear catálogo mínimo y pista control, contrato tenant, SecretStore y perfil OpenBao aprobado. Artefactos: migrations/control, configuración Alembic separada, control/ y providers/secrets. Probar constraints, refs opacas, bootstrap sin root de runtime, secretos conservados tras restart/unseal, token caducado/denegado y logs saneados. La inicialización requiere que Diego confirme disponibles el gestor y la copia fuera de línea del esquema Shamir 1/1 aprobado; no confundir aprobación del esquema con custodia ya materializada.
 - [ ] T002 [F01-R02; AC-F01-01/02; P2; V01/V02] Bootstrap revisable de instancias/template vector y cuenta de provisionado separada; crear roles/BD tenant con grants explícitos y nombres UUID. No editar F00 ni template0/template1. Probar tres BD distintas, ACL reaplicadas, app/migrator A↔B denegados, roles sin superusuario ni SET ROLE cruzado y fallo seguro en colisión de recurso.
 - [ ] T003 [F01-R04/R03; AC-F01-03; P3; V03/V04] Validar MinioAdmin de minio==7.2.20 ya fijado, crear bucket/principal/policy por tenant, guardar credenciales en OpenBao y refs en control. Probar get/put/list propios, cruces y anónimo denegados con credenciales reales; no secretos en argumentos/procesos ni privilegios de administración en principal tenant.
 - [ ] T004 [F01-R05; AC-F01-04/05; P4; V05] Implementar saga y journal de pasos con lock/idempotencia, CAS de secretos y errores cerrados. Inyectar fallo de bucket, caída después de efecto externo y reintento concurrente. Demostrar un único tenant/BD/bucket, no READY parcial, recuperación y conservación de recursos ajenos; ninguna eliminación automática de BD/bucket con datos.
@@ -18,3 +20,7 @@ T002/T003 pueden dividirse en PR pequeños manteniendo las puertas y dependencia
 esta lista no autoriza ejecución paralela ni agentes adicionales. Ninguna casilla
 se cierra por crear scaffolding. Guardar evidencias de éxitos, denegaciones, fallos
 y recuperación; pruebas omitidas bloquean el AC correspondiente.
+
+T002: batería real completada por Diego y corroborada mediante metadatos saneados.
+[PR #10](https://github.com/dlalvarez/rag-platform/pull/10) pendiente de revisión/aceptación;
+la casilla permanece abierta hasta esa puerta. No iniciar T003 todavía.
