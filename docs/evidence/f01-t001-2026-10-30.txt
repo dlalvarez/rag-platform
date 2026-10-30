@@ -124,3 +124,10 @@ Unchanged: Dockerfile sha256=3869f9a12668c2e778bbdc36ef7b462888cc083636a96bc7c64
 Unchanged: src/rag_platform/api.py sha256=b6bb1ff127b6da1007d44260e14aeb04dba74c99391ad9de9f3da3dec8231162
 Unchanged: src/rag_platform/config.py sha256=9509245696d4ed8e541e4ece69daca25eceeddb237934dfd273088b3eee718db
 Unchanged: scripts/f00_smoke.py sha256=6960510f9d8350205d57bf75ae7253c940a0222b83c85cee5fe44f9dab1ec5c9
+
+Bootstrap interaction correction 2026-10-30T17:37:51.388289+00:00
+Operator reported manual unseal successful; independent TLS status initialized=true, sealed=false, threshold=1/1.
+Resume stopped before confirmation prompt: prior script rejected passwords under 16 characters with a generic error. No entered value read or logged.
+New validation explains minimum length/mismatch and permits retry without echo or credential writes before valid confirmation.
+ruff check . exit=0; ruff format --check . exit=0; pytest -q: 43 passed, 1 pre-existing Starlette warning; check_docs.py exit=0; git diff --check exit=0.
+Tools image rebuilt successfully; OpenBao not restarted/reinitialized. Root revocation and completed bootstrap still pending.

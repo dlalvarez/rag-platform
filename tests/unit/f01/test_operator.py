@@ -66,3 +66,27 @@ def test_root_is_not_revoked_if_runtime_validation_fails(monkeypatch):
     with pytest.raises(RuntimeError, match="runtime verification"):
         operator.bootstrap(object(), resume=True)
     assert "auth/token/revoke-self" not in calls
+
+
+def test_short_password_explains_requirement_and_allows_retry(monkeypatch, capsys):
+    short = "synthetic"
+    valid = "synthetic-valid-password"
+    answers = iter((short, valid, valid))
+    monkeypatch.setattr(operator.getpass, "getpass", lambda prompt: next(answers))
+    assert operator.new_operator_password() == valid
+    output = capsys.readouterr().out
+    assert "al menos 16 caracteres" in output
+    assert short not in output
+    assert valid not in output
+
+
+def test_password_mismatch_allows_retry_without_echo(monkeypatch, capsys):
+    valid = "synthetic-valid-password"
+    different = "synthetic-other-password"
+    answers = iter((valid, different, valid, valid))
+    monkeypatch.setattr(operator.getpass, "getpass", lambda prompt: next(answers))
+    assert operator.new_operator_password() == valid
+    output = capsys.readouterr().out
+    assert "no coinciden" in output
+    assert valid not in output
+    assert different not in output

@@ -57,7 +57,8 @@ solo después de guardar ambas copias de la clave y el root temporal.
 
 El script desbloquea, configura KV v2 f01 con CAS obligatorio, userpass de infraestructura
 para diego y AppRole f01-cli. Pide una contraseña de operador de al menos 16 caracteres,
-la confirma y comprueba acceso sin root. Solo tras verificar operador/AppRole/CAS
+la confirma y comprueba acceso sin root. Si es corta o no coincide, explica el motivo
+y permite reintentar sin abortar ni mostrar el valor. Solo tras verificar operador/AppRole/CAS
 revoca el root inicial y verifica que quedó inválido. Eliminar entonces su copia temporal.
 No imprime passwords de operador, tokens AppRole/SecretID ni respuestas de bootstrap adicionales.
 La clave mostrada sigue en el historial visual del terminal; cerrar esa sesión al terminar.

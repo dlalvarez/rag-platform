@@ -51,6 +51,20 @@ def tty_required() -> None:
         )
 
 
+def new_operator_password() -> str:
+    while True:
+        password = getpass.getpass(
+            "Nueva contraseña del operador diego (mínimo 16 caracteres; guardar en el gestor): "
+        )
+        if len(password) < 16:
+            print("La contraseña necesita al menos 16 caracteres. Inténtalo de nuevo.")
+            continue
+        if password != getpass.getpass("Repite la contraseña: "):
+            print("Las contraseñas no coinciden. Inténtalo de nuevo.")
+            continue
+        return password
+
+
 def login_operator(http: httpx.Client) -> str:
     password = getpass.getpass("Contraseña del operador diego: ")
     result = call(http, "POST", "auth/userpass/login/diego", payload={"password": password})
@@ -175,9 +189,7 @@ def bootstrap(http: httpx.Client, *, resume: bool) -> None:
             "token_explicit_max_ttl": "60m",
         },
     )
-    password = getpass.getpass("Nueva contraseña del operador diego (guardar en el gestor): ")
-    if len(password) < 16 or password != getpass.getpass("Repite la contraseña: "):
-        raise RuntimeError("Password confirmation failed; resume with the temporary root")
+    password = new_operator_password()
     call(
         http,
         "POST",
