@@ -65,7 +65,7 @@ def run() -> None:
         upgrade_control(connection, REPOSITORY)
         assert (
             connection.scalar(sa.text("SELECT version_num FROM alembic_version_control"))
-            == "f01_control_0002"
+            == "f01_control_0003"
         )
         assert set(sa.inspect(connection).get_table_names()) == set(Base.metadata.tables) | {
             "alembic_version_control"
@@ -100,6 +100,44 @@ def run() -> None:
             pass
         else:
             raise AssertionError("Catalog accepted invalid port")
+        # SQLite does not enforce VARCHAR lengths: prove a VALID location on PostgreSQL.
+        with connection.begin_nested() as reservation:
+            tenant_id, instance_id = uuid.uuid4(), uuid.uuid4()
+            connection.execute(
+                tenants.insert().values(id=tenant_id, desired_version="f01_tenant_0001")
+            )
+            connection.execute(
+                instances.insert().values(
+                    id=instance_id,
+                    host="reserved-" + instance_id.hex,
+                    port=5432,
+                    admin_secret_ref=uuid.uuid4(),
+                    admin_secret_version=1,
+                )
+            )
+            locations = Base.metadata.tables["db_locations"]
+            connection.execute(
+                locations.insert().values(
+                    tenant_id=tenant_id,
+                    instance_id=instance_id,
+                    db_name="rag_t_" + tenant_id.hex,
+                    app_secret_ref=uuid.uuid4(),
+                    app_secret_version=1,
+                    migrator_secret_ref=uuid.uuid4(),
+                    migrator_secret_version=1,
+                    readonly_secret_ref=uuid.uuid4(),
+                    readonly_secret_version=1,
+                    ssl_mode="verify-full",
+                )
+            )
+            assert (
+                connection.scalar(
+                    sa.select(locations.c.ssl_mode).where(locations.c.tenant_id == tenant_id)
+                )
+                == "verify-full"
+            )
+            reservation.rollback()
+        print("PASS: reserva válida con verify-full insertada y revertida en PostgreSQL.")
     # Wrong password and untrusted CA must fail rather than fall back to a local socket.
     for changed in (
         {"password": secrets.token_urlsafe(32)},

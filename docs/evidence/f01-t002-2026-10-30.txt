@@ -15,3 +15,12 @@ f00_compose.py run --rm smoke: PASS API, PostgreSQL/vector, S3 sintético.
 Prueba sql-check real con OpenBao: PENDIENTE del operador.
 No afirmar aislamiento SQL, colisión ni permisos reales como PASS sin esa ejecución.
 No declarar T002/AC/F01 completos ni autorizar merge por este log.
+
+Corrección posterior — RESERVE:
+Reporte del operador: dos intentos detenidos en RESERVE.
+Diagnóstico con rollback: DataError/SQLSTATE 22001; ningún valor secreto mostrado.
+Causa: ssl_mode VARCHAR(10), verify-full requiere 11 caracteres.
+Migración compatible f01_control_0003 aplicada y upgrade repetido.
+Regresión real: reserva válida verify-full insertada/revertida, PASS.
+Suite actual: 72 passed; Ruff/formato correctos.
+tools T002 reconstruida. Integración completa pendiente de repetir por operador.

@@ -74,14 +74,15 @@ revisión del PR T002; no merge automático.
 
 ## T002 — F01-R02 / AC-F01-01/02 parciales / P2 / V01-V02
 
-Código: provisioning/postgres, credentials y migrations; control 0002,
+Código: provisioning/postgres, credentials y migrations; control 0002/0003,
 tenant 0001, scripts/f01_sql_check.py. [Manual](../../ops/f01/T002.md).
 
 Resultados ejecutados en ragdev01:
-- 71 pruebas offline correctas; Ruff y formato correctos.
+- 72 pruebas offline correctas; Ruff y formato correctos.
 - Documentos SDD y pruebas negativas F00 correctos.
 - Imagen tools T002 construida con lock e imágenes fijadas, sin dependencias nuevas.
-- Control-check real: PostgreSQL/TLS, constraints y migración 0002 aplicada/repetida, PASS.
+- Control-check real: PostgreSQL/TLS, constraints y migración 0003 aplicada/repetida, PASS.
+- Regresión RESERVE real: ubicación válida con verify-full insertada/revertida, PASS.
 - HBA F01: cero errores de sintaxis, recarga aceptada, sin reinicio de servicios.
 - Regresión F00 real: API, PostgreSQL/vector y roundtrip S3 sintético, PASS.
 
@@ -89,3 +90,22 @@ Pendiente: sql-check real con sesión AppRole emitida desde la terminal del oper
 No se marcan PASS SQL A/B, readonly, SET ROLE ni colisión hasta ejecutar esa prueba.
 CI de este nuevo HEAD y revisión humana pendientes. No usar las 71 pruebas offline
 como sustituto de la integración. AC completos y casilla T002 siguen abiertos.
+
+
+### Corrección de RESERVE
+
+Diego reportó dos fallos RESERVE en la primera integración. Diagnóstico aislado con
+rollback, sin autenticación OpenBao ni lectura de secretos del proveedor:
+SQLAlchemy DataError, SQLSTATE 22001. La columna ssl_mode de la revisión inicial
+era VARCHAR(10), insuficiente para verify-full (11 caracteres). SQLite no limita
+VARCHAR(n), por eso las pruebas offline anteriores no detectaron el problema.
+
+La revisión control 0003 amplía esa columna sin modificar revisiones históricas,
+requisitos TLS ni valores existentes. El probe real ahora inserta una ubicación válida
+y la revierte en SAVEPOINT; este caso pasó después de migrar y repetir el upgrade.
+El comando administrativo informa SQLSTATE también para errores encapsulados por
+SQLAlchemy, sin mostrar SQL, parámetros o mensajes del servidor.
+
+72 pruebas offline correctas y control-check real PASS. Imagen tools reconstruida.
+La integración completa SQL A/B sigue pendiente de repetir por el operador;
+esta corrección no acredita su éxito ni cierra T002.

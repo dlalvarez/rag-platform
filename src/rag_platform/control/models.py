@@ -72,7 +72,7 @@ class DbLocation(Base):
     migrator_secret_version: Mapped[int]
     readonly_secret_ref: Mapped[uuid.UUID | None] = mapped_column(unique=True)
     readonly_secret_version: Mapped[int | None]
-    ssl_mode: Mapped[str] = mapped_column(sa.String(10), default="verify-full")
+    ssl_mode: Mapped[str] = mapped_column(sa.String(11), default="verify-full")
     __table_args__ = (
         sa.UniqueConstraint("instance_id", "db_name"),
         sa.CheckConstraint(

@@ -15,6 +15,7 @@ from f01_operator import (
     require_unsealed,
     tty_required,
 )
+from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import NullPool
 
@@ -292,8 +293,12 @@ def main():
                 call(http, "POST", "auth/token/revoke-self", operator, {})
     except SecretStoreError as error:
         raise SystemExit(f"F01-T002 {PHASE}: {error.code.value}; recursos conservados.") from None
-    except psycopg.Error as error:
-        state = error.sqlstate if error.sqlstate and error.sqlstate.isalnum() else "CONNECTION"
+    except (psycopg.Error, DBAPIError) as error:
+        original = error.orig if isinstance(error, DBAPIError) else error
+        code = getattr(original, "sqlstate", None)
+        state = (
+            code if isinstance(code, str) and len(code) == 5 and code.isalnum() else "CONNECTION"
+        )
         raise SystemExit(f"F01-T002 {PHASE}: SQLSTATE {state}; sin detalles sensibles.") from None
     except Exception:
         raise SystemExit(f"F01-T002 {PHASE}: operación detenida; sin detalles sensibles.") from None
