@@ -78,7 +78,7 @@ Código: provisioning/postgres, credentials y migrations; control 0002/0003,
 tenant 0001, scripts/f01_sql_check.py. [Manual](../../ops/f01/T002.md).
 
 Resultados ejecutados en ragdev01:
-- 81 pruebas offline correctas; Ruff y formato correctos.
+- 84 pruebas offline correctas; Ruff y formato correctos.
 - Documentos SDD y pruebas negativas F00 correctos.
 - Imagen tools T002 construida con lock e imágenes fijadas, sin dependencias nuevas.
 - Control-check real: PostgreSQL/TLS, constraints y migración 0003 aplicada/repetida, PASS.
@@ -156,3 +156,20 @@ detiene la prueba en vez de aceptarse.
 
 81 pruebas offline, incluidas siete variantes de rechazo/casos falsos; Ruff/formato
 y reconstrucción correctos. Integración completa pendiente de repetir por el operador.
+
+
+### Contexto de rol del probe vector
+
+El siguiente intento alcanzó SQL_PROBES y recibió 42501. La clasificación saneada
+de la última consulta indicó VECTOR_CAST / permiso de schema public. El migrator
+no hereda acceso de su owner: el probe estaba consultando vector antes de SET ROLE.
+
+Se corrigió el probe para asumir únicamente el owner propio y ejecutar RESET ROLE
+en finally. No se ampliaron grants. Prueba independiente contra PostgreSQL con los
+roles reales A/B, estableciendo SESSION AUTHORIZATION para cada rol:
+vector correcto en migrator/app/readonly y rol original restaurado, PASS.
+Esta comprobación administrativa no sustituye los accesos con credenciales reales
+de la batería completa del operador.
+
+84 pruebas offline, incluidas restauración de rol ante error; Ruff/formato correctos.
+Imagen reconstruida y ensayo completo solicitado al operador.

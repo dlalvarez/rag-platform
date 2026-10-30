@@ -50,3 +50,11 @@ rechazo de destino específico, incluso cuando libpq no entrega SQLSTATE.
 Errores de red/CA/password no cuentan como aislamiento.
 81 pruebas offline correctas; Ruff/formato y tools reconstruida.
 Ensayo completo del operador todavía pendiente.
+
+Corrección del probe vector:
+Reporte SQL_PROBES 42501; clasificación saneada VECTOR_CAST/SCHEMA_PUBLIC.
+El migrator requiere asumir su owner; no se ampliaron permisos.
+Probe independiente con SESSION AUTHORIZATION a roles reales A/B:
+PASS vector migrator/app/readonly y restauración de rol.
+84 pruebas offline correctas; tools reconstruida.
+Pendiente confirmación de la batería completa con credenciales reales.

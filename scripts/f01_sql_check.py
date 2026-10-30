@@ -94,6 +94,17 @@ def denied_statement(connection, statement, *identifiers):
     raise SqlProvisioningError("PRIVILEGE_ALLOWED")
 
 
+def vector_probe(connection, names, kind):
+    # Migrator has no inherited schema access; use only its own owner, then reset.
+    if kind == "migrator":
+        execute(connection, "SET ROLE {}", names.role("owner"))
+    try:
+        assert connection.execute("SELECT '[1,2,3]'::public.vector").fetchone()[0] is not None
+    finally:
+        if kind == "migrator":
+            connection.execute("RESET ROLE")
+
+
 def own_probes(target, names, credentials, other):
     with target.connect(names.database, credentials["migrator"]) as connection:
         execute(connection, "SET ROLE {}", names.role("owner"))
@@ -110,7 +121,7 @@ def own_probes(target, names, credentials, other):
             assert connection.execute(
                 "SELECT ssl FROM pg_stat_ssl WHERE pid=pg_backend_pid()"
             ).fetchone() == (True,)
-            assert connection.execute("SELECT '[1,2,3]'::public.vector").fetchone()[0] is not None
+            vector_probe(connection, names, kind)
             flags = role_record(connection, names.role(kind))
             assert flags[:6] == (False, False, False, False, False, True)
             for foreign in ("owner", "migrator", "app", "readonly"):

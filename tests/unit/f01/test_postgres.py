@@ -261,3 +261,34 @@ def test_startup_rejection_is_specific_when_libpq_has_no_sqlstate(
         module.expected_startup_rejection(error, "synthetic_b", "synthetic_app", state) is expected
     )
     assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("kind", ["migrator", "app", "readonly"])
+def test_vector_probe_restores_role_after_query_failure(monkeypatch, kind):
+    monkeypatch.syspath_prepend(str(ROOT / "scripts"))
+    spec = importlib.util.spec_from_file_location(
+        "f01_vector_cleanup", ROOT / "scripts/f01_sql_check.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    class Connection:
+        assumed = False
+        resets = 0
+
+        def execute(self, statement):
+            if not isinstance(statement, str):
+                assert kind == "migrator"
+                self.assumed = True
+            elif statement == "RESET ROLE":
+                self.assumed = False
+                self.resets += 1
+            else:
+                assert self.assumed == (kind == "migrator")
+                raise RuntimeError("Synthetic vector failure")
+
+    connection = Connection()
+    with pytest.raises(RuntimeError, match="Synthetic"):
+        module.vector_probe(connection, Names(uuid4()), kind)
+    assert connection.assumed is False
+    assert connection.resets == (1 if kind == "migrator" else 0)
