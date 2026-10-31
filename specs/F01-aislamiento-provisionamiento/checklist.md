@@ -1,6 +1,6 @@
 # Checklist F01 — aceptación pendiente
 
-**Estado:** T001 aceptada mediante PR #9; T002 aceptada mediante PR #10; T003 aceptada mediante PR #11; T004 aceptada mediante PR #12; T005 aceptada mediante PR #13; T006 en validación. Ningún AC F01 completo.
+**Estado:** T001 aceptada mediante PR #9; T002 aceptada mediante PR #10; T003 aceptada mediante PR #11; T004 aceptada mediante PR #12; T005 aceptada mediante PR #13; T006 aceptada mediante PR #14; T007 probada; revisión pendiente. Cierre de F01 pendiente.
 
 ## Antes de implementar
 
@@ -9,23 +9,27 @@
 - [x] Esquema de custodia de unseal aprobado por Diego el 2026-10-30: gestor de contraseñas y copia fuera de línea, fuera de ragdev01, Shamir 1/1.
 - [x] Diego confirmó preparados los destinos de custodia el 2026-10-30; bootstrap y custodia confirmados posteriormente por Diego.
 - [x] Diego confirmó credenciales custodiadas y bootstrap con operador limitado y root inicial revocado; no se solicitaron ni leyeron valores.
-- [ ] Perfil F01 separado, límites, TLS, bootstrap SQL y políticas de acceso revisados.
+- [x] Perfil F01 separado, límites, TLS, bootstrap SQL y políticas de acceso revisados.
 - [x] T001: SQLAlchemy 2.1.6/Alembic 1.20.1 fijados con hashes; psycopg/httpx conservados, sin upgrades ajenos. Las dependencias futuras se revisan en sus tareas.
 
 ## Pruebas obligatorias de F01
 
-- [ ] AC-F01-01: rag_control y dos BD tenant distintas, catálogo/migraciones coherentes.
-- [ ] AC-F01-02: SQL A↔B denegado con credenciales reales; sin superuser/roles cruzados.
-- [ ] AC-F01-03: objetos get/put/list A↔B y anónimo denegados; acceso propio permitido.
-- [ ] AC-F01-04: identidad/BD/bucket únicos tras reintentos y concurrencia.
-- [ ] AC-F01-05: fallo de bucket no publica READY, recuperación y recursos ajenos intactos.
-- [ ] AC-F01-06: dos endpoints PostgreSQL reales; pools/credenciales sin mezcla y con límites.
-- [ ] AC-F01-07: locks, versión real, migración repetida/fallida/reversible sin alterar otro tenant.
+Las casillas de pruebas registran resultados técnicos observados; no sustituyen la
+aceptación humana de T007/F01 ni la comprobación postmerge. CI del HEAD documental
+final se registra en el PR antes de solicitar revisión.
+
+- [x] AC-F01-01: rag_control y dos BD tenant distintas, catálogo/migraciones coherentes.
+- [x] AC-F01-02: SQL A↔B denegado con credenciales reales; sin superuser/roles cruzados.
+- [x] AC-F01-03: objetos get/put/list A↔B y anónimo denegados; acceso propio permitido.
+- [x] AC-F01-04: identidad/BD/bucket únicos tras reintentos y concurrencia.
+- [x] AC-F01-05: fallo de bucket no publica READY, recuperación y recursos ajenos intactos.
+- [x] AC-F01-06: dos endpoints PostgreSQL reales; pools/credenciales sin mezcla y con límites.
+- [x] AC-F01-07: locks, versión real, migración repetida/fallida/reversible sin alterar otro tenant.
 - [x] T001: OpenBao conserva canary tras restart/unseal; token inválido y caducado rechazados HTTP 403; sellado rechaza HTTP 503. Ejecución sensible por Diego.
-- [ ] Ningún secreto o contenido privado en Git, catálogo, argumentos, logs ni evidence.
-- [ ] TLS verificado, montaje real ext4, permisos y persistencia probados.
-- [ ] Pruebas offline/CI y regresión F00 exitosas; comandos, versiones y logs reales.
-- [ ] Limitaciones de MinIO, backup externo/restore, HA/PITR declaradas.
+- [x] Fuentes, proyección del catálogo y salidas/evidencias revisadas: sin valores secretos observados; entrada sensible solo en la terminal del operador.
+- [x] TLS verificado, montaje real ext4, permisos y persistencia probados.
+- [x] Pruebas offline/CI y regresión F00 exitosas; comandos, versiones y logs reales.
+- [x] Limitaciones de MinIO, backup externo/restore, HA/PITR declaradas.
 - [ ] Revisión humana del PR técnico, decisión de merge y comprobación postmerge.
 
 No marcar funcionalidades F02+ como probadas. Ver [matriz](plan.md) y [evidence](evidence.md).
@@ -66,7 +70,7 @@ F01 sigue abierta. No anticipar resolver/pools T005 ni pruebas ampliadas T006.
 Dos endpoints reales y batería ampliada de fase permanecen en T006.
 
 
-## Evidencia técnica T006, pendiente de aceptación
+## Evidencia técnica T006, aceptada
 
 - [x] Migración bajo lock en la misma conexión Alembic; versión/identidad comprobadas.
 - [x] Control refleja MIGRATING/FAILED/READY según resultado, sin head falso.
@@ -74,7 +78,25 @@ Dos endpoints reales y batería ampliada de fase permanecen en T006.
 - [x] Calibración PostgreSQL real: reversibilidad, rollback DDL y lock/timeout entre procesos.
 - [x] Dos baterías integrales con credenciales OpenBao y SQL/S3 en ambos sentidos.
 - [x] Pools A2→B2→A2, destino erróneo sin fallback y canary del otro tenant intacto.
-- [ ] Evidencia de fuentes y CI del HEAD T006.
-- [ ] Revisión/aceptación humana y postmerge T006.
+- [x] Evidencia de fuentes y CI del HEAD T006.
+- [x] Revisión/aceptación humana y postmerge T006.
 
 No se cierra F01; T007 y aceptación global permanecen pendientes.
+
+
+## T007 y cierre propuesto de F01
+
+Los apartados anteriores conservan el estado de cada tarea al documentarla; sus
+pendientes de tareas posteriores son históricos. Esta sección indica la puerta actual.
+
+- [x] CLI create/show/check/retry/migrate y proyección explícita sin valores secretos.
+- [x] Perfiles separados: administración de provisioning y consulta/check/migrate sin admin IAM.
+- [x] Tests offline de entrada, idempotencia, reintento y attach sin cambios de datos/servicios.
+- [x] Manual operativo, custodia/unseal y reversión conservadora; límites declarados.
+- [x] Clon limpio fijado al commit, tooling/imagen reproducidos y catálogo real consultado.
+- [x] Batería CLI real desde el clon con credenciales de operador en su terminal.
+- [x] Matriz de AC y fuentes/resultados finales completos; CI del HEAD final.
+- [ ] Revisión humana T007 y aceptación global F01.
+- [ ] Merge autorizado y postmerge correctos; registro de cierre sin iniciar F02.
+
+No ejecutar promoción a main, tag, despliegue ni fase posterior por este checklist.

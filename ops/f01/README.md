@@ -1,4 +1,11 @@
-# F01 T001 — catálogo y bootstrap OpenBao
+# F01 — índice operativo y registro histórico T001
+
+Para la operación actual usar [T007: CLI y manual](T007.md). T001–T006 están aceptadas
+mediante PR #9–#14. Este host ya está inicializado: no repetir init/resume ni preparación.
+Las instrucciones y pendientes T001 que siguen se conservan como registro histórico
+del bootstrap; el estado actual y puertas restantes figuran en T007 y evidence.
+
+## Registro original T001 — catálogo y bootstrap OpenBao
 
 Estado de ragdev01: bootstrap completado por Diego, root inicial revocado; recuperación
 tras reinicio y token caducado comprobados. No volver a ejecutar init/resume en ese host.

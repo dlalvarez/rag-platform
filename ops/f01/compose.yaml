@@ -129,7 +129,7 @@ services:
     memswap_limit: 512m
   tools:
     profiles: [tools]
-    image: rag-f01-tools:t006
+    image: rag-f01-tools:t007
     build:
       context: ../..
       dockerfile: ops/f01/tools.Dockerfile
@@ -235,6 +235,24 @@ services:
     profiles: [test]
     secrets: [postgres2_password]
     command: [python, scripts/f01_migration_calibrate.py]
+
+  admin:
+    extends: tools
+    profiles: [admin]
+    secrets: [control_migrator_password, storage_admin_user, storage_admin_password]
+    entrypoint: [python, scripts/f01_admin.py]
+    command: [--help]
+  admin-read:
+    extends: tools
+    profiles: [admin]
+    secrets: [control_migrator_password]
+    entrypoint: [python, scripts/f01_admin.py]
+    command: [--help]
+  cli-check:
+    extends: tools
+    profiles: [test]
+    secrets: [control_migrator_password, storage_admin_user, storage_admin_password]
+    command: [python, scripts/f01_cli_check.py]
 
 networks:
   f01:

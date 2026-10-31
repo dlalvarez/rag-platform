@@ -254,6 +254,28 @@ def prepare_second() -> None:
     print("T006 second instance paths/TLS/bootstrap prepared; existing services unchanged.")
 
 
+def attach_existing() -> None:
+    """Attach this clean checkout to already prepared dev paths; writes no secrets/data."""
+    validate_host()
+    for name in ("raft", "postgres", "tls", "config", "secrets"):
+        path = DATA / name
+        if not path.is_dir() or path.is_symlink():
+            raise ValueError("Existing prepared F01 paths required")
+    if ENV.exists() or ENV.is_symlink():
+        raise ValueError("Existing checkout configuration will not be overwritten")
+    old_umask = os.umask(0o077)
+    try:
+        with ENV.open("x") as output:
+            output.write(
+                f"RAG_F01_ROOT={DATA}\nRAG_F01_UID={os.getuid()}\nRAG_F01_GID={os.getgid()}\n"
+            )
+    finally:
+        os.umask(old_umask)
+    print(
+        "Checkout attached to existing F01 paths; no services started or data/credentials changed."
+    )
+
+
 def compose(arguments: list[str]) -> None:
     if not arguments or arguments[0] not in {
         "config",
@@ -293,7 +315,8 @@ def compose(arguments: list[str]) -> None:
         if path.is_symlink() or not path.is_file():
             raise ValueError("Missing or symlinked F01 input")
     if any(
-        arg in {"minio", "s3-check", "s3-compat", "saga-check", "isolation-check"}
+        arg
+        in {"minio", "s3-check", "s3-compat", "saga-check", "isolation-check", "admin", "cli-check"}
         for arg in arguments
     ):
         for name in ("minio", "tls/minio"):
@@ -354,6 +377,8 @@ def main() -> None:
             prepare_storage()
         elif args.command == ["prepare-second"]:
             prepare_second()
+        elif args.command == ["attach-existing"]:
+            attach_existing()
         else:
             compose(args.command)
     except (ValueError, OSError, subprocess.SubprocessError, KeyError):
