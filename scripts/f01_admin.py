@@ -28,6 +28,9 @@ from rag_platform.tenancy.resolver import TenantAccessError, control_engine
 
 ROOT = Path(__file__).resolve().parents[1]
 ACTOR = uuid5(UUID("310bf4df-1c98-4a15-a7a3-46d979774f17"), "openbao-userpass-diego")
+DELEGATED_ACTOR = uuid5(
+    UUID("310bf4df-1c98-4a15-a7a3-46d979774f17"), "openbao-approle-f01-cli-delegated"
+)
 STORAGE_ENDPOINT = "https://minio:9000"
 
 
@@ -72,8 +75,8 @@ def catalog():
 
 
 @contextmanager
-def operator_service(command):
-    # Caller must verify its TTY before reading any files or making requests.
+def operator_service(command, *, delegated=False):
+    # Interactive callers verify TTY; delegated callers require an explicit one-use grant.
     control = storage = None
     try:
         control = catalog()
@@ -86,6 +89,14 @@ def operator_service(command):
             )
         with client() as http:
             require_unsealed(http)
+            if delegated:
+                from f01_access import session
+
+                with session("cli-check") as (store, _role, _used):
+                    yield Administration(
+                        control, DELEGATED_ACTOR, store, CA, storage, ROOT, storage_admin=admin
+                    )
+                return
             operator = login_operator(http)
             try:
                 policies = call(http, "GET", "auth/token/lookup-self", operator)["data"]["policies"]

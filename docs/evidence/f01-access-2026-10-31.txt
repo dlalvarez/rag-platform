@@ -1,0 +1,30 @@
+F01 operations follow-up ACC-01..05 / approved delegated development
+Base: develop@14ad657dbf013d4f14f5e1edac8e5ec90f8d1b9c
+Branch: feat/F01-temporary-test-access
+Runtime sources: f01-access-source-sha256.txt, verified inside image/installed package.
+All edits, dependencies, builds and tests on ragdev01; no local environment.
+
+PASS: 180 offline tests; Ruff check/format; SDD docs; controlled F00 negative tests.
+PASS: Compose config; dedicated access-v1 tools build; existing t007 image retained.
+PASS: operator issued a one-use/10-minute SecretID from own SSH terminal.
+PASS T007: create/show/retry; fallo real sin READY y recuperación idempotente sin rotación.
+PASS T007: check y migrate repetidos sin admin IAM; desconocido rechazado sin alta.
+PASS T007: CLI en ambas instancias; versiones reales, salidas sin valores de secretos.
+PASS ACCESS CLI: batería delegada completada y token revocado verificado.
+PASS: token revoke-self followed by actual lookup-self HTTP 403, required before final PASS.
+PASS: scripts/installed package hashes match source manifest; grant file consumed/absent.
+PASS: 14 tenants (11 READY/2 PROVISIONING/1 FAILED); 12 operations (11 SUCCEEDED/1 FAILED).
+PASS: no primary tenant SQL sessions; previous PROVISIONING/FAILED states preserved.
+PASS: subsequent real F00 API/PostgreSQL/vector/synthetic S3 regression.
+
+No password/token/SecretID values received in chat or recorded in evidence.
+No changes to roles/policies/TTL, custody/unseal, persistent services, dependencies or schemas.
+No automatic renewal or permanent unattended access. A new batch needs a new handoff.
+Standalone verify command not run: available grant used for the complete real CLI battery.
+CI of published HEAD and postmerge recorded separately in the PR.
+
+Recuento conciliado: existe otra fixture CLI anterior a esta ejecución (20:30 UTC),
+con actor interactivo. La nueva fixture de esta batería tiene actor delegado distinto;
+ambas conservan seis pasos completos, intentos 2 y referencias SQL versión 1.
+La inspección inicial comparó con un recuento anterior y se corrigió tras revisar
+fechas y auditoría; no se borraron ni modificaron fixtures para ajustar los totales.

@@ -177,6 +177,25 @@ class OpenBaoSecretStore:
         except (KeyError, TypeError, ValueError):
             raise SecretStoreError(SecretErrorCode.INVALID) from None
 
+    def revoke(self) -> None:
+        """Revoke this bearer and verify rejection; always clear local session state."""
+        token = self._token
+        if token is None:
+            return
+        try:
+            headers = {"X-Vault-Token": token}
+            response = self._client.post("/v1/auth/token/revoke-self", headers=headers, json={})
+            if response.status_code not in (204, 403):
+                raise SecretStoreError(SecretErrorCode.UNAVAILABLE)
+            rejected = self._client.get("/v1/auth/token/lookup-self", headers=headers)
+            if rejected.status_code != 403:
+                raise SecretStoreError(SecretErrorCode.DENIED)
+        except httpx.HTTPError:
+            raise SecretStoreError(SecretErrorCode.UNAVAILABLE) from None
+        finally:
+            self._token = None
+            self._expires_at = 0.0
+
     def close(self) -> None:
         self._token = None
         self._expires_at = 0.0

@@ -254,6 +254,24 @@ services:
     secrets: [control_migrator_password, storage_admin_user, storage_admin_password]
     command: [python, scripts/f01_cli_check.py]
 
+  access:
+    extends: tools
+    profiles: [access]
+    image: rag-f01-tools:access-v1
+    entrypoint: [python, scripts/f01_access.py]
+    command: [--help]
+    volumes:
+      - type: bind
+        source: /run/user/${RAG_F01_UID:?Prepare F01}/rag-f01-access
+        target: /run/f01-access
+        bind: {create_host_path: false}
+
+  access-cli:
+    extends: access
+    profiles: [access]
+    secrets: [control_migrator_password, storage_admin_user, storage_admin_password]
+    command: [cli-check]
+
 networks:
   f01:
     internal: true

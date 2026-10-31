@@ -39,12 +39,17 @@ def credential_values(service, tenant):
     return tuple(service.store.read(ref) for ref in (*snap.sql_refs, snap.storage_ref))
 
 
-def main():
+def main(*, delegated=False):
     global PHASE
     logging.disable(logging.CRITICAL)
     try:
-        tty_required()
-        with operator_service("create") as service:
+        if not delegated:
+            tty_required()
+        with (
+            operator_service("create", delegated=True)
+            if delegated
+            else operator_service("create") as service
+        ):
             PHASE = "CATALOG_SHOW"
             instances = command(service, "show", "--instances")
             selected = {i["host"]: i["instance"] for i in instances}
@@ -142,10 +147,7 @@ def main():
                 "PASS T007: CLI en ambas instancias; versiones reales, "
                 "salidas sin valores de secretos."
             )
-            print(
-                "T007: batería CLI desde fuentes del clon limpio completada; "
-                "F01 pendiente de aceptación."
-            )
+            print("T007: batería CLI completada; esta ejecución no cambia la aceptación de fase.")
     except (AdminError, MigrationError, SagaError, TenantAccessError) as error:
         raise SystemExit(f"F01-T007 {PHASE}: {error.code}; recursos conservados.") from None
     except SecretStoreError as error:
