@@ -59,7 +59,7 @@ F01 sigue abierta. No anticipar resolver/pools T005 ni pruebas ampliadas T006.
 - [x] Resolver administrativo: READY/esquema compatible, destinos y refs sin password.
 - [x] QueuePool 2/0, hasta 4 engines, drenado y cota por proceso implementados.
 - [x] Pruebas offline de gates, saturación, ocho préstamos concurrentes, LRU y drenado.
-- [ ] Batería real: A→B→A, ocho conexiones, timeout/evicción, cambio de ref y token revocado.
+- [x] Batería real: A→B→A, ocho conexiones, timeout/evicción, cambio de ref y token revocado.
 - [ ] Evidencia de fuentes ejecutadas y CI del HEAD.
 - [ ] Revisión/aceptación humana y postmerge T005.
 

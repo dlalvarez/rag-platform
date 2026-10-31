@@ -336,7 +336,7 @@ F01-R03/R06 → AC-F01-06 parcial → P5 → T005 → V03/V06.
 QueuePool limitado, LRU y drenado implementados. Sin nuevas migraciones, dependencias,
 servicios o API pública. SecretStore se consulta en cada adquisición, sin caché de valores.
 Pruebas offline ejecutadas de gates, errores saneados, saturación, LRU, cambio de destino,
-drenado, rollback y ocho préstamos concurrentes. Batería real con OpenBao pendiente.
+drenado, rollback y ocho préstamos concurrentes. Batería real con OpenBao completada por Diego.
 No se acredita AC-F01-06 completo: dos instancias reales y pruebas ampliadas son T006.
 
 Validación inicial T005 en servidor: 138 pruebas offline correctas; Ruff/formato,
@@ -348,3 +348,42 @@ tenant reales mediante la factory ni caducidad/revocación con pool caliente.
 Regresión F00 real: API, PostgreSQL/vector y roundtrip S3 sintético, PASS.
 [Log inicial T005](../../docs/evidence/f01-t005-2026-10-31.txt) y
 [manifiesto de fuentes](../../docs/evidence/f01-t005-source-sha256.txt).
+
+
+## Entrega técnica T005 — revisión humana pendiente
+
+F01-R03/R06 → AC-F01-06 parcial → P5 → T005 → V03/V06.
+Código ejecutado: bd3145baf48971c40d77b1f3c9146d0de5ed537a,
+[PR #13](https://github.com/dlalvarez/rag-platform/pull/13).
+[Log saneado](../../docs/evidence/f01-t005-2026-10-31.txt) y
+[manifiesto](../../docs/evidence/f01-t005-source-sha256.txt).
+Las revisiones posteriores de documentación no cambian las fuentes ejecutadas.
+
+Diego ejecutó pool-check en su terminal e informó cuatro PASS:
+- A→B→A: destino, usuario y PID propios, TLS y flags sin privilegios globales.
+  Rollback al devolver; tenants desconocidos/FAILED y contexto/rol inválidos rechazados.
+- Ocho conexiones reales en cuatro engines; quinto engine rechazado por CAPACITY.
+  Tercera conexión de un pool agotó su timeout; devolución, evicción y cierre correctos.
+- Cambio temporal de referencia sintética con la misma credencial: nuevo engine/PID,
+  préstamo antiguo vivo hasta retornar y drenado posterior. La prueba comprobó
+  restauración de la referencia original. No cambia passwords SQL.
+- Token AppRole adicional revocado contra OpenBao real: siguiente adquisición rechazada,
+  incluso con pool caliente. Sin fallback ni revocación del operador o del token principal.
+
+La batería no crea tenants, bases, servicios ni migraciones. Conserva una referencia
+sintética adicional versión 1 en OpenBao, con la misma credencial, fuera del catálogo.
+No es rotación operativa ni limpieza. No se solicitaron secretos al chat.
+
+138 pruebas offline correctas; Ruff/formato, documentos, negativos y regresión F00 correctos.
+CI docs/lint/tests del código ejecutado pasó en push y PR. El HEAD documental final
+se comprueba por separado. Sin autenticación de usuario F02 ni segundo endpoint real:
+T006 mantiene la batería de dos instancias y migraciones ampliadas.
+Las conexiones ya prestadas no se revocan al retirar un engine; las cotas son por proceso.
+T005 pendiente de aceptación humana. F01 e Issue #7 permanecen abiertos.
+
+Corroboración independiente posterior: seis tenants conservados (tres READY,
+dos PROVISIONING y uno FAILED), cuatro operaciones (tres SUCCEEDED y una FAILED),
+tres destinos READY distintos y referencias SQL versión 1. Control sigue en 0004;
+no quedaron sesiones SQL tenant. Esta inspección verifica estructura/versiones y
+conteos; la igualdad con la referencia original fue comprobada por la batería del
+operador. Sin lectura de valores de OpenBao. Regresión F00 posterior completa, PASS.

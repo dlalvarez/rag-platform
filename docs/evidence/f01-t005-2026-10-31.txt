@@ -1,4 +1,4 @@
-F01 T005 / P5 / V03-V06 partial — pre-operator evidence
+F01 T005 / P5 / V03-V06 partial — operator integration evidence
 Base: develop@e46b46f822ca3726086d3b2ba3dc78b71db9ba3e
 Branch: feat/F01-T005-resolver-pools
 Development, builds and tests performed on the authorized development server.
@@ -8,8 +8,25 @@ PASS: 138 offline tests, including eight concurrent leases, capacity, timeout,
 PASS: Ruff check/format, SDD documentation and controlled F00 negative checks.
 PASS: real catalog: three distinct READY destinations; non-READY/unknown rejected
       before SecretStore reads; separate control pool budget.
-PENDING: real operator/OpenBao pool-check, final HEAD CI and human review.
+CODE TESTED: bd3145baf48971c40d77b1f3c9146d0de5ed537a
+PASS: CI docs/lint/tests at code HEAD, push and PR.
+OPERATOR REPORT:
+PASS T005: resolver READY; A→B→A sin mezcla, TLS/roles propios y rollback al devolver.
+PASS T005: 4 engines/8 conexiones; capacidad y timeout reales; evicción/cierre sin fugas.
+PASS T005: referencia nueva drena pool antiguo sin cortar préstamo; referencia original restaurada.
+PASS T005: token AppRole revocado rechazado con pool ya caliente; sin fallback.
+T005: sin nuevos tenants, sin rotación de contraseñas; dos instancias pendientes de T006.
+PENDING: final documentation HEAD CI and human review.
 No new migrations, services, dependencies or public API.
 No claims of two real PostgreSQL instances (T006), end-user authorization (F02)
 or complete F01 acceptance. No secret values included.
 PASS: F00 real API/PostgreSQL/vector/synthetic S3 regression.
+
+INDEPENDENT POST-BATTERY CHECK:
+PASS: 6 tenants unchanged (3 READY, 2 PROVISIONING, 1 FAILED).
+PASS: 4 saga operations unchanged (3 SUCCEEDED, 1 FAILED).
+PASS: SQL refs remain version 1; 3 READY catalog destinations distinct.
+PASS: no remaining tenant SQL sessions; control remains f01_control_0004.
+PASS: F00 real API/PostgreSQL/vector/synthetic S3 regression after the battery.
+Original reference restoration is asserted by operator battery; independent metadata
+check verifies current structure/versions/counts, without reading OpenBao values.

@@ -7,12 +7,14 @@ Rama feat/F01-T005-resolver-pools.
 
 T005 implementa P5/V03/V06 parcial: resolver interno, refs sin password y pools
 limitados por tenant/destino/rol/ref-versión. No AuthorizedTenantContext de F02.
-Batería real pendiente: pool-check, con contraseña del operador solo en su terminal.
+Batería real completada por Diego: cuatro PASS T005 mediante pool-check.
+Código probado: bd3145baf48971c40d77b1f3c9146d0de5ed537a; PR #13.
 Reutiliza fixtures READY T004; no nuevos tenants, servicios ni passwords SQL.
 Cambio temporal de referencia sintética se restaura en finally; conservar la referencia
 de prueba adicional en OpenBao. No convertir esto en rotación operativa o limpieza.
 
-Registrar resultado real, fuentes exactas y CI del HEAD. Presentar PR para revisión;
+Resultado y fuentes exactas registrados; 138 pruebas offline correctas.
+Comprobar CI del HEAD final y presentar PR para revisión;
 no fusionar hasta aprobación explícita. Tras merge autorizado verificar postmerge.
 Solo después de aceptar T005 y autorizar continuar: T006 conforme P6/V01–V07,
 incluida la segunda instancia real y migraciones coordinadas; no acreditarlas con mocks.
