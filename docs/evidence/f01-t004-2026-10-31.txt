@@ -1,0 +1,15 @@
+F01 T004 / P4 / V05 — evidence before operator integration
+Base: develop@4593f3832dd601c0d2ca7424281397622eac923a
+Branch: feat/F01-T004-provisioning-saga
+All development/builds/checks performed on the authorized development server.
+No operator password, OpenBao token, SQL password or secret value included.
+
+PASS: Ruff check and format.
+PASS: offline saga failure/retry/crash/ownership and uncertain final commit cases.
+PASS: control revision f01_control_0004 applied and repeated on PostgreSQL.
+PASS: real session advisory lock: second connection rejected, no open transaction,
+      release and reacquisition verified.
+PASS: F00 API/PostgreSQL/vector/synthetic S3 regression.
+PENDING: full T004 operator/OpenBao battery, CI at PR HEAD, human review.
+No claim of full T004 acceptance or F01 closure.
+See source-sha256 manifest for exact runtime sources.

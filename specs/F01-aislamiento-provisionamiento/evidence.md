@@ -1,8 +1,8 @@
-# Evidencia F01 — T001/T002 aceptadas; T003 ensayada, revisión pendiente
+# Evidencia F01 — T001–T003 aceptadas; T004 en validación
 
 **Estado:** T001 aceptada, con checks del HEAD y postmerge correctos, integrada
 mediante PR #9 en develop@a1568375164627f4be2b10d0cb9285fab92ce685.
-T002 aceptada e integrada mediante PR #10; T003 con batería real completa, revisión pendiente.
+T002/T003 aceptadas e integradas mediante PR #10/#11; T004 en validación.
 F01 e Issue #7 permanecen abiertos. Ningún AC-F01-01..07 completo.
 
 Plan ratificado: [PR #8](https://github.com/dlalvarez/rag-platform/pull/8),
@@ -50,7 +50,7 @@ y rechazos con token ficticio; no recibió valores.
 | AC-F01-06 | SecretStore/refs probados | Resolver, pools y dos endpoints reales |
 | AC-F01-07 | Control y contrato tenant inicial repetibles | Locks, fallos y coordinación de migraciones T006 |
 
-T002 aceptada mediante PR #10; T003 ensayada; T004–T007 no implementadas. No users/memberships/jobs, OIDC/F02, alta HTTP,
+T001–T003 aceptadas; T004 en validación; T005–T007 no implementadas. No users/memberships/jobs, OIDC/F02, alta HTTP,
 documentos, chunks, embeddings de negocio, RAG o chat.
 
 ## CI, revisión y límites
@@ -266,3 +266,20 @@ Código T003 probado y manifiesto verificado:
 ba91e1fb2fc590cf4c7e81794409855e2d3f6694,
 [PR #11](https://github.com/dlalvarez/rag-platform/pull/11).
 Las revisiones posteriores de documentación no alteran las fuentes ejecutadas.
+
+
+## T003 aceptada y T004 en validación
+
+T003 aceptada e integrada en develop@4593f3832dd601c0d2ca7424281397622eac923a.
+[cierre PR #11](https://github.com/dlalvarez/rag-platform/pull/11#issuecomment-6535895042).
+Sus anotaciones de revisión pendiente anteriores describen el estado previo a esa aceptación.
+
+F01-R05 → AC-F01-04/05 → P4 → T004 → V05.
+[Runbook T004](../../ops/f01/T004.md). Registro persistente, locks de sesión,
+propiedad por operación y compensación conservadora implementados.
+Revisión control 0004 aplicada y repetida en PostgreSQL real, PASS.
+Probe real de lock: segunda conexión rechazada, sin transacción abierta y liberación, PASS.
+F00: API, PostgreSQL/vector y roundtrip S3 sintético, PASS.
+Pruebas offline de fallos/reintentos/códigos cerrados correctas.
+La batería con credenciales reales está solicitada al operador; no se acredita
+todavía recuperación integral ni se marca T004 aceptada. CI pendiente del HEAD del PR.

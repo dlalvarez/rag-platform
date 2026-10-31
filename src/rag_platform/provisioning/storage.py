@@ -34,9 +34,12 @@ class StorageError(RuntimeError):
 @dataclass(frozen=True)
 class StorageNames:
     tenant: UUID
+    operation: UUID | None = None
 
     def __post_init__(self):
-        if not isinstance(self.tenant, UUID):
+        if not isinstance(self.tenant, UUID) or (
+            self.operation is not None and not isinstance(self.operation, UUID)
+        ):
             raise ValueError("Internal UUID required")
 
     @property
@@ -56,6 +59,8 @@ def tenant_policy(names: StorageNames, ref: UUID):
     if not isinstance(ref, UUID):
         raise ValueError("Opaque secret reference required")
     marker = "Tenant" + names.tenant.hex + "Ref" + ref.hex
+    if names.operation:
+        marker += "Op" + names.operation.hex
     arn = "arn:aws:s3:::" + names.bucket
     return {
         "Version": "2012-10-17",
@@ -171,7 +176,7 @@ class StorageProvisioner:
         except (TypeError, ValueError):
             raise StorageError("STORAGE_INVALID") from None
 
-    def inspect(self, names: StorageNames, ref: UUID):
+    def inspect(self, names: StorageNames, ref: UUID, *, allow_disabled=False):
         """Read-only ownership checks. A matching name never permits adoption."""
         try:
             bucket_exists = self.s3.bucket_exists(names.bucket)
@@ -186,7 +191,12 @@ class StorageProvisioner:
                 if (
                     policy is None
                     or user.get("policyName") != names.policy
-                    or user.get("status") not in ("enabled", "on")
+                    or user.get("status")
+                    not in (
+                        ("enabled", "on", "disabled", "off")
+                        if allow_disabled and names.operation
+                        else ("enabled", "on")
+                    )
                     or user.get("memberOf")
                 ):
                     raise StorageError()
@@ -196,6 +206,8 @@ class StorageProvisioner:
                     "rag-platform-secret-ref": str(ref),
                     "rag-platform-contract": "f01-t003-v1",
                 }
+                if names.operation:
+                    expected_tags["rag-platform-operation"] = str(names.operation)
                 if dict(self.s3.get_bucket_tags(names.bucket) or {}) != expected_tags:
                     raise StorageError()
                 self.assert_private(names)
@@ -222,7 +234,7 @@ class StorageProvisioner:
         if credential.username != names.user:
             raise StorageError()
         try:
-            bucket, policy, user = self.inspect(names, ref)
+            bucket, policy, user = self.inspect(names, ref, allow_disabled=bool(names.operation))
             if not bucket:
                 self.s3.make_bucket(names.bucket, location=REGION)
                 tags = Tags.new_bucket_tags()
@@ -233,6 +245,8 @@ class StorageProvisioner:
                         "rag-platform-contract": "f01-t003-v1",
                     }
                 )
+                if names.operation:
+                    tags["rag-platform-operation"] = str(names.operation)
                 self.s3.set_bucket_tags(names.bucket, tags)
             self.assert_private(names)
             if not policy:
@@ -240,6 +254,8 @@ class StorageProvisioner:
             if not user:
                 self.admin.user_add(names.user, credential.password)
                 self.admin.attach_policy([names.policy], user=names.user)
+            if user and names.operation:
+                self.admin.user_enable(names.user)
             if self.inspect(names, ref) != (True, True, True):
                 raise StorageError()
         except MinioAdminException as error:
@@ -250,3 +266,15 @@ class StorageProvisioner:
             ) from None
         except (HTTPError, OSError):
             raise StorageError("STORAGE_UNAVAILABLE") from None
+
+    def withdraw(self, names: StorageNames, ref: UUID):
+        """No deletion, password reset or adoption of an unmarked principal."""
+        if names.operation is None:
+            raise StorageError()
+        bucket, _, user = self.inspect(names, ref, allow_disabled=True)
+        if user:
+            self.admin.user_disable(names.user)
+        return {
+            "STORAGE_BUCKET": "PRESERVED" if bucket else "ABSENT",
+            "STORAGE_USER": "ACCESS_REVOKED" if user else "ABSENT",
+        }

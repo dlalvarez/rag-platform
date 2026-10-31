@@ -74,7 +74,7 @@ def run() -> None:
         upgrade_control(connection, REPOSITORY)
         assert (
             connection.scalar(sa.text("SELECT version_num FROM alembic_version_control"))
-            == "f01_control_0003"
+            == "f01_control_0004"
         )
         assert set(sa.inspect(connection).get_table_names()) == set(Base.metadata.tables) | {
             "alembic_version_control"
