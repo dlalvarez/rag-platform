@@ -24,3 +24,10 @@ Sin migración de datos ni cambio de API. Si el flujo no resulta viable, propone
 ## Aplicación verificada (2026-10-30)
 
 Develop creada desde 53004ec218074b0fbf36359e437f22bee3f3924a. Ruleset activo 26218280, targets main/develop, PR obligatorio, conversaciones resueltas, docs (GitHub Actions), bloqueo de borrado y force-push. Sin bypass; 0 aprobaciones externas requeridas al existir un único responsable. Diego revisa y autoriza cada merge. Registro: https://github.com/dlalvarez/rag-platform/issues/4#issuecomment-6527049209. Los párrafos anteriores describen la propuesta histórica; la política efectiva es este registro y docs/14-release-and-governance.md.
+
+
+## Actualización de autorización (2026-10-31)
+
+La exigencia de confirmación individual por merge queda sustituida, para PR elegibles
+hacia develop, por la delegación acotada aprobada en [ADR-0007](0007-delegated-development-review.md).
+Se conservan las demás decisiones; los párrafos previos describen la política anterior.

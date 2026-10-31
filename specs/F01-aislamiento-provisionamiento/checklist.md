@@ -1,6 +1,6 @@
-# Checklist F01 — aceptación pendiente
+# Checklist F01 — aceptada
 
-**Estado:** T001 aceptada mediante PR #9; T002 aceptada mediante PR #10; T003 aceptada mediante PR #11; T004 aceptada mediante PR #12; T005 aceptada mediante PR #13; T006 aceptada mediante PR #14; T007 probada; revisión pendiente. Cierre de F01 pendiente.
+**Estado:** T001 aceptada mediante PR #9; T002 aceptada mediante PR #10; T003 aceptada mediante PR #11; T004 aceptada mediante PR #12; T005 aceptada mediante PR #13; T006 aceptada mediante PR #14; T007 aceptada e integrada mediante PR #15. F01 aceptada y cerrada.
 
 ## Antes de implementar
 
@@ -30,7 +30,7 @@ final se registra en el PR antes de solicitar revisión.
 - [x] TLS verificado, montaje real ext4, permisos y persistencia probados.
 - [x] Pruebas offline/CI y regresión F00 exitosas; comandos, versiones y logs reales.
 - [x] Limitaciones de MinIO, backup externo/restore, HA/PITR declaradas.
-- [ ] Revisión humana del PR técnico, decisión de merge y comprobación postmerge.
+- [x] Revisión humana del PR técnico, decisión de merge y comprobación postmerge.
 
 No marcar funcionalidades F02+ como probadas. Ver [matriz](plan.md) y [evidence](evidence.md).
 
@@ -96,7 +96,12 @@ pendientes de tareas posteriores son históricos. Esta sección indica la puerta
 - [x] Clon limpio fijado al commit, tooling/imagen reproducidos y catálogo real consultado.
 - [x] Batería CLI real desde el clon con credenciales de operador en su terminal.
 - [x] Matriz de AC y fuentes/resultados finales completos; CI del HEAD final.
-- [ ] Revisión humana T007 y aceptación global F01.
-- [ ] Merge autorizado y postmerge correctos; registro de cierre sin iniciar F02.
+- [x] Revisión humana T007 y aceptación global F01.
+- [x] Merge autorizado y postmerge correctos; registro de cierre sin iniciar F02.
 
 No ejecutar promoción a main, tag, despliegue ni fase posterior por este checklist.
+
+
+Estado final: Diego aprobó T007 y F01; develop@585c342fe4a87d0d2b5a071b8114c4cb075ce5be.
+[Registro de cierre](https://github.com/dlalvarez/rag-platform/pull/15#issuecomment-6548809463). Tests/CI y regresión F00 postmerge correctos.
+Las anotaciones de puertas pendientes anteriores son históricas. F02 no iniciada.

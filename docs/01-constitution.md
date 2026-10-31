@@ -1,6 +1,6 @@
 # 01 — Constitución del proyecto (NORMATIVA)
 
-**Versión:** 1.0 propuesta para ratificación. **Fecha:** 2026-10-28. **Estado:** rector desde arranque, sujeto solo al proceso formal de ADR.
+**Versión:** 1.1. **Fecha:** 2026-10-31. **Estado:** rector; P10 actualizado por autorización expresa de Diego en ADR-0007. P01–P09 y P11–P14 conservan su texto original.
 
 **P01. Aislamiento fuerte desde el día 1 — NO NEGOCIABLE.** Cada tenant tiene su propia base PostgreSQL y sus propias tablas, vectores e índices. `rag_control` no contiene contenido privado de documentos/conversaciones. Ningún desarrollo presupone tablas compartidas entre tenants.
 
@@ -20,7 +20,7 @@
 
 **P09. Operabilidad y reversibilidad.** Aprovisionamiento/migración por tenant, backups verificados, restauración ensayada, observabilidad por tenant y procedimientos para falla parcial. Una BD aislada no implica PITR independiente si comparte instancia.
 
-**P10. SDD con evidencia.** Sin implementación sin spec aprobada; plan, tareas, tests y checklist vinculados a requisitos. Cada PR corresponde a alcance acotado y verificable; Codex implementa, el humano aprueba arquitectura y merges.
+**P10. SDD con evidencia.** Sin implementación sin spec aprobada; plan, tareas, tests y checklist vinculados a requisitos. Cada PR corresponde a alcance acotado y verificable; Codex implementa; el humano aprueba arquitectura y autoriza merges, individualmente o mediante delegación previa y acotada conforme al ADR-0007.
 
 **P11. Compatibilidad evolutiva sin promesas ingenuas.** No se presume trivial mover datos entre topologías, reindexar modelos, dividir monolitos o migrar infraestructura. Operaciones y datos versionados; ADR obligatorio para cambios estructurales.
 

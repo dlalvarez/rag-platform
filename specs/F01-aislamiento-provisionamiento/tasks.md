@@ -2,8 +2,8 @@
 
 **Estado:** ratificadas en PR #8; T001 aceptada e integrada en develop mediante
 [PR #9](https://github.com/dlalvarez/rag-platform/pull/9), con checks y postmerge correctos.
-T002 aceptada e integrada mediante PR #10; T003 aceptada e integrada mediante PR #11. T004 aceptada e integrada mediante PR #12; T005 aceptada e integrada mediante PR #13; T006 aceptada e integrada mediante PR #14; T007 probada; revisión pendiente.
-No se cierra F01.
+T002 aceptada e integrada mediante PR #10; T003 aceptada e integrada mediante PR #11. T004 aceptada e integrada mediante PR #12; T005 aceptada e integrada mediante PR #13; T006 aceptada e integrada mediante PR #14; T007 aceptada e integrada mediante PR #15.
+F01 cerrada tras aprobación y postmerge de PR #15.
 Referencias: [plan P1–P7 y pruebas V01–V07](plan.md), [ratificación](ratification.md).
 Se conservan los IDs T001–T007 originales. Orden: T001 → T002/T003 → T004 → T005 → T006 → T007;
 cada tarea comienza solo después de ratificar la planificación y sus decisiones.
@@ -14,7 +14,7 @@ cada tarea comienza solo después de ratificar la planificación y sus decisione
 - [x] T004 [F01-R05; AC-F01-04/05; P4; V05] Implementar saga y journal de pasos con lock/idempotencia, CAS de secretos y errores cerrados. Inyectar fallo de bucket, caída después de efecto externo y reintento concurrente. Demostrar un único tenant/BD/bucket, no READY parcial, recuperación y conservación de recursos ajenos; ninguna eliminación automática de BD/bucket con datos.
 - [x] T005 [F01-R06/R03; AC-F01-06; P5; V03/V06] Resolver administrativo interno y factory por tenant/instancia/rol/ref-versión. Probar límite por proceso, saturación, timeout, drenado/evicción y cambio A→B→A sin conexión/credencial compartida. Destino desconocido/tenant no READY falla cerrado; no simular autorización de usuario ni implementar F02.
 - [x] T006 [F01-R01..07; AC-F01-01..07; P6; V01..V07] Completar pista tenant y locks/versionado/migración canary. Ejecutar dos baterías reales en ragdev01: dos tenants en una instancia y fixtures independientes en dos instancias. Probar ambas direcciones SQL/S3, aislamiento de pools, fallo/reintento/migración concurrente y revisión reversible. Mantener F00 sin regresión; registrar los comandos y resultados reales.
-- [ ] T007 [F01-R01..07; AC-F01-01..07; P7; V01..V07] CLI create/show/check/retry/migrate, runbook de bootstrap/TLS/unseal y rollback no destructivo. Ejecutar clon limpio y CI offline, completar matriz evidence/checklist y abrir PR hacia develop. No exportar secretos, no alta HTTP pública, no merge automático ni F02+.
+- [x] T007 [F01-R01..07; AC-F01-01..07; P7; V01..V07] CLI create/show/check/retry/migrate, runbook de bootstrap/TLS/unseal y rollback no destructivo. Ejecutar clon limpio y CI offline, completar matriz evidence/checklist y abrir PR hacia develop. No exportar secretos, no alta HTTP pública, no merge automático ni F02+.
 
 T002/T003 pueden dividirse en PR pequeños manteniendo las puertas y dependencias;
 esta lista no autoriza ejecución paralela ni agentes adicionales. Ninguna casilla
@@ -26,5 +26,9 @@ T003 aceptada: [cierre PR #11](https://github.com/dlalvarez/rag-platform/pull/11
 T004 aceptada: [cierre PR #12](https://github.com/dlalvarez/rag-platform/pull/12#issuecomment-6544965980).
 T005 aceptada: [cierre PR #13](https://github.com/dlalvarez/rag-platform/pull/13#issuecomment-6547808923).
 T006 aceptada: [cierre PR #14](https://github.com/dlalvarez/rag-platform/pull/14#issuecomment-6548128680).
-T007 implementada; clon limpio y batería CLI completados. Revisión pendiente en PR #15.
-No cerrar F01 ni iniciar F02 todavía.
+T007 aceptada e integrada en PR #15; F01 cerrada. F02 no iniciada.
+
+
+Estado final: Diego aprobó T007 y F01; develop@585c342fe4a87d0d2b5a071b8114c4cb075ce5be.
+[Registro de cierre](https://github.com/dlalvarez/rag-platform/pull/15#issuecomment-6548809463). Tests/CI y regresión F00 postmerge correctos.
+Las anotaciones de puertas pendientes anteriores son históricas. F02 no iniciada.

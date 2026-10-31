@@ -9,7 +9,9 @@ estable; feat/Fxx-* contiene cambios acotados de una fase. Referencia: [ADR-0006
 - Las ramas de implementación parten de develop y abren PR hacia develop.
 - Los hitos aprobados se promueven mediante PR develop → main.
 - Todo PR referencia spec, plan, tareas, requisitos/AC y evidencia real. Diego es el único
-  responsable y revisa/autoriza explícitamente cada merge; Codex no fusiona por iniciativa propia.
+  responsable. Desde la delegación del 2026-10-31, Codex puede revisar y fusionar PR
+  hacia develop dentro de tareas/specs expresamente autorizadas, con evidencia completa,
+  checks correctos y sin conflictos pendientes. Ver [ADR-0007](adr/0007-delegated-development-review.md).
 - No hay auto-merge, despliegue ni promoción automática de ambientes.
 - Los cambios documentales también pasan por PR. Cambios rectores requieren ADR y autorización.
 
@@ -23,7 +25,8 @@ main-develop-pr-quality, activo para los nombres exactos main y develop:
 PR obligatorio, conversaciones resueltas, checks docs/lint/tests con fuente GitHub Actions,
 bloqueo de borrado y force-push. Lista de bypass vacía, también para administradores.
 Se exigen 0 aprobaciones externas porque solo hay un responsable; esto no elimina
-su revisión ni convierte a Codex en revisor independiente.
+la responsabilidad de Diego ni convierte la revisión de Codex en revisión independiente.
+La autorización previa acotada sustituye la confirmación repetida en cada PR elegible.
 [Registro de aplicación](https://github.com/dlalvarez/rag-platform/issues/4#issuecomment-6527049209).
 
 Lint y tests se incorporaron después de verificar las ejecuciones del PR #6:
@@ -40,3 +43,16 @@ No declarar terminado un módulo con tests omitidos, interfaces ficticias o simu
 que no se puedan ejecutar. Un placeholder es únicamente el entregable limitado de F00;
 no acredita funcionalidades de fases posteriores. Las evidencias y la revisión humana
 determinan el cierre de cada fase.
+
+## Delegación de revisión e integración
+
+Diego autorizó en conversación el 2026-10-31 que Codex revise e integre las entregas
+dentro del alcance aprobado, sin pedir una nueva confirmación en cada PR.
+Es ejecución delegada, no aprobación de GitHub emitida en nombre de Diego.
+Se mantienen PR, checks docs/lint/tests, trazabilidad, revisión del diff, registro del
+motivo y comprobación postmerge. No habilitar auto-merge ni cambiar el ruleset/bypass.
+
+Decisiones nuevas de arquitectura/contratos/tenancy, ampliación de alcance o fase,
+promoción a main/tag, producción y operaciones destructivas conservan decisión expresa.
+Un fallo o evidencia incompleta bloquea la integración. Diego puede revocar la delegación.
+No se atribuye revisión independiente a la revisión del mismo agente.
