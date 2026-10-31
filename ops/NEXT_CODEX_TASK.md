@@ -1,23 +1,20 @@
-# Siguiente tarea Codex — validar T007 y proponer cierre F01
+# Siguiente tarea Codex — revisión T007 y aceptación técnica F01
 
-T001–T006 aceptadas mediante PR #9–#14.
-Base T007: develop@bd79a4d12180df9d8af5fca9a7d848a8fd070020.
-Rama feat/F01-T007-admin-cli.
-[Manual](f01/T007.md), [evidence](../specs/F01-aislamiento-provisionamiento/evidence.md).
+T001–T006 aceptadas mediante PR #9–#14. PR #15 propone T007 hacia develop.
+[Manual](f01/T007.md), [evidence y matriz AC](../specs/F01-aislamiento-provisionamiento/evidence.md).
 
-CLI create/show/check/retry/migrate implementada. 152 pruebas offline y show real correctos.
-Clon limpio validado en /home/diego/proyectos/rag-platform-t007-clean-b60b912b,
-commit b60b912ba195779e8e5fd340331dfd649c85403d. uv frozen con Python del servidor,
-152 tests/docs/lint/negativos, attach-existing e imagen construida desde esas fuentes correctos.
-No copiar secretos/.venv/datos ni preparar/reiniciar servicios en el clon.
-Pendiente cli-check desde ese clon en la terminal del operador, con una única autenticación OpenBao.
-Registrar solo PASS/códigos y fuente exacta, no credenciales.
+CLI create/show/check/retry/migrate completada. Clon limpio fijado en
+/home/diego/proyectos/rag-platform-t007-clean-b60b912b,
+commit b60b912ba195779e8e5fd340331dfd649c85403d.
+152 tests, tooling frozen, imagen/fuentes verificadas y batería de operador: tres PASS.
+Corroboración de metadatos y regresión F00 posterior correctas.
+No repetir ensayos ni pedir contraseñas para registrar estos resultados.
 
-Completar matriz de AC/checklist/evidencias con resultados reales y CI del HEAD final.
-Presentar PR hacia develop para revisión T007 y propuesta de aceptación global F01.
-No fusionar ni cerrar Issue #7 antes de aprobación explícita; verificar postmerge.
-Main/tag requieren decisión y PR separados. No iniciar F02 por iniciativa propia.
+Comprobar CI del HEAD final y presentar revisión de PR #15 y aceptación técnica de F01.
+Esperar aprobación explícita antes de merge. Después de autorización: integrar en
+develop, verificar checks/postmerge y registrar aceptación y cierre de Issue #7.
+Mantener separada cualquier decisión de promoción develop→main, tag o inicio de F02.
 
-Conservar F00, datos F01, fixtures/canaries y conflictos ajenos.
-No reinicializar OpenBao, regenerar secretos ni borrar bases/buckets.
+Conservar el clon fijo como evidencia y los datos/fixtures/canaries/conflictos existentes.
+No reinicializar OpenBao ni regenerar secretos ni borrar bases/buckets.
 Desarrollo y pruebas exclusivamente en ragdev01. Backup/restore/HA/PITR no acreditados.

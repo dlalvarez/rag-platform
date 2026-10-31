@@ -2,7 +2,7 @@
 
 **Estado:** ratificadas en PR #8; T001 aceptada e integrada en develop mediante
 [PR #9](https://github.com/dlalvarez/rag-platform/pull/9), con checks y postmerge correctos.
-T002 aceptada e integrada mediante PR #10; T003 aceptada e integrada mediante PR #11. T004 aceptada e integrada mediante PR #12; T005 aceptada e integrada mediante PR #13; T006 aceptada e integrada mediante PR #14; T007 en validación.
+T002 aceptada e integrada mediante PR #10; T003 aceptada e integrada mediante PR #11. T004 aceptada e integrada mediante PR #12; T005 aceptada e integrada mediante PR #13; T006 aceptada e integrada mediante PR #14; T007 probada; revisión pendiente.
 No se cierra F01.
 Referencias: [plan P1–P7 y pruebas V01–V07](plan.md), [ratificación](ratification.md).
 Se conservan los IDs T001–T007 originales. Orden: T001 → T002/T003 → T004 → T005 → T006 → T007;
@@ -26,5 +26,5 @@ T003 aceptada: [cierre PR #11](https://github.com/dlalvarez/rag-platform/pull/11
 T004 aceptada: [cierre PR #12](https://github.com/dlalvarez/rag-platform/pull/12#issuecomment-6544965980).
 T005 aceptada: [cierre PR #13](https://github.com/dlalvarez/rag-platform/pull/13#issuecomment-6547808923).
 T006 aceptada: [cierre PR #14](https://github.com/dlalvarez/rag-platform/pull/14#issuecomment-6548128680).
-T007 implementada y clon limpio validado; batería CLI y revisión pendientes en PR #15.
+T007 implementada; clon limpio y batería CLI completados. Revisión pendiente en PR #15.
 No cerrar F01 ni iniciar F02 todavía.

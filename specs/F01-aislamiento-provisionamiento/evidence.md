@@ -1,9 +1,12 @@
-# Evidencia F01 — T001–T006 aceptadas; T007 en validación
+# Evidencia F01 — pruebas T007 completadas; aceptación de fase pendiente
 
-**Estado:** T001 aceptada, con checks del HEAD y postmerge correctos, integrada
-mediante PR #9 en develop@a1568375164627f4be2b10d0cb9285fab92ce685.
-T002/T003 aceptadas e integradas mediante PR #10/#11; T004 en validación.
-F01 e Issue #7 permanecen abiertos. Ningún AC-F01-01..07 completo.
+**Estado actual:** T001–T006 aceptadas e integradas mediante PR #9–#14.
+T007 probada desde el clon limpio, pendiente de revisión en PR #15.
+Las pruebas técnicas AC-F01-01..07 están cubiertas por la matriz de cierre.
+F01 e Issue #7 permanecen abiertos hasta aceptación y postmerge.
+
+El registro inicial y las secciones anteriores al cierre T007 conservan la cronología;
+sus menciones de tareas posteriores pendientes son históricas.
 
 Plan ratificado: [PR #8](https://github.com/dlalvarez/rag-platform/pull/8),
 develop@f2c74400d2cafb5fce065b6eb0db23243731f8cf.
@@ -489,24 +492,24 @@ sin credencial de administración IAM. No migraciones o dependencias nuevas.
 152 pruebas offline correctas; ayuda y show --instances reales correctos.
 Clon limpio, batería CLI y aceptación global F01 siguen pendientes.
 
-## Matriz de cierre propuesta — completar validación T007 antes de aceptar
+## Matriz de cierre técnico propuesto — aceptación humana pendiente
 
 | AC | Requisito/plan/pruebas reales | Evidencia |
 |---|---|---|
 | AC-F01-01 | R01/R02 → P1/P2/P6 → V01: control y bases distintas, contrato/migraciones reales | T001/T002/T006 |
 | AC-F01-02 | R02 → P2/P6 → V02: SQL propio, CONNECT/SET ROLE denegados, roles limitados; auth separada entre nodos | T002/T006 |
 | AC-F01-03 | R04 → P3/P6 → V04: S3 propio, cruces/anónimo/admin denegados | T003/T006 |
-| AC-F01-04 | R05 → P4/P6 → V05: repetición, caída entre efecto/journal, concurrencia sin duplicados | T004/T006; CLI T007 pendiente |
-| AC-F01-05 | R05 → P4/P6 → V05: fallo bucket sin READY, recuperación y recurso ajeno preservado | T004/T006; CLI T007 pendiente |
+| AC-F01-04 | R05 → P4/P6 → V05: repetición, caída entre efecto/journal, concurrencia sin duplicados | T004/T006/T007 |
+| AC-F01-05 | R05 → P4/P6 → V05: fallo bucket sin READY, recuperación y recurso ajeno preservado | T004/T006/T007 |
 | AC-F01-06 | R03/R06 → P5/P6 → V03/V06: dos nodos, A2→B2→A2, límite/timeout/drenado y sin fallback | T005/T006 |
-| AC-F01-07 | R07 → P6 → V07: lock misma conexión, versión real, fallo/rollback y otro tenant intacto | T006; CLI migrate T007 pendiente |
+| AC-F01-07 | R07 → P6 → V07: lock misma conexión, versión real, fallo/rollback y otro tenant intacto | T006/T007 |
 
 Los logs por tarea y manifiestos versionados anteriores identifican sus fuentes/comandos.
 La matriz no declara HA/restore/producción ni funcionalidades F02+. El cierre de F01
-requiere completar T007 y aceptación humana, además de estos resultados técnicos.
+requiere aceptación humana T007/F01 y postmerge, además de estos resultados técnicos.
 
 
-## T007 — clon limpio comprobado; batería CLI pendiente
+## T007 — clon limpio y batería CLI comprobados
 
 Código de ejecución: b60b912ba195779e8e5fd340331dfd649c85403d,
 [PR #15](https://github.com/dlalvarez/rag-platform/pull/15).
@@ -525,5 +528,32 @@ Regresión F00 real posterior: API/PostgreSQL/vector/roundtrip S3 sintético, PA
 
 [Log T007](../../docs/evidence/f01-t007-2026-10-31.txt) y
 [manifiesto](../../docs/evidence/f01-t007-source-sha256.txt).
-La batería cli-check está solicitada a Diego desde ese clon, con contraseña solo
-en su terminal. No se declara todavía su éxito ni cierre de F01.
+La batería cli-check fue ejecutada por Diego desde ese clon, con contraseña solo
+en su terminal. Sus tres PASS se registran a continuación; el cierre de F01 sigue pendiente.
+
+
+## Resultado final T007 y propuesta de aceptación F01
+
+Diego reportó desde el clon fijo b60b912ba195779e8e5fd340331dfd649c85403d:
+
+- PASS T007: create/show/retry; fallo real sin READY y recuperación idempotente sin rotación.
+- PASS T007: check y migrate repetidos sin admin IAM; desconocido rechazado sin alta.
+- PASS T007: CLI en ambas instancias; versiones reales, salidas sin valores de secretos.
+
+Corroboración independiente de metadatos: doce tenants (nueve READY, dos PROVISIONING,
+uno FAILED), diez operaciones (nueve SUCCEEDED, una FAILED). Las dos nuevas fixtures
+T007 están READY/READY en nodos distintos, con seis pasos completados cada una,
+intentos 2/1 y referencias SQL/S3 versión 1. Control 0004 y ninguna sesión SQL tenant
+residual en primario. La inspección no lee valores de OpenBao ni reemplaza la prueba
+de acceso/credenciales realizada por el operador. Regresión F00 posterior, PASS.
+Los estados históricos PROVISIONING/FAILED se conservan, no se borran para cerrar fase.
+
+El código y manifiesto probados permanecen inmutables; las revisiones posteriores son
+documentales. 152 tests offline y CI docs/lint/tests de código y documentación previos
+correctos. Los checks del HEAD documental final se corroboran y registran en PR #15.
+No se repitió la batería para generar evidencia ni se solicitaron nuevas credenciales.
+
+Se propone aceptar T007 y el alcance técnico original F01, sujeto a revisión humana,
+merge autorizado hacia develop y comprobación postmerge. Issue #7 sigue abierta.
+No se acredita backup/restore externo, HA, PITR independiente ni producción.
+La promoción develop→main/tag y el inicio de F02 requieren decisiones separadas.

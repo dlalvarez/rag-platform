@@ -1,4 +1,4 @@
-F01 T007 / P7 / V01-V07 — before clean clone/operator integration
+F01 T007 / P7 / V01-V07 — clean clone/operator integration completed
 Base: develop@bd79a4d12180df9d8af5fca9a7d848a8fd070020
 Branch: feat/F01-T007-admin-cli
 All development/builds/tests performed on the authorized development server.
@@ -16,5 +16,14 @@ PASS: tools image rebuilt from clone; help and real catalog CLI show correct.
 PASS: runtime and installed package hashes match the versioned source manifest.
 PASS: F00 real API/PostgreSQL/vector/synthetic S3 regression.
 PASS: CI docs/lint/tests at code HEAD, push and PR.
-PENDING: CLI operator battery, final documentation HEAD CI and human acceptance T007/F01.
+PASS T007: create/show/retry; fallo real sin READY y recuperación idempotente sin rotación.
+PASS T007: check y migrate repetidos sin admin IAM; desconocido rechazado sin alta.
+PASS T007: CLI en ambas instancias; versiones reales, salidas sin valores de secretos.
+Operator reported these results from the fixed clean clone; no credentials received.
+PASS metadata: 12 tenants (9 READY/2 PROVISIONING/1 FAILED); 10 operations (9 SUCCEEDED/1 FAILED).
+PASS metadata T007: two READY fixtures on distinct nodes; six completed steps each; attempts 2/1; credential reference versions 1.
+PASS metadata: control 0004; no primary tenant SQL sessions; no OpenBao secret values read.
+PASS: subsequent real F00 regression.
+Final documentation HEAD CI recorded separately in PR #15.
+PENDING: human acceptance T007/F01, authorized merge and postmerge.
 No secret values, production data, F02 or backup/restore/HA claims.
