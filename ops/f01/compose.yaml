@@ -272,6 +272,18 @@ services:
     secrets: [control_migrator_password, storage_admin_user, storage_admin_password]
     command: [cli-check]
 
+  daily:
+    extends: access
+    profiles: [daily]
+    image: rag-f01-tools:daily-v1
+    entrypoint: [python, scripts/f01_daily.py]
+    command: [status]
+  daily-cli:
+    extends: daily
+    profiles: [daily]
+    secrets: [control_migrator_password, storage_admin_user, storage_admin_password]
+    command: [cli-check]
+
 networks:
   f01:
     internal: true

@@ -55,6 +55,45 @@ reiniciar servicios de datos para esta mejora ni anticipar F02.
 
 ## Estado de esta entrega
 
-Solo propuesta y plan. Sin implementación, configuración, sesión activa o cambios
-de permisos. La decisión pendiente es cómo disponer de administración durante la
-configuración inicial. ACC de PR #17 sigue siendo el único flujo aplicado.
+Implementación preparada y probada offline, pendiente de configuración real por Diego.
+El operador confirmó que custodia unseal y contraseña. La vía es una ventana controlada
+con dos reinicios solo de OpenBao; [procedimiento](DAILY_RECOVERY.md).
+No se ha aplicado la configuración ni se declara activa una sesión diaria.
+ACC de PR #17 sigue siendo el único flujo probado contra el servidor.
+
+## Comandos preparados
+
+Configuración inicial, solo desde la terminal SSH del operador y tras revisar la ventana:
+
+    python3 scripts/f01_daily_host.py configure
+
+Exige CONFIGURAR24H y pide unseal/contraseña ocultos. No ejecutarlo desde Codex.
+Al finalizar informa configuración restaurada, root/ensayo revocados y vencimiento
+del token operativo. Si se detiene, no pegar secretos ni repetir a ciegas: informar
+solo el código F01-DAY-SETUP. Un fallo puede dejar el nodo sellado; conserva la clave.
+
+Después, Codex puede ejecutar sin intervención por batería:
+
+    python3 scripts/f01_host.py run --rm -T daily status
+    python3 scripts/f01_host.py run --rm -T daily verify
+    python3 scripts/f01_host.py run --rm -T daily-cli
+
+Para terminar el día antes de tiempo:
+
+    python3 scripts/f01_host.py run --rm -T daily revoke
+
+Al siguiente día, una sola autenticación de operador, sin ceremonia administrativa:
+
+    python3 scripts/f01_host.py run --rm daily start
+
+No sobrescribir una sesión previa: revoke elimina una sesión confirmada revocada
+o expirada. Si el host pierde tmpfs o OpenBao reinicia, el acceso puede necesitar
+recuperación operativa; 24 horas de validez no garantizan disponibilidad del servidor.
+Nunca ampliar fecha local ni renovar automáticamente el token.
+
+## Comprobaciones preparadas
+
+Cliente valida servidor/origen/políticas/TTL y no amplía el login corto.
+Tests de dos clientes independientes, fecha no extensible, ficheros privados,
+configuración idempotente, restauración ante fallo, no adopción de ceremonia ajena
+y revocación de root incluso si falla la configuración. Evidencia real aún pendiente.

@@ -31,6 +31,7 @@ ACTOR = uuid5(UUID("310bf4df-1c98-4a15-a7a3-46d979774f17"), "openbao-userpass-di
 DELEGATED_ACTOR = uuid5(
     UUID("310bf4df-1c98-4a15-a7a3-46d979774f17"), "openbao-approle-f01-cli-delegated"
 )
+DAY_ACTOR = uuid5(UUID("310bf4df-1c98-4a15-a7a3-46d979774f17"), "openbao-approle-f01-dev-day")
 STORAGE_ENDPOINT = "https://minio:9000"
 
 
@@ -75,7 +76,7 @@ def catalog():
 
 
 @contextmanager
-def operator_service(command, *, delegated=False):
+def operator_service(command, *, delegated=False, daily=False):
     # Interactive callers verify TTY; delegated callers require an explicit one-use grant.
     control = storage = None
     try:
@@ -89,12 +90,26 @@ def operator_service(command, *, delegated=False):
             )
         with client() as http:
             require_unsealed(http)
-            if delegated:
-                from f01_access import session
+            if delegated and daily:
+                raise AdminError("CONFIG_UNAVAILABLE")
+            if delegated or daily:
+                if daily:
+                    from f01_daily import session as daily_session
 
-                with session("cli-check") as (store, _role, _used):
+                    context = daily_session()
+                else:
+                    from f01_access import session
+
+                    context = session("cli-check")
+                with context as (store, _role, _used):
                     yield Administration(
-                        control, DELEGATED_ACTOR, store, CA, storage, ROOT, storage_admin=admin
+                        control,
+                        DAY_ACTOR if daily else DELEGATED_ACTOR,
+                        store,
+                        CA,
+                        storage,
+                        ROOT,
+                        storage_admin=admin,
                     )
                 return
             operator = login_operator(http)

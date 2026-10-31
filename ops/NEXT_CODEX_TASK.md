@@ -1,23 +1,21 @@
-# Siguiente tarea Codex — sesión diaria de pruebas
+# Siguiente tarea Codex — activar y acreditar sesión diaria
 
-Diego solicitó una autorización reutilizable de al menos 24 horas, sin nueva
-intervención por batería. El flujo corto ACC de PR #17 no satisface ese objetivo.
-F01 sigue cerrada; el runtime actual no cambia en esta entrega documental.
+Diego pidió un día completo de pruebas sin reautorización por batería. ADR-0008,
+contrato DAY-01..06 y cliente están preparados en PR #18. No confundir con ACC corto.
 
-[ADR-0008 propuesto](../docs/adr/0008-daily-development-session.md).
-[Contrato DAY-01..06 y tareas D001..D006](f01/DAY_ACCESS.md).
-Propuesta: f01-dev-day, mismos permisos f01-provisioner, token reutilizable de 86400s,
-caducidad máxima explícita y revocación por sesión diaria. Sin guardar contraseña.
-Conservar f01-cli y su máximo de una hora como flujo corto independiente.
+Diego custodia unseal y contraseña del operador. Recuperación inicial preparada:
+[procedimiento](f01/DAILY_RECOVERY.md), [manual](f01/DAY_ACCESS.md).
+Solo Diego ejecuta en su terminal python3 scripts/f01_daily_host.py configure,
+tras revisar los dos reinicios de OpenBao y confirmar CONFIGURAR24H.
+No pedir claves en chat ni ejecutar ese mantenimiento por herramientas de Codex.
 
-Pendiente D001: disponer de administración inicial. Root inicial revocado;
-f01-operator no puede crear roles ni editar políticas. Resolver con Diego si tiene
-otra identidad administrativa o si hay que preparar recuperación controlada.
-No generar root ni habilitar endpoints/reiniciar OpenBao unilateralmente.
-No pedir secretos en chat. La duración solicitada está clara; no preguntar otra vez
-si quiere 24 horas ni presentar una batería de un uso como solución equivalente.
+Tras PASS SETUP: verificar con el mismo día dos procesos independientes, daily verify
+y daily-cli, status/TTL real y regresión F00. No revocar el día operativo tras la
+batería; su sesión de ensayo ya se revoca en setup. Mantener el vencimiento original.
+Registrar códigos/salidas saneadas y hashes de fuentes. No fingir transcurso de 24h.
+Si falla configuración, pedir solo código y comprobar estado; no repetir root a ciegas.
 
-Tras resolver D001, implementar y probar el contrato, PR y postmerge conforme a
-la delegación ADR-0007. No afirmar que hay sesión diaria mientras no esté activada.
-Todo desarrollo permanece en ragdev01. Conservar datos/fixtures/clon T007 y F00.
-No iniciar F02 ni promover main/tag por esta tarea. Backup/restore/HA/PITR pendientes.
+PR de implementación permanece sin fusionar hasta evidencia real y CI correctos.
+Después integrar/verificar según ADR-0007 y dejar el día operativo activo para pruebas.
+Toda ejecución/desarrollo en ragdev01; conservar datos, F00, rol corto y clon T007.
+F01 sigue cerrada; F02/main/tag no se inician con esta mejora.

@@ -1,7 +1,7 @@
 # ADR 0008 — Sesión diaria de pruebas en desarrollo
 
 **Estado:** duración de 24 horas solicitada expresamente por Diego el 2026-10-31.
-Propuesta técnica preparada; activación administrativa pendiente. No implementada.
+Implementación y procedimiento preparados; activación administrativa pendiente.
 Referencias: [ADR-0004](0004-secrets-storage.md), [ADR-0007](0007-delegated-development-review.md),
 [contrato y plan](../../ops/f01/DAY_ACCESS.md).
 
@@ -36,12 +36,17 @@ Crear el rol y ajustar esas dos rutas de emisión requiere una identidad adminis
 El root de inicialización fue revocado y la política f01-operator no concede esas
 operaciones. No se puede afirmar que la contraseña del operador baste para configurarlo.
 
-Determinar con Diego si dispone de otra identidad administrativa autorizada o si hay
-que preparar recuperación controlada. No generar root, habilitar endpoints
-deshabilitados, reiniciar OpenBao ni solicitar la clave de desbloqueo por iniciativa
-propia. La API autenticada de generación root y las condiciones de acceso deben
-verificarse antes de decidir un procedimiento; el endpoint antiguo está deshabilitado
-por defecto en esta versión.
+Diego confirmó la custodia de unseal y contraseña del operador. La política default
+de la versión 2.7.2 tampoco concede acceso a la generación root autenticada.
+La comprobación sin autenticar devolvió 403 en esa ruta y 405 en la antigua,
+deshabilitada. La configuración vigente no contiene una excepción.
+
+Se prepara [recuperación controlada](../../ops/f01/DAILY_RECOVERY.md): habilitar
+temporalmente la ruta antigua, dos reinicios de OpenBao/unseal, root solo en memoria
+del proceso interactivo, configuración del rol, revocación comprobada y restauración
+exacta del listener. Solo se activa cuando Diego ejecuta el comando en su terminal
+y confirma CONFIGURAR24H. No ejecutarlo unilateralmente desde herramientas de Codex.
+No se pide ni registra unseal o contraseña en chat.
 
 La configuración administrativa es una operación inicial. Tras ella, la rutina diaria
 solo exige la contraseña del operador una vez para iniciar las 24 horas.
@@ -69,5 +74,5 @@ No borrar Raft, datos o credenciales tenant ni retirar TLS/protecciones.
 [generación root autenticada](https://openbao.org/docs/api/system/generate-root-token/),
 [endpoint antiguo](https://openbao.org/docs/api/system/generate-root/).
 Documentos oficiales consultados el 2026-10-31; no sustituyen prueba del servidor.
-DAY-01..06 y sus pruebas se definen en el plan. Esta entrega es documental;
+DAY-01..06 y sus pruebas se definen en el plan. Esta entrega prepara código y procedimiento;
 no declara sesión activa, configuración aplicada ni ensayo de 24 horas completado.

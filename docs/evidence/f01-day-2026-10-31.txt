@@ -1,0 +1,22 @@
+F01 DAY-01..06 / initial preparation only
+Base: develop@0ec3fefb417e1ad4ec73c6324faef0183b823e4d
+PR #18 / docs/F01-daily-access-plan
+Source manifest: f01-day-source-sha256.txt
+All code/builds/tests on ragdev01.
+
+PASS PREP: 206 offline tests; Ruff check/format; SDD docs.
+PASS PREP: controlled F00 negative checks and real API/SQL/vector/S3 F00 regression.
+PASS PREP: Compose config and separate daily-v1 image built.
+PASS PREP: final scripts/policies and installed package match manifest.
+PASS PREP: health bridge reads initialized/unsealed existing node without secrets.
+Observed original recovery endpoint HTTP 405; authenticated endpoint without token HTTP 403.
+Pinned OpenBao 2.7.2 source confirms default policy has no root-generation capability,
+lookup-self exposes internal token ID rather than external SSC bearer,
+and legacy root generation returns an OTP for local XOR decoding.
+No recovery was enabled, root generated or existing service restarted by Codex.
+
+PENDING: Diego authorizes/configures in own terminal with CONFIGURAR24H.
+PENDING: actual root/trial revocation, restored listener, role/TTL and active day.
+PENDING: two independent actual executions using the same day and postmerge.
+No claims of 24 hours elapsed, active authorization or applied daily configuration.
+No operator password, root, unseal or bearer values recorded.
