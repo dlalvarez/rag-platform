@@ -1,0 +1,15 @@
+F01 T005 / P5 / V03-V06 partial — pre-operator evidence
+Base: develop@e46b46f822ca3726086d3b2ba3dc78b71db9ba3e
+Branch: feat/F01-T005-resolver-pools
+Development, builds and tests performed on the authorized development server.
+
+PASS: 138 offline tests, including eight concurrent leases, capacity, timeout,
+      LRU, endpoint/instance/ref-version changes, draining, rollback and process guard.
+PASS: Ruff check/format, SDD documentation and controlled F00 negative checks.
+PASS: real catalog: three distinct READY destinations; non-READY/unknown rejected
+      before SecretStore reads; separate control pool budget.
+PENDING: real operator/OpenBao pool-check, final HEAD CI and human review.
+No new migrations, services, dependencies or public API.
+No claims of two real PostgreSQL instances (T006), end-user authorization (F02)
+or complete F01 acceptance. No secret values included.
+PASS: F00 real API/PostgreSQL/vector/synthetic S3 regression.

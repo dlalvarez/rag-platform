@@ -1,4 +1,4 @@
-# Evidencia F01 — T001–T003 aceptadas; T004 en validación
+# Evidencia F01 — T001–T004 aceptadas; T005 en validación
 
 **Estado:** T001 aceptada, con checks del HEAD y postmerge correctos, integrada
 mediante PR #9 en develop@a1568375164627f4be2b10d0cb9285fab92ce685.
@@ -322,3 +322,29 @@ los seis pasos completos, tenant READY y revisión observada 0001; marcadores SQ
 operación y recursos S3 propios verificados. Una operación FAILED/OWNERSHIP_CONFLICT
 con pendiente REVIEW; tags y canary del bucket ajeno intactos. Sin lectura de valores
 de OpenBao ni exposición de credenciales.
+
+
+## T004 aceptada; inicio de T005
+
+T004 aceptada por Diego e integrada en develop@e46b46f822ca3726086d3b2ba3dc78b71db9ba3e;
+[cierre PR #12](https://github.com/dlalvarez/rag-platform/pull/12#issuecomment-6544965980).
+Checks y validación postmerge correctos. Las entradas T004 anteriores con aceptación
+pendiente son históricas.
+
+F01-R03/R06 → AC-F01-06 parcial → P5 → T005 → V03/V06.
+[Runbook T005](../../ops/f01/T005.md). Resolver interno, registro por destino/rol/ref-versión,
+QueuePool limitado, LRU y drenado implementados. Sin nuevas migraciones, dependencias,
+servicios o API pública. SecretStore se consulta en cada adquisición, sin caché de valores.
+Pruebas offline ejecutadas de gates, errores saneados, saturación, LRU, cambio de destino,
+drenado, rollback y ocho préstamos concurrentes. Batería real con OpenBao pendiente.
+No se acredita AC-F01-06 completo: dos instancias reales y pruebas ampliadas son T006.
+
+Validación inicial T005 en servidor: 138 pruebas offline correctas; Ruff/formato,
+documentos y pruebas negativas F00 correctos. Inspección real del catálogo: tres
+destinos READY distintos; tenants no READY/desconocidos rechazados antes de leer
+SecretStore; control con pool separado de dos. Esto no acredita todavía conexiones
+tenant reales mediante la factory ni caducidad/revocación con pool caliente.
+
+Regresión F00 real: API, PostgreSQL/vector y roundtrip S3 sintético, PASS.
+[Log inicial T005](../../docs/evidence/f01-t005-2026-10-31.txt) y
+[manifiesto de fuentes](../../docs/evidence/f01-t005-source-sha256.txt).

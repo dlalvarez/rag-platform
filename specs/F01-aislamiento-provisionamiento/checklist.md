@@ -1,6 +1,6 @@
 # Checklist F01 — aceptación pendiente
 
-**Estado:** T001 aceptada mediante PR #9; T002 aceptada mediante PR #10; T003 aceptada mediante PR #11; T004 en validación. Ningún AC F01 completo.
+**Estado:** T001 aceptada mediante PR #9; T002 aceptada mediante PR #10; T003 aceptada mediante PR #11; T004 aceptada mediante PR #12; T005 en validación. Ningún AC F01 completo.
 
 ## Antes de implementar
 
@@ -42,13 +42,25 @@ No marcar funcionalidades F02+ como probadas. Ver [matriz](plan.md) y [evidence]
 Esto no cierra AC de fase ni acredita saga, pools, dos instancias o migraciones T006.
 
 
-## Evidencia técnica T004, pendiente de aceptación
+## Evidencia técnica T004, aceptada
 
 - [x] Journal, idempotencia, estado de compensación y pendientes con códigos cerrados.
 - [x] Control 0004 aplicado y repetido; lock de sesión exclusivo sin transacción abierta.
 - [x] Pruebas offline de fallos, reintento, propiedad y no READY parcial.
 - [x] Batería real con OpenBao: bucket, caída entre efecto/journal, concurrencia y conflicto.
 - [x] Evidencia vinculada a las fuentes exactas ejecutadas.
-- [ ] CI del HEAD y revisión/aceptación humana del PR T004.
+- [x] CI del HEAD, revisión/aceptación humana y postmerge del PR T004.
 
 F01 sigue abierta. No anticipar resolver/pools T005 ni pruebas ampliadas T006.
+
+
+## Evidencia técnica T005, pendiente de aceptación
+
+- [x] Resolver administrativo: READY/esquema compatible, destinos y refs sin password.
+- [x] QueuePool 2/0, hasta 4 engines, drenado y cota por proceso implementados.
+- [x] Pruebas offline de gates, saturación, ocho préstamos concurrentes, LRU y drenado.
+- [ ] Batería real: A→B→A, ocho conexiones, timeout/evicción, cambio de ref y token revocado.
+- [ ] Evidencia de fuentes ejecutadas y CI del HEAD.
+- [ ] Revisión/aceptación humana y postmerge T005.
+
+Dos endpoints reales y batería ampliada de fase permanecen en T006.
