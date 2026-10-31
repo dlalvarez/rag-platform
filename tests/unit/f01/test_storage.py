@@ -178,3 +178,66 @@ def test_tenant_storage_check_rejects_automation_before_credentials(monkeypatch)
     monkeypatch.setattr(check, "admin_credential", lambda: pytest.fail("Must not read credentials"))
     with pytest.raises(SystemExit, match="START"):
         check.main()
+
+
+def test_foreign_operation_policy_cannot_disable_principal():
+    tenant, operation, ref = uuid4(), uuid4(), uuid4()
+    names = StorageNames(tenant, operation)
+    calls = []
+
+    class S3:
+        def bucket_exists(self, bucket):
+            return False
+
+    class Admin:
+        def policy_info(self, policy):
+            other = StorageNames(tenant, uuid4())
+            return json.dumps({"policy": tenant_policy(other, ref)})
+
+        def user_info(self, user):
+            return json.dumps({"policyName": names.policy, "status": "enabled"})
+
+        def user_disable(self, user):
+            calls.append(user)
+
+    provisioner = object.__new__(StorageProvisioner)
+    provisioner.s3, provisioner.admin = S3(), Admin()
+    with pytest.raises(StorageError, match="OWNERSHIP_CONFLICT"):
+        provisioner.withdraw(names, ref)
+    assert calls == []
+
+
+def test_disabled_owned_principal_is_reconcilable_without_password_reset():
+    names, ref = StorageNames(uuid4(), uuid4()), uuid4()
+    calls = []
+
+    class S3:
+        def bucket_exists(self, bucket):
+            return False
+
+    class Admin:
+        def policy_info(self, policy):
+            return json.dumps({"policy": tenant_policy(names, ref)})
+
+        def user_info(self, user):
+            return json.dumps({"policyName": names.policy, "status": "disabled"})
+
+        def user_disable(self, user):
+            calls.append(user)
+
+    provisioner = object.__new__(StorageProvisioner)
+    provisioner.s3, provisioner.admin = S3(), Admin()
+    with pytest.raises(StorageError):
+        provisioner.inspect(names, ref)
+    assert provisioner.inspect(names, ref, allow_disabled=True) == (False, True, True)
+    assert provisioner.withdraw(names, ref) == {
+        "STORAGE_BUCKET": "ABSENT",
+        "STORAGE_USER": "ACCESS_REVOKED",
+    }
+    assert calls == [names.user]
+
+
+def test_legacy_resources_cannot_be_compensated_by_saga():
+    provisioner = object.__new__(StorageProvisioner)
+    with pytest.raises(StorageError, match="OWNERSHIP_CONFLICT"):
+        provisioner.withdraw(StorageNames(uuid4()), uuid4())

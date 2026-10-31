@@ -1,8 +1,8 @@
-# Evidencia F01 — T001/T002 aceptadas; T003 ensayada, revisión pendiente
+# Evidencia F01 — T001–T003 aceptadas; T004 en validación
 
 **Estado:** T001 aceptada, con checks del HEAD y postmerge correctos, integrada
 mediante PR #9 en develop@a1568375164627f4be2b10d0cb9285fab92ce685.
-T002 aceptada e integrada mediante PR #10; T003 con batería real completa, revisión pendiente.
+T002/T003 aceptadas e integradas mediante PR #10/#11; T004 en validación.
 F01 e Issue #7 permanecen abiertos. Ningún AC-F01-01..07 completo.
 
 Plan ratificado: [PR #8](https://github.com/dlalvarez/rag-platform/pull/8),
@@ -50,7 +50,7 @@ y rechazos con token ficticio; no recibió valores.
 | AC-F01-06 | SecretStore/refs probados | Resolver, pools y dos endpoints reales |
 | AC-F01-07 | Control y contrato tenant inicial repetibles | Locks, fallos y coordinación de migraciones T006 |
 
-T002 aceptada mediante PR #10; T003 ensayada; T004–T007 no implementadas. No users/memberships/jobs, OIDC/F02, alta HTTP,
+T001–T003 aceptadas; T004 en validación; T005–T007 no implementadas. No users/memberships/jobs, OIDC/F02, alta HTTP,
 documentos, chunks, embeddings de negocio, RAG o chat.
 
 ## CI, revisión y límites
@@ -266,3 +266,59 @@ Código T003 probado y manifiesto verificado:
 ba91e1fb2fc590cf4c7e81794409855e2d3f6694,
 [PR #11](https://github.com/dlalvarez/rag-platform/pull/11).
 Las revisiones posteriores de documentación no alteran las fuentes ejecutadas.
+
+
+## T003 aceptada y T004 en validación
+
+T003 aceptada e integrada en develop@4593f3832dd601c0d2ca7424281397622eac923a.
+[cierre PR #11](https://github.com/dlalvarez/rag-platform/pull/11#issuecomment-6535895042).
+Sus anotaciones de revisión pendiente anteriores describen el estado previo a esa aceptación.
+
+F01-R05 → AC-F01-04/05 → P4 → T004 → V05.
+[Runbook T004](../../ops/f01/T004.md). Registro persistente, locks de sesión,
+propiedad por operación y compensación conservadora implementados.
+Revisión control 0004 aplicada y repetida en PostgreSQL real, PASS.
+Probe real de lock: segunda conexión rechazada, sin transacción abierta y liberación, PASS.
+F00: API, PostgreSQL/vector y roundtrip S3 sintético, PASS.
+Pruebas offline de fallos/reintentos/códigos cerrados correctas.
+La batería con credenciales reales fue ejecutada por Diego: cuatro PASS T004.
+T004 pendiente de revisión/aceptación humana; no se cierra F01.
+
+
+## Entrega técnica T004 — revisión humana pendiente
+
+Código ejecutado: 2b75e922fa407393004e14fbe29717b6e78cfa77,
+[PR #12](https://github.com/dlalvarez/rag-platform/pull/12).
+[Log saneado](../../docs/evidence/f01-t004-2026-10-31.txt) y
+[manifiesto de fuentes](../../docs/evidence/f01-t004-source-sha256.txt).
+Las revisiones posteriores de documentación no cambian las fuentes de ejecución.
+
+Diego ejecutó saga-check en su propia terminal e informó cuatro PASS:
+- Fallo real de CreateBucket: FAILED sin READY; recursos SQL conservados y sin nuevos
+  accesos. Reintento con los mismos UUID, referencias, credenciales y OID SQL.
+- Caída de proceso tras SQL y antes de completar journal: recuperación de la misma operación.
+- Dos procesos sobre una clave: exclusión por lock; segundo intento sin efectos.
+- Bucket ajeno y canary intactos; conflicto y pendientes REVIEW registrados.
+
+La batería terminó con tres tenants sintéticos READY y uno FAILED/REVIEW.
+READY acredita la migración inicial y los probes de esta saga; no sustituye resolver/pools
+T005 ni migraciones generales, canary y dos instancias T006. Las fixtures T002/T003
+no son adoptadas ni promovidas a READY por esta prueba.
+
+123 pruebas offline correctas; Ruff/formato/documentos y negativos F00 correctos.
+Control 0004 aplicado/repetido, lock PostgreSQL real y regresión F00 correctos.
+CI docs/lint/tests del commit de código completado correctamente en push y PR.
+CI del nuevo HEAD documental se verifica por separado antes de presentar revisión.
+
+No se recibieron contraseñas, tokens o SecretID en el chat. La compensación conserva
+datos y referencias, retira nuevos accesos solo a recursos de la operación y deja REVIEW
+si no puede verificar propiedad. No termina sesiones SQL ya abiertas. Un commit final
+con respuesta perdida se reconcilia sin revocar un READY posiblemente confirmado.
+Sin eliminación automática, cambios de API pública ni dependencias nuevas.
+T004 no se marca aceptada hasta revisión humana; F01 e Issue #7 siguen abiertos.
+
+Corroboración independiente posterior: control 0004; tres operaciones SUCCEEDED con
+los seis pasos completos, tenant READY y revisión observada 0001; marcadores SQL por
+operación y recursos S3 propios verificados. Una operación FAILED/OWNERSHIP_CONFLICT
+con pendiente REVIEW; tags y canary del bucket ajeno intactos. Sin lectura de valores
+de OpenBao ni exposición de credenciales.

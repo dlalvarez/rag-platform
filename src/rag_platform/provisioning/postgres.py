@@ -23,9 +23,12 @@ class SqlProvisioningError(RuntimeError):
 @dataclass(frozen=True)
 class Names:
     tenant: UUID
+    operation: UUID | None = None
 
     def __post_init__(self):
-        if not isinstance(self.tenant, UUID):
+        if not isinstance(self.tenant, UUID) or (
+            self.operation is not None and not isinstance(self.operation, UUID)
+        ):
             raise ValueError("An internal UUID is required")
 
     @property
@@ -39,7 +42,8 @@ class Names:
 
     @property
     def marker(self):
-        return f"rag-platform:f01:tenant:{self.tenant}"
+        marker = f"rag-platform:f01:tenant:{self.tenant}"
+        return marker + f":operation:{self.operation}" if self.operation else marker
 
 
 @dataclass(frozen=True)
@@ -181,12 +185,16 @@ def bootstrap(target: Target, bootstrap_credential: Credential, provisioner: Cre
         admin.execute("SELECT pg_advisory_unlock(71001, 2)")
 
 
-def inspect_resources(connection, names: Names):
+def inspect_resources(connection, names: Names, *, allow_disabled=False):
     """Refuse every unowned resource before applying grants or creating any roles."""
     for kind in ("owner", "migrator", "app", "readonly"):
         role = names.role(kind)
         if role_record(connection, role) is not None:
-            assert_role(connection, role, names.marker, login=kind != "owner")
+            record = role_record(connection, role)
+            login = kind != "owner"
+            if allow_disabled and names.operation and not record[5]:
+                login = False
+            assert_role(connection, role, names.marker, login=login)
             memberships = connection.execute(
                 "SELECT parent.rolname, m.admin_option, m.inherit_option, m.set_option "
                 "FROM pg_auth_members m JOIN pg_roles parent ON parent.oid=m.roleid "
@@ -251,7 +259,7 @@ def provision_sql(
         raise SqlProvisioningError()
     with target.connect("rag_control", admin, autocommit=True) as connection:
         connection.execute("SELECT pg_advisory_lock(71002, hashtext(%s))", (str(names.tenant),))
-        inspect_resources(connection, names)
+        inspect_resources(connection, names, allow_disabled=bool(names.operation))
         with connection.transaction():
             for kind in ("owner", "migrator", "app", "readonly"):
                 if role_record(connection, names.role(kind)) is None:
@@ -262,6 +270,9 @@ def provision_sql(
                         credentials[kind].password if kind != "owner" else None,
                     )
             grant_owner_memberships(connection, names)
+            if names.operation:
+                for kind in ("migrator", "app", "readonly"):
+                    execute(connection, "ALTER ROLE {} LOGIN", names.role(kind))
         if database_record(connection, names.database) is None:
             execute(
                 connection,
@@ -324,3 +335,30 @@ def provision_sql(
             names.role("owner"),
             names.role("app"),
         )
+
+
+def withdraw_sql(target: Target, admin: Credential, names: Names):
+    """Disable new connections only after checking all operation ownership markers."""
+    if names.operation is None:
+        raise SqlProvisioningError()
+    with target.connect("rag_control", admin, autocommit=True) as connection:
+        inspect_resources(connection, names, allow_disabled=True)
+        roles = [
+            names.role(kind)
+            for kind in ("migrator", "app", "readonly")
+            if role_record(connection, names.role(kind)) is not None
+        ]
+        with connection.transaction():
+            for role in roles:
+                execute(connection, "ALTER ROLE {} NOLOGIN", role)
+        database = database_record(connection, names.database)
+        if database:
+            execute(connection, "SET ROLE {}", names.role("owner"))
+            try:
+                execute(connection, "ALTER DATABASE {} ALLOW_CONNECTIONS false", names.database)
+            finally:
+                connection.execute("RESET ROLE")
+        return {
+            "SQL_DATABASE": "PRESERVED" if database else "ABSENT",
+            "SQL_ROLES": "ACCESS_REVOKED" if roles else "ABSENT",
+        }

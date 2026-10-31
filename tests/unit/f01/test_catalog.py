@@ -31,7 +31,7 @@ def test_repeatable_frozen_migration(database):
     }
     assert (
         database.scalar(sa.text("SELECT version_num FROM alembic_version_control"))
-        == "f01_control_0003"
+        == "f01_control_0004"
     )
     assert not any(
         isinstance(c.type, (sa.JSON, sa.LargeBinary, sa.Text))

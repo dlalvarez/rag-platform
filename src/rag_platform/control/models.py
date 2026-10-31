@@ -110,11 +110,13 @@ class ProvisioningOperation(Base):
     idempotency_key: Mapped[uuid.UUID] = mapped_column(unique=True)
     state: Mapped[str] = mapped_column(sa.String(16), default="PENDING")
     attempts: Mapped[int] = mapped_column(default=0)
+    compensation_state: Mapped[str] = mapped_column(sa.String(16), default="NONE")
     error_code: Mapped[str] = mapped_column(sa.String(32), default="NONE")
     __table_args__ = (
         code_check("state", ("PENDING", "RUNNING", "FAILED", "SUCCEEDED"), "operation_state"),
         code_check("error_code", ERRORS, "operation_error"),
         sa.CheckConstraint("attempts >= 0", name="operation_attempts"),
+        code_check("compensation_state", ("NONE", "REVOKED", "REVIEW"), "compensation_state"),
     )
 
 
@@ -153,4 +155,28 @@ class AuditControl(Base):
             "audit_event",
         ),
         code_check("outcome", ("OK", "DENIED", "FAILED"), "audit_outcome"),
+    )
+
+
+class ProvisioningPending(Base):
+    """Closed operational metadata for preserved resources; never a free-text payload."""
+
+    __tablename__ = "provisioning_pending"
+    operation_id: Mapped[uuid.UUID] = mapped_column(
+        sa.ForeignKey("provisioning_operations.id"), primary_key=True
+    )
+    resource: Mapped[str] = mapped_column(sa.String(24), primary_key=True)
+    resource_name: Mapped[str] = mapped_column(sa.String(63))
+    disposition: Mapped[str] = mapped_column(sa.String(24))
+    __table_args__ = (
+        code_check(
+            "resource",
+            ("SQL_DATABASE", "SQL_ROLES", "STORAGE_BUCKET", "STORAGE_USER"),
+            "pending_resource",
+        ),
+        code_check(
+            "disposition",
+            ("ABSENT", "PRESERVED", "ACCESS_REVOKED", "REVIEW", "RESOLVED"),
+            "pending_disposition",
+        ),
     )
