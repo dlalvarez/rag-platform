@@ -1,4 +1,4 @@
-# Evidencia F01 — T001–T004 aceptadas; T005 en validación
+# Evidencia F01 — T001–T005 aceptadas; T006 en validación
 
 **Estado:** T001 aceptada, con checks del HEAD y postmerge correctos, integrada
 mediante PR #9 en develop@a1568375164627f4be2b10d0cb9285fab92ce685.
@@ -387,3 +387,38 @@ tres destinos READY distintos y referencias SQL versión 1. Control sigue en 000
 no quedaron sesiones SQL tenant. Esta inspección verifica estructura/versiones y
 conteos; la igualdad con la referencia original fue comprobada por la batería del
 operador. Sin lectura de valores de OpenBao. Regresión F00 posterior completa, PASS.
+
+
+## T005 aceptada; inicio de T006
+
+T005 aceptada e integrada en develop@290e381c3b6c4d4e1ef52a3e81e75ea96b3e818b;
+[cierre PR #13](https://github.com/dlalvarez/rag-platform/pull/13#issuecomment-6547808923).
+Checks y validación postmerge correctos. Las anotaciones T005 de aceptación pendiente
+anteriores describen el estado previo a esa integración.
+
+F01-R01..07 → AC-F01-01..07 parciales → P6 → T006 → V01..V07.
+[Runbook T006](../../ops/f01/T006.md).
+Coordinador de migración implementado: lock transaccional en la misma conexión Alembic,
+identity/version reales, control sin READY durante MIGRATING y FAILED sin versión observada.
+Revisión canónica tenant sigue 0001; fixtures reversibles fuera de la pista canónica.
+
+Segunda instancia preparada y arrancada con datos, password y certificado propios,
+sin reiniciar servicios anteriores ni publicar puertos. Límites F01 más una herramienta
+suman 5 GiB. Antes: unos 14,8 GiB disponibles y 110 GiB libres en ext4.
+Observación puntual posterior: postgres2 usaba unos 34 MiB de 512 MiB y CPU cercana a cero;
+no es garantía de rendimiento ni prueba de carga.
+
+Calibración real en postgres2 completada: migrator limitado por TLS, Alembic, canary,
+upgrade/downgrade/upgrade, rollback transaccional del DDL fallido, dos procesos,
+timeout PostgreSQL y reintento. Retenida una BD de calibración y cuatro roles, todos
+NOLOGIN al finalizar; nuevas conexiones a la BD deshabilitadas. Sin tenant/catálogo,
+SecretStore ni cambio de recursos existentes en esa calibración.
+La batería integral del operador sigue pendiente; no se extrapola esta calibración
+a aislamiento tenant o a cumplimiento completo de AC-F01-01..07.
+
+Validación previa al operador: 144 pruebas offline correctas; Ruff/formato,
+documentación SDD y pruebas negativas F00 correctos. Control-check PostgreSQL/TLS
+repetido, PASS. Regresión real F00 API/PostgreSQL/vector/roundtrip S3, PASS.
+[Log inicial](../../docs/evidence/f01-t006-2026-10-31.txt) y
+[manifiesto de fuentes](../../docs/evidence/f01-t006-source-sha256.txt).
+La batería isolation-check con credenciales OpenBao está solicitada al operador.

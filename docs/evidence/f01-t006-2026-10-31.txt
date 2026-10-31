@@ -1,0 +1,17 @@
+F01 T006 / P6 / V01-V07 partial — before operator integration
+Base: develop@290e381c3b6c4d4e1ef52a3e81e75ea96b3e818b
+Branch: feat/F01-T006-migrations-isolation
+All development/builds/checks performed on the authorized development server.
+
+PASS: 144 offline tests; Ruff check/format; SDD docs and controlled F00 negatives.
+PASS: new isolated PostgreSQL instance prepared/started without restarting existing services.
+PASS: F01 limits including one tools container total 5 GiB.
+PASS: non-tenant migration calibration on real PostgreSQL/TLS using limited migrator:
+      Alembic upgrade/downgrade/upgrade, retained canary, transactional DDL rollback.
+PASS: two calibration processes; real PostgreSQL lock timeout and retry.
+Calibration DB/data retained, login/new DB connections disabled; no tenant catalog touched.
+PASS: real control-check and F00 API/PostgreSQL/vector/synthetic S3 regression.
+PENDING: complete SAME_INSTANCE / TWO_INSTANCES operator/OpenBao batteries, CI, human review.
+Canonical tenant revision remains f01_tenant_0001; no production data or new dependencies.
+No full F01 acceptance, public API, F02, backup/restore, HA or per-tenant PITR claim.
+No credentials/tokens/secret values included.

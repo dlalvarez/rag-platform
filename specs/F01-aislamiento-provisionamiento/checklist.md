@@ -1,6 +1,6 @@
 # Checklist F01 — aceptación pendiente
 
-**Estado:** T001 aceptada mediante PR #9; T002 aceptada mediante PR #10; T003 aceptada mediante PR #11; T004 aceptada mediante PR #12; T005 en validación. Ningún AC F01 completo.
+**Estado:** T001 aceptada mediante PR #9; T002 aceptada mediante PR #10; T003 aceptada mediante PR #11; T004 aceptada mediante PR #12; T005 aceptada mediante PR #13; T006 en validación. Ningún AC F01 completo.
 
 ## Antes de implementar
 
@@ -54,13 +54,27 @@ Esto no cierra AC de fase ni acredita saga, pools, dos instancias o migraciones 
 F01 sigue abierta. No anticipar resolver/pools T005 ni pruebas ampliadas T006.
 
 
-## Evidencia técnica T005, pendiente de aceptación
+## Evidencia técnica T005, aceptada
 
 - [x] Resolver administrativo: READY/esquema compatible, destinos y refs sin password.
 - [x] QueuePool 2/0, hasta 4 engines, drenado y cota por proceso implementados.
 - [x] Pruebas offline de gates, saturación, ocho préstamos concurrentes, LRU y drenado.
 - [x] Batería real: A→B→A, ocho conexiones, timeout/evicción, cambio de ref y token revocado.
-- [ ] Evidencia de fuentes ejecutadas y CI del HEAD.
-- [ ] Revisión/aceptación humana y postmerge T005.
+- [x] Evidencia de fuentes ejecutadas y CI del HEAD T005.
+- [x] Revisión/aceptación humana y postmerge T005.
 
 Dos endpoints reales y batería ampliada de fase permanecen en T006.
+
+
+## Evidencia técnica T006, pendiente de aceptación
+
+- [x] Migración bajo lock en la misma conexión Alembic; versión/identidad comprobadas.
+- [x] Control refleja MIGRATING/FAILED/READY según resultado, sin head falso.
+- [x] Segunda instancia privada, mismo digest, datos/TLS separados y límites dentro de 5 GiB.
+- [x] Calibración PostgreSQL real: reversibilidad, rollback DDL y lock/timeout entre procesos.
+- [ ] Dos baterías integrales con credenciales OpenBao y SQL/S3 en ambos sentidos.
+- [ ] Pools A2→B2→A2, destino erróneo sin fallback y canary del otro tenant intacto.
+- [ ] Evidencia de fuentes y CI del HEAD T006.
+- [ ] Revisión/aceptación humana y postmerge T006.
+
+No se cierra F01; T007 y aceptación global permanecen pendientes.

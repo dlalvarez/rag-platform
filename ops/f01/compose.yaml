@@ -84,9 +84,52 @@ services:
     cpus: 0.5
     mem_limit: 1536m
     memswap_limit: 1536m
+  postgres2:
+    profiles: [t006]
+    image: pgvector/pgvector:0.8.7-pg17-bookworm@sha256:ac08538c6f8b9904c33c8224c5e5706dbe760aca29db1d096972b4052c22a75d
+    environment:
+      POSTGRES_USER: f01_bootstrap
+      POSTGRES_DB: rag_control
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres2_password
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        install -o postgres -g postgres -m 600 /tls/server.key /tmp/f01-postgres.key
+        exec /usr/local/bin/docker-entrypoint.sh postgres -c ssl=on -c ssl_min_protocol_version=TLSv1.3 -c ssl_cert_file=/tls/server.crt -c ssl_key_file=/tmp/f01-postgres.key -c hba_file=/tls/pg_hba.conf -c max_connections=15 -c shared_buffers=64MB
+    secrets: [postgres2_password]
+    volumes:
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/postgres2
+        target: /var/lib/postgresql/data
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/tls/postgres2.crt
+        target: /tls/server.crt
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/tls/postgres2.key
+        target: /tls/server.key
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F01_ROOT:?Prepare F01}/config/pg_hba.conf
+        target: /tls/pg_hba.conf
+        read_only: true
+        bind: {create_host_path: false}
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U f01_bootstrap -d rag_control"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    networks: [f01]
+    cpus: 0.25
+    mem_limit: 512m
+    memswap_limit: 512m
   tools:
     profiles: [tools]
-    image: rag-f01-tools:t005
+    image: rag-f01-tools:t006
     build:
       context: ../..
       dockerfile: ops/f01/tools.Dockerfile
@@ -181,6 +224,18 @@ services:
     secrets: [control_migrator_password]
     command: [python, scripts/f01_pool_check.py]
 
+  isolation-check:
+    extends: tools
+    profiles: [test]
+    secrets: [postgres2_password, control_migrator_password, storage_admin_user, storage_admin_password]
+    command: [python, scripts/f01_isolation_check.py]
+
+  migration-calibrate:
+    extends: tools
+    profiles: [test]
+    secrets: [postgres2_password]
+    command: [python, scripts/f01_migration_calibrate.py]
+
 networks:
   f01:
     internal: true
@@ -194,3 +249,6 @@ secrets:
     file: ${RAG_F01_ROOT:?Prepare F01}/secrets/storage_admin_user
   storage_admin_password:
     file: ${RAG_F01_ROOT:?Prepare F01}/secrets/storage_admin_password
+
+  postgres2_password:
+    file: ${RAG_F01_ROOT:?Prepare F01}/secrets/postgres2_password
