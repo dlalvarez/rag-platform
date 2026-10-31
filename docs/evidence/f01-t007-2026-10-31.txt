@@ -1,0 +1,11 @@
+F01 T007 / P7 / V01-V07 — before clean clone/operator integration
+Base: develop@bd79a4d12180df9d8af5fca9a7d848a8fd070020
+Branch: feat/F01-T007-admin-cli
+All development/builds/tests performed on the authorized development server.
+
+PASS: 152 offline tests; Ruff check/format; SDD docs; controlled F00 negative checks.
+PASS: CLI help and real metadata-only show --instances.
+No new schema revisions, dependencies or services.
+PENDING: clone from the published commit, frozen environment/build, CLI operator battery,
+         final HEAD CI and human acceptance of T007/F01.
+No secret values, production data, F02 or backup/restore/HA claims.

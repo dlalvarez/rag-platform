@@ -1,26 +1,22 @@
-# Siguiente tarea Codex — validar y revisar T006
+# Siguiente tarea Codex — validar T007 y proponer cierre F01
 
-T001–T005 aceptadas mediante PR #9/#10/#11/#12/#13.
-Base T006: develop@290e381c3b6c4d4e1ef52a3e81e75ea96b3e818b.
-Rama feat/F01-T006-migrations-isolation.
-[Runbook](f01/T006.md), [evidence](../specs/F01-aislamiento-provisionamiento/evidence.md).
+T001–T006 aceptadas mediante PR #9–#14.
+Base T007: develop@bd79a4d12180df9d8af5fca9a7d848a8fd070020.
+Rama feat/F01-T007-admin-cli.
+[Manual](f01/T007.md), [evidence](../specs/F01-aislamiento-provisionamiento/evidence.md).
 
-T006 implementa P6/V01–V07: migración bloqueada en la conexión de Alembic,
-reflejo verificado en control, segunda instancia y fixtures reversibles separadas.
-postgres2 ya preparada/arrancada; NO repetir prepare-second. No reiniciar otros servicios.
-Calibración y ambas baterías integrales completadas por Diego; nueve PASS T006.
-Código probado: fe431aa402ec17382ae4c9cfb33d889038102264; PR #14.
+CLI create/show/check/retry/migrate implementada. 152 pruebas offline y show real correctos.
+Pendiente clon limpio fijo al commit publicado: uv frozen con Python del servidor,
+tests/docs/lint/negativos, attach-existing e imagen tools construida desde esas fuentes.
+No copiar secretos/.venv/datos ni preparar/reiniciar servicios en el clon.
+Después cli-check en la terminal del operador, con una única autenticación OpenBao.
+Registrar solo PASS/códigos y fuente exacta, no credenciales.
 
-Dos baterías completadas: A/B misma instancia y A2/B2 en dos instancias.
-Resultados saneados y manifiesto de fuentes versionados.
-Son cuatro fixtures nuevas respecto de tareas anteriores; claves idempotentes estables.
-SQL/S3, saga/reintento, A2→B2→A2/destino equivocado, rollback y lock con dos procesos probados.
-Conservar canaries, bases, buckets y roles de calibración sin limpiar/regenerar secretos.
+Completar matriz de AC/checklist/evidencias con resultados reales y CI del HEAD final.
+Presentar PR hacia develop para revisión T007 y propuesta de aceptación global F01.
+No fusionar ni cerrar Issue #7 antes de aprobación explícita; verificar postmerge.
+Main/tag requieren decisión y PR separados. No iniciar F02 por iniciativa propia.
 
-144 pruebas offline correctas. Comprobar CI del HEAD final y presentar PR para revisión;
-no fusionar antes de aprobación explícita. Tras merge autorizado verificar postmerge.
-Solo después de aceptar T006 y autorizar continuar: T007, CLI general y clon limpio.
-
-Sin F02, usuarios finales, alta HTTP, datos de negocio ni nuevas dependencias.
-No afirmar backup/restore/HA/PITR por tenant. F00, datos F01 y recursos ajenos intactos.
-Desarrollo/pruebas siempre en ragdev01. F01 e Issue #7 permanecen abiertos.
+Conservar F00, datos F01, fixtures/canaries y conflictos ajenos.
+No reinicializar OpenBao, regenerar secretos ni borrar bases/buckets.
+Desarrollo y pruebas exclusivamente en ragdev01. Backup/restore/HA/PITR no acreditados.

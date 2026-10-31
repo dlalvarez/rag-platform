@@ -1,6 +1,6 @@
 # Checklist F01 — aceptación pendiente
 
-**Estado:** T001 aceptada mediante PR #9; T002 aceptada mediante PR #10; T003 aceptada mediante PR #11; T004 aceptada mediante PR #12; T005 aceptada mediante PR #13; T006 en validación. Ningún AC F01 completo.
+**Estado:** T001 aceptada mediante PR #9; T002 aceptada mediante PR #10; T003 aceptada mediante PR #11; T004 aceptada mediante PR #12; T005 aceptada mediante PR #13; T006 aceptada mediante PR #14; T007 en validación. Cierre de F01 pendiente.
 
 ## Antes de implementar
 
@@ -66,7 +66,7 @@ F01 sigue abierta. No anticipar resolver/pools T005 ni pruebas ampliadas T006.
 Dos endpoints reales y batería ampliada de fase permanecen en T006.
 
 
-## Evidencia técnica T006, pendiente de aceptación
+## Evidencia técnica T006, aceptada
 
 - [x] Migración bajo lock en la misma conexión Alembic; versión/identidad comprobadas.
 - [x] Control refleja MIGRATING/FAILED/READY según resultado, sin head falso.
@@ -74,7 +74,25 @@ Dos endpoints reales y batería ampliada de fase permanecen en T006.
 - [x] Calibración PostgreSQL real: reversibilidad, rollback DDL y lock/timeout entre procesos.
 - [x] Dos baterías integrales con credenciales OpenBao y SQL/S3 en ambos sentidos.
 - [x] Pools A2→B2→A2, destino erróneo sin fallback y canary del otro tenant intacto.
-- [ ] Evidencia de fuentes y CI del HEAD T006.
-- [ ] Revisión/aceptación humana y postmerge T006.
+- [x] Evidencia de fuentes y CI del HEAD T006.
+- [x] Revisión/aceptación humana y postmerge T006.
 
 No se cierra F01; T007 y aceptación global permanecen pendientes.
+
+
+## T007 y cierre propuesto de F01
+
+Los apartados anteriores conservan el estado de cada tarea al documentarla; sus
+pendientes de tareas posteriores son históricos. Esta sección indica la puerta actual.
+
+- [x] CLI create/show/check/retry/migrate y proyección explícita sin valores secretos.
+- [x] Perfiles separados: administración de provisioning y consulta/check/migrate sin admin IAM.
+- [x] Tests offline de entrada, idempotencia, reintento y attach sin cambios de datos/servicios.
+- [x] Manual operativo, custodia/unseal y reversión conservadora; límites declarados.
+- [ ] Clon limpio fijado al commit, tooling/imagen reproducidos y catálogo real consultado.
+- [ ] Batería CLI real desde el clon con credenciales de operador en su terminal.
+- [ ] Matriz de AC y fuentes/resultados finales completos; CI del HEAD final.
+- [ ] Revisión humana T007 y aceptación global F01.
+- [ ] Merge autorizado y postmerge correctos; registro de cierre sin iniciar F02.
+
+No ejecutar promoción a main, tag, despliegue ni fase posterior por este checklist.

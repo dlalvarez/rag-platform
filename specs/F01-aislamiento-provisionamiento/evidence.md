@@ -1,4 +1,4 @@
-# Evidencia F01 — T001–T005 aceptadas; T006 en validación
+# Evidencia F01 — T001–T006 aceptadas; T007 en validación
 
 **Estado:** T001 aceptada, con checks del HEAD y postmerge correctos, integrada
 mediante PR #9 en develop@a1568375164627f4be2b10d0cb9285fab92ce685.
@@ -471,3 +471,36 @@ se acreditan mediante la batería del operador.
 
 Los resultados cubren las pruebas técnicas de T006; las casillas AC globales de F01
 permanecen abiertas hasta T007 (CLI/clon limpio) y aceptación de fase.
+
+
+## T006 aceptada; inicio de T007
+
+T006 aceptada por Diego e integrada en develop@bd79a4d12180df9d8af5fca9a7d848a8fd070020;
+[cierre PR #14](https://github.com/dlalvarez/rag-platform/pull/14#issuecomment-6548128680).
+Checks y validación postmerge correctos. Las anotaciones anteriores de revisión T006
+pendiente son históricas.
+
+F01-R01..07 → AC-F01-01..07 → P7 → T007 → V01..V07.
+[Manual T007](../../ops/f01/T007.md). CLI implementada con create/show/check/retry/migrate.
+show emite metadatos sin sesión OpenBao; operaciones sensibles requieren TTY y operador.
+check no ejecuta DDL ni escribe secretos; usa un objeto sintético temporal propio.
+migrate reutiliza el coordinador verificado. Perfiles sin SQL bootstrap, y admin-read
+sin credencial de administración IAM. No migraciones o dependencias nuevas.
+152 pruebas offline correctas; ayuda y show --instances reales correctos.
+Clon limpio, batería CLI y aceptación global F01 siguen pendientes.
+
+## Matriz de cierre propuesta — completar validación T007 antes de aceptar
+
+| AC | Requisito/plan/pruebas reales | Evidencia |
+|---|---|---|
+| AC-F01-01 | R01/R02 → P1/P2/P6 → V01: control y bases distintas, contrato/migraciones reales | T001/T002/T006 |
+| AC-F01-02 | R02 → P2/P6 → V02: SQL propio, CONNECT/SET ROLE denegados, roles limitados; auth separada entre nodos | T002/T006 |
+| AC-F01-03 | R04 → P3/P6 → V04: S3 propio, cruces/anónimo/admin denegados | T003/T006 |
+| AC-F01-04 | R05 → P4/P6 → V05: repetición, caída entre efecto/journal, concurrencia sin duplicados | T004/T006; CLI T007 pendiente |
+| AC-F01-05 | R05 → P4/P6 → V05: fallo bucket sin READY, recuperación y recurso ajeno preservado | T004/T006; CLI T007 pendiente |
+| AC-F01-06 | R03/R06 → P5/P6 → V03/V06: dos nodos, A2→B2→A2, límite/timeout/drenado y sin fallback | T005/T006 |
+| AC-F01-07 | R07 → P6 → V07: lock misma conexión, versión real, fallo/rollback y otro tenant intacto | T006; CLI migrate T007 pendiente |
+
+Los logs por tarea y manifiestos versionados anteriores identifican sus fuentes/comandos.
+La matriz no declara HA/restore/producción ni funcionalidades F02+. El cierre de F01
+requiere completar T007 y aceptación humana, además de estos resultados técnicos.
