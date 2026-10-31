@@ -7,6 +7,7 @@ COPY src ./src
 RUN uv sync --frozen --no-dev --no-editable
 COPY alembic-control.ini alembic-tenant.ini ./
 COPY migrations ./migrations
+COPY tests/integration/f01/migration_fixture ./tests/integration/f01/migration_fixture
 COPY scripts/f01_*.py ./scripts/
 COPY ops/f01/*.hcl ./ops/f01/
 ENV PATH="/app/.venv/bin:$PATH"

@@ -186,6 +186,74 @@ def prepare_storage() -> None:
     print("F01 storage prepared: isolated data/TLS/bootstrap; existing services preserved.")
 
 
+def prepare_second() -> None:
+    """Prepare only T006's new instance. Never overwrite data, passwords or certificates."""
+    validate_host(starting=True)
+    for folder in (DATA, DATA / "tls", DATA / "secrets"):
+        if not folder.is_dir() or folder.is_symlink():
+            raise ValueError("Existing F01 preparation required")
+    tls = DATA / "tls"
+    targets = [
+        DATA / "postgres2",
+        DATA / "secrets/postgres2_password",
+        tls / "postgres2.key",
+        tls / "postgres2.crt",
+        tls / "postgres2.csr",
+        tls / "postgres2.ext",
+    ]
+    if any(p.exists() or p.is_symlink() for p in targets):
+        raise ValueError("Existing or partial second instance will not be overwritten")
+    for name in ("ca.crt", "ca.key"):
+        if not (tls / name).is_file() or (tls / name).is_symlink():
+            raise ValueError("Existing trusted CA required")
+    old_umask = os.umask(0o077)
+    try:
+        (DATA / "postgres2").mkdir(mode=0o700)
+        (DATA / "secrets/postgres2_password").write_text(secrets.token_urlsafe(36))
+        (tls / "postgres2.ext").write_text(
+            "subjectAltName=DNS:postgres2\nbasicConstraints=critical,CA:FALSE\n"
+            "keyUsage=critical,digitalSignature,keyEncipherment\n"
+            "extendedKeyUsage=serverAuth\n"
+        )
+        for arguments in (
+            (
+                "req",
+                "-new",
+                "-newkey",
+                "rsa:3072",
+                "-nodes",
+                "-subj",
+                "/CN=postgres2",
+                "-keyout",
+                "postgres2.key",
+                "-out",
+                "postgres2.csr",
+            ),
+            (
+                "x509",
+                "-req",
+                "-in",
+                "postgres2.csr",
+                "-CA",
+                "ca.crt",
+                "-CAkey",
+                "ca.key",
+                "-CAcreateserial",
+                "-days",
+                "90",
+                "-extfile",
+                "postgres2.ext",
+                "-out",
+                "postgres2.crt",
+            ),
+        ):
+            subprocess.run(["openssl", *arguments], cwd=tls, check=True, capture_output=True)
+        (tls / "postgres2.crt").chmod(0o444)
+    finally:
+        os.umask(old_umask)
+    print("T006 second instance paths/TLS/bootstrap prepared; existing services unchanged.")
+
+
 def compose(arguments: list[str]) -> None:
     if not arguments or arguments[0] not in {
         "config",
@@ -224,7 +292,10 @@ def compose(arguments: list[str]) -> None:
         path = DATA / name
         if path.is_symlink() or not path.is_file():
             raise ValueError("Missing or symlinked F01 input")
-    if any(arg in {"minio", "s3-check", "s3-compat"} for arg in arguments):
+    if any(
+        arg in {"minio", "s3-check", "s3-compat", "saga-check", "isolation-check"}
+        for arg in arguments
+    ):
         for name in ("minio", "tls/minio"):
             path = DATA / name
             if path.is_symlink() or not path.is_dir():
@@ -242,6 +313,19 @@ def compose(arguments: list[str]) -> None:
                 stat = path.stat()
                 if stat.st_uid != os.getuid() or stat.st_mode & 0o077:
                     raise ValueError("Storage bootstrap requires private owner-only files")
+    if any(arg in {"postgres2", "isolation-check", "migration-calibrate"} for arg in arguments):
+        for name in ("postgres2",):
+            path = DATA / name
+            if not path.is_dir() or path.is_symlink():
+                raise ValueError("Explicit second instance preparation required")
+        for name in ("tls/postgres2.crt", "tls/postgres2.key", "secrets/postgres2_password"):
+            path = DATA / name
+            if not path.is_file() or path.is_symlink():
+                raise ValueError("Missing second instance input")
+            if not name.endswith(".crt") and (
+                path.stat().st_uid != os.getuid() or path.stat().st_mode & 0o077
+            ):
+                raise ValueError("Second instance inputs must be private")
     result = subprocess.run(
         [
             "docker",
@@ -268,6 +352,8 @@ def main() -> None:
             prepare()
         elif args.command == ["prepare-storage"]:
             prepare_storage()
+        elif args.command == ["prepare-second"]:
+            prepare_second()
         else:
             compose(args.command)
     except (ValueError, OSError, subprocess.SubprocessError, KeyError):

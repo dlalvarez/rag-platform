@@ -1,0 +1,41 @@
+F01 T006 / P6 / V01-V07 partial — operator integration evidence
+Base: develop@290e381c3b6c4d4e1ef52a3e81e75ea96b3e818b
+Branch: feat/F01-T006-migrations-isolation
+All development/builds/checks performed on the authorized development server.
+
+PASS: 144 offline tests; Ruff check/format; SDD docs and controlled F00 negatives.
+PASS: new isolated PostgreSQL instance prepared/started without restarting existing services.
+PASS: F01 limits including one tools container total 5 GiB.
+PASS: non-tenant migration calibration on real PostgreSQL/TLS using limited migrator:
+      Alembic upgrade/downgrade/upgrade, retained canary, transactional DDL rollback.
+PASS: two calibration processes; real PostgreSQL lock timeout and retry.
+Calibration DB/data retained, login/new DB connections disabled; no tenant catalog touched.
+PASS: real control-check and F00 API/PostgreSQL/vector/synthetic S3 regression.
+CODE TESTED: fe431aa402ec17382ae4c9cfb33d889038102264
+PASS: CI docs/lint/tests at code HEAD (push and PR).
+OPERATOR REPORT:
+PASS T006 SAME_INSTANCE: SQL/S3 propios y cruces denegados; A→B→A con destinos/roles propios.
+PASS T006 SAME_INSTANCE: fallo bucket sin READY y reintento estable; migración repetible.
+PASS T006 SAME_INSTANCE: revisión reversible, fallo DDL revertido y otro tenant intacto.
+PASS T006 SAME_INSTANCE: dos procesos, lock/timeout reales; FAILED sin versión falsa y recuperación.
+PASS T006 TWO_INSTANCES: destino erróneo rechazado sin fallback; destino correcto recuperado.
+PASS T006 TWO_INSTANCES: SQL/S3 propios y cruces denegados; A→B→A con destinos/roles propios.
+PASS T006 TWO_INSTANCES: fallo bucket sin READY y reintento estable; migración repetible.
+PASS T006 TWO_INSTANCES: revisión reversible, fallo DDL revertido y otro tenant intacto.
+PASS T006 TWO_INSTANCES: dos procesos, lock/timeout reales; FAILED sin versión falsa y recuperación.
+T006: cuatro tenants sintéticos READY; sin cierre de F01, sin backup/restore acreditado.
+PENDING: final documentation HEAD CI and human review.
+Canonical tenant revision remains f01_tenant_0001; no production data or new dependencies.
+No full F01 acceptance, public API, F02, backup/restore, HA or per-tenant PITR claim.
+No credentials/tokens/secret values included.
+
+INDEPENDENT POST-BATTERY CHECK:
+PASS: 10 tenants (7 READY, 2 PROVISIONING, 1 FAILED) and 8 operations (7 SUCCEEDED, 1 FAILED).
+PASS: four T006 fixtures READY/READY with observed version f01_tenant_0001.
+PASS: catalog endpoints cover both instances (three new fixtures primary, one secondary).
+PASS: SQL references version 1; exact private S3 ownership/policy/principal verified.
+PASS: no remaining tenant SQL sessions on either PostgreSQL instance.
+PASS: control remains f01_control_0004; previous tenant states preserved.
+PASS: F00 real API/PostgreSQL/vector/synthetic S3 regression after the full batteries.
+Independent inspection reads metadata, not OpenBao secret values; real tenant access
+and migration/canary outcomes are proved by the operator battery.
