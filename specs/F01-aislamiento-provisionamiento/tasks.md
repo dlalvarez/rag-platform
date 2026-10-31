@@ -23,5 +23,5 @@ y recuperación; pruebas omitidas bloquean el AC correspondiente.
 
 T002 aceptada e integrada: [cierre PR #10](https://github.com/dlalvarez/rag-platform/pull/10#issuecomment-6535497540).
 T003 aceptada: [cierre PR #11](https://github.com/dlalvarez/rag-platform/pull/11#issuecomment-6535895042).
-T004 autorizada e implementada en rama específica; validación real y CI pendientes.
+T004 implementada y batería real completada en PR #12; revisión/aceptación pendientes.
 Su casilla permanece abierta hasta aceptación humana. No iniciar T005 todavía.

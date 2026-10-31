@@ -47,8 +47,8 @@ Esto no cierra AC de fase ni acredita saga, pools, dos instancias o migraciones 
 - [x] Journal, idempotencia, estado de compensación y pendientes con códigos cerrados.
 - [x] Control 0004 aplicado y repetido; lock de sesión exclusivo sin transacción abierta.
 - [x] Pruebas offline de fallos, reintento, propiedad y no READY parcial.
-- [ ] Batería real con OpenBao: bucket, caída entre efecto/journal, concurrencia y conflicto.
-- [ ] Evidencia vinculada a las fuentes exactas ejecutadas.
+- [x] Batería real con OpenBao: bucket, caída entre efecto/journal, concurrencia y conflicto.
+- [x] Evidencia vinculada a las fuentes exactas ejecutadas.
 - [ ] CI del HEAD y revisión/aceptación humana del PR T004.
 
 F01 sigue abierta. No anticipar resolver/pools T005 ni pruebas ampliadas T006.

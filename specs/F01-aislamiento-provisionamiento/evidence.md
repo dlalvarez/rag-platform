@@ -281,5 +281,44 @@ Revisión control 0004 aplicada y repetida en PostgreSQL real, PASS.
 Probe real de lock: segunda conexión rechazada, sin transacción abierta y liberación, PASS.
 F00: API, PostgreSQL/vector y roundtrip S3 sintético, PASS.
 Pruebas offline de fallos/reintentos/códigos cerrados correctas.
-La batería con credenciales reales está solicitada al operador; no se acredita
-todavía recuperación integral ni se marca T004 aceptada. CI pendiente del HEAD del PR.
+La batería con credenciales reales fue ejecutada por Diego: cuatro PASS T004.
+T004 pendiente de revisión/aceptación humana; no se cierra F01.
+
+
+## Entrega técnica T004 — revisión humana pendiente
+
+Código ejecutado: 2b75e922fa407393004e14fbe29717b6e78cfa77,
+[PR #12](https://github.com/dlalvarez/rag-platform/pull/12).
+[Log saneado](../../docs/evidence/f01-t004-2026-10-31.txt) y
+[manifiesto de fuentes](../../docs/evidence/f01-t004-source-sha256.txt).
+Las revisiones posteriores de documentación no cambian las fuentes de ejecución.
+
+Diego ejecutó saga-check en su propia terminal e informó cuatro PASS:
+- Fallo real de CreateBucket: FAILED sin READY; recursos SQL conservados y sin nuevos
+  accesos. Reintento con los mismos UUID, referencias, credenciales y OID SQL.
+- Caída de proceso tras SQL y antes de completar journal: recuperación de la misma operación.
+- Dos procesos sobre una clave: exclusión por lock; segundo intento sin efectos.
+- Bucket ajeno y canary intactos; conflicto y pendientes REVIEW registrados.
+
+La batería terminó con tres tenants sintéticos READY y uno FAILED/REVIEW.
+READY acredita la migración inicial y los probes de esta saga; no sustituye resolver/pools
+T005 ni migraciones generales, canary y dos instancias T006. Las fixtures T002/T003
+no son adoptadas ni promovidas a READY por esta prueba.
+
+123 pruebas offline correctas; Ruff/formato/documentos y negativos F00 correctos.
+Control 0004 aplicado/repetido, lock PostgreSQL real y regresión F00 correctos.
+CI docs/lint/tests del commit de código completado correctamente en push y PR.
+CI del nuevo HEAD documental se verifica por separado antes de presentar revisión.
+
+No se recibieron contraseñas, tokens o SecretID en el chat. La compensación conserva
+datos y referencias, retira nuevos accesos solo a recursos de la operación y deja REVIEW
+si no puede verificar propiedad. No termina sesiones SQL ya abiertas. Un commit final
+con respuesta perdida se reconcilia sin revocar un READY posiblemente confirmado.
+Sin eliminación automática, cambios de API pública ni dependencias nuevas.
+T004 no se marca aceptada hasta revisión humana; F01 e Issue #7 siguen abiertos.
+
+Corroboración independiente posterior: control 0004; tres operaciones SUCCEEDED con
+los seis pasos completos, tenant READY y revisión observada 0001; marcadores SQL por
+operación y recursos S3 propios verificados. Una operación FAILED/OWNERSHIP_CONFLICT
+con pendiente REVIEW; tags y canary del bucket ajeno intactos. Sin lectura de valores
+de OpenBao ni exposición de credenciales.

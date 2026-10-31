@@ -7,9 +7,10 @@ Rama feat/F01-T004-provisioning-saga.
 
 T004 implementa P4/V05: journal, idempotencia, lock por tenant, propiedad por operación
 y compensación sin borrar bases/buckets. Control 0004 y lock real ya comprobados.
-Batería integral solicitada al operador; registrar solo resultados saneados,
-comprobar metadatos sin leer valores secretos y vincular las fuentes exactas ejecutadas.
-No asumir PASS de integración a partir de pruebas offline o de aprobación de T003.
+Batería integral completada por Diego: cuatro PASS T004; tres tenants sintéticos READY
+y uno FAILED/REVIEW, sin adopción ni borrado del recurso ajeno.
+Código probado: 2b75e922fa407393004e14fbe29717b6e78cfa77; PR #12.
+123 pruebas offline correctas. Evidencia y manifiesto de fuentes versionados.
 
 Después: comprobar docs/lint/tests del HEAD, presentar PR para revisión humana.
 No fusionar antes de aprobación explícita. Tras merge autorizado, verificar postmerge.

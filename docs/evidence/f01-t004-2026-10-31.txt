@@ -1,4 +1,4 @@
-F01 T004 / P4 / V05 — evidence before operator integration
+F01 T004 / P4 / V05 — operator integration evidence
 Base: develop@4593f3832dd601c0d2ca7424281397622eac923a
 Branch: feat/F01-T004-provisioning-saga
 All development/builds/checks performed on the authorized development server.
@@ -10,6 +10,21 @@ PASS: control revision f01_control_0004 applied and repeated on PostgreSQL.
 PASS: real session advisory lock: second connection rejected, no open transaction,
       release and reacquisition verified.
 PASS: F00 API/PostgreSQL/vector/synthetic S3 regression.
-PENDING: full T004 operator/OpenBao battery, CI at PR HEAD, human review.
+CODE TESTED: 2b75e922fa407393004e14fbe29717b6e78cfa77
+PASS: 123 offline tests; docs and F00 negative checks.
+PASS: CI docs/lint/tests at code HEAD (push and PR).
+OPERATOR REPORT:
+PASS T004: fallo real de bucket; FAILED sin READY; reintento sin rotación ni duplicados.
+PASS T004: caída de proceso tras SQL y antes del journal; recuperación de la misma operación.
+PASS T004: dos procesos, un lock/tenant/operación; segundo intento sin efectos.
+PASS T004: recurso ajeno y canary conservados; revisión pendiente registrada.
+T004: tres tenants sintéticos READY y uno FAILED; F01 sigue abierta.
+PENDING: CI at final documentation HEAD and human review.
 No claim of full T004 acceptance or F01 closure.
 See source-sha256 manifest for exact runtime sources.
+
+INDEPENDENT METADATA CHECK:
+PASS: control revision 0004; three READY/SUCCEEDED operations with all six steps complete;
+      SQL operation markers, owned private S3 buckets/principals/policies verified.
+PASS: one FAILED/OWNERSHIP_CONFLICT with REVIEW pending; foreign tags and canary intact.
+No secret values were read from OpenBao by this check.
