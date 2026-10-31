@@ -89,7 +89,7 @@ pendientes de tareas posteriores son históricos. Esta sección indica la puerta
 - [x] Perfiles separados: administración de provisioning y consulta/check/migrate sin admin IAM.
 - [x] Tests offline de entrada, idempotencia, reintento y attach sin cambios de datos/servicios.
 - [x] Manual operativo, custodia/unseal y reversión conservadora; límites declarados.
-- [ ] Clon limpio fijado al commit, tooling/imagen reproducidos y catálogo real consultado.
+- [x] Clon limpio fijado al commit, tooling/imagen reproducidos y catálogo real consultado.
 - [ ] Batería CLI real desde el clon con credenciales de operador en su terminal.
 - [ ] Matriz de AC y fuentes/resultados finales completos; CI del HEAD final.
 - [ ] Revisión humana T007 y aceptación global F01.

@@ -26,5 +26,5 @@ T003 aceptada: [cierre PR #11](https://github.com/dlalvarez/rag-platform/pull/11
 T004 aceptada: [cierre PR #12](https://github.com/dlalvarez/rag-platform/pull/12#issuecomment-6544965980).
 T005 aceptada: [cierre PR #13](https://github.com/dlalvarez/rag-platform/pull/13#issuecomment-6547808923).
 T006 aceptada: [cierre PR #14](https://github.com/dlalvarez/rag-platform/pull/14#issuecomment-6548128680).
-T007 autorizada e implementada; clon limpio, batería CLI y revisión pendientes.
+T007 implementada y clon limpio validado; batería CLI y revisión pendientes en PR #15.
 No cerrar F01 ni iniciar F02 todavía.

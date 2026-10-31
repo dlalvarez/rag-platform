@@ -6,6 +6,15 @@ All development/builds/tests performed on the authorized development server.
 PASS: 152 offline tests; Ruff check/format; SDD docs; controlled F00 negative checks.
 PASS: CLI help and real metadata-only show --instances.
 No new schema revisions, dependencies or services.
-PENDING: clone from the published commit, frozen environment/build, CLI operator battery,
-         final HEAD CI and human acceptance of T007/F01.
+CODE: b60b912ba195779e8e5fd340331dfd649c85403d
+PASS: clone from GitHub fixed to code commit, detached HEAD, clean tracked tree.
+Path: /home/diego/proyectos/rag-platform-t007-clean-b60b912b
+PASS: new uv 0.13.6 frozen environment, host Python 3.12.3, no Python download.
+PASS: 152 tests, Ruff check/format, SDD docs and controlled F00 negatives in the clean clone.
+PASS: attach-existing wrote only ignored private path/UID/GID configuration.
+PASS: tools image rebuilt from clone; help and real catalog CLI show correct.
+PASS: runtime and installed package hashes match the versioned source manifest.
+PASS: F00 real API/PostgreSQL/vector/synthetic S3 regression.
+PASS: CI docs/lint/tests at code HEAD, push and PR.
+PENDING: CLI operator battery, final documentation HEAD CI and human acceptance T007/F01.
 No secret values, production data, F02 or backup/restore/HA claims.

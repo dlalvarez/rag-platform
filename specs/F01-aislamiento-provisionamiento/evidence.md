@@ -504,3 +504,26 @@ Clon limpio, batería CLI y aceptación global F01 siguen pendientes.
 Los logs por tarea y manifiestos versionados anteriores identifican sus fuentes/comandos.
 La matriz no declara HA/restore/producción ni funcionalidades F02+. El cierre de F01
 requiere completar T007 y aceptación humana, además de estos resultados técnicos.
+
+
+## T007 — clon limpio comprobado; batería CLI pendiente
+
+Código de ejecución: b60b912ba195779e8e5fd340331dfd649c85403d,
+[PR #15](https://github.com/dlalvarez/rag-platform/pull/15).
+Clon separado en ragdev01: /home/diego/proyectos/rag-platform-t007-clean-b60b912b,
+obtenido desde GitHub y fijado en detached HEAD. No copia de .venv, secretos o datos.
+uv 0.13.6 con Python /usr/bin/python3 3.12.3 y UV_PYTHON_DOWNLOADS=never:
+entorno nuevo frozen correcto; 152 tests, Ruff/formato, docs SDD y negativos F00 correctos.
+attach-existing creó solo configuración ignorada de rutas/UID/GID; no preparación de
+datos o arranque/reinicio de servicios. El árbol de archivos versionados quedó limpio.
+
+Imagen tools t007 reconstruida desde ese clon con receta/lock fijados.
+Ayuda CLI y show --instances contra catálogo real correctos.
+Se verificaron hashes tanto de archivos del contenedor como del paquete instalado
+contra el manifiesto de fuentes del commit, no solo el nombre de la etiqueta de imagen.
+Regresión F00 real posterior: API/PostgreSQL/vector/roundtrip S3 sintético, PASS.
+
+[Log T007](../../docs/evidence/f01-t007-2026-10-31.txt) y
+[manifiesto](../../docs/evidence/f01-t007-source-sha256.txt).
+La batería cli-check está solicitada a Diego desde ese clon, con contraseña solo
+en su terminal. No se declara todavía su éxito ni cierre de F01.
