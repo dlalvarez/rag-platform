@@ -1,25 +1,18 @@
-# Siguiente tarea Codex — acceso temporal de pruebas en desarrollo
+# Siguiente tarea Codex — conservar el flujo delegado aprobado
 
-F01 aceptada y cerrada: PR #15 integrado en
-develop@585c342fe4a87d0d2b5a071b8114c4cb075ce5be; Issue #7 cerrada.
-152 tests, calidad/docs, CI y regresión real F00 postmerge correctos.
-[Evidence](../specs/F01-aislamiento-provisionamiento/evidence.md).
-Conservar el clon fijo b60b912 y los datos/fixtures/canaries/conflictos existentes.
+F01 cerrada, Issue #7 completed. ADR-0007 permite revisar e integrar PR hacia develop
+dentro de specs/tareas autorizadas, con diff revisado, pruebas/checks/evidencias y postmerge.
+No pedir confirmación repetida para operaciones rutinarias autorizadas.
 
-Diego autorizó revisión e integración delegadas de PR dentro del alcance aprobado.
-Ver [ADR-0007](../docs/adr/0007-delegated-development-review.md).
-No pedir confirmación de nuevo para cada PR elegible; conservar pruebas y evidencias.
+La mejora operativa ACC-01..05 está implementada y probada contra OpenBao:
+[manual](f01/ACCESS.md), [log](../docs/evidence/f01-access-2026-10-31.txt).
+180 tests y batería CLI real delegada correctos; token revocado y grant consumido.
+No es acceso permanente. Otra batería requiere emitir otro SecretID desde la terminal
+del operador; no pedir contraseña en chat ni reutilizar grants/tokens. No cambiar roles,
+TTL o custodia para eliminar esa intervención sin decidir antes el cambio de contrato.
 
-Siguiente mejora autorizada por la solicitud de agilizar pruebas: preparar un flujo
-temporal y revocable en ragdev01 con el AppRole F01 ya aprobado. Documentar primero
-plan y pruebas: entrega desde terminal de Diego a archivo privado/tmpfs, TTL y consumo
-limitados, autenticación no interactiva explícita, sin fallback ni acceso root/unseal,
-revocación/limpieza y errores saneados. Revisar diferencias entre sesión de operador
-y token AppRole antes de elegir el contrato; no prometer permisos que el token no tiene.
-No pedir contraseña en chat ni almacenarla de forma permanente. Esa integración
-todavía no está implementada; no afirmar que las herramientas actuales la soportan.
-
-Todo desarrollo/prueba permanece en ragdev01. Sin nueva fase, cambios de permisos,
-políticas generales o servicios por iniciativa propia. Si la solución exige cambiar
-ADR-0004, proponer el cambio y obtener autorización de esa decisión antes del runtime.
-F02 y promoción a main/tag conservan decisión expresa. Backup/restore/HA/PITR pendientes.
+Todo trabajo permanece en ragdev01. Conservar datos, canaries, conflictos y clon fijo
+T007 /home/diego/proyectos/rag-platform-t007-clean-b60b912b.
+F02 y main/tag todavía no autorizados; no asumir que autonomía amplía el alcance.
+Si se autoriza F02, leer su spec/contratos originales y formalizar el plan antes de código.
+No reinicializar OpenBao ni borrar bases/buckets ni declarar backup/restore/HA/PITR.

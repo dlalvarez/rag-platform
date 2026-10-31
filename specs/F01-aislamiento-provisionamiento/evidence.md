@@ -570,3 +570,27 @@ Issue #7 cerrada como completed. Las puertas pendientes de secciones anteriores
 son históricas. Se conservan los datos y el clon fijo de código b60b912.
 No hay cambios de esquema/servicios ni nueva batería sensible para documentar el cierre.
 Sin promoción a main/tag, sin F02 y sin acreditar backup/restore/HA/PITR independiente.
+
+
+## Mejora operativa posterior — acceso temporal delegado
+
+ACC-01..05, autorizados por la solicitud de autonomía y ADR-0007, no amplían
+F01-R01..07 ni crean otra fase. [Plan/manual](../../ops/f01/ACCESS.md).
+180 tests offline correctos. Diego emitió un SecretID de un uso; Codex ejecutó la
+batería CLI completa sin contraseña ni TTY: tres PASS T007 y PASS ACCESS CLI.
+La sesión AppRole fue revocada con rechazo real posterior HTTP 403; grant consumido.
+[Log](../../docs/evidence/f01-access-2026-10-31.txt) y
+[manifiesto](../../docs/evidence/f01-access-source-sha256.txt).
+Una nueva fixture primaria READY conservada, secundaria reutilizada; totales catorce
+tenants (once READY/dos PROVISIONING/uno FAILED), doce operaciones (once SUCCEEDED/una FAILED).
+Fuentes de imagen/paquete instalado, ausencia de sesiones tenant en primario y
+regresión F00 posteriores comprobadas. No secretos consultados en chat, cambios
+de políticas, migraciones, servicios persistentes o contraseñas existentes.
+El comando verify no se ejecutó por separado; la autorización se destinó a cli-check.
+F01 conserva su aceptación; no se inicia F02 ni se acredita recuperación de datos.
+
+Recuento conciliado: existe otra fixture CLI anterior a esta ejecución (20:30 UTC),
+con actor interactivo. La nueva fixture de esta batería tiene actor delegado distinto;
+ambas conservan seis pasos completos, intentos 2 y referencias SQL versión 1.
+La inspección inicial comparó con un recuento anterior y se corrigió tras revisar
+fechas y auditoría; no se borraron ni modificaron fixtures para ajustar los totales.

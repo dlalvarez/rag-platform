@@ -276,6 +276,27 @@ def attach_existing() -> None:
     )
 
 
+def prepare_access() -> None:
+    """Create only an owner-private tmpfs directory for an ephemeral handoff."""
+    root = Path(f"/run/user/{os.getuid()}")
+    mount = json.loads(
+        subprocess.check_output(["findmnt", "--json", "--target", str(root)], text=True)
+    )["filesystems"][0]
+    if mount["fstype"] != "tmpfs" or root.resolve() != root:
+        raise ValueError("Access handoff requires the user's tmpfs runtime directory")
+    info = root.stat()
+    if info.st_uid != os.getuid() or info.st_mode & 0o077:
+        raise ValueError("Private owner runtime directory required")
+    directory = root / "rag-f01-access"
+    directory.mkdir(mode=0o700, exist_ok=True)
+    info = directory.lstat()
+    if directory.is_symlink() or not directory.is_dir() or info.st_uid != os.getuid():
+        raise ValueError("Refuse foreign or symlinked access directory")
+    if info.st_mode & 0o077:
+        raise ValueError("Access directory must be private")
+    print("Private tmpfs access directory ready; no credentials created.")
+
+
 def compose(arguments: list[str]) -> None:
     if not arguments or arguments[0] not in {
         "config",
@@ -316,7 +337,16 @@ def compose(arguments: list[str]) -> None:
             raise ValueError("Missing or symlinked F01 input")
     if any(
         arg
-        in {"minio", "s3-check", "s3-compat", "saga-check", "isolation-check", "admin", "cli-check"}
+        in {
+            "minio",
+            "s3-check",
+            "s3-compat",
+            "saga-check",
+            "isolation-check",
+            "admin",
+            "cli-check",
+            "access-cli",
+        }
         for arg in arguments
     ):
         for name in ("minio", "tls/minio"):
@@ -379,6 +409,8 @@ def main() -> None:
             prepare_second()
         elif args.command == ["attach-existing"]:
             attach_existing()
+        elif args.command == ["prepare-access"]:
+            prepare_access()
         else:
             compose(args.command)
     except (ValueError, OSError, subprocess.SubprocessError, KeyError):
