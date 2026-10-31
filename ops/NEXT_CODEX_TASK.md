@@ -1,18 +1,23 @@
-# Siguiente tarea Codex — conservar el flujo delegado aprobado
+# Siguiente tarea Codex — sesión diaria de pruebas
 
-F01 cerrada, Issue #7 completed. ADR-0007 permite revisar e integrar PR hacia develop
-dentro de specs/tareas autorizadas, con diff revisado, pruebas/checks/evidencias y postmerge.
-No pedir confirmación repetida para operaciones rutinarias autorizadas.
+Diego solicitó una autorización reutilizable de al menos 24 horas, sin nueva
+intervención por batería. El flujo corto ACC de PR #17 no satisface ese objetivo.
+F01 sigue cerrada; el runtime actual no cambia en esta entrega documental.
 
-La mejora operativa ACC-01..05 está implementada y probada contra OpenBao:
-[manual](f01/ACCESS.md), [log](../docs/evidence/f01-access-2026-10-31.txt).
-180 tests y batería CLI real delegada correctos; token revocado y grant consumido.
-No es acceso permanente. Otra batería requiere emitir otro SecretID desde la terminal
-del operador; no pedir contraseña en chat ni reutilizar grants/tokens. No cambiar roles,
-TTL o custodia para eliminar esa intervención sin decidir antes el cambio de contrato.
+[ADR-0008 propuesto](../docs/adr/0008-daily-development-session.md).
+[Contrato DAY-01..06 y tareas D001..D006](f01/DAY_ACCESS.md).
+Propuesta: f01-dev-day, mismos permisos f01-provisioner, token reutilizable de 86400s,
+caducidad máxima explícita y revocación por sesión diaria. Sin guardar contraseña.
+Conservar f01-cli y su máximo de una hora como flujo corto independiente.
 
-Todo trabajo permanece en ragdev01. Conservar datos, canaries, conflictos y clon fijo
-T007 /home/diego/proyectos/rag-platform-t007-clean-b60b912b.
-F02 y main/tag todavía no autorizados; no asumir que autonomía amplía el alcance.
-Si se autoriza F02, leer su spec/contratos originales y formalizar el plan antes de código.
-No reinicializar OpenBao ni borrar bases/buckets ni declarar backup/restore/HA/PITR.
+Pendiente D001: disponer de administración inicial. Root inicial revocado;
+f01-operator no puede crear roles ni editar políticas. Resolver con Diego si tiene
+otra identidad administrativa o si hay que preparar recuperación controlada.
+No generar root ni habilitar endpoints/reiniciar OpenBao unilateralmente.
+No pedir secretos en chat. La duración solicitada está clara; no preguntar otra vez
+si quiere 24 horas ni presentar una batería de un uso como solución equivalente.
+
+Tras resolver D001, implementar y probar el contrato, PR y postmerge conforme a
+la delegación ADR-0007. No afirmar que hay sesión diaria mientras no esté activada.
+Todo desarrollo permanece en ragdev01. Conservar datos/fixtures/clon T007 y F00.
+No iniciar F02 ni promover main/tag por esta tarea. Backup/restore/HA/PITR pendientes.
