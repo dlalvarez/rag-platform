@@ -25,5 +25,5 @@ T002 aceptada e integrada: [cierre PR #10](https://github.com/dlalvarez/rag-plat
 T003 aceptada: [cierre PR #11](https://github.com/dlalvarez/rag-platform/pull/11#issuecomment-6535895042).
 T004 aceptada: [cierre PR #12](https://github.com/dlalvarez/rag-platform/pull/12#issuecomment-6544965980).
 T005 aceptada: [cierre PR #13](https://github.com/dlalvarez/rag-platform/pull/13#issuecomment-6547808923).
-T006 autorizada e implementada en rama específica; batería integral y revisión pendientes.
+T006 implementada y ambas baterías reales completadas en PR #14; revisión/aceptación pendientes.
 No iniciar T007 todavía.

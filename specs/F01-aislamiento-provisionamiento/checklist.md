@@ -72,8 +72,8 @@ Dos endpoints reales y batería ampliada de fase permanecen en T006.
 - [x] Control refleja MIGRATING/FAILED/READY según resultado, sin head falso.
 - [x] Segunda instancia privada, mismo digest, datos/TLS separados y límites dentro de 5 GiB.
 - [x] Calibración PostgreSQL real: reversibilidad, rollback DDL y lock/timeout entre procesos.
-- [ ] Dos baterías integrales con credenciales OpenBao y SQL/S3 en ambos sentidos.
-- [ ] Pools A2→B2→A2, destino erróneo sin fallback y canary del otro tenant intacto.
+- [x] Dos baterías integrales con credenciales OpenBao y SQL/S3 en ambos sentidos.
+- [x] Pools A2→B2→A2, destino erróneo sin fallback y canary del otro tenant intacto.
 - [ ] Evidencia de fuentes y CI del HEAD T006.
 - [ ] Revisión/aceptación humana y postmerge T006.
 

@@ -413,12 +413,61 @@ upgrade/downgrade/upgrade, rollback transaccional del DDL fallido, dos procesos,
 timeout PostgreSQL y reintento. Retenida una BD de calibración y cuatro roles, todos
 NOLOGIN al finalizar; nuevas conexiones a la BD deshabilitadas. Sin tenant/catálogo,
 SecretStore ni cambio de recursos existentes en esa calibración.
-La batería integral del operador sigue pendiente; no se extrapola esta calibración
-a aislamiento tenant o a cumplimiento completo de AC-F01-01..07.
+La calibración inicial no acreditaba por sí sola aislamiento tenant. La batería integral
+posterior del operador se registra abajo; la aceptación global de F01 sigue pendiente.
 
 Validación previa al operador: 144 pruebas offline correctas; Ruff/formato,
 documentación SDD y pruebas negativas F00 correctos. Control-check PostgreSQL/TLS
 repetido, PASS. Regresión real F00 API/PostgreSQL/vector/roundtrip S3, PASS.
 [Log inicial](../../docs/evidence/f01-t006-2026-10-31.txt) y
 [manifiesto de fuentes](../../docs/evidence/f01-t006-source-sha256.txt).
-La batería isolation-check con credenciales OpenBao está solicitada al operador.
+La batería isolation-check con credenciales OpenBao fue ejecutada posteriormente por Diego.
+
+
+## Entrega técnica T006 — revisión humana pendiente
+
+F01-R01..07 → AC-F01-01..07 parciales → P6 → T006 → V01..V07.
+Código ejecutado: fe431aa402ec17382ae4c9cfb33d889038102264,
+[PR #14](https://github.com/dlalvarez/rag-platform/pull/14).
+[Log saneado](../../docs/evidence/f01-t006-2026-10-31.txt) y
+[manifiesto](../../docs/evidence/f01-t006-source-sha256.txt).
+Las revisiones posteriores de documentación no cambian las fuentes ejecutadas.
+
+Diego ejecutó isolation-check en su terminal y reportó nueve PASS:
+cuatro SAME_INSTANCE, cuatro TWO_INSTANCES y uno adicional de destino erróneo.
+Ambas baterías probaron SQL/S3 propios y rechazos en ambos sentidos, pools A→B→A,
+fallo real de bucket sin READY, reintento con credenciales/identidad conservadas,
+upgrade/downgrade/upgrade sintético, fallo DDL revertido y otro tenant intacto.
+Dos procesos comprobaron lock/timeout PostgreSQL, estado FAILED sin versión falsa,
+rechazo del resolver y recuperación/repetición correctas.
+
+Entre instancias se comprobó ausencia del principal en el otro nodo y rechazo de
+autenticación; no se presenta como un rechazo CONNECT 42501 de una misma instancia.
+El destino equivocado se inyectó en un adaptador de catálogo de prueba, sin cambiar
+ubicaciones reales. La adquisición falló sin recurrir al préstamo anterior; el destino
+correcto volvió a conectar. PID numérico no identifica una conexión entre servidores:
+se comprobó junto con endpoint/BD/rol.
+
+Resultado de la batería: cuatro fixtures T006 READY. Secretos versionados en OpenBao,
+referencias opacas en control, ningún secreto recibido en chat ni usado como argumento.
+La fixture reversible conserva canary y versión propios; la pista canónica sigue 0001.
+No se aplicó downgrade canónico ni se borraron bases, buckets o recursos ajenos.
+El token de operador se revoca al finalizar; los tokens AppRole mantienen su TTL aprobado.
+
+144 pruebas offline correctas; Ruff/formato, documentación y negativos F00 correctos.
+CI docs/lint/tests del código probado pasó en push y PR. El HEAD documental final se
+verifica por separado. Sin dependencias nuevas ni endpoints públicos.
+T006 pendiente de aceptación humana; T007 y la aceptación global F01 siguen pendientes.
+No se acredita backup/restore, HA, PITR independiente ni funcionalidades F02+.
+
+Corroboración independiente posterior: diez tenants (siete READY, dos PROVISIONING,
+uno FAILED) y ocho operaciones (siete SUCCEEDED, una FAILED). Las cuatro fixtures T006
+están READY/READY con versión observada 0001; tres ubicaciones nuevas en primario y
+una en secundario, referencias SQL versión 1 y propiedad/política/principal S3 privados
+exactos. No quedaron sesiones SQL tenant en ninguno de los dos nodos. Control 0004,
+estados previos preservados y regresión F00 completa posterior, PASS. Esta inspección
+lee metadatos, no valores OpenBao; el acceso tenant real, canaries y versiones reales
+se acreditan mediante la batería del operador.
+
+Los resultados cubren las pruebas técnicas de T006; las casillas AC globales de F01
+permanecen abiertas hasta T007 (CLI/clon limpio) y aceptación de fase.

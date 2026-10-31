@@ -8,15 +8,16 @@ Rama feat/F01-T006-migrations-isolation.
 T006 implementa P6/V01–V07: migración bloqueada en la conexión de Alembic,
 reflejo verificado en control, segunda instancia y fixtures reversibles separadas.
 postgres2 ya preparada/arrancada; NO repetir prepare-second. No reiniciar otros servicios.
-Calibración real independiente completada; no acredita todavía aislamiento tenant.
+Calibración y ambas baterías integrales completadas por Diego; nueve PASS T006.
+Código probado: fe431aa402ec17382ae4c9cfb33d889038102264; PR #14.
 
-Pendiente: isolation-check en la terminal del operador, con su contraseña OpenBao.
-Dos baterías: A/B misma instancia y A2/B2 en dos instancias. Registrar solo PASS/códigos.
+Dos baterías completadas: A/B misma instancia y A2/B2 en dos instancias.
+Resultados saneados y manifiesto de fuentes versionados.
 Son cuatro fixtures nuevas respecto de tareas anteriores; claves idempotentes estables.
-Probar SQL/S3, saga/reintento, A2→B2→A2/destino equivocado, rollback y lock con dos procesos.
+SQL/S3, saga/reintento, A2→B2→A2/destino equivocado, rollback y lock con dos procesos probados.
 Conservar canaries, bases, buckets y roles de calibración sin limpiar/regenerar secretos.
 
-Registrar fuentes exactas, resultados reales y CI del HEAD. Presentar PR para revisión;
+144 pruebas offline correctas. Comprobar CI del HEAD final y presentar PR para revisión;
 no fusionar antes de aprobación explícita. Tras merge autorizado verificar postmerge.
 Solo después de aceptar T006 y autorizar continuar: T007, CLI general y clon limpio.
 
