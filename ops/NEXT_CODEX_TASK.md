@@ -1,23 +1,24 @@
-# Siguiente tarea Codex — validar y revisar T004
+# Siguiente tarea Codex — validar y revisar T005
 
-T001–T003 aceptadas e integradas mediante PR #9/#10/#11.
-Base T004: develop@4593f3832dd601c0d2ca7424281397622eac923a.
-Rama feat/F01-T004-provisioning-saga.
-[Runbook](f01/T004.md), [evidence](../specs/F01-aislamiento-provisionamiento/evidence.md).
+T001–T004 aceptadas e integradas mediante PR #9/#10/#11/#12.
+Base T005: develop@e46b46f822ca3726086d3b2ba3dc78b71db9ba3e.
+Rama feat/F01-T005-resolver-pools.
+[Runbook](f01/T005.md), [evidence](../specs/F01-aislamiento-provisionamiento/evidence.md).
 
-T004 implementa P4/V05: journal, idempotencia, lock por tenant, propiedad por operación
-y compensación sin borrar bases/buckets. Control 0004 y lock real ya comprobados.
-Batería integral completada por Diego: cuatro PASS T004; tres tenants sintéticos READY
-y uno FAILED/REVIEW, sin adopción ni borrado del recurso ajeno.
-Código probado: 2b75e922fa407393004e14fbe29717b6e78cfa77; PR #12.
-123 pruebas offline correctas. Evidencia y manifiesto de fuentes versionados.
+T005 implementa P5/V03/V06 parcial: resolver interno, refs sin password y pools
+limitados por tenant/destino/rol/ref-versión. No AuthorizedTenantContext de F02.
+Batería real completada por Diego: cuatro PASS T005 mediante pool-check.
+Código probado: bd3145baf48971c40d77b1f3c9146d0de5ed537a; PR #13.
+Reutiliza fixtures READY T004; no nuevos tenants, servicios ni passwords SQL.
+Cambio temporal de referencia sintética se restaura en finally; conservar la referencia
+de prueba adicional en OpenBao. No convertir esto en rotación operativa o limpieza.
 
-Después: comprobar docs/lint/tests del HEAD, presentar PR para revisión humana.
-No fusionar antes de aprobación explícita. Tras merge autorizado, verificar postmerge.
-Solo después de aceptar T004 y autorizar continuar: T005, resolver y pools conforme P5/V06.
+Resultado y fuentes exactas registrados; 138 pruebas offline correctas.
+Comprobar CI del HEAD final y presentar PR para revisión;
+no fusionar hasta aprobación explícita. Tras merge autorizado verificar postmerge.
+Solo después de aceptar T005 y autorizar continuar: T006 conforme P6/V01–V07,
+incluida la segunda instancia real y migraciones coordinadas; no acreditarlas con mocks.
 
-Conservar fixtures T002/T003 y nuevas T004, incluso FAILED/REVIEW. No limpiar recursos,
-regenerar secretos, reinicializar OpenBao ni repetir prepare-storage.
-Los tenants T004 solo pueden ser READY tras migración inicial y probes reales.
-T006 conserva su alcance de migraciones generales, canary y dos instancias; T007 su CLI.
-No F02 ni alta HTTP pública. Desarrollo y pruebas siempre en ragdev01, nunca local.
+Conservar F00 y fixtures F01, incluso FAILED/REVIEW. No reinicializar OpenBao,
+regenerar secretos, borrar recursos o repetir prepare-storage.
+Desarrollo/pruebas siempre en ragdev01, nunca local. F01 e Issue #7 siguen abiertos.

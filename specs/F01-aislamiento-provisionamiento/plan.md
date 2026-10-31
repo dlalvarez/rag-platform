@@ -1,6 +1,6 @@
 # Plan F01 — ratificado en PR #8
 
-**Estado:** ratificado por Diego el 2026-10-30; T001 aceptada e integrada en develop mediante PR #9; T002 aceptada mediante PR #10; T003 implementada y ensayada, pendiente de aceptación. [Aprobación](https://github.com/dlalvarez/rag-platform/pull/8#issuecomment-6528543252).
+**Estado:** ratificado por Diego el 2026-10-30; T001 aceptada e integrada en develop mediante PR #9; T002 aceptada mediante PR #10; T003/T004 aceptadas mediante PR #11/#12; T005 implementada y ensayada, revisión pendiente. [Aprobación](https://github.com/dlalvarez/rag-platform/pull/8#issuecomment-6528543252).
 Las propuestas de diseño de este plan quedaron aprobadas; cada PR técnico requiere revisión posterior.
 Dependencia satisfecha: [F00 aceptada, Issue #4](https://github.com/dlalvarez/rag-platform/issues/4),
 PR #6 integrado en develop@85cd39f401b48e312c1e4fd61906543a4ff588fe.
