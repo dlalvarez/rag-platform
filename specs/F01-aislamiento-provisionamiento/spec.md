@@ -1,6 +1,6 @@
 # F01 — Plano de control y aprovisionamiento aislado
 
-**Estado:** spec/plan/tasks ratificados por Diego en PR #8 el 2026-10-30; T001 aceptada e integrada mediante PR #9; T002 aceptada e integrada mediante PR #10; T003/T004 aceptadas e integradas mediante PR #11/#12; T005 aceptada e integrada mediante PR #13; T006 aceptada e integrada mediante PR #14; T007 probada; revisión pendiente. Aceptación técnica de F01 pendiente.
+**Estado:** spec/plan/tasks ratificados por Diego en PR #8 el 2026-10-30; T001 aceptada e integrada mediante PR #9; T002 aceptada e integrada mediante PR #10; T003/T004 aceptadas e integradas mediante PR #11/#12; T005 aceptada e integrada mediante PR #13; T006 aceptada e integrada mediante PR #14; T007 aceptada e integrada mediante PR #15. F01 aceptada y cerrada.
 [Registro de aprobación](https://github.com/dlalvarez/rag-platform/pull/8#issuecomment-6528543252).
 **Dependencia:** F00 aprobada y cerrada en Issue #4 (PR #6 integrado en develop).
 **Meta:** Prueba técnica de aislamiento antes de datos de negocio.
@@ -50,3 +50,8 @@ Esta fase transforma el estado previo en: Prueba técnica de aislamiento antes d
 ## Puerta de salida
 
 Aprobación humana de evidencia, revisión de seguridad y compatibilidad, pruebas reproducibles exitosas y merge controlado.
+
+
+Estado final: Diego aprobó T007 y F01; develop@585c342fe4a87d0d2b5a071b8114c4cb075ce5be.
+[Registro de cierre](https://github.com/dlalvarez/rag-platform/pull/15#issuecomment-6548809463). Tests/CI y regresión F00 postmerge correctos.
+Las anotaciones de puertas pendientes anteriores son históricas. F02 no iniciada.

@@ -1,9 +1,9 @@
-# Evidencia F01 — pruebas T007 completadas; aceptación de fase pendiente
+# Evidencia F01 — aceptada y cerrada
 
 **Estado actual:** T001–T006 aceptadas e integradas mediante PR #9–#14.
-T007 probada desde el clon limpio, pendiente de revisión en PR #15.
+T007 aceptada e integrada mediante PR #15 tras pruebas desde el clon limpio.
 Las pruebas técnicas AC-F01-01..07 están cubiertas por la matriz de cierre.
-F01 e Issue #7 permanecen abiertos hasta aceptación y postmerge.
+F01 e Issue #7 cerradas tras aprobación de Diego y postmerge correcto.
 
 El registro inicial y las secciones anteriores al cierre T007 conservan la cronología;
 sus menciones de tareas posteriores pendientes son históricas.
@@ -557,3 +557,16 @@ Se propone aceptar T007 y el alcance técnico original F01, sujeto a revisión h
 merge autorizado hacia develop y comprobación postmerge. Issue #7 sigue abierta.
 No se acredita backup/restore externo, HA, PITR independiente ni producción.
 La promoción develop→main/tag y el inicio de F02 requieren decisiones separadas.
+
+
+## Aceptación y cierre efectivo
+
+Diego revisó y aprobó T007 y el cierre técnico F01. PR #15 integrado en
+develop@585c342fe4a87d0d2b5a071b8114c4cb075ce5be.
+Postmerge en ragdev01: 152 tests PASS, Ruff/formato, documentación y regresión
+real API/PostgreSQL/vector/S3 F00 PASS. CI docs/lint/tests del merge success.
+[Registro de aceptación y postmerge](https://github.com/dlalvarez/rag-platform/pull/15#issuecomment-6548809463).
+Issue #7 cerrada como completed. Las puertas pendientes de secciones anteriores
+son históricas. Se conservan los datos y el clon fijo de código b60b912.
+No hay cambios de esquema/servicios ni nueva batería sensible para documentar el cierre.
+Sin promoción a main/tag, sin F02 y sin acreditar backup/restore/HA/PITR independiente.
