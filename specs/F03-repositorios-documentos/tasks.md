@@ -1,10 +1,10 @@
 # Tareas F03
 
-T001: planificación preparada; su integración y postmerge aún pendientes.
+T001: integrada en PR #27, develop@8530739dbc2cf5a067c5f67c6cc963ea2cc12d76; CI/postmerge correctos.
 T002..T007: pendientes de implementación/pruebas, sin AC acreditados.
 [Plan](plan.md), [checklist](checklist.md), [evidencia](evidence.md).
 
-- [ ] T001 — Persistir continuidad ADR-0010 y formalizar plan/tareas/trazabilidad.
+- [x] T001 — Persistir continuidad ADR-0010 y formalizar plan/tareas/trazabilidad.
   R01..05; AC-01..04; V01..V07. Integrar PR documental y continuar.
 - [ ] T002 — Credencial de aplicación mínima y conexión autorizada/versión conocida.
   R01/R02/R03/R05; AC-01/02; V01/V02/V06.
@@ -22,3 +22,7 @@ T002..T007: pendientes de implementación/pruebas, sin AC acreditados.
 Orden lógico: T001 primero; T002/T003 pueden prepararse independientemente cuando el
 bootstrap de credenciales esté bloqueado. No saltar las puertas de runtime/integración.
 Seguir sin confirmaciones rutinarias; consultar solo bajo condiciones de ADR-0010.
+
+T002: adaptador/policy/bootstrap preparados y probados de forma aislada; requiere
+acción administrativa única del operador antes de integrar la credencial runtime.
+T003 puede avanzar sin esa acción. No dar T002 por terminada ni usar bearer infra en API.

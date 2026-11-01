@@ -12,3 +12,5 @@ COPY scripts/f01_*.py ./scripts/
 COPY ops/f01/*.hcl ./ops/f01/
 COPY scripts/f02_*.py ./scripts/
 ENV PATH="/app/.venv/bin:$PATH"
+COPY scripts/f03_*.py ./scripts/
+COPY ops/f03 ./ops/f03/

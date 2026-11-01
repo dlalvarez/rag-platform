@@ -1,0 +1,41 @@
+{
+  "fixtures": [
+    {
+      "name": "same-a",
+      "refs": [
+        "09986822-3d84-40de-a992-0cb9b75f94c1",
+        "1ede7d47-fe5a-4b95-a4bc-4a57604f8781",
+        "5d28fabc-fc77-4caf-81c8-3cb7a38e37a4"
+      ],
+      "tenant": "34edf39b-5cf7-40a5-92c4-805fd2afae01"
+    },
+    {
+      "name": "same-b",
+      "refs": [
+        "190fcbfd-7aee-40ef-be30-2c06b2f6964f",
+        "a245239a-be0c-41cd-b04c-941eb4c4f7f0",
+        "cb3840ca-aae0-4143-97c5-99e9ed2b785c"
+      ],
+      "tenant": "5c3b5e3f-34d0-437c-a18d-e700ae044694"
+    },
+    {
+      "name": "two-a",
+      "refs": [
+        "1fe8c0f7-0388-4a95-b484-49c5e1c59d28",
+        "21febd2a-c30e-45b2-8645-d07e7d3e52a0",
+        "ea0a300f-9a70-4e38-b0aa-e1fb04518654"
+      ],
+      "tenant": "68fd8a26-be8e-4f85-851a-288e72212d86"
+    },
+    {
+      "name": "two-b",
+      "refs": [
+        "160ffd57-a331-4b87-a810-aa32f076c33e",
+        "4fc6a57b-cab5-4359-8967-d39ebccc3b5c",
+        "6a0b89de-1bb0-4826-ae97-1d4ac2a9fa60"
+      ],
+      "tenant": "9e696790-1908-4cd6-9cb1-af0a05f822e1"
+    }
+  ],
+  "version": 1
+}
