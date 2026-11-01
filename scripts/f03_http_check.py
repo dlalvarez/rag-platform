@@ -4,6 +4,7 @@ import hashlib
 import io
 import json
 import logging
+import os
 import ssl
 import zipfile
 from pathlib import Path
@@ -25,7 +26,9 @@ from rag_platform.providers.application_handoff import NAME, read_record
 from rag_platform.providers.application_secrets import ApplicationSecretStore
 
 DELIVERY = Path("/run/f03-application")
-HOST = "rag-f03-api-candidate"
+HOST = os.environ.get("RAG_F03_TEST_HOST", "api")
+if HOST not in {"api", "rag-f03-api-candidate"}:
+    raise ValueError("Invalid fixed test target")
 
 
 class Failure(RuntimeError):
@@ -187,6 +190,7 @@ def prove():
                         value={"role": "owner"},
                         expected=403,
                     )
+                    api.json("alice", "DELETE", temp + f"/acl/{actors['alice']}", expected=409)
                     api.json("alice", "DELETE", temp + f"/acl/{actors['bob']}")
                     api.json("bob", "GET", temp, expected=403)
                     api.json("alice", "DELETE", temp)
@@ -253,7 +257,21 @@ def prove():
                             )
 
                     stage = tag + "/NEGATIVES"
+
+                    def object_state(tenant=tenant, repo=repo):
+                        trace = uuid4()
+                        ctx = services.authority.authorize(actors["alice"], tenant, trace)
+                        with services.gateway.client(ctx, trace, repo, "read") as (s3, bucket):
+                            return sorted(
+                                (item.object_name, item.etag, item.size)
+                                for item in s3.list_objects(
+                                    bucket, prefix=f"f03/{repo.hex}/", recursive=True
+                                )
+                            )
+
                     baseline = totals(services, actors["alice"], tenant)
+                    objects_before = object_state()
+
                     bad = path + "/documents?filename=http-fixture.txt"
                     headers = {
                         "Content-Type": "text/plain",
@@ -266,6 +284,44 @@ def prove():
                     api.json("alice", "GET", root + "/" + fixture["private"], expected=403)
                     foreign = next(f for f in fixtures if f["tenant"] != fixture["tenant"])
                     api.json("alice", "GET", root + "/" + foreign["repository"], expected=403)
+                    api.json("dave", "GET", path + "/documents", expected=403)
+                    alice_repos = api.json("alice", "GET", root)["items"]
+                    dave_repos = api.json("dave", "GET", root)["items"]
+                    check(
+                        fixture["private"] not in {r["repository_id"] for r in alice_repos}
+                        and str(repo) not in {r["repository_id"] for r in dave_repos},
+                        "REPOSITORY_ENUMERATION",
+                    )
+                    conditional = json.loads(
+                        (ROOT / "ops/f03/conditional-fixture.json").read_text()
+                    )["fixtures"]
+                    foreign_doc = next(
+                        f["document"] for f in conditional if f["tenant"] == foreign["tenant"]
+                    )
+                    api.json(
+                        "alice", "GET", path + f"/documents/{foreign_doc}/original", expected=404
+                    )
+                    bomb = io.BytesIO()
+                    with zipfile.ZipFile(bomb, "w", zipfile.ZIP_DEFLATED) as archive:
+                        archive.writestr(
+                            "[Content_Types].xml",
+                            b"<Types>application/vnd.openxmlformats-officedocument."
+                            b"wordprocessingml.document.main+xml</Types>",
+                        )
+                        archive.writestr("_rels/.rels", b"<Relationships/>")
+                        archive.writestr("word/document.xml", b"<document/>")
+                        archive.writestr("word/bomb.bin", b"x" * (2 * 1024 * 1024))
+                    api.json(
+                        "alice",
+                        "POST",
+                        path + "/documents?filename=invalid.docx",
+                        body=bomb.getvalue(),
+                        headers={
+                            "Content-Type": formats()[-1][1],
+                            "Idempotency-Key": "f03-http-zipbomb-" + fixture["name"],
+                        },
+                        expected=422,
+                    )
 
                     # Enforce actual chunked bytes, without trusting a declared total.
                     def oversized():
@@ -286,6 +342,7 @@ def prove():
                         totals(services, actors["alice"], tenant) == baseline,
                         "NEGATIVE_CREATED_ROWS",
                     )
+                    check(object_state() == objects_before, "NEGATIVE_CHANGED_OBJECTS")
 
                     stage = tag + "/CURSOR"
                     listing = api.json("alice", "GET", path + "/documents?limit=1")
@@ -305,6 +362,25 @@ def prove():
                     )
                     print(f"PASS T006 {tag}: CRUD/ACL HTTPS; formatos/replay/original correctos.")
                     print(f"PASS T006 {tag}: denegaciones y cursor correctos.")
+
+                stage = "A_B_A"
+                for names in (("same-a", "same-b", "same-a"), ("two-a", "two-b", "two-a")):
+                    for name in names:
+                        item = next(f for f in fixtures if f["name"] == name)
+                        record = next(
+                            r
+                            for r in records
+                            if r["tenant"] == item["tenant"] and r["format"] == "txt"
+                        )
+                        base = (
+                            f"/api/v1/tenants/{record['tenant']}/repositories/"
+                            f"{record['repository']}/documents/{record['document']}"
+                        )
+                        metadata = api.json("alice", "GET", base)["document"]
+                        check(metadata["version_id"] == record["version"], "A_B_A_WRONG_VERSION")
+                        body, _ = api.call("alice", "GET", base + "/original")
+                        check(body == formats()[0][2], "A_B_A_WRONG_ORIGINAL")
+                print("PASS T007: A→B→A en ambas topologías; IDs y original propios.")
 
                 stage = "DELIVERY"
                 first_fixture = fixtures[0]

@@ -1,47 +1,34 @@
 # Tareas F03
 
-T001: integrada en PR #27, develop@8530739dbc2cf5a067c5f67c6cc963ea2cc12d76; CI/postmerge correctos.
-T002: handoff/runtime implementado y probado en candidato; CI/promoción pendientes.
-T003: integrada en PR #30, CI/revisión/postmerge correctos.
-T004: componente integrado en PR #31, develop@ea4554fb70425b3df61d9198aeb907e1216fec82; CI/postmerge correctos.
-T005 integrada en PR #32; CI/postmerge correctos. T006 candidata verificada; T007 pendiente. Ningún AC documental de API acreditado aún.
-[Plan](plan.md), [checklist](checklist.md), [evidencia](evidence.md).
+Implementación T001..T006 integrada y promovida en desarrollo; baterías T007 correctas.
+Falta cerrar el PR T007 con CI/revisión/merge/postmerge antes de activar F04.
+[Plan](plan.md), [aceptación](acceptance.md), [checklist](checklist.md),
+[evidencia](evidence.md). Requisitos y criterios originales conservados.
 
 - [x] T001 — Persistir continuidad ADR-0010 y formalizar plan/tareas/trazabilidad.
-  R01..05; AC-01..04; V01..V07. Integrar PR documental y continuar.
+  R01..05; AC-01..04; V01..V07. PR #27 integrado con CI/revisión/postmerge.
 - [x] T002 — Credencial de aplicación mínima y conexión autorizada/versión conocida.
-  R01/R02/R03/R05; AC-01/02; V01/V02/V06.
+  R01/R02/R03/R05; AC-01/02; V01/V02/V06. Bootstrap #28, lock #29 y handoff/runtime #33.
 - [x] T003 — Migración tenant aditiva, estado RECEIVED y restricciones/idempotencia.
-  R01/R03/R04; AC-03/04; V03/V04/V07.
+  R01/R03/R04; AC-03/04; V03/V04/V07. PR #30; repetición final con documentos presentes.
 - [x] T004 — CRUD repositorios y ACL por capacidad, paginación y auditoría.
-  R01/R02; AC-01/02; V01/V02/V06.
+  R01/R02; AC-01/02; V01/V02/V06. PR #31 y HTTP #33, aceptación real T007.
 - [x] T005 — Streaming/MIME/tamaño/hash, objeto privado, recepción/reintento/compensación.
-  R03/R04; AC-03/04; V03/V04/V06.
+  R03/R04; AC-03/04; V03/V04/V06. PR #32; caídas, SQL parcial, lease/fencing y cuotas.
 - [x] T006 — Proxy de original autorizado y API con errores/cabeceras seguras.
-  R02/R05; AC-01/02; V01/V02/V05/V06.
+  R02/R05; AC-01/02; V01/V02/V05/V06. PR #33 integrado/promovido; postmerge correcto.
 - [ ] T007 — Batería real ambas topologías, regresiones, evidencia/CI/revisión/postmerge.
-  R01..05; AC-01..04; V01..V07.
+  R01..05; AC-01..04; V01..V07. Baterías y 562 tests correctos; pendiente puerta del PR.
 
-Orden lógico: T001 primero; T002/T003 pueden prepararse independientemente cuando el
-bootstrap de credenciales esté bloqueado. No saltar las puertas de runtime/integración.
-Seguir sin confirmaciones rutinarias; consultar solo bajo condiciones de ADR-0010.
+T002/T006: develop@be7643847f6e472ae9b1b5d3011d83d3f75b3260, cuatro checks de head y
+tres de merge correctos, revisión delegada y API existente promovida con la misma imagen.
+Sin reinicios de PostgreSQL/MinIO/OpenBao ni cambios de contraseña del operador.
 
-T002: bootstrap real completado por Diego y verificado por agente sin otra contraseña.
-PR #29 serializa ventanas/baterías. Falta handoff/runtime; no usar bearer infra en API.
-T003: esquema f03_tenant_0002 y batería final ambas topologías correctos; ver schema.md
-y evidence.md. Integrar con CI/revisión/postmerge y continuar T004 sin pausa.
+T007 añade observadores reales, cruces SQL/S3, baja lógica con contenido, concurrencia
+HTTP y ZIP expansivo; compara filas/objetos y conserva recursos. Regresiones F00/F01/F02
+y T003 F03 correctas. Logs sin secretos/contenido y temporales cerrados.
+Consultar acceptance.md/evidence.md para el alcance exacto y las limitaciones.
 
-T004: ver acl.md y evidence.md; cuatro fixtures reales y 415 tests correctos.
-PR #31 integrado con CI/revisión/postmerge; API documental aún no desplegada.
-
-T005: ver receipt.md/evidence.md; 512 tests y batería real de cuatro fixtures correctos.
-Componente de validación/recepción privada, diario durable,
-recuperación y cuotas. Mantener abiertos los AC HTTP hasta T006/T007.
-
-
-T005: PR #32 integrado en 752036e2533f96e54deedbd6d782818a583e3460 con CI/revisión/
-postmerge correctos; 40 documentos y cuatro colisiones sintéticas retenidas.
-T002/T006: componentes verificados en candidato HTTPS aislado, sin sustituir aún API
-activa. 562 tests, handoff real, dos baterías HTTP en cuatro fixtures correctos.
-Ver api.md/evidence.md. Completar PR/CI/revisión/promoción/postmerge y seguir T007,
-sin terminar el turno al comunicar ese hito.
+No terminar el turno al cerrar el PR: registrar postmerge y continuar planificación F04.
+Consultar solo decisiones reales pendientes según ADR-0010, sin pedir otra aprobación
+de trámite. No anticipar código dependiente de una decisión de arquitectura sin resolver.

@@ -8,11 +8,13 @@ from pathlib import Path
 DATA = Path("/srv/rag-data/rag-platform/f02")
 
 
-def run():
+def run(*, extra_forbidden=(), extra_patterns=()):
     values = json.loads((DATA / "secrets/identity-fixture-v2.json").read_text())
-    forbidden = [values["client_secret"]] + [
-        item[field] for item in values["users"].values() for field in ("password", "id")
-    ]
+    forbidden = (
+        list(extra_forbidden)
+        + [values["client_secret"]]
+        + [item[field] for item in values["users"].values() for field in ("password", "id")]
+    )
     forbidden += [
         (DATA / "secrets/identity_app_password").read_text(),
         (DATA / "secrets/identity_admin_password").read_text(),
@@ -22,6 +24,8 @@ def run():
     )
     body = result.stdout + result.stderr
     if any(secret in body for secret in forbidden):
+        raise ValueError("LEAK")
+    if any(re.search(pattern, body) for pattern in extra_patterns):
         raise ValueError("LEAK")
     if re.search(r"eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+", body):
         raise ValueError("LEAK")

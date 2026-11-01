@@ -1,77 +1,58 @@
-# Tarea activa Codex — continuar F03 sin pausas de trámite
+# Tarea activa Codex — cerrar F03 y continuar F04 sin pausas
 
-Diego autorizó expresamente el 2026-11-01 continuidad por el roadmap original y pidió
-persistirla. Leer AGENTS y [ADR-0010](../docs/adr/0010-roadmap-continuity.md).
-No terminar el trabajo al cerrar una tarea/PR/fase ni esperar otro «procede».
-Integrar con evidencia/CI/postmerge y seguir con la siguiente actividad/dependencia.
-Consultar solo ante inconsistencias/desvíos, stop conditions o bloqueo externo comprobado;
-seguir trabajo independiente y preparar solución concreta antes de pedir intervención.
+Leer AGENTS y ADR-0010. Diego reiteró después de PR #32 que completar un PR no permite
+terminar el turno. Seguir la próxima actividad autorizada; consultar solo decisiones
+reales/inconsistencias/desvíos o bloqueos externos bajo los criterios acordados.
+La reiteración está persistida en PR #33. No pedir otro «procede» ni aprobación rutinaria.
+Toda ejecución manual de código/dependencias/servicios permanece en ragdev01.
 
-F00/F01/F02 aceptadas; F02 cerrada en develop@81e213c0682ec1766358b29328e52df968c4d8ea
-mediante PR #26. F03 activa: [spec](../specs/F03-repositorios-documentos/spec.md),
-[plan](../specs/F03-repositorios-documentos/plan.md), tasks/checklist/evidence.
-T001 integrada en PR #27. T002 tiene identidad mínima instalada/probada; handoff y
-runtime pendientes antes del despliegue T006. T003/T004 integradas en PR #30/#31.
-No crear otro roadmap ni anticipar F04 antes de aceptar F03.
+## Estado actual
 
-F03: repositorios/ACL, carga validada y objetos privados, metadata RECEIVED y proxy de
-original autorizado. Sin parsing/embeddings/Drive/UI/chat. Definir credencial runtime
-de mínimo privilegio; no dar a la API el bearer diario, SQL migrator o MinIO admin.
-Preparar bootstrap fijo y pruebas; si requiere una acción administrativa no disponible,
-solicitar solo esa intervención mientras se avanzan módulos/migraciones independientes.
+F00/F01/F02 aceptadas. F03: componentes y API integrados en PR #27..#33; T007 completo
+en pruebas y pendiente del PR de cierre con CI/revisión/merge/postmerge.
+Ver specs/F03-repositorios-documentos/{spec,plan,tasks,checklist,evidence,acceptance}.md.
+No cambiar el roadmap original ni iniciar código de F04 antes de cerrar esa puerta.
 
-Código, dependencias, builds, tests y servicios manuales solo en ragdev01:
- /home/diego/proyectos/rag-platform. Mantener PR a develop, revisión delegada ADR-0007,
-checks y postmerge; no atribuir revisión independiente/aprobación personal nueva.
-Sesión diaria reemitida con vencimiento observado 2026-11-02T06:38:16-05:00.
-Comprobar status/canary antes de uso; no leer bearer, renovar/revocar automáticamente,
-repetir configure/root o pedir password por batería. Linger=yes conserva tmpfs tras
-logout; reboot elimina archivos y unseal permanece con Diego.
+Base develop@be7643847f6e472ae9b1b5d3011d83d3f75b3260, PR #33 con CI/revisión/postmerge.
+API normal rag-f02-dev-api-1 F03 activa con la misma imagen probada. Candidato efímero
+cerrado. PostgreSQL/MinIO/OpenBao conservados, sin puertos nuevos ni cambio de claves.
+Worktree /home/diego/proyectos/rag-platform-f03-schema, feat/F03-T007-acceptance.
+Checkout operativo /home/diego/proyectos/rag-platform en develop, limpio.
 
-Conservar F00/F01/F02, sus fixtures/datos, versiones y clon T007 F01. Sin main/tag,
-producción, cambio de visibilidad, borrado/downgrade destructivo o relajación de aislamiento.
+T007: 562 tests, HTTP en cuatro fixtures/ambas topologías, observadores, cruces SQL/S3,
+conservación tras baja lógica, concurrencia HTTP, ZIP expansivo, F00/F01/F02 y esquema
+F03 con documentos presentes correctos. Logs sin secretos/contenido/trazas, temporales
+cerrados. Nuevos scripts/artefactos/evidencia en el worktree; publicar PR de cierre,
+revisar head exacto, integrar develop y verificar postmerge. Continuar F04 al terminar.
 
-## Punto de continuación F03 — T005 integrada, ejecutar T002/T006 ahora
+## Operación y recursos
 
-PR #28: bootstrap real completado y verificado; PR #29 lock de mantenimiento;
-PR #30 T003 y PR #31 T004 integradas con CI/revisión/postmerge correctos.
-PR #32 T005 integrado con revisión/CI/postmerge en develop@752036e2533f96e54deedbd6d782818a583e3460.
-512 tests; batería real cuatro fixtures, 12 secuencias 412→HEAD y regresión T004 correctas.
-40 documentos y cuatro colisiones sintéticas del run final conservados.
-No repetir configure ni pedir otra contraseña. Día vigente emite AppRole read-only
-de una hora con SecretID de un uso; no bearer infra en runtime.
+Día autorizado observado hasta 2026-11-02T06:38:16-05:00. Reutilizarlo, comprobar estado;
+no leer/exportar bearer al chat, renovarlo/revocarlo automáticamente ni repetir root/
+configure. Linger=yes conserva tmpfs tras logout; reboot elimina archivos y unseal
+permanece con Diego. No solicitar password por batería.
 
-Worktree ragdev01 /home/diego/proyectos/rag-platform-f03-schema,
-feat/F03-T006-api-proxy. Checkout operativo /home/diego/proyectos/rag-platform.
-T005 implementa validación acotada, objeto condicional privado y diario SQL con
-fencing/cuota/recuperación. Ver receipt.md/evidence.md para resultados y límites.
-T005 cerrada como componente. Ejecutar T002 handoff/T006 API-proxy ahora; no detenerse
-al comunicar PR #32 ni esperar otra instrucción. Diego reiteró esta regla tras ese cierre.
+Runtime API: AppRole limitado de una hora, doce refs exactas de aplicación, sin día,
+migrator, root o MinIO admin. scripts/f03_runtime_host.py ensure reutiliza/emite entrega;
+replace para identidad revocada/reinicio. API verifica/reemplaza y revoca la anterior.
+En worktree indicar --f02-env /home/diego/proyectos/rag-platform/.env.f02. .env.f03
+solo contiene UID/GID. Usar composición ops/f02/compose.yaml + ops/f03/handoff.compose.yaml.
+No ejecutar baterías que toman el lock diario en paralelo.
 
-Repos semilla: ops/f03/repositories-fixture.json. Alice owner explícita de tenants ORG
-F03; Bob editor, Carol reader, Dave admin. Repo a: Alice owner/Bob editor/Carol reader,
-Dave sin ACL. Repo b: Dave owner; Alice sin ACL pese a operador/owner tenant.
-Repo c: Alice owner. No modificar permisos de fixtures F01/F02.
-conditional-fixture.json conserva los cuatro originales de prueba idempotente;
-receipt-fixture.json identifica la última batería T005 completa. No borrar anteriores.
+Conservar todos los recursos F00/F01/F02/F03 y clon F01 T007. Fixtures F03:
+repositories-fixture, conditional-fixture, receipt-fixture, http-fixture,
+http-race-fixture y lifecycle-fixture en ops/f03. Las cuatro colisiones T005 y repos
+DELETED mantienen reserva/historial/objetos; no borrar ni adoptar. La CLI F01 crea
+fixtures sintéticas adicionales durante regresión y las conserva.
+Sin main/tag, producción, cambio de visibilidad, purge o downgrade destructivo.
 
-Continuar T002 handoff/T006 API y proxy tras T005. La API recibe solo identidad AppRole
-F03 verificada; nunca día/admin/migrator/MinIO admin. Reutilizar servicio API existente
-(512 MiB/0.25 CPU, un worker), sin puertos/microservicios extra. Temporales privados
-con cuota y concurrencia de carga/descarga; verificar original antes de HTTP exitoso.
-Pruebas de cabeceras/errores v1, ACL/cruces y regresiones T007 antes de aceptar F03.
-No iniciar F04 ni elegir parser antes de esa aceptación; conservar DDL histórico.
+## Continuación tras el cierre
 
-
-### Estado actual T002/T006
-
-Handoff y API/proxy implementados en feat/F03-T006-api-proxy; candidato efímero
-rag-f03-api-candidate activo, sin puertos ni alias api. Instancia F02 previa intacta.
-562 tests y dos baterías HTTPS reales correctos en cuatro fixtures; mismo conjunto
-de 16 documentos en ops/f03/http-fixture.json; temporales cerrados/log flags false.
-Candidato usa entrega privada compartida, consumidor único. Antes de promover: cerrar
-candidato (revoca su bearer), emitir replace con día vigente y recrear solo api con
-ops/f03/handoff.compose.yaml + .env.f03 y .env.f02 operativo. No reiniciar otros servicios.
-Validar CI/revisión del mismo agente/merge/postmerge. Continuar T007 inmediatamente,
-sin terminar el turno al entregar el PR. Pendientes observadores de denegación,
-negativas adicionales API, A→B→A y regresiones F00/F01/F02 antes de aceptar F03.
+Registrar evidencia/postmerge del PR T007 y seguir la fase F04 del roadmap original.
+Leer su spec y docs/05-ingestion.md, docs/04-data-model.md, docs/13-decisions-risks.md.
+Preparar plan/tareas/trazabilidad y revisar D-05 (parser PDF/DOCX y límites), que el
+registro original deja por confirmar antes de F04. Proponer opciones concretas con
+fuentes y consecuencias para calidad/tablas/resiliencia/recursos; no inventar una
+aprobación de arquitectura ni pedir una aprobación de trámite de toda la fase.
+Mientras llega una decisión necesaria, avanzar documentación/trabajo independiente
+sin implementar lo que dependa de ella. No terminar el turno solo por cerrar F03.
