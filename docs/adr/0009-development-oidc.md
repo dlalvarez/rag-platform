@@ -1,7 +1,7 @@
 # ADR 0009 — IdP OIDC de desarrollo para F02
 
 Estado: aprobado expresamente por Diego en conversación, 2026-10-31.
-Decisión: «Keycloak solo para desarrollo (recomendado)». Aplicación técnica pendiente.
+Decisión: «Keycloak solo para desarrollo (recomendado)». Entorno dev T001 aplicado e integrado en PR #20; fase F02 aún abierta.
 [Registro D-04](../13-decisions-risks.md), [arquitectura](../02-architecture.md),
 [plan F02](../../specs/F02-identidad-membresias/plan.md).
 

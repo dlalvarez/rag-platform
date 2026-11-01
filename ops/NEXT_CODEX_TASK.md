@@ -11,8 +11,10 @@ D-04 resuelta expresamente por Diego: Keycloak solo para desarrollo según
 Ejecutar T001..T007 en PR acotados a develop con revisión delegada ADR-0007,
 CI, evidencia real y postmerge, sin nuevas preguntas rutinarias.
 T001 implementada y ensayada con Keycloak 26.8.1 por digest, TLS, PostgreSQL propio
-y presupuesto medido. Revisar/integrar su PR con CI y postmerge; continuar T002:
-access token, firma/claims, JWKS acotado, rotación, fallo cerrado y pruebas reales.
+y presupuesto medido. T001 integrada en PR #20. T002 implementada y ensayada con tokens Keycloak reales,
+rotación reversible y expiración real; revisar/integrar su PR con CI y postmerge.
+Continuar T003: identidad issuer+sub, membresías/tipos/roles y auditoría de control
+con migración aditiva, constraints, grants mínimos y pruebas PostgreSQL reales.
 No confundir discovery/JWKS de T001 con validación de tokens o aceptación de F02.
 
 Toda ejecución y dependencias en ragdev01. Sesión de pruebas de ADR-0008 activa

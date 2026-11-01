@@ -1,6 +1,6 @@
 # Evidencia F02
 
-Estado: T001 implementada y comprobada; F02 no aceptada.
+Estado: T001 integrada, T002 implementada y comprobada; F02 no aceptada.
 Las anotaciones de planificación siguientes conservan el estado histórico.
 
 Base inspeccionada en ragdev01: develop@f66a38c8dbfe6d9244eef3cf390ed16f37998b41,
@@ -65,3 +65,43 @@ La evidencia de T001 no cierra AC-F02 ni autoriza F03.
 Fuentes exactas: [manifiesto](../../docs/evidence/f02-t001-source-sha256.txt).
 Manual: [IdP dev](../../ops/f02/README.md).
 CI, revisión y comprobación postmerge se registran en la conversación del PR.
+
+## T002 — tokens verificados y rotación real
+
+Base develop@2acd9f6c5704cde47c73690480e7131d1b690778.
+Rama feat/F02-T002-oidc-validation; F02-R01/R05, AC-03/04 parciales; V01/V06.
+PyJWT[crypto] 2.15.1 y cryptography 50.0.2 por hashes; sin actualizar versiones previas.
+Verificador RS256/RSA >=2048, issuer/audience/exp/iat/sub y perfil access token
+validados; cache JWKS <=300 s/32 claves/64 KiB, red 5 s y refresco limitado/concurrente.
+Sin redirecciones, proxy, URLs de JWT, claves vencidas o roles de producto desde claims.
+Identity inmutable sin bearer/claims completos y sin issuer/sub en repr.
+
+Batería real scripts/f02_token_check.py, imagen rag-f02-tools:t002:
+sha256:271784a521da6c5ef939faabbc7177e4cec7fc3137fbc409212a9fdd1182d7cb.
+Verificador instalado y scripts de imagen coinciden con fuentes del servidor.
+PASS T002: token Keycloak real; firma y audiencia alteradas rechazadas.
+PASS T002: rotación real de clave; tokens nuevo/anterior verificados y clave original restaurada.
+PASS T002: token de 5 s realmente vencido rechazado con leeway=0.
+Credenciales solo en archivos privados del servidor; tokens solo en memoria.
+Realm sintético rag-dev-token-fixture separado del principal, clientes de servicio,
+controlador manage-realm solo en su realm; no usuario/admin master.
+La batería retira solo su componente temporal; no rota secretos existentes.
+
+Importación inicial falló por nombre de archivo diferente del realm, requisito de
+DirImportProvider. Se corrigió el destino del bind y se añadió regresión de nombre,
+permisos y no sobrescritura. Sin borrar/reinicializar base o secretos; prueba completa
+correcta después. Se recreó solo IdP F02; PostgreSQL y F00/F01 conservados.
+
+249 tests correctos, Ruff/formato/SDD correctos; 28 nuevos tests desde T001.
+Firma y claims inválidos, ID token, none/HS, JWKS privados/débiles/duplicados,
+límites/redirecciones, ráfaga concurrente de kid, rotación, caída/cache expirada,
+cierre y captura de logs sin JWT/subject probados offline.
+Regresiones reales: discovery/TLS/CA del realm principal, canary diario OpenBao
+y F00 API/SQL/vector/S3 correctas. Sin nueva contraseña ni extensión del día.
+Un aviso previo de Starlette/httpx continúa; sin tests fallidos.
+
+Sin migraciones de control/tenant, usuarios de producto, membresías ni endpoints nuevos.
+T003..T007 y aceptación integral siguen pendientes. Este servicio de prueba no
+acredita login humano ni cierre de todos los AC-F02.
+[Fuentes exactas](../../docs/evidence/f02-t002-source-sha256.txt).
+CI/revisión/postmerge del commit publicado se registran en la conversación de su PR.

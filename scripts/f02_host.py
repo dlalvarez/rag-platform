@@ -132,7 +132,89 @@ def prepare():
         )
     finally:
         os.umask(previous)
+    prepare_tokens()
     print("PASS F02 PREP: private paths/TLS/SQL prepared; no users or product memberships.")
+
+
+def prepare_tokens():
+    validate(True)
+    for folder in (DATA, DATA / "config", DATA / "secrets"):
+        if not folder.is_dir() or folder.is_symlink():
+            raise ValueError("PATH")
+    targets = (DATA / "config/token-fixture-realm.json", DATA / "secrets/token-fixture.json")
+    if any(p.exists() or p.is_symlink() for p in targets):
+        raise ValueError("EXISTS")
+    previous = os.umask(0o077)
+    try:
+        probe_secret = secrets.token_urlsafe(36)
+        controller_secret = secrets.token_urlsafe(36)
+        short_secret = secrets.token_urlsafe(36)
+        controller = "f02-fixture-controller"
+        realm = {
+            "realm": "rag-dev-token-fixture",
+            "enabled": True,
+            "sslRequired": "all",
+            "registrationAllowed": False,
+            "resetPasswordAllowed": False,
+            "loginWithEmailAllowed": False,
+            "bruteForceProtected": True,
+            "accessTokenLifespan": 120,
+            "clients": [
+                {"clientId": "rag-api", "protocol": "openid-connect", "bearerOnly": True},
+                {
+                    "clientId": "f02-probe",
+                    "protocol": "openid-connect",
+                    "publicClient": False,
+                    "secret": probe_secret,
+                    "serviceAccountsEnabled": True,
+                    "standardFlowEnabled": False,
+                    "directAccessGrantsEnabled": False,
+                    "protocolMappers": [
+                        {
+                            "name": "api-audience",
+                            "protocol": "openid-connect",
+                            "protocolMapper": "oidc-audience-mapper",
+                            "config": {
+                                "included.client.audience": "rag-api",
+                                "access.token.claim": "true",
+                                "id.token.claim": "false",
+                            },
+                        }
+                    ],
+                },
+                {
+                    "clientId": controller,
+                    "protocol": "openid-connect",
+                    "publicClient": False,
+                    "secret": controller_secret,
+                    "serviceAccountsEnabled": True,
+                    "standardFlowEnabled": False,
+                    "directAccessGrantsEnabled": False,
+                },
+            ],
+            "users": [
+                {
+                    "username": "service-account-" + controller,
+                    "enabled": True,
+                    "serviceAccountClientId": controller,
+                    "clientRoles": {"realm-management": ["manage-realm"]},
+                }
+            ],
+        }
+        short_client = dict(realm["clients"][1])
+        short_client.update(
+            clientId="f02-short", secret=short_secret, attributes={"access.token.lifespan": "5"}
+        )
+        realm["clients"].append(short_client)
+        targets[0].write_text(json.dumps(realm))
+        targets[1].write_text(
+            json.dumps(
+                {"probe": probe_secret, "controller": controller_secret, "short": short_secret}
+            )
+        )
+    finally:
+        os.umask(previous)
+    print("PASS T002 PREP: isolated realm fixture; credentials private, no master admin.")
 
 
 def compose(*args):
@@ -159,11 +241,30 @@ def compose(*args):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", choices=["prepare", "build", "up", "status", "check", "config"])
+    parser.add_argument(
+        "action",
+        choices=[
+            "prepare",
+            "prepare-tokens",
+            "build",
+            "build-tools",
+            "tokens",
+            "up",
+            "status",
+            "check",
+            "config",
+        ],
+    )
     args = parser.parse_args()
     try:
         if args.action == "prepare":
             prepare()
+        elif args.action == "prepare-tokens":
+            prepare_tokens()
+        elif args.action == "build-tools":
+            compose("build", "token-check")
+        elif args.action == "tokens":
+            compose("run", "--rm", "-T", "--no-deps", "token-check")
         elif args.action == "build":
             compose("build", "idp")
         elif args.action == "up":
