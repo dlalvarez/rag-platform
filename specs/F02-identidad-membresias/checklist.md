@@ -5,7 +5,7 @@
 - [x] F01 aceptada previamente; base y requisitos rectores identificados.
 - [x] Plan y tareas propuestos sin modificar requisitos de la spec.
 - [x] D-04 resuelta por Diego; ejecución spec/plan autorizada dentro del roadmap.
-- [ ] PR de planificación revisado y CI correcto.
+- [x] PR #19 integrado y comprobado; CI del commit de merge correcto.
 - [ ] Identidad, membresías y contexto implementados con migraciones y permisos mínimos.
 - [ ] Evidencia real V01..V07 y todos los AC cumplidos.
 - [ ] F00/F01 y CI sin regresión; revisión y postmerge registrados.

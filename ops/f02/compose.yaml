@@ -1,0 +1,127 @@
+name: rag-f02-dev
+services:
+  idp-postgres:
+    image: pgvector/pgvector:0.8.7-pg17-bookworm@sha256:ac08538c6f8b9904c33c8224c5e5706dbe760aca29db1d096972b4052c22a75d
+    environment:
+      POSTGRES_USER: f02_bootstrap
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    entrypoint: [/bin/sh, -ec]
+    command:
+      - |
+        install -o postgres -g postgres -m 600 /tls/idp-postgres.key /tmp/f02-postgres.key
+        install -d -o postgres -g postgres -m 700 /docker-entrypoint-initdb.d
+        install -o postgres -g postgres -m 600 /bootstrap/init.sql /docker-entrypoint-initdb.d/01-idp.sql
+        exec /usr/local/bin/docker-entrypoint.sh postgres -c ssl=on -c ssl_min_protocol_version=TLSv1.3 -c ssl_cert_file=/tls/idp-postgres.crt -c ssl_key_file=/tmp/f02-postgres.key -c hba_file=/tls/pg_hba.conf -c max_connections=20 -c shared_buffers=64MB
+    secrets: [postgres_password]
+    volumes:
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/postgres
+        target: /var/lib/postgresql/data
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/tls/idp-postgres.crt
+        target: /tls/idp-postgres.crt
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/tls/idp-postgres.key
+        target: /tls/idp-postgres.key
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/tls/pg_hba.conf
+        target: /tls/pg_hba.conf
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/config/init.sql
+        target: /bootstrap/init.sql
+        read_only: true
+        bind: {create_host_path: false}
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U f02_bootstrap -d postgres]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    networks: [f02]
+    cpus: 0.25
+    mem_limit: 512m
+    memswap_limit: 512m
+    ulimits: {core: {soft: 0, hard: 0}}
+  idp:
+    image: rag-f02-keycloak:26.8.1
+    build:
+      context: ../..
+      dockerfile: ops/f02/keycloak.Dockerfile
+    user: "${RAG_F02_UID:?Prepare F02}:${RAG_F02_GID:?Prepare F02}"
+    command: [start, --optimized, --import-realm]
+    environment:
+      JAVA_OPTS_KC_HEAP: "-Xms128m -Xmx768m"
+    depends_on:
+      idp-postgres: {condition: service_healthy}
+    volumes:
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/config/keycloak.conf
+        target: /opt/keycloak/conf/keycloak.conf
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/tls/idp.crt
+        target: /tls/idp.crt
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/tls/idp.key
+        target: /tls/idp.key
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/tls/ca.crt
+        target: /tls/ca.crt
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ../../ops/f02/realm.json
+        target: /opt/keycloak/data/import/rag-dev-realm.json
+        read_only: true
+        bind: {create_host_path: false}
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=128m
+      - /opt/keycloak/data/tmp:rw,nosuid,size=128m,mode=1777
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    networks: [f02]
+    cpus: 0.75
+    mem_limit: 1536m
+    memswap_limit: 1536m
+    ulimits: {core: {soft: 0, hard: 0}}
+  idp-check:
+    profiles: [test]
+    image: rag-f01-tools:daily-v1
+    user: "${RAG_F02_UID:?Prepare F02}:${RAG_F02_GID:?Prepare F02}"
+    entrypoint: [python, /check/f02_idp_check.py]
+    volumes:
+      - type: bind
+        source: ../../scripts/f02_idp_check.py
+        target: /check/f02_idp_check.py
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/tls/ca.crt
+        target: /tls/ca.crt
+        read_only: true
+        bind: {create_host_path: false}
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    networks: [f02]
+    cpus: 0.25
+    mem_limit: 768m
+    memswap_limit: 768m
+    ulimits: {core: {soft: 0, hard: 0}}
+networks:
+  f02: {internal: true}
+secrets:
+  postgres_password:
+    file: ${RAG_F02_ROOT:?Prepare F02}/secrets/postgres_password

@@ -1,0 +1,15 @@
+{
+  "realm": "rag-dev",
+  "enabled": true,
+  "sslRequired": "all",
+  "registrationAllowed": false,
+  "resetPasswordAllowed": false,
+  "loginWithEmailAllowed": false,
+  "duplicateEmailsAllowed": false,
+  "bruteForceProtected": true,
+  "accessTokenLifespan": 300,
+  "eventsEnabled": false,
+  "adminEventsEnabled": false,
+  "clients": [],
+  "users": []
+}
