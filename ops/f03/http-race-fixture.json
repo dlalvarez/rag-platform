@@ -1,0 +1,29 @@
+{
+  "fixtures": [
+    {
+      "document": "adc5a261-5a00-4c9e-b868-1b19443e7ebb",
+      "repository": "b60ef408-da5d-4b50-afd6-15975e60da48",
+      "tenant": "34edf39b-5cf7-40a5-92c4-805fd2afae01",
+      "version": "303e69b9-3719-4197-9027-56f1c5262ba4"
+    },
+    {
+      "document": "e9e846ab-3128-432e-acd5-29191dd237a2",
+      "repository": "9975128e-4f22-43a4-8345-318dad6f9621",
+      "tenant": "5c3b5e3f-34d0-437c-a18d-e700ae044694",
+      "version": "760d7883-0773-400c-8267-972f27bc8ebf"
+    },
+    {
+      "document": "fa2ee4c3-044c-4a95-90ae-01106db2bb58",
+      "repository": "7806fe2b-1a77-4a6e-b4fa-b69418d43c25",
+      "tenant": "68fd8a26-be8e-4f85-851a-288e72212d86",
+      "version": "238b4307-140a-4810-ab10-8d36f1d08129"
+    },
+    {
+      "document": "0924f0e8-3602-421a-982d-770e300f2c3e",
+      "repository": "3bb15346-0f0b-43b9-9ede-8deb967db457",
+      "tenant": "9e696790-1908-4cd6-9cb1-af0a05f822e1",
+      "version": "68c3991f-9323-4fb8-84e8-0124910b6820"
+    }
+  ],
+  "version": 1
+}

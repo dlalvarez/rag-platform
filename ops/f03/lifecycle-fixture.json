@@ -1,0 +1,37 @@
+{
+  "fixtures": [
+    {
+      "document": "8cdbc29c-9dff-46ac-8d12-b544025f951d",
+      "repository": "10f063fb-70d8-4e87-856a-20c0cf83b1cd",
+      "source": "c5efe058-2cc8-5dd9-9d12-48da01df5b79",
+      "state": "DELETED",
+      "tenant": "34edf39b-5cf7-40a5-92c4-805fd2afae01",
+      "version": "5ddc1af5-7e63-45aa-8128-14474d0c2859"
+    },
+    {
+      "document": "62533df7-6892-46a3-b4c7-2b0040f7c13f",
+      "repository": "3073a1dd-dad2-476d-96ec-ed76d6e45295",
+      "source": "8b0c3e22-3ff8-525e-998b-fa756dbe5a49",
+      "state": "DELETED",
+      "tenant": "5c3b5e3f-34d0-437c-a18d-e700ae044694",
+      "version": "304ae6a2-439d-4e3a-acdf-d763b64c9ce5"
+    },
+    {
+      "document": "29bd0c70-d3e8-4b07-a25c-62a9d1fbcacb",
+      "repository": "48658a15-7d99-41f0-ab11-f0cf23d7edc8",
+      "source": "84460943-1e6f-5688-90ca-98b0919e56c7",
+      "state": "DELETED",
+      "tenant": "68fd8a26-be8e-4f85-851a-288e72212d86",
+      "version": "5264cedd-3ab4-4500-b8ce-4316223f1c6d"
+    },
+    {
+      "document": "49f3895c-3683-452c-8b6b-ad6b146ecb57",
+      "repository": "13a18e1d-a2f7-4b29-8c60-23078ded2c75",
+      "source": "dd4621c6-12e4-50b1-ab2e-f68533638af1",
+      "state": "DELETED",
+      "tenant": "9e696790-1908-4cd6-9cb1-af0a05f822e1",
+      "version": "685bd35a-100c-4a18-bdb5-872d7c4c8d1c"
+    }
+  ],
+  "version": 1
+}

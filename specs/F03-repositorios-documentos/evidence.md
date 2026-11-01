@@ -245,3 +245,77 @@ La API candidata mantiene exactamente las fuentes de runtime probadas.
 Pendientes: CI/revisión/integración del PR T002/T006, promoción controlada de esa
 imagen al servicio API existente y validación posterior. Seguir T007 con observadores,
 negativas adicionales y regresiones. F03 permanece abierta; sin iniciar F04.
+
+
+## T002/T006 integrado y cierre T007 — 2026-11-01
+
+PR #33 integrado en develop@be7643847f6e472ae9b1b5d3011d83d3f75b3260.
+Cuatro checks del head y tres del merge correctos, revisión delegada sobre head exacto.
+[Postmerge y promoción](https://github.com/dlalvarez/rag-platform/pull/33#issuecomment-6564409178).
+Candidato efímero cerrado; bearer reemplazado con día vigente y solo servicio api
+recreado con la misma Image ID. Sin reinicios de PostgreSQL/MinIO/OpenBao, puertos
+nuevos, contraseña del operador ni cambio de visibilidad. La API normal F03 está activa.
+
+T007 HTTPS sobre api correcto, cuatro fixtures/ambas topologías: mismo conjunto de
+16 documentos y versiones, CRUD/ACL, último owner 409, listado sin enumerar repo
+sin ACL, documento ajeno 404 antes de S3, negativos de archivo/tamaño con conteos
+SQL y objetos S3 iguales antes/después. A→B→A verifica documento/versión/original
+propios tanto en instancia compartida como en dos instancias.
+Bearer ausente/revocado devuelve 503 con pool caliente y reemplazo recupera acceso.
+
+Observadores reales correctos: cuatro fixtures, positivos instrumentados comprueban
+lecturas reales de secretos/S3/spool. JWT ausente, tenant sin membresía, reader en
+carga y cursor de otro actor dejan los tres contadores en cero. La comprobación
+de ACL/doc ajeno usa SQL tenant pero no S3 ni spool, aun con pool caliente.
+No endpoint de debug ni cambios a la identidad de la API activa.
+El primer probe se detuvo antes de los casos; al incorporar el manifiesto HTTP
+generado a la imagen de herramientas y reconstruir, batería completa correcta.
+Material privado del probe revocado y retirado de tmpfs; recursos de datos conservados.
+
+Aislamiento directo F03 correcto: app/readonly con base/usuario/TLS propios y
+rolsuper/rolcreatedb/rolcreaterole/rolbypassrls false. Readonly UPDATE denegado 42501;
+SET ROLE cruzado denegado 42501 en instancia compartida. CONNECT entre bases/instancias
+rechazado por la causa precisa de permisos/autenticación; no se aceptó un fallo TLS
+genérico como aislamiento. Ambas direcciones en ambas topologías.
+GET propio correcto; GET/HEAD cruzados y anónimos AccessDenied HTTP 403 en las cuatro
+fixtures. No lectura de contenido cruzado, cambios de permisos o borrados.
+
+Baja lógica con contenido real de prueba correcta en las cuatro fixtures:
+repo DELETED y API deniega metadata/original; documento, versión, fuente, recibo
+COMMITTED, objeto con ETag/LastModified/metadatos intactos, ACL y auditoría conservados.
+ops/f03/lifecycle-fixture.json registra esos cuatro repos/documentos retenidos.
+
+Concurrencia HTTPS real correcta: dos solicitudes con misma clave, una recepción
+final/replay estable; SQL suma exactamente una fuente/documento/versión/recibo y un
+DOCUMENT_RECEIVED. Cuatro originales adicionales retenidos, IDs en
+ops/f03/http-race-fixture.json. La clave distinta por ejecución permite reproducir
+el caso sin borrar historial. DOCX expansivo construido desde un DOCX válido con sus
+partes completas rechazado 422 en cada fixture: filas y objetos idénticos antes/después.
+No atribuir este resultado solo a partes ausentes de un ZIP inválido.
+
+Regresiones reales correctas:
+- F00: constitución ausente, assertion fallida e import sin uso rechazados con exit 1,
+  únicamente en copias temporales; gates activos.
+- F01: imagen de herramientas reconstruida desde fuentes actuales; CLI diaria sin
+  password, create/fallo/retry/check/migrate en ambas instancias, sin rotación o
+  duplicados. Perfil identity/f01_tenant_0001 conservado. Nuevas fixtures sintéticas
+  propias de la regresión retenidas; no se confunden con mutaciones ajenas de F03.
+- F02 T006: OIDC A/B/A, SQL/S3 y cruces, IDOR/estados antes de secretos/conexiones/
+  queries/S3, ambas topologías. LOG_FLAGS forbidden_value=false, jwt_pattern=false,
+  traceback=false; datos F01 conservados.
+- F03 T003 con documentos presentes: cuatro fixtures, versión física/repetición,
+  DDL histórico fresco revertido, constraints/grants, fallo DDL revertido, FAILED sin
+  versión falsa/recuperación y locks entre procesos correctos. Sin probes persistentes
+  ni pérdida de contenido. Todas las baterías se ejecutaron en serie.
+
+Inspección de la API normal después de los ensayos: sin JWT, credenciales/subjects IdP,
+token de aplicación ni su familia, referencias/nombres físicos, contenido o trazas.
+No se publicaron logs brutos. Cero descriptores temporales; /tmp 0700 y 64 MiB.
+Se amplió el inspector F02 mediante parámetros opcionales para reutilizar el mismo
+control con el material F03, manteniendo la llamada F02 sin argumentos compatible.
+
+[Tabla R/AC/V, reproducción y límites](acceptance.md). Runtime idéntico a #33;
+esta entrega T007 solo añade validación y documentación. 562 tests offline y
+ruff/check_docs/diff correctos; falta CI/revisión/merge/postmerge del PR de cierre.
+Después continuar F04 según ADR-0010, presentando únicamente las decisiones técnicas
+reales pendientes antes del código que dependa de ellas.
