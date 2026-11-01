@@ -31,14 +31,23 @@ logout; reboot elimina archivos y unseal permanece con Diego.
 Conservar F00/F01/F02, sus fixtures/datos, versiones y clon T007 F01. Sin main/tag,
 producción, cambio de visibilidad, borrado/downgrade destructivo o relajación de aislamiento.
 
-## Punto de continuación F03-T002
+## Punto de continuación F03 — esquema preparado, seguir CRUD/ACL
 
-Adaptador de aplicación read-only y bootstrap fijo en ops/f03/README.md.
-333 tests offline, lint/format/docs correctos y prueba OpenBao real aislada correcta.
-Cuatro fixtures F03 propias creadas, refs públicas enumeradas sin credenciales.
-El día vigente tiene deny administrativo; falta acción única del operador con su clave
-para instalar el rol mínimo (dos reinicios SOLO OpenBao, root revocado/config restaurada).
-Preparar PR/CI/revisión/integración y checkout limpio antes de solicitar esa acción.
-No pedir contraseña para baterías: tras setup el día puede emitir el AppRole limitado.
-No reutilizar bearer diario en API ni dar T002 por cerrada. Continuar esquema/módulos
-T003 de forma independiente; preservar checkout de operación limpio si hay intervención.
+PR #28: bootstrap real completado por Diego y verificado autónomamente. PR #29:
+lock compartido entre ventanas/baterías, CI/postmerge correctos. No repetir configure.
+El día vigente ya puede emitir f03-application de solo lectura; prueba real de 12 refs,
+SQL/TLS propios y denegación de admin/migrator/canary, SecretID de un uso y revocación.
+
+Worktree técnico en ragdev01: /home/diego/proyectos/rag-platform-f03-schema,
+feat/F03-T003-schema. Checkout operativo /home/diego/proyectos/rag-platform limpio.
+T003 preparado: migración f03_tenant_0002, perfiles explícitos y DDL congelado,
+batería real cuatro fixtures correcta, 351 tests offline y regresión F02 ambas
+topologías correctos. Revisar CI/PR/integración/postmerge y seguir T004.
+Consultar schema.md/evidence.md de F03. No dar AC documentales ni fase por cerrados.
+
+T002 aún necesita handoff privado/runtime sin bearer infra. Continuar T004 CRUD/ACL,
+T005 recepción validada/idempotencia/compensación y T006 proxy/API, usando identidad
+de aplicación limitada para acceso de datos. Crear perfiles/membresías F03 explícitos
+y auditados para las fixtures, sin cambiar membresías F02 ni dar contenido implícito
+al operador. La API F02 existente conserva sus límites y funciones; no microservicios
+o puertos extra. No iniciar F04 antes de acreditar F03.

@@ -88,7 +88,7 @@ def apply_initial(connection, names: Names, repository: Path):
             raise MigrationError("IDENTITY_CONFLICT")
     config = Config(str(repository / "alembic-tenant.ini"))
     config.attributes["connection"] = connection
-    command.upgrade(config, "head")
+    command.upgrade(config, VERSION)
     existing = connection.execute(sa.text("SELECT tenant_id FROM public.ops_identity")).all()
     if not existing:
         connection.execute(

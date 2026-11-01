@@ -1,7 +1,9 @@
 # Tareas F03
 
 T001: integrada en PR #27, develop@8530739dbc2cf5a067c5f67c6cc963ea2cc12d76; CI/postmerge correctos.
-T002..T007: pendientes de implementación/pruebas, sin AC acreditados.
+T002: identidad mínima instalada/probada; handoff/runtime pendiente.
+T003: esquema y batería real preparados; CI/revisión/integración pendientes.
+T004..T007 pendientes; ningún AC documental acreditado aún.
 [Plan](plan.md), [checklist](checklist.md), [evidencia](evidence.md).
 
 - [x] T001 — Persistir continuidad ADR-0010 y formalizar plan/tareas/trazabilidad.
@@ -23,6 +25,7 @@ Orden lógico: T001 primero; T002/T003 pueden prepararse independientemente cuan
 bootstrap de credenciales esté bloqueado. No saltar las puertas de runtime/integración.
 Seguir sin confirmaciones rutinarias; consultar solo bajo condiciones de ADR-0010.
 
-T002: adaptador/policy/bootstrap preparados y probados de forma aislada; requiere
-acción administrativa única del operador antes de integrar la credencial runtime.
-T003 puede avanzar sin esa acción. No dar T002 por terminada ni usar bearer infra en API.
+T002: bootstrap real completado por Diego y verificado por agente sin otra contraseña.
+PR #29 serializa ventanas/baterías. Falta handoff/runtime; no usar bearer infra en API.
+T003: esquema f03_tenant_0002 y batería final ambas topologías correctos; ver schema.md
+y evidence.md. Integrar con CI/revisión/postmerge y continuar T004 sin pausa.

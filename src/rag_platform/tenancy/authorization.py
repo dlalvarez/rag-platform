@@ -14,7 +14,8 @@ from rag_platform.control.identity import AccessError, audit
 from rag_platform.control.identity_models import Membership, TenantProfile, User
 from rag_platform.control.models import DbLocation, StorageLocation, Tenant
 from rag_platform.tenancy.contracts import SecretRef
-from rag_platform.tenancy.resolver import VERSION, AdministrativeTenant
+from rag_platform.tenancy.profiles import version_for
+from rag_platform.tenancy.resolver import AdministrativeTenant
 
 
 @dataclass(frozen=True, slots=True)
@@ -47,15 +48,15 @@ def payload(context):
 
 
 class TenantAuthorizer:
-    def __init__(self, engine, key: bytes):
+    def __init__(self, engine, key: bytes, *, profile="identity"):
         if not isinstance(key, bytes) or len(key) != 32:
             raise ValueError("Invalid authority configuration")
         self.engine, self._key = engine, key
+        self.profile, self.version = profile, version_for(profile)
 
     def _sign(self, context):
-        return hmac.new(
-            self._key, b"F02/context/v1:" + payload(context), hashlib.sha256
-        ).hexdigest()
+        purpose = b"F02/context/v1:" if self.profile == "identity" else b"F03/context/v1:"
+        return hmac.new(self._key, purpose + payload(context), hashlib.sha256).hexdigest()
 
     def _current(self, principal, tenant, trace):
         if not all(isinstance(v, UUID) for v in (principal, tenant, trace)):
@@ -93,8 +94,8 @@ class TenantAuthorizer:
             if row is None or (
                 row.state != "READY"
                 or row.migration_state != "READY"
-                or row.desired_version != VERSION
-                or row.observed_version != VERSION
+                or row.desired_version != self.version
+                or row.observed_version != self.version
             ):
                 raise AccessError("TENANT_UNAVAILABLE")
             db = (

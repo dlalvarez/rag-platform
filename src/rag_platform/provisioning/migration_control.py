@@ -16,11 +16,22 @@ from rag_platform.provisioning.migrations import VERSION, MigrationError, migrat
 from rag_platform.provisioning.postgres import Names, Target
 from rag_platform.provisioning.saga import postgres_lock
 from rag_platform.tenancy.contracts import SecretRef
+from rag_platform.tenancy.profiles import version_for
 
 
 def migrate_controlled(
-    engine, tenant_id: UUID, actor: UUID, store, ca, repository, *, runner=migrate_initial
+    engine,
+    tenant_id: UUID,
+    actor: UUID,
+    store,
+    ca,
+    repository,
+    *,
+    runner=migrate_initial,
+    profile="identity",
 ):
+    expected = version_for(profile)
+    allowed = {VERSION, expected}
     if not isinstance(tenant_id, UUID) or not isinstance(actor, UUID):
         raise MigrationError("IDENTITY_CONFLICT")
     with postgres_lock(engine, "f01-saga-tenant:", tenant_id):
@@ -36,7 +47,7 @@ def migrate_controlled(
                 or operation is None
                 or operation.state != "SUCCEEDED"
                 or tenant.state == "SUSPENDED"
-                or tenant.desired_version != VERSION
+                or tenant.desired_version not in allowed
             ):
                 raise MigrationError("IDENTITY_CONFLICT")
             instance = session.get(Instance, location.instance_id)
@@ -48,6 +59,7 @@ def migrate_controlled(
             target = Target(instance.host, instance.port, ca)
             ref = SecretRef(location.migrator_secret_ref, location.migrator_secret_version)
             # Preserve lifecycle until the lock/identity is checked, then deny new resolution.
+            tenant.desired_version = expected
             tenant.state, tenant.migration_state = "PROVISIONING", "MIGRATING"
             tenant.observed_version = None
             session.add(
@@ -62,7 +74,7 @@ def migrate_controlled(
             )
         try:
             result = runner(target, names, store.read(ref), repository)
-            if result != VERSION:
+            if result != expected:
                 raise MigrationError("VERSION_MISMATCH")
         except Exception:
             with Session(engine) as session, session.begin():
