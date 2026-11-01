@@ -1,9 +1,10 @@
 # Tareas F02
 
-Estado: planificación; ninguna implementación acreditada.
+Estado: T001 implementada y ensayada; revisión/integración de su PR pendientes.
+T002..T007 y aceptación de fase pendientes.
 Dependencias y pruebas: [plan](plan.md), [checklist](checklist.md), [evidence](evidence.md).
 
-- [ ] T001 — D-04 y entorno IdP de desarrollo: resolver ADR-0009; versión/digest,
+- [x] T001 — D-04 y entorno IdP de desarrollo: resolver ADR-0009; versión/digest,
   TLS, configuración, secretos y presupuestos. F02-R01; AC-03/04; V01/V07.
 - [ ] T002 — Adaptador de access tokens y JWKS con límites/rotación y errores saneados.
   F02-R01/R05; AC-03/04; V01/V06.

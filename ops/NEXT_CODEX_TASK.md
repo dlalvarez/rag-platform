@@ -10,8 +10,10 @@ D-04 resuelta expresamente por Diego: Keycloak solo para desarrollo según
 [ADR-0009](../docs/adr/0009-development-oidc.md), proveedor de producción sin decidir.
 Ejecutar T001..T007 en PR acotados a develop con revisión delegada ADR-0007,
 CI, evidencia real y postmerge, sin nuevas preguntas rutinarias.
-Comenzar T001 con versiones/digest, TLS, entorno separado y presupuesto medido;
-no marcar implementación por ratificar documentos.
+T001 implementada y ensayada con Keycloak 26.8.1 por digest, TLS, PostgreSQL propio
+y presupuesto medido. Revisar/integrar su PR con CI y postmerge; continuar T002:
+access token, firma/claims, JWKS acotado, rotación, fallo cerrado y pruebas reales.
+No confundir discovery/JWKS de T001 con validación de tokens o aceptación de F02.
 
 Toda ejecución y dependencias en ragdev01. Sesión de pruebas de ADR-0008 activa
 hasta 2026-11-01T21:34:19-05:00 según última verificación. Comprobar status antes de
