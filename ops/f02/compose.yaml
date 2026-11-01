@@ -340,6 +340,26 @@ services:
         target: /run/secrets/control_migrator_password
         read_only: true
         bind: {create_host_path: false}
+  isolation-check:
+    extends: cli-check
+    image: rag-f02-tools:t006
+    entrypoint: [python, scripts/f02_isolation_check.py]
+    volumes:
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/secrets/api_authority_key
+        target: /run/secrets/api_authority_key
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/tls/api.key
+        target: /tls/api.key
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/tls/api.crt
+        target: /tls/api.crt
+        read_only: true
+        bind: {create_host_path: false}
 networks:
   f02: {internal: true}
   control:

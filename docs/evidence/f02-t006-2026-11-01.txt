@@ -1,0 +1,15 @@
+F02 T006 — ragdev01, 2026-11-01 (America/Bogota)
+Source branch: feat/F02-T006-isolation
+Command: python3 scripts/f02_host.py isolation
+
+PASS T006 SAME_INSTANCE: OIDC roles A/B/A; SQL/S3 propios y cruces denegados.
+PASS T006 SAME_INSTANCE: IDOR/estados: cero secretos, conexiones, queries y S3.
+PASS T006 TWO_INSTANCES: OIDC roles A/B/A; SQL/S3 propios y cruces denegados.
+PASS T006 TWO_INSTANCES: IDOR/estados: cero secretos, conexiones, queries y S3.
+T006 LOG_FLAGS: {"forbidden_value": false, "jwt_pattern": false, "traceback": false}
+PASS T006: captura API sin JWT/credenciales/subjects; datos F01 conservados.
+T006: fixtures conservadas, sin nuevas fases ni cierre automático de F02.
+
+Full command exit: 0, including membership restoration.
+Earlier failed attempts are described in specs/F02-identidad-membresias/evidence.md.
+This file contains only observed sanitized results, not raw container logs.

@@ -1,7 +1,7 @@
 # Tareas F02
 
-Estado: T001..T004 integradas en PR #20..#23; T005 implementada y ensayada.
-Revisión/merge de T005 y T006/T007 pendientes; F02 sigue abierta.
+Estado: T001..T005 integradas en PR #20..#24; T006 implementada y comprobada.
+Revisión/merge de T006 y T007 pendientes; F02 sigue abierta.
 Dependencias y pruebas: [plan](plan.md), [checklist](checklist.md), [evidence](evidence.md).
 
 - [x] T001 — D-04 y entorno IdP de desarrollo: resolver ADR-0009; versión/digest,
@@ -14,7 +14,7 @@ Dependencias y pruebas: [plan](plan.md), [checklist](checklist.md), [evidence](e
   concurrente del último owner. F02-R02/R04/R05; AC-01/03/04; V02/V04/V06.
 - [x] T005 — AuthorizedTenantContext y GET /me, /tenants, autorización antes de
   secretos/pools; paginación y denegaciones. F02-R02/R03/R04; AC-01/02/03; V03/V05.
-- [ ] T006 — Integración real IdP/API/control, aislamiento en ambas topologías,
+- [x] T006 — Integración real IdP/API/control, aislamiento en ambas topologías,
   suspensión/revocación/rotación y no filtración. F02-R01..05; AC-01..04; V01..07.
 - [ ] T007 — Runbook, matriz/evidencia completa, revisión PR/CI y postmerge.
   F02-R01..05; AC-01..04; V01..07.

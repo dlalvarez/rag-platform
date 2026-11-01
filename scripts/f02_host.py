@@ -422,6 +422,8 @@ def main():
             "api-up",
             "build-api-tools",
             "api-check",
+            "build-isolation",
+            "isolation",
             "build-cli",
             "cli",
             "build-control",
@@ -447,6 +449,11 @@ def main():
             prepare_humans()
         elif args.action == "prepare-api":
             prepare_api()
+        elif args.action == "build-isolation":
+            compose("build", "isolation-check")
+        elif args.action == "isolation":
+            ensure_auth()
+            compose("run", "--rm", "-T", "--no-deps", "isolation-check")
         elif args.action == "build-api":
             compose("build", "api")
         elif args.action == "api-up":

@@ -272,3 +272,41 @@ tmpfs se borra al reiniciar el host: no hay persistencia de credenciales en disc
 Reversión del ajuste de runtime: loginctl disable-linger diego (invalidaría continuidad
 tras logout; ejecutar solo al retirar el uso diario). El token mantiene su TTL.
 El lanzador F02 prepara y verifica el directorio vacío de JWT temporales cuando hace falta.
+
+## T006 — batería de aislamiento
+
+Construir `python3 scripts/f02_host.py build-isolation` y, tras verificar daily
+status/canary, ejecutar `python3 scripts/f02_host.py isolation`.
+La batería requiere autorización diaria vigente y las cuatro fixtures T004.
+La autorización reemitida el 2026-11-01 vence el 2026-11-02 a las 06:38:16 -05:00;
+comprobar status/canary, no asumir vigencia a partir de esta fecha histórica.
+No ejecutarla en paralelo con otra herramienta que use la sesión diaria.
+El servicio normal de API no incorpora estas rutas ni los secretos de pruebas.
+
+isolation-check usa credenciales de fixtures exclusivamente y un proceso HTTPS temporal
+ligado a 127.0.0.1 dentro del contenedor. Tiene contadores de lecturas de secretos,
+intentos de conexión (incluso fallidos), consultas tenant y llamadas S3. Comprueba rechazo previo a esos
+cuatro efectos con pools fríos/calientes, roles A/B/A en misma y distintas instancias,
+UUID/cabecera/payload/contexto de otra solicitud, usuario/membresía/tenant suspendidos
+y versión incompatible. Pruebas SQL/S3 cruzadas directas fuera de la API añaden la
+verificación del proveedor. Cambios de estado se restauran en finally; membresías
+auxiliares nuevas se conservan revocadas, sin borrar historial. No nuevas bases/buckets.
+
+El cliente HTTPS exclusivo del fixture se cierra antes de detener el servidor: con
+keepalive abierto, Uvicorn espera conexiones; se reprodujo y corrigió en el driver.
+El cliente IdP se conserva para restaurar membresías después. El proceso temporal
+se termina y libera su conexión al almacén al cerrar, sin revocar el día. Logs privados en tmpfs se inspeccionan localmente y se borran; nunca se imprimen.
+La ejecución completa está registrada en evidence.md; compilación/configuración por sí
+solas no acreditan PASS. Exigir batería real, captura de logs y CI antes de integrar.
+
+### Diagnóstico seguro del comprobador
+
+Un fallo muestra etapa/código cerrado y, cuando corresponde, booleanos; no excepción
+de proveedor ni log crudo. Los rechazos libpq de arranque pueden omitir SQLSTATE:
+solo se acepta firma exacta para base/usuario esperados y privilegio CONNECT negado
+comprobado antes en la instancia compartida. Fallo TLS/red no cuenta como aislamiento.
+
+El probe consulta identidad de conexión, TLS, privilegios y vector en la base tenant.
+ops_identity/alembic_version_tenant permanecen restringidas a administración/migración
+por F01; no ampliar grants para hacer pasar una prueba. No se crean tablas/contenidos
+de F03 para ensayar F02. Los contadores incluyen intentos de conexión fallidos.

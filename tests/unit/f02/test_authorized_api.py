@@ -359,3 +359,35 @@ def test_context_expiry_and_private_config_fail_closed(setup, monkeypatch, tmp_p
         private_file(link, 32)
     with pytest.raises(ValueError):
         private_file(file, 16)
+
+
+def test_identity_dependency_unavailable_returns_503_without_registration(setup, caplog):
+    from rag_platform.providers.identity import IdentityError
+
+    e, users, tenants, app, client, token, secret = setup
+
+    class UnavailableVerifier:
+        def verify(self, bearer):
+            raise IdentityError(unavailable=True)
+
+    faulted = create_app(e, UnavailableVerifier(), secret)
+    with e.connect() as c:
+        before = c.scalar(sa.select(sa.func.count()).select_from(User))
+    bearer = "synthetic-sensitive-bearer"
+    caplog.set_level(logging.INFO, logger="rag_platform.identity")
+    with TestClient(faulted) as http:
+        response = http.get("/api/v1/me", headers={"Authorization": "Bearer " + bearer})
+    assert response.status_code == 503
+    assert response.json()["error"] == {"version": "v1", "code": "IDENTITY_UNAVAILABLE"}
+    assert bearer not in response.text
+    assert all(
+        bearer not in r.getMessage() for r in caplog.records if r.name.startswith("rag_platform")
+    )
+    with e.connect() as c:
+        assert c.scalar(sa.select(sa.func.count()).select_from(User)) == before
+        assert (
+            c.scalar(
+                sa.text("SELECT count(*) FROM identity_audit WHERE reason='DEPENDENCY_UNAVAILABLE'")
+            )
+            >= 1
+        )
