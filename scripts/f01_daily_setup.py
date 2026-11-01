@@ -89,7 +89,7 @@ def configure(http, root):
         raise AccessError()
 
 
-def recover(http, key):
+def recover(http, key, *, configure_action=None):
     with stage("RECOVER_UNSEAL"):
         status = call(http, "GET", "sys/seal-status")
         if status["n"] != 1 or status["t"] != 1:
@@ -126,7 +126,7 @@ def recover(http, key):
             root = bytes(a ^ b for a, b in zip(raw, mask, strict=True)).decode("ascii")
             del otp, raw, mask, result, key
         with stage("RECOVER_CONFIGURE"):
-            configure(http, root)
+            (configure if configure_action is None else configure_action)(http, root)
     finally:
         try:
             if root is not None:
