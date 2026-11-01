@@ -7,6 +7,7 @@ class DocumentError(RuntimeError):
         "ROLE_DENIED": 403,
         "NOT_FOUND": 404,
         "STATE_CONFLICT": 409,
+        "OPERATION_IN_PROGRESS": 409,
         "LAST_OWNER": 409,
         "TOO_LARGE": 413,
         "QUOTA_EXCEEDED": 429,

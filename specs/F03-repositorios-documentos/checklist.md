@@ -17,3 +17,14 @@
 | V07 reproducibilidad | R01..05 | AC-01..04 | Migraciones reales/repetidas, hashes, CI y regresiones F00/F01/F02 |
 
 Los documentos o mocks no acreditan integración real; un AC esencial pendiente bloquea cierre.
+
+## Entrega de componente T005
+
+- [x] T004 integrada en PR #31 con CI/revisión/postmerge.
+- [x] Validación y secretos mínimos: 512 tests offline correctos.
+- [x] Recepción real/idempotencia/fallos/concurrencia/cuotas en cuatro fixtures.
+- [x] Objetos y reservas conservados, colisión ajena sin adopción/borrado.
+- [ ] CI/revisión/integración/postmerge del PR T005.
+- [ ] T002 handoff/runtime, T006 API/proxy y aceptación final T007.
+
+T005 marcada como componente verificado; no equivale a aceptar AC-F03 por HTTP.

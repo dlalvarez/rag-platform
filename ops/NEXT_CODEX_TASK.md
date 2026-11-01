@@ -10,8 +10,8 @@ seguir trabajo independiente y preparar solución concreta antes de pedir interv
 F00/F01/F02 aceptadas; F02 cerrada en develop@81e213c0682ec1766358b29328e52df968c4d8ea
 mediante PR #26. F03 activa: [spec](../specs/F03-repositorios-documentos/spec.md),
 [plan](../specs/F03-repositorios-documentos/plan.md), tasks/checklist/evidence.
-T001 integrada en PR #27 con CI/postmerge correctos. T002 en preparación técnica;
-seguir T003 mientras el bootstrap administrativo esté pendiente, sin pausa de trámite.
+T001 integrada en PR #27. T002 tiene identidad mínima instalada/probada; handoff y
+runtime pendientes antes del despliegue T006. T003/T004 integradas en PR #30/#31.
 No crear otro roadmap ni anticipar F04 antes de aceptar F03.
 
 F03: repositorios/ACL, carga validada y objetos privados, metadata RECEIVED y proxy de
@@ -31,27 +31,30 @@ logout; reboot elimina archivos y unseal permanece con Diego.
 Conservar F00/F01/F02, sus fixtures/datos, versiones y clon T007 F01. Sin main/tag,
 producción, cambio de visibilidad, borrado/downgrade destructivo o relajación de aislamiento.
 
-## Punto de continuación F03 — componente CRUD/ACL preparado, seguir T005
+## Punto de continuación F03 — finalizar recepción T005 y seguir T006
 
 PR #28: bootstrap real completado y verificado; PR #29 lock de mantenimiento;
-PR #30 T003 integrada con CI/postmerge correcto en abae0e6d91b8c02e34816be00393ad1d437b2855.
+PR #30 T003 y PR #31 T004 integradas con CI/revisión/postmerge correctos.
+Base actual develop@ea4554fb70425b3df61d9198aeb907e1216fec82.
 No repetir configure ni pedir otra contraseña. Día vigente emite AppRole read-only
-de una hora con SecretID de un uso, sin bearer infra en runtime.
+de una hora con SecretID de un uso; no bearer infra en runtime.
 
-Worktree técnico ragdev01 /home/diego/proyectos/rag-platform-f03-schema,
-feat/F03-T004-repositories. Checkout de operación /home/diego/proyectos/rag-platform limpio.
-T004 componente CRUD/ACL y dos ejecuciones reales correctos en cuatro fixtures,
-415 tests offline y regresión T003 con datos CRUD presente correcta. Ver acl.md/evidence.md.
-Revisar CI/PR/integración/postmerge y continuar T005 sin otra aprobación de trámite.
+Worktree ragdev01 /home/diego/proyectos/rag-platform-f03-schema,
+feat/F03-T005-document-receipt. Checkout operativo /home/diego/proyectos/rag-platform.
+T005 implementa validación acotada, objeto condicional privado y diario SQL con
+fencing/cuota/recuperación. Ver receipt.md/evidence.md para resultados y límites.
+Completar CI, revisión del mismo agente e integración/postmerge del PR correspondiente.
 
-Repos semilla: ops/f03/repositories-fixture.json, solo UUID lógicos sintéticos.
-Alice owner explícita de tenants ORG F03; Bob editor, Carol reader, Dave admin.
-Repo a: Alice owner/Bob editor/Carol reader, Dave sin ACL. Repo b: Dave owner y
-Alice sin ACL aunque sea operador/owner del tenant. Repo c: Alice owner.
-No modificar roles/membresías de fixtures F01/F02 ni conceder contenido implícito.
+Repos semilla: ops/f03/repositories-fixture.json. Alice owner explícita de tenants ORG
+F03; Bob editor, Carol reader, Dave admin. Repo a: Alice owner/Bob editor/Carol reader,
+Dave sin ACL. Repo b: Dave owner; Alice sin ACL pese a operador/owner tenant.
+Repo c: Alice owner. No modificar permisos de fixtures F01/F02.
+conditional-fixture.json conserva los cuatro originales de prueba idempotente;
+receipt-fixture.json identifica la última batería T005 completa. No borrar anteriores.
 
-T002 handoff privado/runtime pendiente; T005 recepción validada/idempotencia/fallos
-SQL-S3 y T006 proxy/API pendientes. Mantener AC documentales abiertos.
-No desplegar con sesión diaria en API; usar identidad de aplicación limitada.
-Reutilizar límites del API existente y sus funciones F02, sin microservicios/puertos
-extra. No iniciar F04 antes de acreditar F03 ni alterar la fábrica DDL histórica.
+Continuar T002 handoff/T006 API y proxy tras T005. La API recibe solo identidad AppRole
+F03 verificada; nunca día/admin/migrator/MinIO admin. Reutilizar servicio API existente
+(512 MiB/0.25 CPU, un worker), sin puertos/microservicios extra. Temporales privados
+con cuota y concurrencia de carga/descarga; verificar original antes de HTTP exitoso.
+Pruebas de cabeceras/errores v1, ACL/cruces y regresiones T007 antes de aceptar F03.
+No iniciar F04 ni elegir parser antes de esa aceptación; conservar DDL histórico.

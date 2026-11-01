@@ -58,7 +58,9 @@ class RepositoryService:
             if error.code in {"INPUT_INVALID", "ROLE_DENIED", "STATE_CONFLICT", "LAST_OWNER"}
             else "DEPENDENCY_UNAVAILABLE"
         )
-        if error.code in {"QUOTA_EXCEEDED", "TOO_LARGE"}:
+        if error.code == "OPERATION_IN_PROGRESS":
+            reason = "STATE_CONFLICT"
+        elif error.code in {"QUOTA_EXCEEDED", "TOO_LARGE"}:
             reason = "INPUT_INVALID"
         elif error.code == "NOT_FOUND":
             reason = "ROLE_DENIED"
@@ -125,6 +127,14 @@ class RepositoryService:
                 action=action,
                 outcome="OK",
             )
+        )
+
+    def require(self, context, trace, repo, action):
+        repo = logical_id(repo)
+        if not isinstance(action, str) or action not in {"read", "upload"}:
+            raise DocumentError("INPUT_INVALID")
+        return self._run(
+            context, trace, action, lambda c, checked: view(self._row(c, checked, repo, action))
         )
 
     def create(self, context, trace, name, config=None):

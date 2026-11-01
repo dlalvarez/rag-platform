@@ -353,3 +353,56 @@ def test_maintenance_refuses_active_daily_battery_and_releases_locks(setup, tmp_
             raise RuntimeError("synthetic")
     with host.exclusive_maintenance(directory):
         pass
+
+
+def test_application_bearer_handoff_validates_profile_without_login():
+    store, calls, revoked = make_store()
+    with store:
+        store.attach_application(TOKEN)
+        assert [r.url.path for r in calls] == ["/v1/auth/token/lookup-self"]
+        assert store.read(SecretRef(uuid4(), 7)).username == "synthetic"
+        store.revoke()
+        assert revoked[0]
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"policies": ["root"]},
+        {"policies": ["default", "f01-provisioner"]},
+        {"meta": {"role_name": "f01-dev-day"}},
+        {"path": "auth/userpass/login/diego"},
+        {"identity_policies": ["unexpected"]},
+        {"explicit_max_ttl": 86400},
+        {"ttl": 0},
+        {"ttl": True},
+        {"num_uses": False},
+    ],
+)
+def test_wrong_supplied_bearer_rejected_without_revoking_operator(changes):
+    store, calls, revoked = make_store(changes=changes)
+    with store, pytest.raises(SecretStoreError):
+        store.attach_application(TOKEN)
+    assert not revoked[0]
+    assert [r.url.path for r in calls] == ["/v1/auth/token/lookup-self"]
+
+
+@pytest.mark.parametrize("token", [None, "", "line\nbreak", "nonascii-é", [], "a" * 4097])
+def test_malformed_application_handoff_never_reaches_http(token):
+    store, calls, _ = make_store()
+    with store, pytest.raises(SecretStoreError):
+        store.attach_application(token)
+    assert calls == []
+
+
+def test_active_application_session_cannot_be_silently_replaced():
+    store, calls, _ = make_store()
+    with store:
+        store.login("role", "one-use")
+        before = len(calls)
+        with pytest.raises(SecretStoreError):
+            store.login("role", "another-id")
+        with pytest.raises(SecretStoreError):
+            store.attach_application("another-bearer")
+        assert len(calls) == before
+        assert store.read(SecretRef(uuid4(), 7)).username == "synthetic"

@@ -127,3 +127,63 @@ diff correctos en ragdev01. Advertencia Starlette/httpx previa sin fallo funcion
 T004 componente pendiente de CI/revisión/integración de este PR. AC de API/carga/proxy
 siguen pendientes; no F03 cerrada. Continuar T005 sin pausa de trámite, mantener
 handoff/runtime de T002 como puerta antes del despliegue T006.
+
+## T004 integrado y recepción T005 — 2026-11-01
+
+PR #31 integrado en develop@ea4554fb70425b3df61d9198aeb907e1216fec82,
+con CI/revisión del mismo agente y postmerge correctos. Se continuó T005.
+
+[Recepción y límites](receipt.md): F03-R03/R04, ACL de R02 y secreto mínimo;
+V03/V04/V06 y parte de V01/V02/V07. No nuevas migraciones ni despliegue HTTP.
+Validación privada/acotada, firma condicional real, diario, cuota tenant, lease/fencing
+y recuperación hacia delante sin borrar objetos.
+
+Prueba condicional completa y repetida correcta en SAME_A/SAME_B/TWO_A/TWO_B:
+HTTP 412 exacto, ETag/LastModified intactos, replay con mismos documento/versión y
+conflicto ante contenido diferente con igual clave. Los cuatro UUID lógicos estables
+se conservan en ops/f03/conditional-fixture.json.
+
+Se observaron fallos intermitentes DEPENDENCY_UNAVAILABLE/REFUSED en el HEAD posterior
+al PUT rechazado. Aislamiento por etapa: el rechazo esperado sí era 412. Una primera
+sonda de 12 secuencias no reprodujo el fallo; no se atribuye una causa única.
+Se corrigió el ciclo de vida: cerrar/liberar respuesta y descartar el pool de esa
+operación tras S3Error, sin retry de PUT. Test de transporte fija ese comportamiento.
+La prueba completa posterior y su repetición pasaron. No se aceptó un error de
+transporte como denegación de seguridad ni se reescribió/borró un original.
+
+Batería real final T005 completa correcta en las cuatro fixtures/ambas topologías:
+- TXT/MD/PDF/DOCX estructurales; GET privado con bytes/SHA-256 correctos y replay estable.
+- Inválidos/límite, reader/sin ACL/UUID de otro tenant y cuota: denegados sin altas.
+- Credencial S3 propia contra bucket ajeno y acceso anónimo: AccessDenied exacto.
+- Caída real de proceso con os._exit después de PUT y después de COMMIT; mismo par
+  de IDs, sin RECEIVED prematuro y exactamente una fuente/documento/versión al recuperar.
+- Dos procesos: lease vigente rechaza segundo intento; lease realmente caducado
+  permite takeover y el attempt_id antiguo no confirma. Sin expirar filas manualmente.
+- Error SQL real (división por cero dentro del commit): rollback de fuente/documento/
+  versión; OBJECT_STORED conservado y recuperación con los mismos IDs.
+- Reserva de cuota en un repositorio impide otra en el segundo; suma final exacta.
+- Objeto canario con propiedad ajena a la recepción: conflicto inicial y al reintentar;
+  ETag, LastModified, metadatos de propiedad y SHA-256 intactos. Reserva y objeto retenidos.
+- Catálogo ajeno a las fixtures F03 idéntico antes/después. Bearers hijos solo de
+  aplicación, verificados en OpenBao y revocados por el padre también tras caída.
+
+Los intentos iniciales no se presentan como PASS completo: se corrigieron una fixture
+DOCX sin parte rels, el tipo Decimal de SUM(bigint) en el driver de cuota y una comparación
+de metadatos que incluía Date/request-id variables. Diagnóstico independiente del canario:
+body_hash_intact=true, etag_intact=true y foreign_marker_retained=true; no pérdida de datos.
+Se conservan todos los recursos válidos y reservas de esas ejecuciones.
+ops/f03/receipt-fixture.json registra run y los 16 documentos de formatos de la última
+batería completa; el diario durable conserva los restantes casos asociados a ese run.
+
+512 tests offline correctos en ragdev01, incluidos 21 de límites fail-closed de recepción.
+Ruff check/format, check_docs y diff check correctos. Advertencia previa Starlette/httpx
+sin fallo. Sin nuevas dependencias, privilegios administrativos de aplicación, puertos
+o servicios. Herramienta observada cerca de 112 MiB/768 MiB; servicios previos activos.
+No se solicitó contraseña ni se renovó/revocó la sesión diaria.
+
+Componente T005 preparado; CI/revisión/integración/postmerge del PR pendientes.
+T002 handoff/runtime y T006/T007 siguen abiertos; ningún AC HTTP ni cierre F03 acreditado.
+
+Cierre de comprobaciones del componente: otras 12 secuencias 412→HEAD correctas tras
+la corrección, en las cuatro fixtures. Regresión real T004 completa también correcta
+con los documentos recibidos: mismos repos semilla, ACL, membresías e historial intactos.
