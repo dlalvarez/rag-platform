@@ -3,8 +3,8 @@
 T001: integrada en PR #27, develop@8530739dbc2cf5a067c5f67c6cc963ea2cc12d76; CI/postmerge correctos.
 T002: identidad mínima instalada/probada; handoff/runtime pendiente.
 T003: integrada en PR #30, CI/revisión/postmerge correctos.
-T004: componente y batería real preparados, CI/revisión/integración pendientes.
-T005..T007 pendientes; ningún AC documental de API acreditado aún.
+T004: componente integrado en PR #31, develop@ea4554fb70425b3df61d9198aeb907e1216fec82; CI/postmerge correctos.
+T005: componente y batería real correctos; CI/revisión/integración pendientes; T006/T007 pendientes. Ningún AC documental de API acreditado aún.
 [Plan](plan.md), [checklist](checklist.md), [evidencia](evidence.md).
 
 - [x] T001 — Persistir continuidad ADR-0010 y formalizar plan/tareas/trazabilidad.
@@ -13,9 +13,9 @@ T005..T007 pendientes; ningún AC documental de API acreditado aún.
   R01/R02/R03/R05; AC-01/02; V01/V02/V06.
 - [x] T003 — Migración tenant aditiva, estado RECEIVED y restricciones/idempotencia.
   R01/R03/R04; AC-03/04; V03/V04/V07.
-- [ ] T004 — CRUD repositorios y ACL por capacidad, paginación y auditoría.
+- [x] T004 — CRUD repositorios y ACL por capacidad, paginación y auditoría.
   R01/R02; AC-01/02; V01/V02/V06.
-- [ ] T005 — Streaming/MIME/tamaño/hash, objeto privado, recepción/reintento/compensación.
+- [x] T005 — Streaming/MIME/tamaño/hash, objeto privado, recepción/reintento/compensación.
   R03/R04; AC-03/04; V03/V04/V06.
 - [ ] T006 — Proxy de original autorizado y API con errores/cabeceras seguras.
   R02/R05; AC-01/02; V01/V02/V05/V06.
@@ -32,4 +32,8 @@ T003: esquema f03_tenant_0002 y batería final ambas topologías correctos; ver 
 y evidence.md. Integrar con CI/revisión/postmerge y continuar T004 sin pausa.
 
 T004: ver acl.md y evidence.md; cuatro fixtures reales y 415 tests correctos.
-Integrar con CI/revisión/postmerge y continuar T005; API documental aún no desplegada.
+PR #31 integrado con CI/revisión/postmerge; API documental aún no desplegada.
+
+T005: ver receipt.md/evidence.md; 512 tests y batería real de cuatro fixtures correctos.
+Componente de validación/recepción privada, diario durable,
+recuperación y cuotas. Mantener abiertos los AC HTTP hasta T006/T007.
