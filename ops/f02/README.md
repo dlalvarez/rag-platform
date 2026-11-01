@@ -119,3 +119,50 @@ No ejecutar el manifiesto histórico T001 sobre fuentes modificadas por T002:
 usar el manifiesto T002 y conservar el anterior como evidencia del commit T001.
 
 [Convención de importación verificada en código oficial](https://github.com/keycloak/keycloak/blob/26.8.1/model/storage-services/src/main/java/org/keycloak/exportimport/dir/DirImportProvider.java).
+
+## T003 — catálogo de identidad y permisos SQL
+
+Migración f02_control_0005, aditiva sobre f01_control_0004: users (issuer+sub únicos),
+memberships, platform_roles, tenant_profiles e identity_audit. Base declarativa
+separada; sin añadir contenido privado o clasificar/modificar tenants F01 existentes.
+Ausencia de tenant_profiles significa tipo aún no clasificado; nunca PERSONAL implícito.
+El alta idempotente registra UUID interno y auditoría, no membresía o rol automático.
+Identidad suspendida no se reactiva al repetir login; su denegación se confirma antes
+de devolver error. Auditoría solo UUID/códigos/timestamp, sin subject/issuer/JWT.
+
+Credenciales de runtime/admin de control separadas, generadas en servidor:
+    python3 scripts/f02_host.py prepare-identity
+    python3 scripts/f02_host.py build-control
+    python3 scripts/f02_host.py control
+
+Ya preparadas/aplicadas en ragdev01; no repetir prepare-identity.
+prepare de un host nuevo incluye la preparación. Nunca mostrar identity_*_password.
+El perfil control-check monta bootstrap/migrator explícitos y nuevos secretos; solo
+se usa para migración/ensayo, no como API. No tiene secretos IdP, MinIO o Bao.
+Se conecta por la red interna F01; ninguna base nueva ni puerto publicado.
+
+f02_identity_app: SELECT de identidad/membresías/roles/perfiles y catálogo de destinos,
+INSERT solo id/issuer/oidc_subject en users, INSERT de auditoría sin sobrescribir
+timestamp. Sin modificar estados/membresías/roles, DDL ni auditoría existente.
+f02_identity_admin: además administra estado/roles/membresías/perfil con columnas
+limitadas; no altera issuer/sub ni modifica/elimina auditoría.
+Ambos NOINHERIT, sin superuser/CREATEDB/CREATEROLE/REPLICATION/BYPASSRLS ni membresías
+SQL heredadas. Contraseñas existentes no se rotan en un reintento; ownership ajeno
+bloquea bootstrap. Statement/error echo se deshabilita solo en esa sesión privada
+de bootstrap para no registrar material de CREATE ROLE.
+
+El helper F01 conserva revisión f01_control_0004 como límite al iniciar una base.
+Si ya existe una revisión descendiente conocida, no la rebaja. F02 invoca
+upgrade_identity explícitamente. El probe F01 de fuentes actuales admite el catálogo
+extendido; imágenes históricas siguen siendo evidencia de sus commits, no migradores
+de F02. La CLI F01 diaria original fue probada después de ampliar el catálogo.
+
+Prueba real: migración repetida, hashes de todas las filas F01 antes/después,
+12 intentos/8 hilos/2 conexiones para una identidad, mismo sub en distinto issuer,
+constraints/FK/duplicados y perfiles en SAVEPOINT revertido. App no conecta a
+ninguna BD rag_t_*; no auto roles; suspensión denegada/auditada y restaurada.
+Tres identidades sintéticas de catálogo se conservan. No son usuarios IdP reales.
+El probe negativo usa rol inválido de longitud válida para medir CHECK:
+PostgreSQL rechazaba primero VARCHAR(8) con el valor anterior, y se corrigió el ensayo.
+No se borró/reinicializó nada para recuperarse; auditoría y credenciales conservadas.
+Reversión de esquema con datos es una operación aparte, no downgrade automático.

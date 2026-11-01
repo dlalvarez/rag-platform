@@ -11,6 +11,7 @@ from psycopg import sql
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.pool import NullPool
 
+from rag_platform.control.identity_models import IdentityBase
 from rag_platform.control.migrations import upgrade_control
 from rag_platform.control.models import Base
 from rag_platform.providers.secrets import Credential
@@ -72,13 +73,12 @@ def run() -> None:
         upgrade_control(connection, REPOSITORY)
     with engine.begin() as connection:
         upgrade_control(connection, REPOSITORY)
-        assert (
-            connection.scalar(sa.text("SELECT version_num FROM alembic_version_control"))
-            == "f01_control_0004"
-        )
-        assert set(sa.inspect(connection).get_table_names()) == set(Base.metadata.tables) | {
-            "alembic_version_control"
-        }
+        version = connection.scalar(sa.text("SELECT version_num FROM alembic_version_control"))
+        assert version in {"f01_control_0004", "f02_control_0005"}
+        expected = set(Base.metadata.tables) | {"alembic_version_control"}
+        if version == "f02_control_0005":
+            expected |= set(IdentityBase.metadata.tables)
+        assert set(sa.inspect(connection).get_table_names()) == expected
         # Rejected records run in SAVEPOINTs, without persistent tenant provisioning.
         tenants = Base.metadata.tables["tenants"]
         for values in ({"state": "INVALID"}, {"migration_state": "INVALID"}):

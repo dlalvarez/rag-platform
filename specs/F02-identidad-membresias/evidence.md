@@ -1,6 +1,6 @@
 # Evidencia F02
 
-Estado: T001 integrada, T002 implementada y comprobada; F02 no aceptada.
+Estado: T001/T002 integradas; T003 implementada y comprobada; F02 no aceptada.
 Las anotaciones de planificación siguientes conservan el estado histórico.
 
 Base inspeccionada en ragdev01: develop@f66a38c8dbfe6d9244eef3cf390ed16f37998b41,
@@ -105,3 +105,33 @@ T003..T007 y aceptación integral siguen pendientes. Este servicio de prueba no
 acredita login humano ni cierre de todos los AC-F02.
 [Fuentes exactas](../../docs/evidence/f02-t002-source-sha256.txt).
 CI/revisión/postmerge del commit publicado se registran en la conversación de su PR.
+
+## T003 — migración y catálogo de identidad
+
+Base e94e9854214a67feedc3ecc9bff71cfb24d3bb00; rama feat/F02-T003-identity-catalog.
+F02-R02/R04/R05, AC-01/03/04 parciales; V02/V04/V06.
+f02_control_0005 aplicada y repetida en rag_control con migrador limitado.
+Cinco tablas aditivas, sin columnas de contenido/secreto, tipo de tenants F01
+sin inferir ni modificar. Metadatos F01 separados y helpers acotados por fase.
+Registro issuer+sub estable, sin auto membresías/roles; 3 fixtures sintéticas
+de catálogo retenidas, sin usuario final/API creado en esta tarea.
+
+PASS T003 real: todas las filas de tablas F01 iguales antes/después por hashes
+calculados en memoria; migración repetida y F01 helper no rebaja revisión F02.
+12 intentos/8 hilos/2 conexiones producen un UUID; mismo sub en otro issuer distinto.
+Constraints/FK/PK y roles distintos A/B probados en PostgreSQL con SAVEPOINT revertido.
+App/admin SQL separados y mínimos, TLS verify-full; app sin CONNECT a bases rag_t_*,
+sin escritura de membresías/estados/roles, DDL o alteración de auditoría.
+Admin sin modificar issuer/sub o auditoría existente. Suspensión denegada y
+auditada sin reactivar la identidad; estado de fixture restaurado al finalizar.
+Un negativo inicial obtuvo el límite VARCHAR antes del CHECK; ensayo corregido
+para probar el CHECK y batería completa repetida, sin rotación o borrado.
+
+260 tests offline correctos; Ruff/formato/SDD correctos.
+Regresión real CLI F01 diaria (tres PASS T007) después del esquema ampliado,
+con su nueva fixture sintética esperada; autorización diaria conservada.
+F00 API/SQL/vector/S3 real correcto. Sin reinicio de Bao/PG/MinIO.
+Manual y matriz de permisos en ops/f02/README.md.
+[Manifiesto de fuentes](../../docs/evidence/f02-t003-source-sha256.txt).
+CI, commit exacto, revisión e integración/postmerge en conversación del PR.
+T004..T007 y aceptación F02 pendientes; no F03.
