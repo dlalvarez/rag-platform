@@ -1,6 +1,7 @@
 # F02 — Identidad, membresías y contexto autorizado
 
-**Estado:** BORRADOR RECTOR, pendiente de aprobación humana para ejecutar.  
+**Estado:** ejecución autorizada por Diego al delegar la continuidad del roadmap y
+resolver D-04 con Keycloak solo dev en PR #19; implementación/aceptación pendientes.
 **Dependencia:** F01.  
 **Meta:** Identidad y selector tenant seguros.
 

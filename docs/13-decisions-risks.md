@@ -22,7 +22,7 @@
 | D-01 | Nombre/branding y dominio | Antes de comercializar | Disponibilidad y marca |
 | D-02 | F00 fija PG 17/pgvector 0.8.7, Python/uv y dependencias; F01 fijará nuevas bibliotecas compatibles | Antes de implementar F01 | Conservar pins y probar compatibilidad, sin upgrade de clúster |
 | D-03 | OpenBao 2.7.2 propuesto para dev; custodia de unseal pendiente. Producción requiere otra decisión de operación/HA | Ratificar F01; custodiar antes de inicializar | Refs opacas, políticas, TLS y recuperación sin secretos en Git/control |
-| D-04 | IdP OIDC concreto | F02 | Seguridad, operación, coste |
+| D-04 | Keycloak solo dev aprobado por Diego en PR #19/ADR-0009; producción sin decidir | F02 dev; producción antes de promover | Seguridad, operación, coste |
 | D-05 | Parser PDF/DOCX y límites | F04 | Calidad texto/tablas y resiliencia |
 | D-06 | Modelo embedding inicial + dimensiones | F05 | Evaluación español/inglés, coste y pgvector |
 | D-07 | Perfil LLM y política de retención chat | F07 | Privacidad, costo, groundedness |
