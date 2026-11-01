@@ -1,25 +1,20 @@
-# Siguiente tarea Codex — activar y acreditar sesión diaria
+# Siguiente tarea Codex — sesión diaria acreditada
 
-Diego pidió un día completo de pruebas sin reautorización por batería. ADR-0008,
-contrato DAY-01..06 y cliente están preparados en PR #18. No confundir con ACC corto.
+La configuración de ADR-0008 está aplicada y verificada en ragdev01. Diego completó
+CONFIGURAR24H: root temporal y ensayo revocados, configuración original restaurada.
+daily verify y daily-cli pasaron en procesos independientes, sin nueva contraseña.
+La sesión operativa vence el 2026-11-01T21:34:19-05:00 (Bogotá).
+Conservar ese vencimiento; no revocar al terminar cada batería ni iniciar otro día.
 
-Diego custodia unseal y contraseña del operador. Recuperación inicial preparada:
-[procedimiento](f01/DAILY_RECOVERY.md), [manual](f01/DAY_ACCESS.md).
-Solo Diego ejecuta en su terminal python3 scripts/f01_daily_host.py configure,
-tras revisar los dos reinicios de OpenBao y confirmar CONFIGURAR24H.
-No pedir claves en chat ni ejecutar ese mantenimiento por herramientas de Codex.
+Consultar status antes de pruebas autorizadas:
+    python3 scripts/f01_host.py run --rm -T daily status
 
-El primer intento BRIDGE quedó restaurado/desbloqueado, sin día activo.
-La corrección espera nodo activo y pasó una regresión con reinicio real en fixture
-desechable; 210 tests offline. Pedir un único nuevo intento cuando CI esté correcto.
+No repetir configure, reiniciar OpenBao ni regenerar root para trabajo ordinario.
+Al vencer, el operador puede iniciar otro día una sola vez con daily start;
+no pedir contraseña, unseal o tokens en chat. Manual: [DAY_ACCESS](f01/DAY_ACCESS.md).
 
-Tras PASS SETUP: verificar con el mismo día dos procesos independientes, daily verify
-y daily-cli, status/TTL real y regresión F00. No revocar el día operativo tras la
-batería; su sesión de ensayo ya se revoca en setup. Mantener el vencimiento original.
-Registrar códigos/salidas saneadas y hashes de fuentes. No fingir transcurso de 24h.
-Si falla configuración, pedir solo código y comprobar estado; no repetir root a ciegas.
-
-PR de implementación permanece sin fusionar hasta evidencia real y CI correctos.
-Después integrar/verificar según ADR-0007 y dejar el día operativo activo para pruebas.
-Toda ejecución/desarrollo en ragdev01; conservar datos, F00, rol corto y clon T007.
-F01 sigue cerrada; F02/main/tag no se inician con esta mejora.
+Toda ejecución, desarrollo y pruebas en ragdev01. Conservar datos, F00, rol corto
+y clon T007. La autorización diaria habilita pruebas dentro del alcance acordado;
+no autoriza una fase nueva. F01 sigue cerrada. El siguiente paso funcional requiere
+definir y ratificar F02 conforme al roadmap antes de implementarla.
+No promover main ni crear tags con esta mejora.

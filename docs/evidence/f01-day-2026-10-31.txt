@@ -41,3 +41,30 @@ Current source manifest records the corrected runtime; initial preparation remai
 available in PR history at 1a7ec8d7ff396867bf1359db47671b04c693f6b6.
 
 PENDING: corrected operator activation and actual existing-environment daily session.
+
+REAL EXISTING ENVIRONMENT / operator-authorized CONFIGURAR24H completed.
+Runtime commit: 6864cddf8c1ac600ba723424072c5d7bfeb37c9e.
+PASS DAY SETUP: temporary root revoked; original configuration restored.
+PASS DAY SETUP: trial session revoked; operational 24-hour session ACTIVE.
+Server-issued TTL: 86400 seconds; initial remaining validity: 86399.
+Original expiry: 2026-11-01T21:34:19-05:00 (Bogota).
+PASS independent process 1: daily verify, real canary; daily session conserved.
+PASS independent process 2: daily-cli, all three T007 lines:
+create/show/retry and actual failure recovery without rotation;
+check/migrate repeated, unknown rejected, no IAM admin for tenant checks;
+CLI on both instances, actual versions, no secret values in output.
+PASS DAY CLI: same day remains available until original expiry.
+PASS F00 integration: API, PostgreSQL/vector and synthetic S3 roundtrip.
+No new password prompt, renewal, operational-day revocation or phase opening.
+Earlier PENDING entries above describe historical preparation and are superseded.
+Validity and expiry were observed; 24 hours have not elapsed during verification.
+Postmerge result is recorded in the PR conversation after integration.
+
+PASS independent corroboration: health HTTP 200; disabled legacy recovery HTTP 405.
+Original listener bytes exactly equal ops/f01/openbao.hcl.
+Private authorization directory 0700; day.json 0600, without reading bearer.
+Catalog: 15 synthetic tenants (12 READY, 2 PROVISIONING, 1 FAILED);
+13 operations (12 SUCCEEDED, 1 FAILED); 13 audit records for dedicated DAY_ACTOR.
+Historical failed/provisioning resources retained.
+PASS FINAL LOCAL: 210 tests, Ruff check/format (68 files), SDD integrity.
+One existing Starlette/httpx deprecation warning; no test failures.
