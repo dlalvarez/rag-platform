@@ -319,3 +319,12 @@ esta entrega T007 solo añade validación y documentación. 562 tests offline y
 ruff/check_docs/diff correctos; falta CI/revisión/merge/postmerge del PR de cierre.
 Después continuar F04 según ADR-0010, presentando únicamente las decisiones técnicas
 reales pendientes antes del código que dependa de ellas.
+
+## Cierre efectivo postmerge PR #34
+
+Head a323e6ac2847b7d69f033eba6daef9f9aaa25106: cuatro checks correctos.
+Merge 4c5b8d3189b71dad6fbe6f2921cbd06b33754871: tres checks correctos, checkouts
+limpios y misma fuente; herramientas reconstruidas, lectura HTTPS de cuatro originales
+con hashes/cabeceras correctos, logs y temporales seguros. F03 aceptada bajo revisión
+delegada del mismo agente; no se atribuye revisión independiente ni nueva aprobación
+personal de Diego. [Registro completo](https://github.com/dlalvarez/rag-platform/pull/34#issuecomment-6565126139). Continúa F04.

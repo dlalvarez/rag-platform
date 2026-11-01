@@ -1,58 +1,43 @@
-# Tarea activa Codex — cerrar F03 y continuar F04 sin pausas
+# Tarea activa Codex — F04 ingesta versionada
 
-Leer AGENTS y ADR-0010. Diego reiteró después de PR #32 que completar un PR no permite
-terminar el turno. Seguir la próxima actividad autorizada; consultar solo decisiones
-reales/inconsistencias/desvíos o bloqueos externos bajo los criterios acordados.
-La reiteración está persistida en PR #33. No pedir otro «procede» ni aprobación rutinaria.
-Toda ejecución manual de código/dependencias/servicios permanece en ragdev01.
+Leer AGENTS y ADR-0010. No detenerse por cerrar tareas/PR/fases; seguir alcance original.
+Toda ejecución manual en ragdev01, sin entorno local. Revisión/merge a develop delegados,
+CI exacto y postmerge; sin main/tag, producción, purge ni cambio de visibilidad.
 
-## Estado actual
+F00..F03 aceptadas. F03 cierre PR #34, develop@4c5b8d3189b71dad6fbe6f2921cbd06b33754871.
+Ver specs/F03-repositorios-documentos/evidence.md y comentario postmerge de #34.
+562 tests y todas las baterías reales correctas; API normal F03 activa, candidato retirado.
+Conservar fixtures, cuatro colisiones T005, repos DELETED y todos los originales/versiones.
 
-F00/F01/F02 aceptadas. F03: componentes y API integrados en PR #27..#33; T007 completo
-en pruebas y pendiente del PR de cierre con CI/revisión/merge/postmerge.
-Ver specs/F03-repositorios-documentos/{spec,plan,tasks,checklist,evidence,acceptance}.md.
-No cambiar el roadmap original ni iniciar código de F04 antes de cerrar esa puerta.
+## Continuar
 
-Base develop@be7643847f6e472ae9b1b5d3011d83d3f75b3260, PR #33 con CI/revisión/postmerge.
-API normal rag-f02-dev-api-1 F03 activa con la misma imagen probada. Candidato efímero
-cerrado. PostgreSQL/MinIO/OpenBao conservados, sin puertos nuevos ni cambio de claves.
-Worktree /home/diego/proyectos/rag-platform-f03-schema, feat/F03-T007-acceptance.
-Checkout operativo /home/diego/proyectos/rag-platform en develop, limpio.
+Worktree /home/diego/proyectos/rag-platform-f03-schema, feat/F04-planning.
+Checkout operativo /home/diego/proyectos/rag-platform en develop, limpio al comenzar.
+T001: plan/tareas/checklist/evidencia F04 preparados; validar docs/diff y CI, revisar,
+integrar y verificar postmerge. Continuar T002 cola durable y T004 extractores/corpus
+según dependencias; no declarar implementación por planificación.
 
-T007: 562 tests, HTTP en cuatro fixtures/ambas topologías, observadores, cruces SQL/S3,
-conservación tras baja lógica, concurrencia HTTP, ZIP expansivo, F00/F01/F02 y esquema
-F03 con documentos presentes correctos. Logs sin secretos/contenido/trazas, temporales
-cerrados. Nuevos scripts/artefactos/evidencia en el worktree; publicar PR de cierre,
-revisar head exacto, integrar develop y verificar postmerge. Continuar F04 al terminar.
+D-05 resuelta como elección técnica del adaptador ya previsto: pypdf/python-docx locales,
+sin OCR/modelos ni cambio de arquitectura; no atribuir aprobación personal nueva.
+Ver specs/F04-ingesta-versionada/parsers.md y plan.md. Fijar pins/lock, comprobar licencias
+transitivas y medir límites en ragdev01 antes de aceptar. No cambiar el roadmap.
 
-## Operación y recursos
+Cola control solo identificadores, jamás contenido; tenant guarda versiones/chunks.
+Migraciones históricas intactas, evolución aditiva. READY_FOR_EMBEDDING no PUBLISHED.
+No fingir atomicidad entre bases. Lease/fencing, autorización vigente y tombstone bloquean
+commit tardío; corpus nuevo semántico no reescribe los positivos estructurales F03.
 
-Día autorizado observado hasta 2026-11-02T06:38:16-05:00. Reutilizarlo, comprobar estado;
-no leer/exportar bearer al chat, renovarlo/revocarlo automáticamente ni repetir root/
-configure. Linger=yes conserva tmpfs tras logout; reboot elimina archivos y unseal
-permanece con Diego. No solicitar password por batería.
+## Acceso y operación conservados
 
-Runtime API: AppRole limitado de una hora, doce refs exactas de aplicación, sin día,
-migrator, root o MinIO admin. scripts/f03_runtime_host.py ensure reutiliza/emite entrega;
-replace para identidad revocada/reinicio. API verifica/reemplaza y revoca la anterior.
-En worktree indicar --f02-env /home/diego/proyectos/rag-platform/.env.f02. .env.f03
-solo contiene UID/GID. Usar composición ops/f02/compose.yaml + ops/f03/handoff.compose.yaml.
-No ejecutar baterías que toman el lock diario en paralelo.
+Sesión diaria hasta 2026-11-02T06:38:16-05:00; comprobar estado, no exportar bearer ni
+pedir password por batería. No renovar/revocar día ni repetir root/configure automáticamente.
+Linger conserva tmpfs tras logout; reboot sí lo elimina. Unseal y custodia con Diego.
+API usa solo AppRole F03 de lectura (12 refs) y SQL/S3 tenant; sin día/migrator/IAM admin.
+ops/f02/compose.yaml + ops/f03/handoff.compose.yaml; .env.f02 operativo y .env.f03 UID/GID.
+En worktree scripts/f03_runtime_host.py requiere --f02-env /home/diego/proyectos/rag-platform/.env.f02.
+ensure reutiliza; replace al reiniciar API cuyo token se revocó. No reiniciar infraestructura.
+No ejecutar en paralelo baterías que toman el lock diario.
 
-Conservar todos los recursos F00/F01/F02/F03 y clon F01 T007. Fixtures F03:
-repositories-fixture, conditional-fixture, receipt-fixture, http-fixture,
-http-race-fixture y lifecycle-fixture en ops/f03. Las cuatro colisiones T005 y repos
-DELETED mantienen reserva/historial/objetos; no borrar ni adoptar. La CLI F01 crea
-fixtures sintéticas adicionales durante regresión y las conserva.
-Sin main/tag, producción, cambio de visibilidad, purge o downgrade destructivo.
-
-## Continuación tras el cierre
-
-Registrar evidencia/postmerge del PR T007 y seguir la fase F04 del roadmap original.
-Leer su spec y docs/05-ingestion.md, docs/04-data-model.md, docs/13-decisions-risks.md.
-Preparar plan/tareas/trazabilidad y revisar D-05 (parser PDF/DOCX y límites), que el
-registro original deja por confirmar antes de F04. Proponer opciones concretas con
-fuentes y consecuencias para calidad/tablas/resiliencia/recursos; no inventar una
-aprobación de arquitectura ni pedir una aprobación de trámite de toda la fase.
-Mientras llega una decisión necesaria, avanzar documentación/trabajo independiente
-sin implementar lo que dependa de ella. No terminar el turno solo por cerrar F03.
+Pruebas: PYTHONPATH=src /home/diego/proyectos/rag-platform/.venv/bin/pytest -q,
+ruff check/format, python3 scripts/check_docs.py, git diff --check. Dependencias solo servidor.
+No imprimir logs/errores privados: capturar en servidor y devolver códigos/PASS saneados.

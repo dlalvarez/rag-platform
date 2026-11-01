@@ -6,7 +6,7 @@
 - [x] AC-01..04 y V01..V07 acreditados en cuatro fixtures/ambas topologías.
 - [x] Regresiones F00/F01/F02 y esquema F03 con documentos presentes correctas.
 - [x] 562 tests offline, lint/formato/docs/diff y logs/temporales correctos.
-- [ ] CI/revisión/merge/postmerge del PR de cierre T007.
+- [x] CI/revisión/merge/postmerge del PR de cierre T007 (#34).
 
 | Validación | Requisitos | Criterios | Resultado |
 |---|---|---|---|
@@ -21,3 +21,5 @@
 [Detalle de aceptación y límites](acceptance.md), [resultados reales](evidence.md).
 Un fallo esencial bloquea cierre; los mocks o documentos solos no acreditan integración.
 T002/T006 tienen CI/revisión/postmerge en PR #33; T007 conserva su puerta final.
+
+Cierre efectivo acreditado en [postmerge PR #34](https://github.com/dlalvarez/rag-platform/pull/34#issuecomment-6565126139).

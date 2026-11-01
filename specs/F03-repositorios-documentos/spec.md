@@ -2,8 +2,7 @@
 
 **Estado:** alcance original autorizado para ejecución continuada por Diego el
 2026-11-01 (ADR-0010), tras aceptación de F02 en PR #26. Implementación y criterios
-acreditados en ragdev01. Aceptación técnica T007 condicionada a CI/revisión/merge/
-postmerge del PR de cierre; ver [aceptación y límites](acceptance.md).
+acreditados en ragdev01. Aceptación T007 efectiva con CI/revisión/merge/postmerge del PR #34; ver [aceptación y límites](acceptance.md).
 **Dependencia:** F02.  
 **Meta:** Carga de archivos privados y repositorios seguros.
 
