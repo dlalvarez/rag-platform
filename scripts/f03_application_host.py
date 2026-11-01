@@ -8,6 +8,7 @@ import os
 import resource
 import subprocess
 import sys
+from contextlib import contextmanager
 from pathlib import Path
 
 import f01_daily_host as base
@@ -98,6 +99,25 @@ def maintenance(key):
         rpc("restore", key=key)
 
 
+@contextmanager
+def exclusive_maintenance(directory):
+    file_fd = os.open(directory / "maintenance.lock", os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
+    directory_fd = None
+    try:
+        fcntl.flock(file_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        directory_fd = os.open(directory, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        try:
+            # Same inode lock as f01_access.directory() in every daily battery.
+            fcntl.flock(directory_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            raise SetupError("DAY_BUSY") from None
+        yield
+    finally:
+        if directory_fd is not None:
+            os.close(directory_fd)
+        os.close(file_fd)
+
+
 def main():
     try:
         if sys.argv[1:] != ["configure"] or not sys.stdin.isatty() or not sys.stdout.isatty():
@@ -127,9 +147,7 @@ def main():
             or info.st_mode & 0o077
         ):
             raise SetupError("ACCESS_DIRECTORY")
-        fd = os.open(directory / "maintenance.lock", os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
-        try:
-            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        with exclusive_maintenance(directory):
             health = rpc("health")
             if health.get("source_hash") != source_hash():
                 raise SetupError("IMAGE_SOURCE_MISMATCH")
@@ -149,8 +167,6 @@ def main():
             print(
                 "PASS F03 APP SETUP: rol de lectura limitado instalado; sesión diaria conservada."
             )
-        finally:
-            os.close(fd)
     except (Exception, KeyboardInterrupt) as error:
         code = error.args[0] if isinstance(error, SetupError) else "STOPPED"
         raise SystemExit(
