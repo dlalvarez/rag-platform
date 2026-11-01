@@ -52,3 +52,15 @@ Respuesta:
 ## Contratos internos
 
 `TenantResolver.resolve(authorized_context) -> TenantResourceDescriptor`; `TenantDB.session(descriptor)`; `StorageProvider.for_tenant(descriptor)`; `EmbeddingProvider.embed(texts, model_profile)`; `Extractor.extract(document_stream)`; `Retriever.search(authorized_context, repositories, query, profile)`; `AnswerService.generate(evidence, policies)`.
+
+## Perfil implementado en F02
+
+GET /api/v1/me: principal_id UUID, platform_roles, memberships y next_cursor.
+GET /api/v1/tenants: items [{tenant_id UUID, kind PERSONAL|ORG, role}] y next_cursor.
+Cada respuesta incluye request_id UUID generado por servidor. Sin referencias físicas,
+secretos o claims de identidad. Solo membresías activas de usuario activo y tenants
+READY con migración/versión compatibles. /me devuelve hasta 50 membresías;
+continuar con /tenants y su cursor. /tenants admite limit 1..100 (default 50) y
+cursor opaco ligado al principal. No se habilitan rutas tenant ni administrativas.
+Errores: {error: {version: "v1", code}, request_id}; sin input rechazado ni excepción
+de proveedor. Cache-Control no-store y X-Request-ID. JWT solo en Authorization Bearer.

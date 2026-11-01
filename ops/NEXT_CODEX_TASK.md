@@ -10,25 +10,22 @@ D-04 resuelta expresamente por Diego: Keycloak solo para desarrollo según
 [ADR-0009](../docs/adr/0009-development-oidc.md), proveedor de producción sin decidir.
 Ejecutar T001..T007 en PR acotados a develop con revisión delegada ADR-0007,
 CI, evidencia real y postmerge, sin nuevas preguntas rutinarias.
-T001 implementada y ensayada con Keycloak 26.8.1 por digest, TLS, PostgreSQL propio
-y presupuesto medido. T001 integrada en PR #20. T002 implementada y ensayada con tokens Keycloak reales,
-rotación reversible y expiración real; revisar/integrar su PR con CI y postmerge.
-T003 aplicada y ensayada en PostgreSQL real: migración aditiva, identidad issuer+sub,
-roles/tipos/membresías/auditoría y grants mínimos. Revisar/integrar su PR y continuar
-T004: CLI autenticada implementada/probada, bootstrap explícito y último owner
-protegido por advisory xact locks en PostgreSQL real. Revisar/integrar su PR y seguir
-T005: AuthorizedTenantContext, GET /me y /tenants, errores y autorización previa
-a secretos/pools, con API de mínimo privilegio y pruebas negativas.
+T001..T004 integradas en PR #20..#23 con CI y postmerge.
+T005 implementada y ensayada: contexto firmado/revalidado, API TLS de mínimo privilegio,
+GET /me y /tenants con paginación y negativos. Revisar/integrar PR T005 y continuar T006
+con contadores reales SQL/S3 y ambas topologías; después T007, evidencia/aceptación.
 No detenerse entre tareas ni pedir confirmaciones rutinarias; continuar hasta completar
 F02, salvo bloqueo real o desvío de los contratos/specs.
 No confundir discovery/JWKS de T001 con validación de tokens o aceptación de F02.
 
-Toda ejecución y dependencias en ragdev01. Sesión de pruebas de ADR-0008 activa
-hasta 2026-11-01T21:34:19-05:00 según última verificación. Comprobar status antes de
-usar la sesión; integrar el contexto diario sin leer el bearer en herramientas.
-No pedir contraseña por batería, renovar automáticamente, revocar el día al terminar
-o repetir configure. Si el servidor rechaza por vencimiento, informar el bloqueo real.
-No guardar contraseñas, unseal o root; mantener custodia con Diego.
+Toda ejecución y dependencias en ragdev01. El archivo de autorización diaria desapareció
+del runtime de usuario; daily status rechazó su uso. Se habilitó loginctl Linger=yes
+para diego, sin cambiar TTL/permisos o reiniciar Bao. Se pidió reemisión con
+`python3 scripts/f01_host.py run --rm daily start` en terminal del operador.
+No pedir contraseña en chat ni repetir configure/root/unseal. Verificar status/canary
+antes de T006; sin bearer válido continuar preparativos offline, no simular integración.
+No renovar automáticamente ni revocar el día al terminar. Clave/token anterior no
+recuperables desde el archivo perdido; podrían seguir válidos en Bao hasta TTL original.
 
 Conservar F00/F01, sus servicios/datos y clon T007. No F03, main, tags, producción,
 cambio de visibilidad o borrado de recursos. No cerrar F02 sin integración IdP real,
