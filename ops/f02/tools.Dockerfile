@@ -5,7 +5,10 @@ RUN pip install --no-cache-dir uv==0.13.6
 COPY pyproject.toml uv.lock ./
 COPY src ./src
 RUN uv sync --frozen --no-dev --no-editable
-COPY alembic-control.ini ./
-COPY migrations/control ./migrations/control
+COPY alembic-control.ini alembic-tenant.ini ./
+COPY migrations ./migrations
+COPY tests/integration/f01/migration_fixture ./tests/integration/f01/migration_fixture
+COPY scripts/f01_*.py ./scripts/
+COPY ops/f01/*.hcl ./ops/f01/
 COPY scripts/f02_*.py ./scripts/
 ENV PATH="/app/.venv/bin:$PATH"

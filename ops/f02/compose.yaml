@@ -92,6 +92,11 @@ services:
         target: /opt/keycloak/data/import/rag-dev-token-fixture-realm.json
         read_only: true
         bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/config/identity-fixture-v2-realm.json
+        target: /opt/keycloak/data/import/rag-dev-identity-fixture-v2-realm.json
+        read_only: true
+        bind: {create_host_path: false}
     tmpfs:
       - /tmp:rw,noexec,nosuid,size=128m
       - /opt/keycloak/data/tmp:rw,nosuid,size=128m,mode=1777
@@ -192,6 +197,83 @@ services:
     mem_limit: 768m
     memswap_limit: 768m
     ulimits: {core: {soft: 0, hard: 0}}
+  identity-cli:
+    profiles: [admin]
+    image: rag-f02-tools:t004
+    build:
+      context: ../..
+      dockerfile: ops/f02/tools.Dockerfile
+    user: "${RAG_F02_UID:?Prepare F02}:${RAG_F02_GID:?Prepare F02}"
+    entrypoint: [python, scripts/f02_identity_admin.py]
+    environment:
+      RAG_OIDC_ISSUER: https://idp:8443/realms/rag-dev-identity-fixture-v2
+      RAG_OIDC_AUDIENCE: rag-api
+      RAG_OIDC_JWKS: https://idp:8443/realms/rag-dev-identity-fixture-v2/protocol/openid-connect/certs
+    volumes:
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/tls/ca.crt
+        target: /tls/ca.crt
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /srv/rag-data/rag-platform/f01/tls/ca.crt
+        target: /run/f01-ca.crt
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/secrets/identity_app_password
+        target: /run/secrets/identity_app_password
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/secrets/identity_admin_password
+        target: /run/secrets/identity_admin_password
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /run/user/${RAG_F02_UID:?Prepare F02}/rag-f02-auth
+        target: /run/f02-auth
+        bind: {create_host_path: false}
+    networks: [f02, control]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    cpus: 0.5
+    mem_limit: 768m
+    memswap_limit: 768m
+    ulimits: {core: {soft: 0, hard: 0}}
+  identity-bootstrap:
+    extends: identity-cli
+    profiles: [admin]
+    volumes:
+      - type: bind
+        source: /run/user/${RAG_F02_UID:?Prepare F02}/rag-f01-access
+        target: /run/f01-access
+        bind: {create_host_path: false}
+  cli-check:
+    extends: identity-bootstrap
+    profiles: [test]
+    entrypoint: [python, scripts/f02_cli_check.py]
+    volumes:
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/secrets/identity-fixture-v2.json
+        target: /run/secrets/identity-fixture.json
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /srv/rag-data/rag-platform/f01/secrets/control_migrator_password
+        target: /run/secrets/control_migrator_password
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /srv/rag-data/rag-platform/f01/secrets/storage_admin_user
+        target: /run/secrets/storage_admin_user
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /srv/rag-data/rag-platform/f01/secrets/storage_admin_password
+        target: /run/secrets/storage_admin_password
+        read_only: true
+        bind: {create_host_path: false}
 networks:
   f02: {internal: true}
   control:

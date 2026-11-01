@@ -15,7 +15,10 @@ y presupuesto medido. T001 integrada en PR #20. T002 implementada y ensayada con
 rotación reversible y expiración real; revisar/integrar su PR con CI y postmerge.
 T003 aplicada y ensayada en PostgreSQL real: migración aditiva, identidad issuer+sub,
 roles/tipos/membresías/auditoría y grants mínimos. Revisar/integrar su PR y continuar
-T004: CLI autenticada, bootstrap explícito y último owner protegido concurrentemente.
+T004: CLI autenticada implementada/probada, bootstrap explícito y último owner
+protegido por advisory xact locks en PostgreSQL real. Revisar/integrar su PR y seguir
+T005: AuthorizedTenantContext, GET /me y /tenants, errores y autorización previa
+a secretos/pools, con API de mínimo privilegio y pruebas negativas.
 No detenerse entre tareas ni pedir confirmaciones rutinarias; continuar hasta completar
 F02, salvo bloqueo real o desvío de los contratos/specs.
 No confundir discovery/JWKS de T001 con validación de tokens o aceptación de F02.

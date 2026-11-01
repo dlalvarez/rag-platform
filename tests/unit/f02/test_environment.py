@@ -147,3 +147,38 @@ def test_private_token_fixture_import_name_and_no_overwrite(modules, monkeypatch
     with pytest.raises(ValueError, match="EXISTS"):
         host.prepare_tokens()
     assert metadata.read_bytes() == original
+
+
+def test_human_fixture_audience_and_global_user_ids(modules, monkeypatch, tmp_path):
+    import json
+    from uuid import UUID, uuid5
+
+    import yaml
+
+    host, _ = modules
+    data = tmp_path / "data"
+    data.mkdir(mode=0o700)
+    for name in ("config", "secrets"):
+        (data / name).mkdir(mode=0o700)
+    monkeypatch.setattr(host, "DATA", data)
+    monkeypatch.setattr(host, "AUTH", tmp_path / "auth")
+    monkeypatch.setattr(host, "validate", lambda *args: None)
+    monkeypatch.setattr(
+        host.subprocess,
+        "check_output",
+        lambda *args, **kwargs: json.dumps({"filesystems": [{"fstype": "tmpfs"}]}),
+    )
+    host.prepare_humans()
+    realm = json.loads((data / "config/identity-fixture-v2-realm.json").read_text())
+    clients = {c["clientId"]: c for c in realm["clients"]}
+    audience = clients["f02-identity-probe"]["protocolMappers"][0]["config"][
+        "included.client.audience"
+    ]
+    assert audience in clients
+    namespace = UUID("724d3de6-0a3c-4caa-8ed2-d3ef8b05889e")
+    for user in realm["users"]:
+        assert user["id"] == str(uuid5(namespace, realm["realm"] + ":" + user["username"]))
+        assert user["id"] != str(uuid5(namespace, user["username"]))
+    compose = yaml.safe_load((ROOT / "ops/f02/compose.yaml").read_text())
+    targets = [m["target"] for m in compose["services"]["idp"]["volumes"]]
+    assert "/opt/keycloak/data/import/" + realm["realm"] + "-realm.json" in targets

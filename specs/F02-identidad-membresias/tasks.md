@@ -1,7 +1,7 @@
 # Tareas F02
 
-Estado: T001/T002 integradas en PR #20/#21; T003 implementada y ensayada.
-Revisión/merge de T003 y T004..T007 pendientes; F02 sigue abierta.
+Estado: T001..T003 integradas en PR #20..#22; T004 implementada y ensayada.
+Revisión/merge de T004 y T005..T007 pendientes; F02 sigue abierta.
 Dependencias y pruebas: [plan](plan.md), [checklist](checklist.md), [evidence](evidence.md).
 
 - [x] T001 — D-04 y entorno IdP de desarrollo: resolver ADR-0009; versión/digest,
@@ -10,7 +10,7 @@ Dependencias y pruebas: [plan](plan.md), [checklist](checklist.md), [evidence](e
   F02-R01/R05; AC-03/04; V01/V06.
 - [x] T003 — Migración control: identidad issuer+sub, membresías/tipos/roles y auditoría,
   constraints/grants/idempotencia. F02-R02/R04/R05; AC-01/03/04; V02/V04/V06.
-- [ ] T004 — Administración CLI con bootstrap explícito, matriz de permisos y control
+- [x] T004 — Administración CLI con bootstrap explícito, matriz de permisos y control
   concurrente del último owner. F02-R02/R04/R05; AC-01/03/04; V02/V04/V06.
 - [ ] T005 — AuthorizedTenantContext y GET /me, /tenants, autorización antes de
   secretos/pools; paginación y denegaciones. F02-R02/R03/R04; AC-01/02/03; V03/V05.
