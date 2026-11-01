@@ -1,12 +1,12 @@
 # Tareas F02
 
-Estado: T001 implementada y ensayada; revisión/integración de su PR pendientes.
-T002..T007 y aceptación de fase pendientes.
+Estado: T001 integrada en PR #20; T002 implementada y ensayada, revisión/merge
+de su PR pendientes. T003..T007 y aceptación de fase pendientes.
 Dependencias y pruebas: [plan](plan.md), [checklist](checklist.md), [evidence](evidence.md).
 
 - [x] T001 — D-04 y entorno IdP de desarrollo: resolver ADR-0009; versión/digest,
   TLS, configuración, secretos y presupuestos. F02-R01; AC-03/04; V01/V07.
-- [ ] T002 — Adaptador de access tokens y JWKS con límites/rotación y errores saneados.
+- [x] T002 — Adaptador de access tokens y JWKS con límites/rotación y errores saneados.
   F02-R01/R05; AC-03/04; V01/V06.
 - [ ] T003 — Migración control: identidad issuer+sub, membresías/tipos/roles y auditoría,
   constraints/grants/idempotencia. F02-R02/R04/R05; AC-01/03/04; V02/V04/V06.

@@ -119,3 +119,31 @@ def test_discovery_redirect_rejected_before_follow(modules):
         probe.NoRedirect().redirect_request(
             None, None, 302, "redirect", {}, "https://attacker.invalid"
         )
+
+
+def test_private_token_fixture_import_name_and_no_overwrite(modules, monkeypatch, tmp_path):
+    import json
+    import stat
+
+    import yaml
+
+    host, _ = modules
+    data = tmp_path / "private"
+    data.mkdir(mode=0o700)
+    for name in ("config", "secrets"):
+        (data / name).mkdir(mode=0o700)
+    monkeypatch.setattr(host, "DATA", data)
+    monkeypatch.setattr(host, "validate", lambda *args: None)
+    host.prepare_tokens()
+    metadata = data / "secrets/token-fixture.json"
+    original = metadata.read_bytes()
+    realm = json.loads((data / "config/token-fixture-realm.json").read_text())
+    assert realm["realm"] != "master"
+    assert stat.S_IMODE(metadata.stat().st_mode) == 0o600
+    assert realm["users"][0]["clientRoles"] == {"realm-management": ["manage-realm"]}
+    compose = yaml.safe_load((ROOT / "ops/f02/compose.yaml").read_text())
+    targets = [mount["target"] for mount in compose["services"]["idp"]["volumes"]]
+    assert "/opt/keycloak/data/import/" + realm["realm"] + "-realm.json" in targets
+    with pytest.raises(ValueError, match="EXISTS"):
+        host.prepare_tokens()
+    assert metadata.read_bytes() == original

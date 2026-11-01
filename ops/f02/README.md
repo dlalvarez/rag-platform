@@ -68,3 +68,54 @@ Fuentes verificadas:
 La release incorpora correcciones de seguridad; no equivale a un escaneo completo
 de la imagen ni garantiza ausencia de vulnerabilidades. Sin federation, broker,
 token exchange o extensiones custom de IdP en este perfil.
+
+## T002 — validador y fixture de tokens
+
+T002 añade PyJWT[crypto] 2.15.1 y cryptography 50.0.2, fijados en uv.lock.
+No cambia versiones existentes. OIDCSettings configura issuer, audience, JWKS y CA.
+Solo firma RS256/RSA >=2048; perfil Keycloak exige access token Bearer, no ID token.
+El perfil RFC9068 requiere header at+jwt. No roles/membresías desde claims.
+Identity es inmutable, conserva solo issuer/sub/exp y no imprime identidad en repr.
+
+JWT máximo 16384 caracteres, JWKS máximo 64 KiB/32 claves, TTL cache <=300 s,
+refresco mínimo configurado (30 s por defecto), red TLS/5 s y sin proxy/redirecciones.
+kid desconocido dispara refresco limitado, también tras errores; no URLs del JWT.
+Cache válida permite comprobar una firma conocida sin red; expirada o clave
+desconocida sin refresco correcto falla cerrada. No fallback a claves vencidas.
+Tolerancia de reloj 0..30 s; no se desactiva firma/issuer/audience/exp/iat.
+
+Sobre el entorno T001 existente, solo una vez:
+    python3 scripts/f02_host.py prepare-tokens
+    python3 scripts/f02_host.py build-tools
+    python3 scripts/f02_host.py up
+    python3 scripts/f02_host.py tokens
+
+Estos pasos ya están ejecutados en ragdev01; no repetir prepare-tokens.
+En una preparación nueva, prepare también crea la fixture T002.
+up aplica únicamente los servicios propios F02; importar una nueva fixture puede
+recrear el IdP. No reinicia Bao ni PostgreSQL F00/F01.
+
+Fixture: realm rag-dev-token-fixture, distinto del realm principal rag-dev.
+Tres clientes de prueba: f02-probe, f02-short y controlador de fixture.
+Solo el controlador tiene manage-realm en ese realm para generar una clave
+temporal; no administrador master ni permiso sobre memberships del producto.
+Sin contraseñas de usuarios: grant client_credentials para identidades de servicio
+sintéticas. No usar esta prueba como evidencia de login humano o membresías F02.
+
+Importación exige el nombre <realm>-realm.json. Archivo y credenciales de fixture
+fuera de Git, 0600; controller/probe/short solo montados en token-check, nunca API.
+La herramienta genera una clave temporal, verifica token nuevo y anterior, retira
+únicamente su componente y comprueba que la clave original vuelve a emitir tokens.
+Tokens quedan en memoria; no se imprimen ni almacenan en archivos.
+La prueba de caducidad usa f02-short (5 s), sin cambiar lifespan del realm ni
+contraseñas/secretos existentes. El validador de esa prueba usa leeway=0.
+Si falla, informa únicamente F02-T002 y etapa; no pegar salidas de Keycloak.
+
+La importación inicial T002 falló por nombre de archivo distinto del realm.
+Se corrigió el destino del bind mount según el código oficial DirImportProvider
+y se añadió test de esa convención. Se conservaron base/secretos y realm principal;
+la batería completa pasó después. No se borró/reinicializó nada para recuperarlo.
+No ejecutar el manifiesto histórico T001 sobre fuentes modificadas por T002:
+usar el manifiesto T002 y conservar el anterior como evidencia del commit T001.
+
+[Convención de importación verificada en código oficial](https://github.com/keycloak/keycloak/blob/26.8.1/model/storage-services/src/main/java/org/keycloak/exportimport/dir/DirImportProvider.java).

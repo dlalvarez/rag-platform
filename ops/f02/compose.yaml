@@ -87,6 +87,11 @@ services:
         target: /opt/keycloak/data/import/rag-dev-realm.json
         read_only: true
         bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/config/token-fixture-realm.json
+        target: /opt/keycloak/data/import/rag-dev-token-fixture-realm.json
+        read_only: true
+        bind: {create_host_path: false}
     tmpfs:
       - /tmp:rw,noexec,nosuid,size=128m
       - /opt/keycloak/data/tmp:rw,nosuid,size=128m,mode=1777
@@ -116,6 +121,32 @@ services:
     cap_drop: [ALL]
     security_opt: ["no-new-privileges:true"]
     networks: [f02]
+    cpus: 0.25
+    mem_limit: 768m
+    memswap_limit: 768m
+    ulimits: {core: {soft: 0, hard: 0}}
+  token-check:
+    profiles: [test]
+    image: rag-f02-tools:t002
+    build:
+      context: ../..
+      dockerfile: ops/f02/tools.Dockerfile
+    user: "${RAG_F02_UID:?Prepare F02}:${RAG_F02_GID:?Prepare F02}"
+    entrypoint: [python, scripts/f02_token_check.py]
+    volumes:
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/tls/ca.crt
+        target: /tls/ca.crt
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/secrets/token-fixture.json
+        target: /run/secrets/token-fixture.json
+        read_only: true
+        bind: {create_host_path: false}
+    networks: [f02]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
     cpus: 0.25
     mem_limit: 768m
     memswap_limit: 768m
