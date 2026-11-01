@@ -97,3 +97,12 @@ Fuentes consultadas el 2026-10-30:
 [seal/unseal](https://openbao.org/docs/concepts/seal/),
 [AppRole](https://openbao.org/docs/auth/approle/),
 [KV v2](https://openbao.org/docs/secrets/kv/kv-v2/).
+
+## Excepción aprobada para pruebas diarias en desarrollo
+
+[ADR-0008](0008-daily-development-session.md) incorpora f01-dev-day con token
+reutilizable de 86400 segundos, sin renovación que extienda el vencimiento.
+Diego autorizó las 24 horas y ejecutó la configuración controlada; la sesión
+real pasó verificaciones independientes en ragdev01. Esta excepción afecta
+solo al nuevo rol de desarrollo. f01-cli conserva sus TTL y pruebas originales;
+no aumenta permisos de datos ni deja una identidad root disponible.

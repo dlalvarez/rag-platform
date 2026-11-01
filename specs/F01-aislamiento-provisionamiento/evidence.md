@@ -594,3 +594,12 @@ con actor interactivo. La nueva fixture de esta batería tiene actor delegado di
 ambas conservan seis pasos completos, intentos 2 y referencias SQL versión 1.
 La inspección inicial comparó con un recuento anterior y se corrigió tras revisar
 fechas y auditoría; no se borraron ni modificaron fixtures para ajustar los totales.
+
+## Seguimiento operativo: autorización diaria
+
+ADR-0008 y contrato DAY-01..06 aplicados mediante CONFIGURAR24H por Diego.
+Root temporal/ensayo revocados; sesión operativa de 24 horas reutilizada por
+daily verify y daily-cli en procesos independientes, con F00 real correcto.
+[Evidencia y fuentes exactas](../../docs/evidence/f01-day-2026-10-31.txt).
+F01 mantiene su aceptación previa; este seguimiento no abre F02.
+No se acredita transcurso de 24 horas ni backup/restore.

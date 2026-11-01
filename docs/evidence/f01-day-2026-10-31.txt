@@ -1,0 +1,70 @@
+F01 DAY-01..06 / initial preparation only
+Base: develop@0ec3fefb417e1ad4ec73c6324faef0183b823e4d
+PR #18 / docs/F01-daily-access-plan
+Source manifest: f01-day-source-sha256.txt
+All code/builds/tests on ragdev01.
+
+PASS PREP: 206 offline tests; Ruff check/format; SDD docs.
+PASS PREP: controlled F00 negative checks and real API/SQL/vector/S3 F00 regression.
+PASS PREP: Compose config and separate daily-v1 image built.
+PASS PREP: final scripts/policies and installed package match manifest.
+PASS PREP: health bridge reads initialized/unsealed existing node without secrets.
+Observed original recovery endpoint HTTP 405; authenticated endpoint without token HTTP 403.
+Pinned OpenBao 2.7.2 source confirms default policy has no root-generation capability,
+lookup-self exposes internal token ID rather than external SSC bearer,
+and legacy root generation returns an OTP for local XOR decoding.
+No recovery was enabled, root generated or existing service restarted by Codex.
+
+PENDING: Diego authorizes/configures in own terminal with CONFIGURAR24H.
+PENDING: actual root/trial revocation, restored listener, role/TTL and active day.
+PENDING: two independent actual executions using the same day and postmerge.
+No claims of 24 hours elapsed, active authorization or applied daily configuration.
+No operator password, root, unseal or bearer values recorded.
+
+CORRECTION / operator attempt returned F01-DAY-SETUP BRIDGE.
+Independent inspection: config bytes restored, node initialized/unsealed,
+existing PostgreSQL/MinIO healthy, no day/grant file. No credentials inspected.
+
+Old code reproduced failure after restarting a disposable production-mode Raft node:
+OperatorFailure API on recovery status immediately after unseal, before root generation.
+Warm disposable recovery succeeded. Corrected code waits for health HTTP 200 before
+recovery/restore/activation, with bounded deadline and allowlisted stage errors.
+
+PASS CORRECTION: 210 offline tests; Ruff and formatting.
+PASS ISOLATED REGRESSION: tests/integration/f01/daily_recovery.py --run.
+OpenBao 2.7.2, fresh TLS/network/Raft, synthetic credentials, no existing environment mounts.
+Actual restart, root recovery/configuration/revocation, trial session revocation,
+daily token reused by two independent client sessions and final server revocation.
+Observed remaining daily validity 86399 seconds; not 24 hours elapsed.
+Disposable containers/network/TLS/data removed; no permanent service added.
+Current source manifest records the corrected runtime; initial preparation remains
+available in PR history at 1a7ec8d7ff396867bf1359db47671b04c693f6b6.
+
+PENDING: corrected operator activation and actual existing-environment daily session.
+
+REAL EXISTING ENVIRONMENT / operator-authorized CONFIGURAR24H completed.
+Runtime commit: 6864cddf8c1ac600ba723424072c5d7bfeb37c9e.
+PASS DAY SETUP: temporary root revoked; original configuration restored.
+PASS DAY SETUP: trial session revoked; operational 24-hour session ACTIVE.
+Server-issued TTL: 86400 seconds; initial remaining validity: 86399.
+Original expiry: 2026-11-01T21:34:19-05:00 (Bogota).
+PASS independent process 1: daily verify, real canary; daily session conserved.
+PASS independent process 2: daily-cli, all three T007 lines:
+create/show/retry and actual failure recovery without rotation;
+check/migrate repeated, unknown rejected, no IAM admin for tenant checks;
+CLI on both instances, actual versions, no secret values in output.
+PASS DAY CLI: same day remains available until original expiry.
+PASS F00 integration: API, PostgreSQL/vector and synthetic S3 roundtrip.
+No new password prompt, renewal, operational-day revocation or phase opening.
+Earlier PENDING entries above describe historical preparation and are superseded.
+Validity and expiry were observed; 24 hours have not elapsed during verification.
+Postmerge result is recorded in the PR conversation after integration.
+
+PASS independent corroboration: health HTTP 200; disabled legacy recovery HTTP 405.
+Original listener bytes exactly equal ops/f01/openbao.hcl.
+Private authorization directory 0700; day.json 0600, without reading bearer.
+Catalog: 15 synthetic tenants (12 READY, 2 PROVISIONING, 1 FAILED);
+13 operations (12 SUCCEEDED, 1 FAILED); 13 audit records for dedicated DAY_ACTOR.
+Historical failed/provisioning resources retained.
+PASS FINAL LOCAL: 210 tests, Ruff check/format (68 files), SDD integrity.
+One existing Starlette/httpx deprecation warning; no test failures.

@@ -1,18 +1,20 @@
-# Siguiente tarea Codex — conservar el flujo delegado aprobado
+# Siguiente tarea Codex — sesión diaria acreditada
 
-F01 cerrada, Issue #7 completed. ADR-0007 permite revisar e integrar PR hacia develop
-dentro de specs/tareas autorizadas, con diff revisado, pruebas/checks/evidencias y postmerge.
-No pedir confirmación repetida para operaciones rutinarias autorizadas.
+La configuración de ADR-0008 está aplicada y verificada en ragdev01. Diego completó
+CONFIGURAR24H: root temporal y ensayo revocados, configuración original restaurada.
+daily verify y daily-cli pasaron en procesos independientes, sin nueva contraseña.
+La sesión operativa vence el 2026-11-01T21:34:19-05:00 (Bogotá).
+Conservar ese vencimiento; no revocar al terminar cada batería ni iniciar otro día.
 
-La mejora operativa ACC-01..05 está implementada y probada contra OpenBao:
-[manual](f01/ACCESS.md), [log](../docs/evidence/f01-access-2026-10-31.txt).
-180 tests y batería CLI real delegada correctos; token revocado y grant consumido.
-No es acceso permanente. Otra batería requiere emitir otro SecretID desde la terminal
-del operador; no pedir contraseña en chat ni reutilizar grants/tokens. No cambiar roles,
-TTL o custodia para eliminar esa intervención sin decidir antes el cambio de contrato.
+Consultar status antes de pruebas autorizadas:
+    python3 scripts/f01_host.py run --rm -T daily status
 
-Todo trabajo permanece en ragdev01. Conservar datos, canaries, conflictos y clon fijo
-T007 /home/diego/proyectos/rag-platform-t007-clean-b60b912b.
-F02 y main/tag todavía no autorizados; no asumir que autonomía amplía el alcance.
-Si se autoriza F02, leer su spec/contratos originales y formalizar el plan antes de código.
-No reinicializar OpenBao ni borrar bases/buckets ni declarar backup/restore/HA/PITR.
+No repetir configure, reiniciar OpenBao ni regenerar root para trabajo ordinario.
+Al vencer, el operador puede iniciar otro día una sola vez con daily start;
+no pedir contraseña, unseal o tokens en chat. Manual: [DAY_ACCESS](f01/DAY_ACCESS.md).
+
+Toda ejecución, desarrollo y pruebas en ragdev01. Conservar datos, F00, rol corto
+y clon T007. La autorización diaria habilita pruebas dentro del alcance acordado;
+no autoriza una fase nueva. F01 sigue cerrada. El siguiente paso funcional requiere
+definir y ratificar F02 conforme al roadmap antes de implementarla.
+No promover main ni crear tags con esta mejora.

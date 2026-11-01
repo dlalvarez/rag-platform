@@ -39,15 +39,15 @@ def credential_values(service, tenant):
     return tuple(service.store.read(ref) for ref in (*snap.sql_refs, snap.storage_ref))
 
 
-def main(*, delegated=False):
+def main(*, delegated=False, daily=False):
     global PHASE
     logging.disable(logging.CRITICAL)
     try:
-        if not delegated:
+        if not (delegated or daily):
             tty_required()
         with (
-            operator_service("create", delegated=True)
-            if delegated
+            operator_service("create", delegated=delegated, daily=daily)
+            if delegated or daily
             else operator_service("create") as service
         ):
             PHASE = "CATALOG_SHOW"

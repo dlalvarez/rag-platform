@@ -346,6 +346,7 @@ def compose(arguments: list[str]) -> None:
             "admin",
             "cli-check",
             "access-cli",
+            "daily-cli",
         }
         for arg in arguments
     ):

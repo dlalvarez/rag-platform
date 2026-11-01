@@ -135,6 +135,44 @@ class OpenBaoSecretStore:
         self._token = token
         self._expires_at = time.monotonic() + max(0, ttl - 1)
 
+    def attach_day(self, token: str, expires_at: float) -> None:
+        """Validate the dedicated server-issued daily token; never renew it."""
+        self._token = None
+        self._expires_at = 0.0
+        if (
+            not isinstance(token, str)
+            or not 0 < len(token) <= 4096
+            or type(expires_at) not in (int, float)
+            or not time.time() < expires_at <= time.time() + 86400
+        ):
+            raise SecretStoreError(SecretErrorCode.DENIED)
+        self._token = token
+        self._expires_at = time.monotonic() + 5
+        try:
+            own = self._request("GET", "/v1/auth/token/lookup-self")["data"]
+            ttl = own["ttl"]
+            if (
+                set(own["policies"]) != {"default", "f01-provisioner"}
+                or own["path"] != "auth/approle/login"
+                or own["meta"]["role_name"] != "f01-dev-day"
+                or own["creation_ttl"] != 86400
+                or own["explicit_max_ttl"] != 86400
+                or own["num_uses"] != 0
+                or type(ttl) is not int
+                or not 0 < ttl <= 86400
+                or own["creation_time"] + 86400 != expires_at
+            ):
+                raise SecretStoreError(SecretErrorCode.DENIED)
+            self._expires_at = time.monotonic() + max(0, min(ttl, expires_at - time.time()) - 1)
+        except (KeyError, TypeError, ValueError):
+            self._token = None
+            self._expires_at = 0.0
+            raise SecretStoreError(SecretErrorCode.DENIED) from None
+        except BaseException:
+            self._token = None
+            self._expires_at = 0.0
+            raise
+
     def read(self, ref: SecretRef) -> Credential:
         if not isinstance(ref, SecretRef):
             raise SecretStoreError(SecretErrorCode.INVALID)
