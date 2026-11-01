@@ -1,6 +1,6 @@
-> F00 finalizada y aceptada en PR #6/Issue #4; este archivo conserva la tarea ya ejecutada. La siguiente propuesta está en [NEXT_CODEX_TASK.md](NEXT_CODEX_TASK.md), pendiente de ratificación F01.
+> F00 finalizada y aceptada en PR #6/Issue #4; este archivo conserva la tarea ya ejecutada. El contexto y siguiente tarea actuales están en [NEXT_CODEX_TASK.md](NEXT_CODEX_TASK.md).
 
-# Tarea Codex activa — F00 en ragdev01
+# Tarea Codex histórica — F00 en ragdev01
 
 Planificación/ADRs ratificados en PR #5; develop y protecciones ya existen.
 La implementación fue autorizada por el responsable para ejecutarse exclusivamente

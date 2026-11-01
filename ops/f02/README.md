@@ -310,3 +310,12 @@ El probe consulta identidad de conexión, TLS, privilegios y vector en la base t
 ops_identity/alembic_version_tenant permanecen restringidas a administración/migración
 por F01; no ampliar grants para hacer pasar una prueba. No se crean tablas/contenidos
 de F03 para ensayar F02. Los contadores incluyen intentos de conexión fallidos.
+
+## Cierre T007
+
+La [aceptación técnica](../../specs/F02-identidad-membresias/acceptance.md) reúne la matriz
+R/AC/V, revisión delegada, pruebas reales/offline, hashes y límites. F02 se limita a
+identidad/contexto y API metadata; no habilita contenidos de F03 o producción.
+Para la API normal se verifica únicamente su perfil app; las herramientas de pruebas
+mantienen permisos adicionales y no son una receta de despliegue del runtime.
+No reiniciar/cerrar servicios o revocar el día por formalizar el cierre documental.

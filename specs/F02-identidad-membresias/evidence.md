@@ -1,6 +1,7 @@
 # Evidencia F02
 
-Estado: T001..T005 integradas en PR #20..#24; T006 implementada y comprobada; revisión/merge y T007 pendientes; F02 no aceptada.
+Estado: T001..T006 integradas en PR #20..#25; T007 documenta aceptación técnica delegada.
+Cierre efectivo con CI/revisión/merge/postmerge de su PR. Las secciones anteriores son históricas.
 Las anotaciones de planificación siguientes conservan el estado histórico.
 
 Base inspeccionada en ragdev01: develop@f66a38c8dbfe6d9244eef3cf390ed16f37998b41,
@@ -274,3 +275,18 @@ sha256:fb407bff4e1abc8b9313f22c9d7c3f23ebb9e713cf21368cc6a0d798cccb4355.
 Los mensajes de cierre parcial de las herramientas históricas T002/T005/T007-F01
 se refieren a su alcance; no sustituyen el estado actual de esta evidencia.
 Manifiesto final T006: docs/evidence/f02-t006-source-sha256.txt.
+
+## T007 — aceptación técnica y cierre documental
+
+Base develop@29a3a84f79925001ff57dafa3debfa5997a325e7, rama feat/F02-T007-acceptance.
+T006 postmerge en ragdev01: checkout limpio, 18 hashes correctos y check_docs correcto.
+CI del merge docs/lint/tests success; [registro](https://github.com/dlalvarez/rag-platform/pull/25#issuecomment-6557775077).
+No repetir baterías sensibles que ya pasaron para producir evidencia documental.
+
+[Acceptance](acceptance.md) consolida R01..05 / AC-01..04 / V01..V07, revisión de
+seguridad/compatibilidad, comandos, pruebas offline/reales y límites. Manual y README
+actualizados al estado implementado, conservando los pendientes históricos en sus entregas.
+Codex actúa bajo la delegación de Diego y ADR-0007, sin nueva aprobación humana atribuida
+ni revisión independiente. Cierre efectivo al integrar este PR con checks/postmerge
+registrados en su conversación. No habilita otra fase ni promoción main/tag/producción.
+La sesión diaria se conserva hasta su vencimiento; no nuevas contraseñas o reinicios.
