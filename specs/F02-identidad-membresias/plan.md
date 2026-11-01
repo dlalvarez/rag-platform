@@ -1,7 +1,8 @@
 # Plan F02 — identidad y membresías
 
-Estado: ejecución autorizada por Diego; D-04 resuelta con Keycloak solo dev.
-Implementación y aceptación técnica pendientes.
+Estado: T001..T006 implementadas, probadas e integradas en PR #20..#25.
+T007 documenta aceptación técnica delegada, manual y matriz final; cierre efectivo
+con integración/CI/postmerge de su PR. D-04 conserva Keycloak solo de desarrollo.
 Base: develop@f66a38c8dbfe6d9244eef3cf390ed16f37998b41.
 F01 aceptada en PR #15. Seguimiento operativo de acceso diario integrado en PR #18.
 Diego renovó la delegación de revisión e integración de actividades dentro del plan;

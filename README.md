@@ -1,9 +1,12 @@
 # RAG Platform — Arquitectura fundacional y especificaciones SDD
 
-**Estado:** documentación de arranque / propuesta rectora, versión 0.1, 2026-10-28.  
-**Nombre de trabajo:** `rag-platform` (marca comercial por definir).  
-**Método:** Spec-Driven Development (SDD) con GitHub, Codex, revisiones y pruebas por PR.  
-**Importante:** este paquete contiene especificaciones y plantillas; **no contiene un producto funcional ni despliegues de producción**.
+**Estado:** fundamento F00–F02 implementado y probado en ragdev01 (2026-11-01).
+F02 dispone de aceptación técnica delegada documentada en su entrega T007; el cierre
+se hace efectivo con CI/merge/postmerge de ese PR. El código de integración está en develop.
+**Nombre de trabajo:** rag-platform (marca comercial por definir).
+**Método:** Spec-Driven Development con fases, pruebas y PR.
+El repositorio contiene especificaciones, código y pruebas de aprovisionamiento/identidad.
+Todavía no es un producto RAG completo ni un despliegue de producción.
 
 ## Visión
 
@@ -39,9 +42,12 @@ Plataforma SaaS para crear repositorios de conocimiento y asistentes conversacio
 - [`specs/`](specs): especificación trazable por fase.
 - [`docs/adr/`](docs/adr): registros de decisiones.
 
-## Primer paso de implementación
+## Secuencia de implementación
 
-Realizar **F00**, que genera el repositorio ejecutable y el entorno de pruebas *sin construir todavía funcionalidades de negocio*. Después, aprobar **F01**, que demuestra separación real entre al menos dos bases de datos de tenants y la BD central. No iniciar ingestión ni chat antes de superar esa barrera.
+F00 estableció el repositorio y entorno; F01 probó aislamiento de bases/objetos y el
+provisionador; F02 añadió OIDC, membresías, roles, contexto autorizado y API de identidad.
+La siguiente fase del [roadmap original](docs/10-roadmap.md) es F03, repositorios/ACL/
+documentos, que requiere su planificación y alcance autorizados. No adelantar ingesta o chat.
 
 ## Gobierno de cambios
 
@@ -49,4 +55,16 @@ La jerarquía de referencia es: `docs/01-constitution.md` > ADRs aprobados > arq
 
 ## Estado de fases
 
-F00 aceptada en PR #6 e Issue #4, con postmerge verificado en develop. Implementación y pruebas exclusivamente en ragdev01. [Runbook F00](ops/F00_RUNBOOK.md), [plan y trazabilidad](specs/F00-fundacion-repositorio/plan.md), [evidencias](specs/F00-fundacion-repositorio/evidence.md). Solo paquete Python, API placeholder /healthz, PostgreSQL/pgvector y MinIO sintéticos; no tenants ni RAG. F01 está en planificación para ratificación: [propuesta](specs/F01-aislamiento-provisionamiento/ratification.md), sin implementación ni tenants. Las entregas van por PR hacia develop y revisión humana antes de merge.
+- F00 aceptada en PR #6/Issue #4: tooling, CI, entorno base y smoke API/SQL/vector/S3.
+- F01 aceptada en PR #15: catálogo/provisionador, secretos y SQL/S3 aislados, dos
+  topologías, reintentos, pools, migraciones y CLI. [Evidencia F01](specs/F01-aislamiento-provisionamiento/evidence.md).
+- F02 implementada y validada en PR #20..#25, con cierre técnico documental T007:
+  OIDC configurable, UUID internos/membresías, administración CLI auditada, contexto
+  por solicitud y GET /api/v1/me, /api/v1/tenants. 297 pruebas offline y baterías reales
+  en ambas topologías. [Aceptación/límites F02](specs/F02-identidad-membresias/acceptance.md)
+  y [manual](ops/f02/README.md).
+- F03..F11 conservan el alcance y dependencias del roadmap; no implementadas.
+
+Toda ejecución se realiza en ragdev01. PR a develop con revisión delegada según
+ADR-0007, checks obligatorios y postmerge; no promoción a main/tag por iniciativa
+del agente. [Siguiente tarea](ops/NEXT_CODEX_TASK.md). No producción, HA o restore acreditados.
