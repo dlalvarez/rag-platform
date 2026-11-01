@@ -46,6 +46,10 @@ la imagen, no saltar el control. El operador confirma CONFIGURARF03 e introduce
 al chat, argumentos, variables de entorno, archivos ni repositorio. No pide password
 del operador ni crea una nueva sesión diaria.
 
+La ventana toma el mismo lock de directorio que las baterías diarias. DAY_BUSY
+rechaza el mantenimiento antes de pedir claves/reiniciar si hay una batería activa;
+con la ventana abierta, las baterías esperan hasta su salida. No borrar locks ni tokens.
+
 Ventana concreta: dos reinicios SOLO OpenBao. Recuperación habilitada temporalmente,
 ceremonia 1/1 existente, root en memoria para la configuración fija, revocación
 verificada en finally, restauración atómica de la configuración/TLS original,

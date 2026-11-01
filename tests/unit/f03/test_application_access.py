@@ -323,3 +323,33 @@ def test_noninteractive_setup_refused_before_key_read(setup, monkeypatch):
     monkeypatch.setattr(host.getpass, "getpass", lambda *_: pytest.fail("secret read"))
     with pytest.raises(SystemExit, match="TTY_REQUIRED"):
         host.main()
+
+
+def test_maintenance_refuses_active_daily_battery_and_releases_locks(setup, tmp_path):
+    import fcntl
+    import os
+
+    host = importlib.import_module("f03_application_host")
+    directory = tmp_path / "access"
+    directory.mkdir(mode=0o700)
+    fd = os.open(directory, os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        with pytest.raises(host.SetupError, match="DAY_BUSY"):
+            with host.exclusive_maintenance(directory):
+                pytest.fail("maintenance overlapped a daily battery")
+    finally:
+        os.close(fd)
+    with host.exclusive_maintenance(directory):
+        other = os.open(directory, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            with pytest.raises(BlockingIOError):
+                fcntl.flock(other, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        finally:
+            os.close(other)
+    # Exceptional maintenance exit also releases the shared directory lock.
+    with pytest.raises(RuntimeError, match="synthetic"):
+        with host.exclusive_maintenance(directory):
+            raise RuntimeError("synthetic")
+    with host.exclusive_maintenance(directory):
+        pass
