@@ -9,6 +9,7 @@ from sqlalchemy.pool import QueuePool
 
 from rag_platform.control.models import DbLocation, Instance, Tenant
 from rag_platform.tenancy.contracts import SecretRef
+from rag_platform.tenancy.profiles import version_for
 
 VERSION = "f01_tenant_0001"
 
@@ -59,8 +60,9 @@ class ResolvedDatabase:
 
 
 class CatalogResolver:
-    def __init__(self, control_engine):
+    def __init__(self, control_engine, *, profile="identity"):
         self.control_engine = control_engine
+        self.version = version_for(profile)
 
     def resolve(self, context: AdministrativeTenant, role="app") -> ResolvedDatabase:
         if not isinstance(context, AdministrativeTenant):
@@ -75,8 +77,8 @@ class CatalogResolver:
                     raise TenantAccessError("TENANT_UNAVAILABLE")
                 if (
                     tenant.migration_state != "READY"
-                    or tenant.desired_version != VERSION
-                    or tenant.observed_version != VERSION
+                    or tenant.desired_version != self.version
+                    or tenant.observed_version != self.version
                 ):
                     raise TenantAccessError("SCHEMA_INCOMPATIBLE")
                 location = session.get(DbLocation, tenant.id)

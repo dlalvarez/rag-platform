@@ -51,3 +51,41 @@ con el día vigente y conectar runtime autorizado/versionado. No aplicadas migra
 tenant F03, no desplegada API documental, no AC-F03 acreditado ni F03 cerrada.
 Mientras esa acción externa esté pendiente, continuar T003 y módulos independientes.
 CI/revisión/postmerge de esta preparación se registran en el PR, no se presuponen.
+
+## Bootstrap real y esquema T003 — 2026-11-01
+
+Diego ejecutó el procedimiento del PR #28 y comunicó ambos PASS F03 APP SETUP.
+Verificación autónoma posterior: 12 refs exactas/versionadas, SQL app/readonly en
+destinos propios con TLS; admin SQL/migrator/canary denegados, SecretID de un uso,
+token de ensayo revocado y sesión diaria conservada. PR #29 añadió exclusión con
+baterías diarias; CI/revisión/postmerge correctos en d10a8d318f4b74c5a184e4acf75289fd1c235d03.
+No se necesita repetir bootstrap ni pedir otra contraseña para las pruebas.
+
+T003 añade f03_tenant_0002 solo a las cuatro fixtures F03 propias. [Esquema y permisos](schema.md).
+Fábrica DDL histórica independiente del metadata runtime; F01 fijada a su versión
+explícita para no migrar fixtures anteriores al head nuevo. Resolver/authority/queries
+aceptan solo perfiles conocidos y contextos separados, con defaults F01/F02 conservados.
+
+Batería real final SAME_A/SAME_B/TWO_A/TWO_B correcta: versión física/repetición,
+constraints de nombre/config/MIME/tamaño/hash, pertenencia source/doc/versión/recibo,
+unicidad actor/repo/key, grants mínimos, readonly sin escritura/DDL, migración DDL
+fallida revertida, FAILED sin versión falsa y recuperación, lock real entre procesos.
+DDL histórico reproducido fresco en schemas temporales propios y revertido sin DROP;
+schemas ausentes y versión intacta comprobados. Todos los documentos/recibos de probes
+SQL revertidos; sin archivos u objetos ficticios persistentes. Catálogo ajeno intacto.
+
+Primer intento de la batería falló sin PASS; se aislaron fases. El probe de lock
+confundía importación del hijo (spawn bajo límite CPU) con el tiempo de contención.
+Se añadió handshake antes de medir la respuesta; lock_timeout SQL permanece 5 s.
+Los cuatro casos finales demuestran MIGRATION_BUSY real, no un timeout genérico aceptado.
+
+351 tests offline, ruff check/format, check_docs y diff check correctos en ragdev01.
+Regresión real F02 T006 en ambas topologías correcta: OIDC A/B/A, SQL/S3 y cruces,
+IDOR/estados con cero accesos antes de autoridad. LOG_FLAGS forbidden_value=false,
+jwt_pattern=false, traceback=false; fixtures F01/F02/F03 conservadas.
+La congelación posterior del factory solo cambia construcción de metadata/replay;
+se volvió a ejecutar la batería F03 completa y los tests sobre las fuentes finales.
+
+No API documental desplegada, ACL CRUD o carga/proxy acreditados todavía.
+T002 sigue pendiente de handoff/runtime; T003 pendiente de CI/revisión/integración
+de este PR; T004 continúa sin nueva confirmación. F03 permanece abierta.

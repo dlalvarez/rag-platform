@@ -2,7 +2,7 @@
 
 - [x] F02 aceptada técnicamente y postmerge verificado en PR #26.
 - [x] Continuidad del roadmap original autorizada expresamente por Diego (ADR-0010).
-- [ ] T001 integrado con CI/revisión/postmerge, sin alterar requisitos/roadmap.
+- [x] T001 integrado con CI/revisión/postmerge, sin alterar requisitos/roadmap.
 - [ ] T002..T006 implementadas, permisos mínimos y servicios/datos previos conservados.
 - [ ] AC y V reales acreditados, regresión F00/F01/F02, CI y revisión/postmerge correctos.
 

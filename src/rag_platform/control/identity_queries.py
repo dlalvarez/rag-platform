@@ -10,13 +10,18 @@ import sqlalchemy as sa
 from rag_platform.control.identity import AccessError
 from rag_platform.control.identity_models import Membership, PlatformRole, TenantProfile, User
 from rag_platform.control.models import Tenant
-from rag_platform.tenancy.resolver import VERSION
+from rag_platform.tenancy.profiles import version_for
 
 
 class IdentityQueries:
-    def __init__(self, engine, cursor_key):
+    def __init__(self, engine, cursor_key, *, profiles=("identity",)):
         if not isinstance(cursor_key, bytes) or len(cursor_key) != 32:
             raise ValueError("Invalid cursor configuration")
+        if not isinstance(profiles, tuple) or not 1 <= len(profiles) <= 2:
+            raise ValueError("Invalid schema profiles")
+        self._versions = tuple(version_for(profile) for profile in profiles)
+        if len(set(self._versions)) != len(self._versions):
+            raise ValueError("Duplicate schema profiles")
         self.engine, self._key = engine, cursor_key
 
     def _cursor(self, principal, last):
@@ -65,8 +70,8 @@ class IdentityQueries:
                         Membership.state == "ACTIVE",
                         Tenant.state == "READY",
                         Tenant.migration_state == "READY",
-                        Tenant.desired_version == VERSION,
-                        Tenant.observed_version == VERSION,
+                        Tenant.desired_version.in_(self._versions),
+                        Tenant.observed_version == Tenant.desired_version,
                     )
                     .order_by(Tenant.id)
                     .limit(limit + 1)
