@@ -1,6 +1,8 @@
 # F03 — Repositorios, ACL y recepción documental
 
-**Estado:** BORRADOR RECTOR, pendiente de aprobación humana para ejecutar.  
+**Estado:** alcance original autorizado para ejecución continuada por Diego el
+2026-11-01 (ADR-0010), tras aceptación de F02 en PR #26. Planificación activa;
+implementación y aceptación técnica aún pendientes.
 **Dependencia:** F02.  
 **Meta:** Carga de archivos privados y repositorios seguros.
 

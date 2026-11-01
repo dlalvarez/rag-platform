@@ -56,3 +56,15 @@ Decisiones nuevas de arquitectura/contratos/tenancy, ampliación de alcance o fa
 promoción a main/tag, producción y operaciones destructivas conservan decisión expresa.
 Un fallo o evidencia incompleta bloquea la integración. Diego puede revocar la delegación.
 No se atribuye revisión independiente a la revisión del mismo agente.
+
+
+## Continuidad entre fases — instrucción del 2026-11-01
+
+Diego autorizó continuar el roadmap original sin nuevas órdenes de inicio por tarea,
+PR o fase. [ADR-0010](adr/0010-roadmap-continuity.md) actualiza la reserva de inicio de
+fase de ADR-0007: la transición queda autorizada cuando la dependencia tiene evidencia,
+aceptación técnica y postmerge completos. Formalizar el plan de cada fase antes del código.
+Cerrar una entrega no habilita una pausa de trámite ni omite sus puertas de calidad.
+Cambios fuera del alcance original, arquitectura/contratos, producción/main/tag,
+visibilidad y operaciones destructivas conservan decisión expresa; un bloqueo real
+requiere intervención solo después de agotar el trabajo independiente autorizado.
