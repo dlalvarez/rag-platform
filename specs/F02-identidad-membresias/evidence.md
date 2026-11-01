@@ -22,3 +22,10 @@ Anotar tarea/requisitos/AC, commit y hashes, fecha/entorno/comando, resultado ob
 negativos, cambios de esquema/config/dependencias, recursos conservados, límites
 y resultado postmerge. Salidas saneadas; no bearer, claves, passwords ni claims
 personales. Un fallo mantiene abierto el criterio afectado.
+
+## Ratificación
+
+Diego respondió «Keycloak solo para desarrollo (recomendado)» a la decisión
+concreta de D-04 presentada en PR #19. Proveedor de producción no elegido.
+Ejecución de F02 dentro del roadmap autorizada; revisión/merge delegados ADR-0007.
+Esta ratificación no acredita implementación ni cierre de fase.

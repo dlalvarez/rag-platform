@@ -1,15 +1,16 @@
 # Plan F02 — identidad y membresías
 
-Estado: propuesta de ejecución del borrador rector, sin implementación ni aceptación.
+Estado: ejecución autorizada por Diego; D-04 resuelta con Keycloak solo dev.
+Implementación y aceptación técnica pendientes.
 Base: develop@f66a38c8dbfe6d9244eef3cf390ed16f37998b41.
 F01 aceptada en PR #15. Seguimiento operativo de acceso diario integrado en PR #18.
 Diego renovó la delegación de revisión e integración de actividades dentro del plan;
-no se pide aprobación rutinaria por tarea o PR. D-04 conserva su decisión pendiente
-de arquitectura según docs/13 y P10; no sustituirla por una autoaprobación.
+no se pide aprobación rutinaria por tarea o PR. La decisión de D-04 fue tomada
+expresamente por Diego; no se atribuye a una autoaprobación.
 
 Fuentes: [spec](spec.md), [arquitectura](../../docs/02-architecture.md),
 [tenancy](../../docs/03-tenancy-security.md), [API](../../docs/07-api-contracts.md),
-[ADR propuesto](../../docs/adr/0009-development-oidc.md).
+[ADR aprobado](../../docs/adr/0009-development-oidc.md).
 No se modifica el roadmap ni F02-R01..05/AC-F02-01..04.
 
 ## Resultado y límites
@@ -23,10 +24,10 @@ F01 como API de alta. No vincular userpass de OpenBao con usuarios del producto.
 
 ## P1 — proveedor y entorno (T001)
 
-Propuesta D-04: Keycloak solo como IdP de desarrollo; adaptador configurable por
+Decisión D-04: Keycloak solo como IdP de desarrollo; adaptador configurable por
 issuer/audience/JWKS. [ADR-0009](../../docs/adr/0009-development-oidc.md) compara
 alternativas y reversión. No fijar IdP comercial/de producción por esta elección.
-Tras resolver D-04, seleccionar release soportada, verificar avisos/versiones y
+Seleccionar release soportada, verificar avisos/versiones y
 fijar imagen por digest antes de descargar/ejecutar en ragdev01. No usar latest.
 
 Proyecto/perfil F02 separado; TLS con CA validada, hostname/issuer estables, puertos

@@ -4,7 +4,7 @@
 
 - [x] F01 aceptada previamente; base y requisitos rectores identificados.
 - [x] Plan y tareas propuestos sin modificar requisitos de la spec.
-- [ ] D-04 resuelta y spec/plan ratificados para implementación.
+- [x] D-04 resuelta por Diego; ejecución spec/plan autorizada dentro del roadmap.
 - [ ] PR de planificación revisado y CI correcto.
 - [ ] Identidad, membresías y contexto implementados con migraciones y permisos mínimos.
 - [ ] Evidencia real V01..V07 y todos los AC cumplidos.

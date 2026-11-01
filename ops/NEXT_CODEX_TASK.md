@@ -6,12 +6,12 @@ Leer [spec](../specs/F02-identidad-membresias/spec.md),
 [plan](../specs/F02-identidad-membresias/plan.md),
 [tareas](../specs/F02-identidad-membresias/tasks.md) y checklist/evidence.
 
-La planificación está preparada. D-04 (IdP concreto), abierta en docs/13,
-tiene propuesta [ADR-0009](../docs/adr/0009-development-oidc.md): Keycloak solo dev,
-sin proveedor de producción. Resolver esa decisión antes de instalar IdP o implementar
-la fase; no presentarla como arquitectura aprobada por Diego sin su decisión.
-Después ejecutar T001..T007 en PR acotados a develop con revisión delegada ADR-0007,
+D-04 resuelta expresamente por Diego: Keycloak solo para desarrollo según
+[ADR-0009](../docs/adr/0009-development-oidc.md), proveedor de producción sin decidir.
+Ejecutar T001..T007 en PR acotados a develop con revisión delegada ADR-0007,
 CI, evidencia real y postmerge, sin nuevas preguntas rutinarias.
+Comenzar T001 con versiones/digest, TLS, entorno separado y presupuesto medido;
+no marcar implementación por ratificar documentos.
 
 Toda ejecución y dependencias en ragdev01. Sesión de pruebas de ADR-0008 activa
 hasta 2026-11-01T21:34:19-05:00 según última verificación. Comprobar status antes de

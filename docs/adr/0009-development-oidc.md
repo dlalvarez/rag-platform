@@ -1,10 +1,11 @@
 # ADR 0009 — IdP OIDC de desarrollo para F02
 
-Estado: propuesta para resolver D-04; no aplicada.
+Estado: aprobado expresamente por Diego en conversación, 2026-10-31.
+Decisión: «Keycloak solo para desarrollo (recomendado)». Aplicación técnica pendiente.
 [Registro D-04](../13-decisions-risks.md), [arquitectura](../02-architecture.md),
 [plan F02](../../specs/F02-identidad-membresias/plan.md).
 
-## Decisión propuesta
+## Decisión aprobada
 
 Usar Keycloak únicamente como IdP local de pruebas en ragdev01. La arquitectura
 ya lo contempla como opción. La aplicación conserva proveedor configurable por
@@ -40,13 +41,13 @@ de contrato; no prometer migración automática de identidades entre emisores.
 Cambiar issuer requiere mapeo explícito revisado; no fusionar sujetos por email.
 Conservar bases/fixtures y F00/F01. No borrar datos como parte de reversión.
 
-## Decisión pendiente y autoridad
+## Ratificación y autoridad
 
-D-04 está expresamente abierta en docs/13. Constitución P10 reserva arquitectura
-al humano y ADR-0007 mantiene decisión expresa para arquitectura/contratos.
-La delegación de revisión ordinaria no se registra como ratificación ficticia
-del proveedor. Esta propuesta deja listo el cambio concreto para esa única decisión.
-Tras resolverla, no pedir confirmación por cada tarea, prueba o PR dentro de F02.
+Diego resolvió D-04 eligiendo Keycloak solo para desarrollo en respuesta a la
+propuesta del PR #19, con proveedor configurable y sin decidir producción.
+La planificación F02 se ejecuta bajo su instrucción de continuar el roadmap con
+revisión e integración delegadas. No pedir confirmación rutinaria por tarea o PR.
+Conservar las condiciones de parada de constitución y ADR-0007.
 
 ## Fuentes consultadas
 
