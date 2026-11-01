@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import re
+import ssl
 import subprocess
 import sys
 import tempfile
@@ -11,9 +12,11 @@ import time
 from pathlib import Path
 from uuid import UUID, uuid5
 
+import httpx
 import psycopg
 import sqlalchemy as sa
 from f01_daily import session as daily_session
+from f01_sql_check import expected_startup_rejection
 from f02_common import engine
 from f02_testing import FIXTURE_NAMES, ISSUER, NAMESPACE, Humans, legacy_snapshot
 from minio.error import S3Error
@@ -35,7 +38,17 @@ PHASE = "START"
 CA = Path("/run/f01-ca.crt")
 
 
+def expected_cross_rejection(error, source, destination, username):
+    if source.host == destination.host and source.port == destination.port:
+        return expected_startup_rejection(error, destination.database, username, "42501")
+    if error.sqlstate not in {None, "28P01"}:
+        return False
+    signature = r'FATAL:\s+password authentication failed for user "' + re.escape(username) + r'"'
+    return re.search(signature, str(error)) is not None
+
+
 def provider_crosses(control, fixtures):
+    global PHASE
     resolver = CatalogResolver(control)
     with daily_session() as (store, _role, _used):
         for a, b in (
@@ -43,20 +56,35 @@ def provider_crosses(control, fixtures):
             (fixtures["two-a"], fixtures["two-b"]),
         ):
             for own, other in ((a, b), (b, a)):
+                PHASE = "DIRECT_CATALOG"
                 source = resolver.resolve(AdministrativeTenant(own), "app")
                 destination = resolver.resolve(AdministrativeTenant(other), "app")
+                PHASE = "DIRECT_SQL_OWN"
                 credential = store.read(source.credential)
                 with Target(source.host, source.port, CA).connect(source.database, credential) as c:
                     assert c.execute("SELECT current_database()").fetchone()[0] == source.database
+                    if source.host == destination.host and source.port == destination.port:
+                        assert (
+                            c.execute(
+                                "SELECT has_database_privilege(current_user,%s,'CONNECT')",
+                                (destination.database,),
+                            ).fetchone()[0]
+                            is False
+                        )
+                PHASE = "DIRECT_SQL_CROSS"
                 try:
                     c = Target(destination.host, destination.port, CA).connect(
                         destination.database, credential
                     )
                 except psycopg.Error as error:
-                    assert error.sqlstate in {"42501", "28P01"}
+                    if not expected_cross_rejection(
+                        error, source, destination, credential.username
+                    ):
+                        raise RuntimeError("WRONG_SQL_DENIAL") from None
                 else:
                     c.close()
                     raise RuntimeError("SQL_CROSS_ALLOWED")
+                PHASE = "DIRECT_S3_OWN"
                 with control.connect() as c:
                     locations = {
                         row.tenant_id: row
@@ -74,6 +102,7 @@ def provider_crosses(control, fixtures):
                     )
                     s3 = storage.s3(secret)
                     list(s3.list_objects(location["bucket"]))
+                    PHASE = "DIRECT_S3_CROSS"
                     try:
                         list(s3.list_objects(locations[other]["bucket"]))
                     except S3Error as error:
@@ -87,7 +116,7 @@ def provider_crosses(control, fixtures):
 def run():
     global PHASE
     driver, control = Humans(), engine("migrator")
-    child, log = None, None
+    child, log, api_http = None, None, None
     temporary = tempfile.TemporaryDirectory(prefix="f02-t006-", dir="/run/f02-auth")
     tokens, cleanup = [], []
     before = None
@@ -172,12 +201,18 @@ def run():
             stderr=subprocess.STDOUT,
         )
         base = "https://localhost:9443"
+        api_http = httpx.Client(
+            verify=ssl.create_default_context(cafile="/tls/ca.crt"),
+            timeout=10,
+            trust_env=False,
+            follow_redirects=False,
+        )
         deadline = time.monotonic() + 45
         while True:
             if child.poll() is not None:
                 raise RuntimeError("FIXTURE_START")
             try:
-                if driver.http.get(base + "/healthz").status_code == 200:
+                if api_http.get(base + "/healthz").status_code == 200:
                     break
             except Exception:
                 pass
@@ -190,21 +225,51 @@ def run():
         ]
 
         def counters():
-            response = driver.http.get(base + "/__test/counters")
+            response = api_http.get(base + "/__test/counters")
             assert response.status_code == 200
             result = response.json()
             assert set(result) == {"secrets", "connections", "queries", "s3"}
             return result
 
         def request(name, tenant, *, expected=200, params=None, bearer=None, headers=None):
+            global PHASE
             raw = driver.tokens(name)["access_token"] if bearer is None else bearer
             tokens.append(raw)
-            response = driver.http.get(
+            response = api_http.get(
                 base + "/__test/context/" + str(tenant),
                 params=params,
                 headers={"Authorization": "Bearer " + raw, **(headers or {})},
             )
             if response.status_code != expected:
+                diagnostics = api_http.get(base + "/__test/status").json()
+                allowed = {
+                    "IDLE",
+                    "NONE",
+                    "AUTHORIZATION",
+                    "CONNECTION",
+                    "SQL_IDENTITY",
+                    "SQL_READ",
+                    "STORAGE_CATALOG",
+                    "STORAGE_CONTEXT",
+                    "STORAGE_SECRET",
+                    "STORAGE_LIST",
+                    "AccessError",
+                    "TenantAccessError",
+                    "SecretStoreError",
+                    "ProgrammingError",
+                    "OperationalError",
+                    "S3Error",
+                    "TypeError",
+                    "AttributeError",
+                    "AssertionError",
+                    "OTHER",
+                    "42501",
+                    "42P01",
+                    "28000",
+                    "28P01",
+                }
+                safe = [v for v in diagnostics.values() if v in allowed]
+                print("T006 DIAGNOSTIC: " + "/".join(safe))
                 raise RuntimeError("HTTP_" + str(response.status_code))
             assert not any(value in response.text for value in forbidden + tokens)
             return response.json()
@@ -250,21 +315,7 @@ def run():
             denied("alice", a, params={"forge": str(b)}, expected=422)
             denied("alice", a, params={"other_request": "1"}, expected=422)
             # State changes are observed on the next request, with warm pools.
-            driver.command(
-                "alice",
-                "membership",
-                "--tenant",
-                a,
-                "--user",
-                users["carol"],
-                "--role",
-                "reader",
-                "--state",
-                "SUSPENDED",
-            )
-            try:
-                denied("carol", a)
-            finally:
+            for membership_state in ("SUSPENDED", "REVOKED"):
                 driver.command(
                     "alice",
                     "membership",
@@ -275,8 +326,23 @@ def run():
                     "--role",
                     "reader",
                     "--state",
-                    "ACTIVE",
+                    membership_state,
                 )
+                try:
+                    denied("carol", a)
+                finally:
+                    driver.command(
+                        "alice",
+                        "membership",
+                        "--tenant",
+                        a,
+                        "--user",
+                        users["carol"],
+                        "--role",
+                        "reader",
+                        "--state",
+                        "ACTIVE",
+                    )
             driver.command(
                 "alice", "principal-state", "--user", users["bob"], "--state", "SUSPENDED"
             )
@@ -311,19 +377,32 @@ def run():
                 > 0
             )
         assert legacy_snapshot(control) == before
-        PHASE = "LOGS"
+        PHASE = "LOG_TERMINATE"
+        # Close the test client's persistent TLS connections before stopping its server.
+        # Keep the IdP client available for membership restoration below.
+        api_http.close()
+        api_http = None
         child.terminate()
         child.wait(timeout=20)
         child = None
         log.close()
         log = None
+        PHASE = "LOG_SCAN"
         text = path.read_text()
-        assert not any(value in text for value in forbidden + tokens)
-        assert not re.search(r"eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+", text)
-        assert "Traceback" not in text
+        flags = {
+            "forbidden_value": any(value in text for value in forbidden + tokens),
+            "jwt_pattern": bool(
+                re.search(r"eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+", text)
+            ),
+            "traceback": "Traceback" in text,
+        }
+        print("T006 LOG_FLAGS: " + json.dumps(flags, sort_keys=True))
+        assert not any(flags.values())
         print("PASS T006: captura API sin JWT/credenciales/subjects; datos F01 conservados.")
         print("T006: fixtures conservadas, sin nuevas fases ni cierre automático de F02.")
     finally:
+        if api_http:
+            api_http.close()
         if child:
             child.terminate()
             try:
@@ -363,7 +442,7 @@ if __name__ == "__main__":
     try:
         run()
     except Exception as error:
-        safe = str(error)
+        safe = "TIMEOUT" if isinstance(error, subprocess.TimeoutExpired) else str(error)
         if safe not in {
             "SESSION",
             "FIXTURE_START",
@@ -372,6 +451,10 @@ if __name__ == "__main__":
             "HTTP_403",
             "HTTP_422",
             "HTTP_503",
+            "WRONG_SQL_DENIAL",
+            "TIMEOUT",
+            "SQL_CROSS_ALLOWED",
+            "S3_CROSS_ALLOWED",
             "RESTORE_MEMBERSHIPS",
         }:
             safe = "STOPPED"

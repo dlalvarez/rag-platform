@@ -83,6 +83,7 @@ def factory():
         resources.append(registry.close)
         connections = AuthorizedConnections(app.state.authority, registry)
         principal = app.state.principal_dependency
+        probe = {"stage": "IDLE", "failure": "NONE", "sqlstate": "NONE"}
 
         @asynccontextmanager
         async def lifespan(application):
@@ -99,59 +100,112 @@ def factory():
             with lock:
                 return dict(counts)
 
+        @app.get("/__test/status")
+        def status():
+            return dict(probe)
+
         @app.get("/__test/context/{tenant}")
         def context(tenant: UUID, request: Request, actor=Depends(principal)):  # noqa: B008
-            authorized = app.state.authority.authorize(actor, tenant, request.state.trace_id)
-            forge = request.query_params.get("forge")
-            trace = request.state.trace_id
-            if forge:
-                try:
-                    authorized = replace(authorized, tenant_id=UUID(forge))
-                except ValueError:
-                    raise AccessError("INPUT_INVALID") from None
-            if request.query_params.get("other_request"):
-                from uuid import uuid4
-
-                trace = uuid4()
-            with connections.connection(authorized, trace) as c:
-                row = c.execute(
-                    sa.text(
-                        "SELECT current_database(),current_user,ssl FROM pg_stat_ssl "
-                        "WHERE pid=pg_backend_pid()"
-                    )
-                ).one()
-                expected_db = "rag_t_" + tenant.hex
-                expected_role = "readonly" if authorized.roles == ("reader",) else "app"
-                if (row[0], row[1], row[2]) != (
-                    expected_db,
-                    expected_db + "_" + expected_role,
-                    True,
-                ):
-                    raise AccessError("STATE_CONFLICT")
-                # An actual tenant-table read, not only metadata inspection.
-                c.execute(sa.text("SELECT count(*) FROM public.ops_identity")).scalar_one()
-            with control.connect() as c:
-                location = c.execute(
-                    sa.select(StorageLocation.endpoint, StorageLocation.bucket).where(
-                        StorageLocation.tenant_id == tenant
-                    )
-                ).one()
-            if (
-                location.endpoint != "https://minio:9000"
-                or location.bucket != StorageNames(tenant).bucket
-            ):
-                raise AccessError("TENANT_UNAVAILABLE")
-            app.state.authority.validate(authorized, trace)
-            credential = counted.read(authorized.storage_ref)
-            if credential.username != StorageNames(tenant).user:
-                raise AccessError("TENANT_UNAVAILABLE")
-            storage = StorageTarget(location.endpoint, CA)
             try:
-                increment("s3")
-                list(storage.s3(credential).list_objects(location.bucket))
-            finally:
-                storage.close()
-            return {"tenant_id": str(tenant), "role": authorized.roles[0], "sql": True, "s3": True}
+                probe["stage"] = "AUTHORIZATION"
+                authorized = app.state.authority.authorize(actor, tenant, request.state.trace_id)
+                forge = request.query_params.get("forge")
+                trace = request.state.trace_id
+                if forge:
+                    try:
+                        authorized = replace(authorized, tenant_id=UUID(forge))
+                    except ValueError:
+                        raise AccessError("INPUT_INVALID") from None
+                if request.query_params.get("other_request"):
+                    from uuid import uuid4
+
+                    trace = uuid4()
+                probe["stage"] = "CONNECTION"
+                with connections.connection(authorized, trace) as c:
+                    probe["stage"] = "SQL_IDENTITY"
+                    row = c.execute(
+                        sa.text(
+                            "SELECT current_database(),current_user,ssl FROM pg_stat_ssl "
+                            "WHERE pid=pg_backend_pid()"
+                        )
+                    ).one()
+                    expected_db = "rag_t_" + tenant.hex
+                    expected_role = "readonly" if authorized.roles == ("reader",) else "app"
+                    if (row[0], row[1], row[2]) != (
+                        expected_db,
+                        expected_db + "_" + expected_role,
+                        True,
+                    ):
+                        raise AccessError("STATE_CONFLICT")
+                    # F01 deliberately restricts operational identity/version tables.
+                    # Exercise actual tenant SQL without creating F03 content or widening grants.
+                    probe["stage"] = "SQL_READ"
+                    if (
+                        c.scalar(
+                            sa.text(
+                                "SELECT has_table_privilege(current_user,"
+                                "'public.ops_identity','SELECT')"
+                            )
+                        )
+                        is not False
+                    ):
+                        raise AccessError("STATE_CONFLICT")
+                    if c.scalar(sa.text("SELECT '[1,2,3]'::public.vector")) is None:
+                        raise AccessError("STATE_CONFLICT")
+                probe["stage"] = "STORAGE_CATALOG"
+                with control.connect() as c:
+                    location = c.execute(
+                        sa.select(StorageLocation.endpoint, StorageLocation.bucket).where(
+                            StorageLocation.tenant_id == tenant
+                        )
+                    ).one()
+                if (
+                    location.endpoint != "https://minio:9000"
+                    or location.bucket != StorageNames(tenant).bucket
+                ):
+                    raise AccessError("TENANT_UNAVAILABLE")
+                probe["stage"] = "STORAGE_CONTEXT"
+                app.state.authority.validate(authorized, trace)
+                probe["stage"] = "STORAGE_SECRET"
+                credential = counted.read(authorized.storage_ref)
+                if credential.username != StorageNames(tenant).user:
+                    raise AccessError("TENANT_UNAVAILABLE")
+                storage = StorageTarget(location.endpoint, CA)
+                try:
+                    increment("s3")
+                    probe["stage"] = "STORAGE_LIST"
+                    list(storage.s3(credential).list_objects(location.bucket))
+                finally:
+                    storage.close()
+                return {
+                    "tenant_id": str(tenant),
+                    "role": authorized.roles[0],
+                    "sql": True,
+                    "s3": True,
+                }
+            except Exception as error:
+                name = type(error).__name__
+                probe["failure"] = (
+                    name
+                    if name
+                    in {
+                        "AccessError",
+                        "TenantAccessError",
+                        "SecretStoreError",
+                        "ProgrammingError",
+                        "OperationalError",
+                        "S3Error",
+                        "TypeError",
+                        "AttributeError",
+                        "AssertionError",
+                    }
+                    else "OTHER"
+                )
+                state = getattr(getattr(error, "orig", error), "sqlstate", None)
+                probe["sqlstate"] = (
+                    state if state in {"42501", "42P01", "28000", "28P01"} else "NONE"
+                )
+                raise
 
         return app
     except Exception:
