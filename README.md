@@ -1,8 +1,7 @@
 # RAG Platform — Arquitectura fundacional y especificaciones SDD
 
 **Estado:** F00–F03 implementadas y probadas en ragdev01 (2026-11-01).
-F03 dispone de evidencia de aceptación técnica T007; su cierre se hace efectivo con
-CI/revisión/merge/postmerge del PR correspondiente. La API documental está en develop.
+F03 aceptada con CI/revisión/merge/postmerge en PR #34. La API documental está en develop.
 **Nombre de trabajo:** rag-platform (marca comercial por definir).
 **Método:** Spec-Driven Development con fases, pruebas y PR.
 El repositorio contiene especificaciones, código y pruebas de aprovisionamiento, identidad y documentos privados.
@@ -47,7 +46,7 @@ Plataforma SaaS para crear repositorios de conocimiento y asistentes conversacio
 F00 estableció el repositorio y entorno; F01 probó aislamiento de bases/objetos y el
 provisionador; F02 añadió OIDC, membresías, roles, contexto autorizado y API de identidad.
 F03 añadió repositorios/ACL, recepción privada idempotente y proxy de originales.
-Tras su cierre formal, continuar F04 del [roadmap original](docs/10-roadmap.md),
+F04 inicia planificación dentro del [roadmap original](docs/10-roadmap.md),
 con planificación y decisiones técnicas pendientes según el registro original.
 
 ## Gobierno de cambios
@@ -64,12 +63,13 @@ La jerarquía de referencia es: `docs/01-constitution.md` > ADRs aprobados > arq
   por solicitud y GET /api/v1/me, /api/v1/tenants. 297 pruebas offline y baterías reales
   en ambas topologías. [Aceptación/límites F02](specs/F02-identidad-membresias/acceptance.md)
   y [manual](ops/f02/README.md).
-- F03 implementada en PR #27..#33, con cierre técnico T007: API repositorios/ACL,
+- F03 aceptada en PR #34, implementada en PR #27..#33: API repositorios/ACL,
   originales privados, validación y diario de recepción, idempotencia y proxy.
   562 tests offline, cuatro fixtures/ambas topologías y regresiones reales.
   [Aceptación/límites F03](specs/F03-repositorios-documentos/acceptance.md) y
   [manual HTTP/handoff](specs/F03-repositorios-documentos/api.md).
-- F04..F11 conservan el alcance y dependencias del roadmap; no implementadas.
+- F04 en planificación: [plan y tareas](specs/F04-ingesta-versionada/plan.md), sin
+  implementación acreditada. F05..F11 conservan alcance/dependencias, no implementadas.
 
 Toda ejecución se realiza en ragdev01. PR a develop con revisión delegada según
 ADR-0007, checks obligatorios y postmerge; no promoción a main/tag por iniciativa

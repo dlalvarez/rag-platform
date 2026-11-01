@@ -17,7 +17,7 @@ Falta cerrar el PR T007 con CI/revisión/merge/postmerge antes de activar F04.
   R03/R04; AC-03/04; V03/V04/V06. PR #32; caídas, SQL parcial, lease/fencing y cuotas.
 - [x] T006 — Proxy de original autorizado y API con errores/cabeceras seguras.
   R02/R05; AC-01/02; V01/V02/V05/V06. PR #33 integrado/promovido; postmerge correcto.
-- [ ] T007 — Batería real ambas topologías, regresiones, evidencia/CI/revisión/postmerge.
+- [x] T007 — Batería real ambas topologías, regresiones, evidencia/CI/revisión/postmerge.
   R01..05; AC-01..04; V01..V07. Baterías y 562 tests correctos; pendiente puerta del PR.
 
 T002/T006: develop@be7643847f6e472ae9b1b5d3011d83d3f75b3260, cuatro checks de head y
@@ -32,3 +32,6 @@ Consultar acceptance.md/evidence.md para el alcance exacto y las limitaciones.
 No terminar el turno al cerrar el PR: registrar postmerge y continuar planificación F04.
 Consultar solo decisiones reales pendientes según ADR-0010, sin pedir otra aprobación
 de trámite. No anticipar código dependiente de una decisión de arquitectura sin resolver.
+
+F03 aceptada: [postmerge PR #34](https://github.com/dlalvarez/rag-platform/pull/34#issuecomment-6565126139). La puerta pendiente descrita arriba
+quedó satisfecha en develop@4c5b8d3189b71dad6fbe6f2921cbd06b33754871.

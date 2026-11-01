@@ -1,7 +1,8 @@
 # F04 — Pipeline asíncrono de ingesta y versionado
 
-**Estado:** BORRADOR RECTOR, pendiente de aprobación humana para ejecutar.  
-**Dependencia:** F03.  
+**Estado:** alcance original autorizado por Diego mediante ADR-0010; F03 aceptada
+en PR #34. Planificación T001 activa, sin implementación acreditada.
+**Dependencia:** F03.
 **Meta:** Documentos convertidos a chunks versionados y auditables.
 
 ## Problema y resultado esperado

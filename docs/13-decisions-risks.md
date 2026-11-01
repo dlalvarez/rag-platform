@@ -7,9 +7,10 @@
 - ADR-0002: monolito modular, ratificado en PR #5.
 - ADR-0006: main/develop y PRs; protecciones aplicadas, verificadas en F00.
 
-## Propuestas de ADR pendientes de ratificación
-
-- ADR-0004: gestor de secretos y bucket por tenant. Propuesta F01 con OpenBao de desarrollo, elegida para revisión por Diego; pendiente de ratificación.
+- ADR-0004: OpenBao de desarrollo y bucket por tenant, aprobado por Diego en PR #8;
+  custodia preparada fuera del host, bootstrap y root revocado acreditados en F01.
+  El ADR histórico se conserva.
+- ADR-0007/0010: revisión/integración delegada y continuidad del roadmap original.
 
 ## Decisión operacional ya ejecutada
 
@@ -21,9 +22,9 @@
 |---|---|---|---|
 | D-01 | Nombre/branding y dominio | Antes de comercializar | Disponibilidad y marca |
 | D-02 | F00 fija PG 17/pgvector 0.8.7, Python/uv y dependencias; F01 fijará nuevas bibliotecas compatibles | Antes de implementar F01 | Conservar pins y probar compatibilidad, sin upgrade de clúster |
-| D-03 | OpenBao 2.7.2 propuesto para dev; custodia de unseal pendiente. Producción requiere otra decisión de operación/HA | Ratificar F01; custodiar antes de inicializar | Refs opacas, políticas, TLS y recuperación sin secretos en Git/control |
+| D-03 | OpenBao 2.7.2 dev aprobado/instalado, custodia gestor y copia fuera de línea confirmada por Diego; producción/HA sin decidir | Ratificar F01; custodiar antes de inicializar | Refs opacas, políticas, TLS y recuperación sin secretos en Git/control |
 | D-04 | Keycloak solo dev aprobado por Diego en PR #19/ADR-0009; producción sin decidir | F02 dev; producción antes de promover | Seguridad, operación, coste |
-| D-05 | Parser PDF/DOCX y límites | F04 | Calidad texto/tablas y resiliencia |
+| D-05 | pypdf/python-docx locales seleccionados dentro del adaptador previsto; [límites y alternativas](../specs/F04-ingesta-versionada/parsers.md) | F04, validar con corpus antes de cierre | Texto/tablas y resiliencia; sin OCR ni garantías de layout complejo |
 | D-06 | Modelo embedding inicial + dimensiones | F05 | Evaluación español/inglés, coste y pgvector |
 | D-07 | Perfil LLM y política de retención chat | F07 | Privacidad, costo, groundedness |
 | D-08 | UI framework y diseño visual | F08 | Simplicidad y soporte |
