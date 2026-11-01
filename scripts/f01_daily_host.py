@@ -50,9 +50,29 @@ def rpc(action, **secrets):
     try:
         data = json.loads(result.stdout)
     except (ValueError, TypeError):
-        raise RecoveryError("BRIDGE") from None
+        raise RecoveryError("BRIDGE_PROTOCOL") from None
     if result.returncode or not isinstance(data, dict) or data.get("ok") is not True:
-        raise RecoveryError("BRIDGE")
+        allowed = {
+            "INPUT",
+            "RECOVER",
+            "RESTORE",
+            "ACTIVATE",
+            "RECOVER_UNSEAL",
+            "RECOVER_ACTIVE",
+            "RECOVER_STATUS",
+            "RECOVER_INIT",
+            "RECOVER_UPDATE",
+            "RECOVER_DECODE",
+            "RECOVER_CONFIGURE",
+            "ROOT_REVOKE",
+            "CEREMONY_CLEANUP",
+            "RESTORE_ACTIVE",
+            "ACTIVATE_ACTIVE",
+        }
+        code = data.get("code", "") if isinstance(data, dict) else ""
+        if code in {"F01-DAY-" + step for step in allowed}:
+            raise RecoveryError(code.removeprefix("F01-DAY-"))
+        raise RecoveryError("BRIDGE_" + action.upper())
     return data
 
 
@@ -159,9 +179,9 @@ def main():
             if not key or any(c.isspace() for c in key) or not password:
                 raise RecoveryError("INPUT")
             maintenance(key)
+            print("PASS DAY SETUP: root revocado; configuración original restaurada.")
             result = rpc("activate", key=key, password=password)
             del key, password
-            print("PASS DAY SETUP: root revocado; configuración original restaurada.")
             print("PASS DAY SETUP: sesión de ensayo revocada; sesión operativa de 24 horas activa.")
             print(json.dumps(result["day"], sort_keys=True))
         finally:

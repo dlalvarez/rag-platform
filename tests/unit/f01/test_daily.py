@@ -208,7 +208,9 @@ def test_recovery_own_ceremony_revokes_root_even_when_configuration_fails(module
         return {}
 
     class HTTP:
-        def get(self, *_, **kwargs):
+        def get(self, path, **kwargs):
+            if path == "/v1/sys/health":
+                return httpx.Response(200)
             assert kwargs["headers"]["X-Vault-Token"] == ROOT_TOKEN
             return httpx.Response(403)
 
@@ -231,6 +233,7 @@ def test_recovery_does_not_adopt_existing_ceremony(modules, monkeypatch):
         return {"n": 1, "t": 1, "sealed": False} if path == "sys/seal-status" else {"started": True}
 
     monkeypatch.setattr(setup, "call", call)
+    monkeypatch.setattr(setup, "wait_active", lambda _: None)
     with pytest.raises(RuntimeError):
         setup.recover(None, KEY)
     assert all(method == "GET" for method, _ in calls)
@@ -364,3 +367,73 @@ def test_server_internal_id_need_not_equal_presented_ssc_bearer():
     with store_with(data) as store:
         store.attach_day(TOKEN, data["creation_time"] + 86400)
         assert store._token == TOKEN
+
+
+def test_wait_active_retries_unsealed_standby_before_recovery(modules, monkeypatch):
+    from types import SimpleNamespace
+
+    _, setup, _, _ = modules
+    clock = SimpleNamespace(value=0)
+    responses = iter([429, 503, 200])
+    waits = []
+    monkeypatch.setattr(
+        setup,
+        "time",
+        SimpleNamespace(monotonic=lambda: clock.value, sleep=lambda value: waits.append(value)),
+    )
+
+    class HTTP:
+        def get(self, path, **kwargs):
+            assert path == "/v1/sys/health"
+            return httpx.Response(next(responses))
+
+    setup.wait_active(HTTP())
+    assert len(waits) == 2
+
+
+def test_wait_active_has_bounded_deadline(modules, monkeypatch):
+    from types import SimpleNamespace
+
+    _, setup, _, _ = modules
+    clock = SimpleNamespace(value=0)
+
+    def sleep(value):
+        clock.value += value
+
+    monkeypatch.setattr(setup, "time", SimpleNamespace(monotonic=lambda: clock.value, sleep=sleep))
+
+    class HTTP:
+        def get(self, path, **kwargs):
+            return httpx.Response(429)
+
+    with pytest.raises(RuntimeError):
+        setup.wait_active(HTTP())
+    assert clock.value == 45
+
+
+@pytest.mark.parametrize(
+    "child_code,expected",
+    [
+        ("F01-DAY-RECOVER_ACTIVE", "RECOVER_ACTIVE"),
+        (TOKEN, "BRIDGE_RECOVER"),
+    ],
+)
+def test_host_preserves_only_allowlisted_closed_stage_codes(
+    modules, monkeypatch, child_code, expected
+):
+    from types import SimpleNamespace
+
+    _, _, host, _ = modules
+    monkeypatch.setattr(
+        host.subprocess,
+        "run",
+        lambda *_, **__: SimpleNamespace(
+            returncode=1,
+            stdout=json.dumps({"ok": False, "code": child_code, "detail": TOKEN}),
+            stderr=TOKEN,
+        ),
+    )
+    with pytest.raises(host.RecoveryError) as error:
+        host.rpc("recover", key=KEY)
+    assert error.value.code == expected
+    assert TOKEN not in str(error.value) and KEY not in str(error.value)

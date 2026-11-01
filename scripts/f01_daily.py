@@ -242,7 +242,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         if args.command == "start":
-            print(json.dumps(start(), sort_keys=True))
+            print(json.dumps(start(trial=True), sort_keys=True))
         elif args.command == "status":
             status()
         elif args.command == "verify":

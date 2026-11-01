@@ -20,3 +20,24 @@ PENDING: actual root/trial revocation, restored listener, role/TTL and active da
 PENDING: two independent actual executions using the same day and postmerge.
 No claims of 24 hours elapsed, active authorization or applied daily configuration.
 No operator password, root, unseal or bearer values recorded.
+
+CORRECTION / operator attempt returned F01-DAY-SETUP BRIDGE.
+Independent inspection: config bytes restored, node initialized/unsealed,
+existing PostgreSQL/MinIO healthy, no day/grant file. No credentials inspected.
+
+Old code reproduced failure after restarting a disposable production-mode Raft node:
+OperatorFailure API on recovery status immediately after unseal, before root generation.
+Warm disposable recovery succeeded. Corrected code waits for health HTTP 200 before
+recovery/restore/activation, with bounded deadline and allowlisted stage errors.
+
+PASS CORRECTION: 210 offline tests; Ruff and formatting.
+PASS ISOLATED REGRESSION: tests/integration/f01/daily_recovery.py --run.
+OpenBao 2.7.2, fresh TLS/network/Raft, synthetic credentials, no existing environment mounts.
+Actual restart, root recovery/configuration/revocation, trial session revocation,
+daily token reused by two independent client sessions and final server revocation.
+Observed remaining daily validity 86399 seconds; not 24 hours elapsed.
+Disposable containers/network/TLS/data removed; no permanent service added.
+Current source manifest records the corrected runtime; initial preparation remains
+available in PR history at 1a7ec8d7ff396867bf1359db47671b04c693f6b6.
+
+PENDING: corrected operator activation and actual existing-environment daily session.

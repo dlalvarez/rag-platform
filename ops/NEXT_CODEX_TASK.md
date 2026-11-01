@@ -9,6 +9,10 @@ Solo Diego ejecuta en su terminal python3 scripts/f01_daily_host.py configure,
 tras revisar los dos reinicios de OpenBao y confirmar CONFIGURAR24H.
 No pedir claves en chat ni ejecutar ese mantenimiento por herramientas de Codex.
 
+El primer intento BRIDGE quedó restaurado/desbloqueado, sin día activo.
+La corrección espera nodo activo y pasó una regresión con reinicio real en fixture
+desechable; 210 tests offline. Pedir un único nuevo intento cuando CI esté correcto.
+
 Tras PASS SETUP: verificar con el mismo día dos procesos independientes, daily verify
 y daily-cli, status/TTL real y regresión F00. No revocar el día operativo tras la
 batería; su sesión de ensayo ya se revoca en setup. Mantener el vencimiento original.

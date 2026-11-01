@@ -97,3 +97,17 @@ Cliente valida servidor/origen/políticas/TTL y no amplía el login corto.
 Tests de dos clientes independientes, fecha no extensible, ficheros privados,
 configuración idempotente, restauración ante fallo, no adopción de ceremonia ajena
 y revocación de root incluso si falla la configuración. Evidencia real aún pendiente.
+
+
+## Validación de la corrección de arranque
+
+210 tests offline correctos. La prueba real desechable reprodujo el fallo original
+al consultar recuperación inmediatamente tras unseal/reinicio. El cliente ahora espera
+nodo activo HTTP 200 y preserva códigos de etapa. Con la corrección, la fixture real
+completó recuperación, rol diario, sesión de ensayo revocada, dos lecturas con el
+mismo día y revocación final; TTL observado 86399 segundos al registrar el resultado.
+Es prueba de validez configurada, no de transcurso de 24 horas.
+La sesión del entorno existente sigue pendiente de activación por Diego.
+
+[Health API](https://openbao.org/docs/api/system/health/) distingue activo 200
+de desbloqueado standby 429. No usar standbyok para saltar esta puerta.

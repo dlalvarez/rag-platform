@@ -4,14 +4,49 @@ import base64
 import json
 import logging
 import sys
+import time
+from contextlib import contextmanager
 from pathlib import Path
 
+import httpx
 from f01_access import AccessError
 from f01_daily import ROLE, ROLE_SETTINGS, SECONDS, start
 from f01_operator import call, client, require_unsealed
 
 ROOT = Path(__file__).resolve().parents[1]
 GENERATION = "sys/generate-root"
+
+
+class SetupFailure(AccessError):
+    def __init__(self, step):
+        super().__init__()
+        self.step = step
+
+
+@contextmanager
+def stage(step):
+    try:
+        yield
+    except SetupFailure:
+        raise
+    except (Exception, KeyboardInterrupt):
+        raise SetupFailure(step) from None
+
+
+def wait_active(http):
+    deadline = time.monotonic() + 45
+    while time.monotonic() < deadline:
+        try:
+            response = http.get("/v1/sys/health", timeout=5)
+        except httpx.HTTPError:
+            time.sleep(0.25)
+            continue
+        if response.status_code == 200:
+            return
+        if response.status_code not in (429, 472, 473, 503):
+            raise AccessError()
+        time.sleep(0.25)
+    raise AccessError()
 
 
 def optional(http, path, token):
@@ -55,49 +90,61 @@ def configure(http, root):
 
 
 def recover(http, key):
-    status = call(http, "GET", "sys/seal-status")
-    if status["n"] != 1 or status["t"] != 1:
-        raise AccessError()
-    if status["sealed"]:
-        result = call(http, "POST", "sys/unseal", payload={"key": key})
-        if result["sealed"]:
+    with stage("RECOVER_UNSEAL"):
+        status = call(http, "GET", "sys/seal-status")
+        if status["n"] != 1 or status["t"] != 1:
             raise AccessError()
-    state = call(http, "GET", GENERATION + "/attempt")
-    if state["started"]:
-        raise AccessError()  # Never adopt/cancel someone else's ceremony.
+        if status["sealed"]:
+            result = call(http, "POST", "sys/unseal", payload={"key": key})
+            if result["sealed"]:
+                raise AccessError()
+    with stage("RECOVER_ACTIVE"):
+        wait_active(http)
+    with stage("RECOVER_STATUS"):
+        state = call(http, "GET", GENERATION + "/attempt")
+        if state["started"]:
+            raise AccessError()
     root = nonce = None
     try:
-        attempt = call(http, "POST", GENERATION + "/attempt", payload={})
-        nonce, otp = attempt["nonce"], attempt["otp"]
-        if attempt["required"] != 1 or not nonce or not otp:
-            raise AccessError()
-        result = call(http, "POST", GENERATION + "/update", payload={"nonce": nonce, "key": key})
-        if result["nonce"] != nonce or not result["complete"]:
-            raise AccessError()
-        encoded = result.get("encoded_token", result.get("encoded_root_token", ""))
-        raw = base64.b64decode(encoded + "=" * (-len(encoded) % 4), validate=True)
-        mask = otp.encode("ascii")
-        if not raw or len(raw) != len(mask):
-            raise AccessError()
-        root = bytes(a ^ b for a, b in zip(raw, mask, strict=True)).decode("ascii")
-        del otp, raw, mask, result, key
-        configure(http, root)
+        with stage("RECOVER_INIT"):
+            attempt = call(http, "POST", GENERATION + "/attempt", payload={})
+            nonce, otp = attempt["nonce"], attempt["otp"]
+            if attempt["required"] != 1 or not nonce or not otp:
+                raise AccessError()
+        with stage("RECOVER_UPDATE"):
+            result = call(
+                http, "POST", GENERATION + "/update", payload={"nonce": nonce, "key": key}
+            )
+            if result["nonce"] != nonce or not result["complete"]:
+                raise AccessError()
+        with stage("RECOVER_DECODE"):
+            encoded = result.get("encoded_token", result.get("encoded_root_token", ""))
+            raw = base64.b64decode(encoded + "=" * (-len(encoded) % 4), validate=True)
+            mask = otp.encode("ascii")
+            if not raw or len(raw) != len(mask):
+                raise AccessError()
+            root = bytes(a ^ b for a, b in zip(raw, mask, strict=True)).decode("ascii")
+            del otp, raw, mask, result, key
+        with stage("RECOVER_CONFIGURE"):
+            configure(http, root)
     finally:
         try:
             if root is not None:
-                call(http, "POST", "auth/token/revoke-self", root, {})
-                if (
-                    http.get(
-                        "/v1/auth/token/lookup-self", headers={"X-Vault-Token": root}
-                    ).status_code
-                    != 403
-                ):
-                    raise AccessError()
+                with stage("ROOT_REVOKE"):
+                    call(http, "POST", "auth/token/revoke-self", root, {})
+                    if (
+                        http.get(
+                            "/v1/auth/token/lookup-self", headers={"X-Vault-Token": root}
+                        ).status_code
+                        != 403
+                    ):
+                        raise AccessError()
         finally:
             if nonce is not None:
-                current = call(http, "GET", GENERATION + "/attempt")
-                if current["started"] and current["nonce"] == nonce:
-                    call(http, "DELETE", GENERATION + "/attempt")
+                with stage("CEREMONY_CLEANUP"):
+                    current = call(http, "GET", GENERATION + "/attempt")
+                    if current["started"] and current["nonce"] == nonce:
+                        call(http, "DELETE", GENERATION + "/attempt")
 
 
 def main():
@@ -131,6 +178,8 @@ def main():
                 if state["sealed"]:
                     call(http, "POST", "sys/unseal", payload={"key": key})
                 require_unsealed(http)
+                with stage(body["action"].upper() + "_ACTIVE"):
+                    wait_active(http)
                 # Confirm the temporary legacy endpoint was disabled again after restart.
                 disabled = http.get("/v1/sys/generate-root/attempt")
                 if disabled.status_code != 405:
@@ -141,8 +190,9 @@ def main():
                     else {"ok": True, "day": start(password=body["password"], trial=True)}
                 )
         print(json.dumps(output, sort_keys=True))
-    except (Exception, KeyboardInterrupt):
-        print(json.dumps({"ok": False, "code": "F01-DAY-" + phase}))
+    except (Exception, KeyboardInterrupt) as error:
+        step = error.step if isinstance(error, SetupFailure) else phase
+        print(json.dumps({"ok": False, "code": "F01-DAY-" + step}))
         raise SystemExit(1) from None
 
 
