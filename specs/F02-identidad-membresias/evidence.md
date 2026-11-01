@@ -1,6 +1,6 @@
 # Evidencia F02
 
-Estado: T001/T002 integradas; T003 implementada y comprobada; F02 no aceptada.
+Estado: T001..T003 integradas en PR #20..#22; T004 implementada y comprobada; F02 no aceptada.
 Las anotaciones de planificación siguientes conservan el estado histórico.
 
 Base inspeccionada en ragdev01: develop@f66a38c8dbfe6d9244eef3cf390ed16f37998b41,
@@ -135,3 +135,35 @@ Manual y matriz de permisos en ops/f02/README.md.
 [Manifiesto de fuentes](../../docs/evidence/f02-t003-source-sha256.txt).
 CI, commit exacto, revisión e integración/postmerge en conversación del PR.
 T004..T007 y aceptación F02 pendientes; no F03.
+
+## T004 — CLI de identidad real y locks
+
+Base b568d6a5d5eb3297724fcf2cc6ebab37c2d556bf; rama feat/F02-T004-identity-cli.
+F02-R02/R04/R05; AC-01/03/04 parciales; V02/V04/V06.
+PASS real: CLI OIDC, bootstrap con autorización infra adicional y sin roles del JWT.
+Matrices owner/admin/editor/reader/support, ausencia de autoridad global sobre
+tenant ajeno, protección frente a takeover, permisos consultados en control.
+Dos procesos CLI distintos retiran owner simultáneamente: exactamente uno pasa
+y otro LAST_OWNER; estado final restaurado con un owner. Suspensión de Bob
+denegada al iniciar sesión y restaurada; último platform_operator protegido.
+Archivos JWT tmpfs 0600 eliminados; respuestas/stderr sin bearer, subject IdP
+o contraseñas. Registro y denegaciones auditados sin datos sensibles.
+
+Cuatro identidades IdP sintéticas aceptadas en realm fixture v2, con 4 tenants
+físicos nuevos READY de propiedad/idempotency keys F02. Tipo explícito solo en
+esas fixtures. Alice owner A/reader B, Bob editor A/owner B; Carol reader A/support,
+Dave sin membresías. Fixture anterior de IdP preservada, sin roles de producto.
+Catálogo F01 fuera de las cuatro operaciones conserva hashes exactos.
+
+Hallazgos de implementación corregidos sin debilitar controles:
+audiencia exigió declarar el cliente rag-api; nuevo realm conserva el anterior.
+IDs de usuario deben ser únicos globalmente en Keycloak; transacción fallida
+verificada revertida antes de ajustar solo IDs aún no persistidos, sin rotar passwords.
+FOR UPDATE exigía privilegio UPDATE del catálogo F01; se sustituyó por advisory
+xact lock por tenant, sin ampliar grants. Batería real completa correcta después.
+Regresiones offline cubren audiencia, nombre de import y IDs únicos por realm.
+T005 contexto/API y T006/T007 aún pendientes; F02 no cerrada.
+
+Verificación T004: 269 tests offline correctos; Ruff check y 85 archivos formateados;
+check_docs correcto. La advertencia de compatibilidad Starlette/httpx ya existente
+no afecta el resultado y no se silencia. Hashes: docs/evidence/f02-t004-source-sha256.txt.

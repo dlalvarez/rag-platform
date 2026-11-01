@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MOUNT = Path("/srv/rag-data")
 DATA = MOUNT / "rag-platform/f02"
 ENV = ROOT / ".env.f02"
+AUTH = Path("/run/user") / str(os.getuid()) / "rag-f02-auth"
 
 
 def validate(starting=False):
@@ -134,6 +135,7 @@ def prepare():
         os.umask(previous)
     prepare_tokens()
     prepare_identity()
+    prepare_humans()
     print("PASS F02 PREP: private paths/TLS/SQL prepared; no users or product memberships.")
 
 
@@ -236,6 +238,95 @@ def prepare_identity():
     print("PASS T003 PREP: private SQL runtime/admin credentials; no identity auto-grants.")
 
 
+def prepare_humans():
+    validate(True)
+    targets = (
+        DATA / "config/identity-fixture-v2-realm.json",
+        DATA / "secrets/identity-fixture-v2.json",
+    )
+    if any(p.exists() or p.is_symlink() for p in targets):
+        raise ValueError("EXISTS")
+    auth = AUTH
+    mount = json.loads(
+        subprocess.check_output(["findmnt", "--json", "--target", str(auth.parent)], text=True)
+    )["filesystems"][0]
+    if mount["fstype"] != "tmpfs":
+        raise ValueError("AUTH_TMPFS")
+    auth.mkdir(mode=0o700, exist_ok=True)
+    if (
+        auth.is_symlink()
+        or auth.stat().st_uid != os.getuid()
+        or (auth.stat().st_mode & 0o777) != 0o700
+    ):
+        raise ValueError("AUTH_PERMISSIONS")
+    previous = os.umask(0o077)
+    try:
+        from uuid import UUID, uuid5
+
+        namespace = UUID("724d3de6-0a3c-4caa-8ed2-d3ef8b05889e")
+        values = {"client_secret": secrets.token_urlsafe(36), "users": {}}
+        users = []
+        for name in ("alice", "bob", "carol", "dave"):
+            password = secrets.token_urlsafe(36)
+            user_id = str(uuid5(namespace, "rag-dev-identity-fixture-v2:" + name))
+            values["users"][name] = {"id": user_id, "password": password}
+            users.append(
+                {
+                    "id": user_id,
+                    "username": name,
+                    "enabled": True,
+                    "firstName": "Synthetic",
+                    "lastName": name,
+                    "email": name + "@synthetic.invalid",
+                    "emailVerified": True,
+                    "requiredActions": [],
+                    "credentials": [{"type": "password", "value": password, "temporary": False}],
+                }
+            )
+        realm = {
+            "realm": "rag-dev-identity-fixture-v2",
+            "enabled": True,
+            "sslRequired": "all",
+            "registrationAllowed": False,
+            "resetPasswordAllowed": False,
+            "loginWithEmailAllowed": False,
+            "bruteForceProtected": True,
+            "accessTokenLifespan": 300,
+            "users": users,
+            "clients": [
+                {
+                    "clientId": "f02-identity-probe",
+                    "protocol": "openid-connect",
+                    "publicClient": False,
+                    "secret": values["client_secret"],
+                    "directAccessGrantsEnabled": True,
+                    "standardFlowEnabled": False,
+                    "serviceAccountsEnabled": False,
+                    "protocolMappers": [
+                        {
+                            "name": "api-audience",
+                            "protocol": "openid-connect",
+                            "protocolMapper": "oidc-audience-mapper",
+                            "config": {
+                                "included.client.audience": "rag-api",
+                                "access.token.claim": "true",
+                                "id.token.claim": "false",
+                            },
+                        }
+                    ],
+                }
+            ],
+        }
+        realm["clients"].append(
+            {"clientId": "rag-api", "protocol": "openid-connect", "bearerOnly": True}
+        )
+        targets[0].write_text(json.dumps(realm))
+        targets[1].write_text(json.dumps(values))
+    finally:
+        os.umask(previous)
+    print("PASS T004 PREP: synthetic IdP users; private fixture/auth tmpfs; no product roles.")
+
+
 def compose(*args):
     validate(args[0] in {"up", "build"})
     if not ENV.is_file() or ENV.is_symlink():
@@ -266,6 +357,9 @@ def main():
             "prepare",
             "prepare-tokens",
             "prepare-identity",
+            "prepare-humans",
+            "build-cli",
+            "cli",
             "build-control",
             "control",
             "build",
@@ -285,6 +379,12 @@ def main():
             prepare_tokens()
         elif args.action == "prepare-identity":
             prepare_identity()
+        elif args.action == "prepare-humans":
+            prepare_humans()
+        elif args.action == "build-cli":
+            compose("build", "identity-cli")
+        elif args.action == "cli":
+            compose("run", "--rm", "-T", "--no-deps", "cli-check")
         elif args.action == "build-control":
             compose("build", "control-check")
         elif args.action == "control":

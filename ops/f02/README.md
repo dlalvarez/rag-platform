@@ -166,3 +166,57 @@ El probe negativo usa rol inválido de longitud válida para medir CHECK:
 PostgreSQL rechazaba primero VARCHAR(8) con el valor anterior, y se corrigió el ensayo.
 No se borró/reinicializó nada para recuperarse; auditoría y credenciales conservadas.
 Reversión de esquema con datos es una operación aparte, no downgrade automático.
+
+## T004 — CLI autenticada de identidad
+
+Comandos internos: me, bootstrap-operator, bootstrap-owner, membership,
+platform-role y principal-state. --token-file recibe una ruta privada 0600,
+propietario actual, archivo regular sin symlink/hardlink; nunca un JWT en argumentos.
+Errores de parser son códigos constantes y no repiten entradas. El JWT se valida
+contra issuer/audience/JWKS configurados por servidor; actor UUID se obtiene de
+issuer+sub y estado activo, nunca de --actor, cabeceras tenant o roles del token.
+
+identity-cli monta solo app/admin SQL, CAs y tmpfs de tokens. identity-bootstrap
+añade la autorización diaria para el bootstrap inicial de platform_operator:
+sesión OpenBao verificada y canary leído, sin renovación/revocación. No se autoasigna
+un segundo operador por tener un token válido o acceso a la fixture.
+cli-check añade credenciales sintéticas/infra para crear exclusivamente sus cuatro
+tenants de prueba; no es el perfil de API ni el flujo de un usuario final.
+    python3 scripts/f02_host.py prepare-humans
+    python3 scripts/f02_host.py build-cli
+    python3 scripts/f02_host.py up
+    python3 scripts/f02_host.py cli
+Ya preparado en ragdev01: no repetir prepare-humans ni reemplazar credenciales.
+
+Realm activo de fixture: rag-dev-identity-fixture-v2, sin administrador master.
+Cuatro usuarios sintéticos y cliente de pruebas con direct grant, solo integración
+privada de desarrollo; no acredita login web/PKCE ni elige el flujo de producción.
+API sigue aceptando access tokens; no recibe las contraseñas del IdP.
+El cliente de audiencia rag-api debe existir. UUID de fixture incluye nombre de
+realm: Keycloak usa IDs de usuario únicos también entre sus realms.
+El primer realm sin audiencia quedó conservado sin roles de producto. El intento
+v2 con IDs duplicados revirtió completamente (0 realms v2) antes de corregirlos,
+conservando passwords; no borrar/reimportar datos para ocultar fallos.
+
+owner administra membresías de su tenant; admin solo editor/reader y no modifica
+owner/admin; editor/reader no administran. platform_support sin acceso implícito.
+platform_operator administra identidad/infra y bootstrap inicial, no toma un tenant
+que ya tiene owner ni recibe membresía por su rol. Tipo PERSONAL/ORG explícito,
+sin cambiar tipo existente por un reintento. Último operador también protegido.
+Suspensión global no reactiva al iniciar sesión; no permite takeover de un tenant
+con membresía owner activa aunque ese usuario esté suspendido.
+
+Los cambios de membresía usan pg_advisory_xact_lock por UUID/namespace dentro de
+la transacción y revalidan autoridad tras el lock. No FOR UPDATE sobre tenants:
+esa operación exigiría ampliar UPDATE del catálogo F01, que se conserva denegado.
+Las comprobaciones reales de dos procesos prueban serialización del último owner.
+Auditoría de éxito y denegación con UUID/códigos, rollback de acción rechazada y
+registro de denegación en transacción separada; sin identidad OIDC ni JWT en salida.
+
+Batería conserva Alice owner A/reader B, Bob owner B/editor A, Carol reader A y
+support de plataforma, Dave sin membresías. Cuatro tenants de fixture READY,
+misma instancia y dos instancias, claves idempotentes en f02_testing.py.
+No cambian roles/secretos/datos ajenos; hashes del catálogo excluyendo esas cuatro
+operaciones prueban preservación de registros legacy. Tokens temporales eliminados.
+Para ejecutar la CLI manualmente usar el perfil autorizado y un archivo temporal,
+no copiar tokens por chat ni incorporarlos al historial. No es una API pública.
