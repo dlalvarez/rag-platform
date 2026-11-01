@@ -139,8 +139,10 @@ def sql_probe(target, names, app, readonly):
         with app_engine.connect() as c:
             # Everything inserted in these probes is rolled back. No RECEIVED metadata
             # survives without an S3 original, no SQL-only synthetic document is published.
+            baseline_documents = c.scalar(sa.text("SELECT count(*) FROM knowledge.documents"))
             actor, repo_a, repo_b = uuid4(), uuid4(), uuid4()
-            for repo, name in ((repo_a, "A"), (repo_b, "B")):
+            first_name = "A-" + uuid4().hex
+            for repo, name in ((repo_a, first_name), (repo_b, "B-" + uuid4().hex)):
                 c.execute(
                     sa.text(
                         "INSERT INTO knowledge.repositories(id,name,owner_id) "
@@ -269,8 +271,8 @@ def sql_probe(target, names, app, readonly):
             )
             denied(
                 c,
-                "UPDATE knowledge.repositories SET name='a' WHERE id=:id",
-                {"id": repo_b},
+                "UPDATE knowledge.repositories SET name=:name WHERE id=:id",
+                {"id": repo_b, "name": first_name.lower()},
                 "23505",
             )
             denied(
@@ -331,11 +333,14 @@ def sql_probe(target, names, app, readonly):
                 "UPDATE ops.audit_events SET outcome='OK' WHERE false",
             ):
                 denied(c, statement)
-            if c.scalar(sa.text("SELECT count(*) FROM knowledge.documents")) != 1:
+            if (
+                c.scalar(sa.text("SELECT count(*) FROM knowledge.documents"))
+                != baseline_documents + 1
+            ):
                 raise ProbeFailure("OWN_CRUD")
             c.rollback()
         with read_engine.connect() as c:
-            if c.scalar(sa.text("SELECT count(*) FROM knowledge.documents")) != 0:
+            if c.scalar(sa.text("SELECT count(*) FROM knowledge.documents")) != baseline_documents:
                 raise ProbeFailure("PROBE_NOT_ROLLED_BACK")
             for statement in (
                 "INSERT INTO knowledge.repositories(id,name,owner_id) VALUES "

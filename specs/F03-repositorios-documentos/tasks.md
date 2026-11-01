@@ -2,15 +2,16 @@
 
 T001: integrada en PR #27, develop@8530739dbc2cf5a067c5f67c6cc963ea2cc12d76; CI/postmerge correctos.
 T002: identidad mínima instalada/probada; handoff/runtime pendiente.
-T003: esquema y batería real preparados; CI/revisión/integración pendientes.
-T004..T007 pendientes; ningún AC documental acreditado aún.
+T003: integrada en PR #30, CI/revisión/postmerge correctos.
+T004: componente y batería real preparados, CI/revisión/integración pendientes.
+T005..T007 pendientes; ningún AC documental de API acreditado aún.
 [Plan](plan.md), [checklist](checklist.md), [evidencia](evidence.md).
 
 - [x] T001 — Persistir continuidad ADR-0010 y formalizar plan/tareas/trazabilidad.
   R01..05; AC-01..04; V01..V07. Integrar PR documental y continuar.
 - [ ] T002 — Credencial de aplicación mínima y conexión autorizada/versión conocida.
   R01/R02/R03/R05; AC-01/02; V01/V02/V06.
-- [ ] T003 — Migración tenant aditiva, estado RECEIVED y restricciones/idempotencia.
+- [x] T003 — Migración tenant aditiva, estado RECEIVED y restricciones/idempotencia.
   R01/R03/R04; AC-03/04; V03/V04/V07.
 - [ ] T004 — CRUD repositorios y ACL por capacidad, paginación y auditoría.
   R01/R02; AC-01/02; V01/V02/V06.
@@ -29,3 +30,6 @@ T002: bootstrap real completado por Diego y verificado por agente sin otra contr
 PR #29 serializa ventanas/baterías. Falta handoff/runtime; no usar bearer infra en API.
 T003: esquema f03_tenant_0002 y batería final ambas topologías correctos; ver schema.md
 y evidence.md. Integrar con CI/revisión/postmerge y continuar T004 sin pausa.
+
+T004: ver acl.md y evidence.md; cuatro fixtures reales y 415 tests correctos.
+Integrar con CI/revisión/postmerge y continuar T005; API documental aún no desplegada.
