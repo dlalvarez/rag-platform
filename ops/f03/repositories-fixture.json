@@ -1,0 +1,33 @@
+{
+  "fixtures": [
+    {
+      "name": "same-a",
+      "private": "72a94930-3ce4-49c3-9038-9b29ad3c0faa",
+      "repository": "b60ef408-da5d-4b50-afd6-15975e60da48",
+      "second": "8653f7f7-af26-4873-a6b2-23ba3d42c0e7",
+      "tenant": "34edf39b-5cf7-40a5-92c4-805fd2afae01"
+    },
+    {
+      "name": "same-b",
+      "private": "16644c72-f002-444f-bbd9-3e1b34068b20",
+      "repository": "9975128e-4f22-43a4-8345-318dad6f9621",
+      "second": "8cf29181-bf69-4e23-9b99-5aa552d283d3",
+      "tenant": "5c3b5e3f-34d0-437c-a18d-e700ae044694"
+    },
+    {
+      "name": "two-a",
+      "private": "e422a581-275c-4fc5-a5c9-ab37411f9764",
+      "repository": "7806fe2b-1a77-4a6e-b4fa-b69418d43c25",
+      "second": "fcb058df-da80-4335-a01f-0ce3ebb3edff",
+      "tenant": "68fd8a26-be8e-4f85-851a-288e72212d86"
+    },
+    {
+      "name": "two-b",
+      "private": "4c8d19a3-49c2-494d-bd6d-89241c6e05e1",
+      "repository": "3bb15346-0f0b-43b9-9ede-8deb967db457",
+      "second": "73e8b7f4-9e7d-438e-96e7-55ac42827747",
+      "tenant": "9e696790-1908-4cd6-9cb1-af0a05f822e1"
+    }
+  ],
+  "version": 1
+}

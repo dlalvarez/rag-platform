@@ -89,3 +89,41 @@ se volvió a ejecutar la batería F03 completa y los tests sobre las fuentes fin
 No API documental desplegada, ACL CRUD o carga/proxy acreditados todavía.
 T002 sigue pendiente de handoff/runtime; T003 pendiente de CI/revisión/integración
 de este PR; T004 continúa sin nueva confirmación. F03 permanece abierta.
+
+## T003 integrado y componente T004 — 2026-11-01
+
+PR #30 integrado en develop@abae0e6d91b8c02e34816be00393ad1d437b2855,
+con CI/revisión/postmerge correctos. Se inició T004 sin nueva confirmación.
+
+[Perfil ACL](acl.md): CRUD tenant-local, control por capacidad y techo de membresía,
+denegación por defecto, owner/admin/editor/reader, cambios de ACL serializados,
+último owner activo/owner_id consistente y baja lógica con historial.
+Listados/cursor HMAC actor/tenant/colección, nombres/config acotados, errores cerrados
+y auditoría transaccional tenant para cambios. No endpoint HTTP nuevo en esta entrega.
+
+T004 real correcto, repetido sobre ambas topologías/cuatro fixtures. OIDC real para
+Alice/Bob/Carol/Dave, altas de perfil ORG/membresías explícitas solo en fixtures F03,
+identidad AppRole limitada para datos. Sin acceso de operador/owner tenant a repo sin
+ACL. Editor/reader sin administración, escalado y modificación de owner por admin
+denegados, target limitado por membresía, último owner protegido, transferencia y
+pérdida inmediata de acceso, owner_id reconciliado.
+Cursores ajenos entre actor/tenant rechazados antes de secretos; UUID repo cruzado
+denegado en destino propio. Suspensión de membresía existente rechazada exactamente
+como MEMBERSHIP_REQUIRED, sin lecturas de secretos tenant.
+Baja lógica conserva fila/ACL/auditoría; no se creó documento por CRUD.
+
+Segunda ejecución reutilizó los mismos tres repos semilla por fixture. IDs en
+ops/f03/repositories-fixture.json; solo referencias lógicas sintéticas.
+Repos temporales de probes quedan DELETED, con historial. Hashes de catálogo,
+usuarios/roles y membresías/perfiles ajenos a los cuatro tenants iguales antes/después.
+No rotación de credenciales, IAM admin de S3 ni bearer infra en componente de datos.
+
+Regresión T003 completa con datos CRUD presentes correcta en las cuatro fixtures:
+DDL fresco revertido, constraints, roles, FAILED/reintento y locks. Probes ahora
+parten de conteo previo y nombres únicos para no asumir ausencia de documentos futuros.
+415 tests offline correctos (64 nuevos de política/metadatos/cursor), lint/format/docs/
+diff correctos en ragdev01. Advertencia Starlette/httpx previa sin fallo funcional.
+
+T004 componente pendiente de CI/revisión/integración de este PR. AC de API/carga/proxy
+siguen pendientes; no F03 cerrada. Continuar T005 sin pausa de trámite, mantener
+handoff/runtime de T002 como puerta antes del despliegue T006.
