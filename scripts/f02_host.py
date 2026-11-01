@@ -238,14 +238,7 @@ def prepare_identity():
     print("PASS T003 PREP: private SQL runtime/admin credentials; no identity auto-grants.")
 
 
-def prepare_humans():
-    validate(True)
-    targets = (
-        DATA / "config/identity-fixture-v2-realm.json",
-        DATA / "secrets/identity-fixture-v2.json",
-    )
-    if any(p.exists() or p.is_symlink() for p in targets):
-        raise ValueError("EXISTS")
+def ensure_auth():
     auth = AUTH
     mount = json.loads(
         subprocess.check_output(["findmnt", "--json", "--target", str(auth.parent)], text=True)
@@ -259,6 +252,17 @@ def prepare_humans():
         or (auth.stat().st_mode & 0o777) != 0o700
     ):
         raise ValueError("AUTH_PERMISSIONS")
+
+
+def prepare_humans():
+    validate(True)
+    targets = (
+        DATA / "config/identity-fixture-v2-realm.json",
+        DATA / "secrets/identity-fixture-v2.json",
+    )
+    if any(p.exists() or p.is_symlink() for p in targets):
+        raise ValueError("EXISTS")
+    ensure_auth()
     previous = os.umask(0o077)
     try:
         from uuid import UUID, uuid5
@@ -327,6 +331,61 @@ def prepare_humans():
     print("PASS T004 PREP: synthetic IdP users; private fixture/auth tmpfs; no product roles.")
 
 
+def prepare_api():
+    validate(True)
+    targets = [DATA / "tls/api.key", DATA / "tls/api.crt", DATA / "secrets/api_authority_key"]
+    if any(p.exists() or p.is_symlink() for p in targets):
+        raise ValueError("EXISTS")
+    previous = os.umask(0o077)
+    try:
+        tls = DATA / "tls"
+        (tls / "api.ext").write_text(
+            "subjectAltName=DNS:api,DNS:localhost\nbasicConstraints=critical,CA:FALSE\n"
+            "keyUsage=critical,digitalSignature,keyEncipherment\n"
+            "extendedKeyUsage=serverAuth\n"
+        )
+
+        def openssl(*args):
+            subprocess.run(["openssl", *args], cwd=tls, check=True, capture_output=True)
+
+        openssl(
+            "req",
+            "-new",
+            "-newkey",
+            "rsa:3072",
+            "-nodes",
+            "-subj",
+            "/CN=api",
+            "-keyout",
+            "api.key",
+            "-out",
+            "api.csr",
+        )
+        openssl(
+            "x509",
+            "-req",
+            "-in",
+            "api.csr",
+            "-CA",
+            "ca.crt",
+            "-CAkey",
+            "ca.key",
+            "-CAcreateserial",
+            "-days",
+            "90",
+            "-extfile",
+            "api.ext",
+            "-out",
+            "api.crt",
+        )
+        (tls / "api.crt").chmod(0o444)
+        with targets[2].open("xb") as output:
+            output.write(secrets.token_bytes(32))
+    finally:
+        os.umask(previous)
+    print("PASS T005 PREP: private API key/TLS prepared; existing credentials unchanged.")
+
+
 def compose(*args):
     validate(args[0] in {"up", "build"})
     if not ENV.is_file() or ENV.is_symlink():
@@ -358,6 +417,11 @@ def main():
             "prepare-tokens",
             "prepare-identity",
             "prepare-humans",
+            "prepare-api",
+            "build-api",
+            "api-up",
+            "build-api-tools",
+            "api-check",
             "build-cli",
             "cli",
             "build-control",
@@ -381,9 +445,21 @@ def main():
             prepare_identity()
         elif args.action == "prepare-humans":
             prepare_humans()
+        elif args.action == "prepare-api":
+            prepare_api()
+        elif args.action == "build-api":
+            compose("build", "api")
+        elif args.action == "api-up":
+            compose("up", "-d", "--no-deps", "api")
+        elif args.action == "build-api-tools":
+            compose("build", "api-check")
+        elif args.action == "api-check":
+            ensure_auth()
+            compose("run", "--rm", "-T", "--no-deps", "api-check")
         elif args.action == "build-cli":
             compose("build", "identity-cli")
         elif args.action == "cli":
+            ensure_auth()
             compose("run", "--rm", "-T", "--no-deps", "cli-check")
         elif args.action == "build-control":
             compose("build", "control-check")

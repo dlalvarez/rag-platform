@@ -1,6 +1,6 @@
 # Evidencia F02
 
-Estado: T001..T003 integradas en PR #20..#22; T004 implementada y comprobada; F02 no aceptada.
+Estado: T001..T004 integradas en PR #20..#23; T005 implementada y comprobada; F02 no aceptada.
 Las anotaciones de planificación siguientes conservan el estado histórico.
 
 Base inspeccionada en ragdev01: develop@f66a38c8dbfe6d9244eef3cf390ed16f37998b41,
@@ -167,3 +167,36 @@ T005 contexto/API y T006/T007 aún pendientes; F02 no cerrada.
 Verificación T004: 269 tests offline correctos; Ruff check y 85 archivos formateados;
 check_docs correcto. La advertencia de compatibilidad Starlette/httpx ya existente
 no afecta el resultado y no se silencia. Hashes: docs/evidence/f02-t004-source-sha256.txt.
+
+## T005 — contexto y API de identidad
+
+Base develop@d7e3aec78f08007878ba2a564f6ed3be60f5f134, rama
+feat/F02-T005-authorized-api. Fuentes/herramientas/construcción y ejecución en ragdev01.
+F02-R02/R03/R04/R05; AC-01/02/03/04, V03/V05 parcialmente offline hasta T006.
+
+Contexto inmutable firmado, vinculado a request UUID y máximo 30 s; roles y referencias
+versionadas revalidadas en control antes del registro F01. Roles JWT/cabeceras ignorados
+como autoridad. Reader se adapta a readonly y no admite elegir otro rol SQL.
+GET /me y /tenants reales con OIDC Keycloak/TLS y PostgreSQL: Alice owner A/reader B,
+Carol solo A, Dave sin membresías; cursor limitado/ligado a identidad, token inválido
+e ID token rechazados, suspensión efectiva en próxima solicitud y restaurada.
+No rutas públicas admin/contenido/tests. API separada con rol SQL app, sin secretos
+administrativos, sesión diaria o MinIO; 512 MiB/0.25 CPU, sin puertos publicados.
+
+Batería real api-check completa y captura local de logs correcta (sin mostrar cuerpos).
+Runtime medido aproximadamente 71 MiB API, 508 MiB IdP, 39 MiB PostgreSQL propio;
+F00/F01 permanecen activos. Se corrigieron antes de integrar: lista tmpfs YAML,
+mapeo de error de token ausente a 401 y lookup de fixtures en herramienta migrator
+sin ampliar grants del runtime. Fixtures sintéticas y datos previos conservados.
+Los tests de contexto/IDOR emplean espías offline; cero acceso SQL/S3 real ante
+denegación y ambas topologías siguen pendientes de T006. No se declara F02 aceptada.
+
+Bloqueo separado detectado: desapareció el archivo privado de sesión diaria junto al
+runtime de usuario, con Linger=no. Se habilitó Linger=yes para conservarlo tras logout;
+no se recuperó bearer, no renovación/revocación ni reinicio Bao. daily status rechaza
+por falta de autorización; el operador debe ejecutar daily start desde su terminal.
+El token anterior puede seguir válido hasta su TTL original, no consta revocación.
+T005 no requiere esa sesión; T006 con secretos reales permanece pendiente de reemisión.
+
+T005 regresión: 287 tests offline correctos, Ruff check y 91 archivos formateados;
+check_docs correcto. Manifiesto: docs/evidence/f02-t005-source-sha256.txt.

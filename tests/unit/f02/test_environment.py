@@ -182,3 +182,27 @@ def test_human_fixture_audience_and_global_user_ids(modules, monkeypatch, tmp_pa
     compose = yaml.safe_load((ROOT / "ops/f02/compose.yaml").read_text())
     targets = [m["target"] for m in compose["services"]["idp"]["volumes"]]
     assert "/opt/keycloak/data/import/" + realm["realm"] + "-realm.json" in targets
+
+
+def test_api_runtime_has_only_identity_app_credentials():
+    import yaml
+
+    config = yaml.safe_load((ROOT / "ops/f02/compose.yaml").read_text())
+    api = config["services"]["api"]
+    assert api["tmpfs"] == ["/tmp:rw,noexec,nosuid,size=32m"]
+    assert api["read_only"] is True
+    assert "ports" not in api and api["mem_limit"] == "512m"
+    targets = {item["target"] for item in api["volumes"]}
+    assert targets == {
+        "/tls/ca.crt",
+        "/tls/api.key",
+        "/tls/api.crt",
+        "/run/f01-ca.crt",
+        "/run/secrets/identity_app_password",
+        "/run/secrets/api_authority_key",
+    }
+    assert all(item["read_only"] for item in api["volumes"])
+    assert not api.get("secrets")
+    dockerfile = (ROOT / "ops/f02/api.Dockerfile").read_text()
+    assert "COPY scripts" not in dockerfile and "--no-access-log" in dockerfile
+    assert api["cap_drop"] == ["ALL"]

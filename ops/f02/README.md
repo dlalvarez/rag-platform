@@ -220,3 +220,55 @@ No cambian roles/secretos/datos ajenos; hashes del catálogo excluyendo esas cua
 operaciones prueban preservación de registros legacy. Tokens temporales eliminados.
 Para ejecutar la CLI manualmente usar el perfil autorizado y un archivo temporal,
 no copiar tokens por chat ni incorporarlos al historial. No es una API pública.
+
+## T005 — API de identidad y contexto
+
+Preparación única en ragdev01: `python3 scripts/f02_host.py prepare-api`.
+Genera solo un certificado API dev (SAN api/localhost) y una clave privada de
+autoridad/cursor, sin rotar contraseñas existentes. No volver a ejecutar si existen.
+Construir con `build-api` y `build-api-tools`; arrancar únicamente API con
+`api-up`; comprobar con `api-check` y `python3 scripts/f02_api_log_check.py`.
+Los argumentos son acciones de scripts/f02_host.py, salvo el comprobador de logs.
+
+API TLS interna https://api:9443, sin puertos publicados, un worker, 512 MiB/0.25 CPU,
+máximo 16 solicitudes concurrentes y keepalive 5 s. Root filesystem de solo lectura.
+Solo recibe contraseña SQL identity_app, CAs públicas, certificado/clave TLS de API
+y clave de autoridad. Sin admin/migrator, sesión diaria, IdP passwords o MinIO.
+La herramienta de integración sí recibe credenciales administrativas de identidad
+para suspender/restaurar fixtures y la conexión migrator para localizar sus IDs;
+esos montajes no pertenecen a la API.
+
+GET /api/v1/me devuelve principal UUID, roles de plataforma activos y primera página
+de membresías autorizadas (máximo 50). GET /api/v1/tenants devuelve items y next_cursor;
+limit 1..100, cursor opaco autenticado ligado al principal. Continuar /me mediante
+/tenants usando next_cursor. No issuer, subject, email, nombre físico ni referencias
+de secretos. Estados y versión compatible se comprueban en cada solicitud.
+JWT solo por Authorization Bearer; no tokens en URL/argumentos, ni roles de JWT como autoridad.
+Errores JSON v1 con request_id generado por servidor; 401 credencial, 403 autorización,
+422 entrada, 503 dependencia. Sin eco de input/tracebacks; Cache-Control no-store.
+Access logs de Uvicorn desactivados para impedir registrar URLs/query strings sensibles.
+Los logs de negocio solo contienen UUID de solicitud, status y código cerrado.
+
+TenantAuthorizer emite AuthorizedTenantContext frozen/slots, UUID de principal/tenant,
+rol, SecretRefs opacos, trace UUID y vencimiento máximo 30 s. MAC privado cubre todos
+los campos y el contexto se revalida antes de adaptar internamente al registro F01.
+Reader usa SQL readonly; owner/admin/editor usan app. No se acepta AdministrativeTenant
+desde rutas de usuario ni se habilitan endpoints de contenido para probarlo.
+Los espías offline prueban rechazo antes del registro; la prueba real con contadores
+y ambas topologías queda en T006, no se presume por obtener HTTP 403.
+
+### Continuidad del runtime de pruebas
+
+Se observó la desaparición de /run/user/1000/rag-f01-access y rag-f02-auth tras
+cerrar sesiones SSH; loginctl mostraba Linger=no. Se activó Linger=yes para diego
+(conservación del runtime del usuario tras logout), sin tocar tokens, Bao o permisos.
+La sesión diaria perdida no se recupera ni se renueva automáticamente. Para emitir otra
+sesión el operador ejecuta desde su terminal SSH
+`python3 scripts/f01_host.py run --rm daily start` e introduce allí su contraseña.
+No repetir configure ni usar root/unseal. Verificar status/canary antes de T006.
+El bearer anterior podría seguir válido en Bao hasta su caducidad original aunque
+el archivo local ya no exista; no se afirma que haya sido revocado.
+tmpfs se borra al reiniciar el host: no hay persistencia de credenciales en disco.
+Reversión del ajuste de runtime: loginctl disable-linger diego (invalidaría continuidad
+tras logout; ejecutar solo al retirar el uso diario). El token mantiene su TTL.
+El lanzador F02 prepara y verifica el directorio vacío de JWT temporales cuando hace falta.
