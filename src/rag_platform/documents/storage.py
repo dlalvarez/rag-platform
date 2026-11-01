@@ -172,6 +172,65 @@ def closed_storage(function):
     return operation
 
 
+@dataclass(frozen=True, slots=True, repr=False)
+class Original:
+    repository_id: UUID
+    version_id: UUID
+    content_hash: str
+    byte_size: int
+    mime: str
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.repository_id, UUID)
+            or not isinstance(self.version_id, UUID)
+            or not isinstance(self.content_hash, str)
+            or re.fullmatch("[0-9a-f]{64}", self.content_hash) is None
+            or type(self.byte_size) is not int
+            or not 1 <= self.byte_size <= MAX_BYTES
+            or not isinstance(self.mime, str)
+            or self.mime not in MIMES
+        ):
+            raise DocumentError()
+
+    def __repr__(self):
+        return "Original(<private>)"
+
+    @property
+    def key(self):
+        return f"f03/{self.repository_id.hex}/{self.version_id.hex}"
+
+
+def inspect_original(client, bucket, original):
+    # Readonly SQL can see the committed version, never ops.document_receipts.
+    # The full original SHA-256 is checked against that SQL version before HTTP 200.
+    try:
+        info = client.stat_object(bucket, original.key)
+    except Exception:
+        raise DocumentError() from None
+    metadata = {str(k).lower(): str(v) for k, v in info.metadata.items()}
+    expected = {
+        "x-amz-meta-rag-repository": str(original.repository_id),
+        "x-amz-meta-rag-version": str(original.version_id),
+        "x-amz-meta-rag-sha256": original.content_hash,
+    }
+    try:
+        UUID(metadata["x-amz-meta-rag-receipt"])
+    except (KeyError, ValueError, TypeError):
+        raise DocumentError() from None
+    md5 = metadata.get("x-amz-meta-rag-md5", "")
+    if (
+        info.size != original.byte_size
+        or info.content_type != original.mime
+        or any(metadata.get(k) != v for k, v in expected.items())
+        or re.fullmatch("[0-9a-f]{64}", metadata.get("x-amz-meta-rag-fingerprint", "")) is None
+        or re.fullmatch("[0-9a-f]{32}", md5) is None
+        or info.etag != md5
+    ):
+        raise DocumentError()
+    return info.etag
+
+
 class ObjectGateway:
     def __init__(self, repository_service, store, ca, *, allowed_endpoints=("https://minio:9000",)):
         self.repositories, self.store, self.ca = repository_service, store, ca
@@ -263,3 +322,28 @@ class ObjectGateway:
             finally:
                 response.close()
                 response.release_conn()
+
+    @contextmanager
+    def download(self, context, trace, original):
+        response = None
+        try:
+            with self.client(context, trace, original.repository_id, "read") as (client, bucket):
+                etag = inspect_original(client, bucket, original)
+                response = client._url_open(
+                    "GET",
+                    REGION,
+                    bucket_name=bucket,
+                    object_name=original.key,
+                    headers={"If-Match": '"' + etag + '"'},
+                    preload_content=False,
+                    no_body_trace=True,
+                )
+                try:
+                    yield response
+                finally:
+                    response.close()
+                    response.release_conn()
+        except (DocumentError, AccessError):
+            raise
+        except Exception:
+            raise DocumentError() from None

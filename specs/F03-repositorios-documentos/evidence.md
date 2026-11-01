@@ -187,3 +187,61 @@ T002 handoff/runtime y T006/T007 siguen abiertos; ningún AC HTTP ni cierre F03 
 Cierre de comprobaciones del componente: otras 12 secuencias 412→HEAD correctas tras
 la corrección, en las cuatro fixtures. Regresión real T004 completa también correcta
 con los documentos recibidos: mismos repos semilla, ACL, membresías e historial intactos.
+
+
+## T005 postmerge y T002/T006 candidata — 2026-11-01
+
+PR #32 integrado en develop@752036e2533f96e54deedbd6d782818a583e3460.
+Cuatro checks del head y tres del merge correctos, revisión delegada y dos checkouts
+limpios por fast-forward; postmerge real 44 recibos: 40 COMMITTED/40 documentos y
+cuatro PENDING de colisiones sintéticas, conservados.
+[Registro posterior](https://github.com/dlalvarez/rag-platform/pull/32#issuecomment-6562724783).
+Diego reiteró no detenerse al cerrar PR; AGENTS/NEXT refuerzan esa instrucción y se
+continuó con T002/T006 sin pedir otra autorización ni contraseña.
+
+[Perfil y límites T002/T006](api.md). No cambios de esquema, grants, roles admin,
+dependencias o puertos. Misma API F02 extendida; candidato efímero de prueba separado
+solo durante ensayo, sin alias api ni exposición LAN; instancia anterior conservada.
+Composición comprobada: siete bind mounts read-only de CA/TLS/control app/authority/
+handoff, sin día, migrator, SQL/MinIO admin ni secretos IdP. API 512 MiB/0.25 CPU,
+un worker, root read-only y tmpfs privado noexec 64 MiB.
+
+Handoff real correcto: entrega 0600 en tmpfs 0700, consumidor único, 12 refs exactas/
+versionadas; ensure reutiliza sin rotación. Reemplazo atómico instala bearer de
+aplicación verificado y revoca el anterior; archivo ausente/token revocado bloquean
+acceso incluso con pool caliente. Día validado/conservado. Emisor efímero monta solo
+día/handoff/CA, sin SQL/IAM/IdP admin. Material del probe revocado y retirado de tmpfs.
+No se renovó la sesión diaria ni se automatizó desbloqueo/recuperación administrativa.
+
+API candidata: dos baterías HTTPS completas correctas, cuatro fixtures y ambas
+topologías. CRUD/baja lógica/ACL, editor sin promoción a owner, retirada de ACL con
+pérdida de acceso; cuatro formatos y replay iguales; distinto cuerpo con key igual
+409; original para reader con bytes/hash/cabeceras correctos y rol readonly sin ops.
+Sin ACL y anónimo denegados; repo de otro tenant denegado; inválidos y cuerpo chunked
+de más de 10 MiB rechazados sin altas de recibo/fuente/documento/versión.
+Paginación sin duplicados y cursor de Alice rechazado por Bob.
+
+Las 16 referencias lógicas en ops/f03/http-fixture.json son estables entre ambas
+ejecuciones; se conservan documentos/repositorios/historial de los probes anteriores.
+Segunda batería comparó hashes de catálogo y usuarios/roles/membresías/perfiles ajenos
+a los cuatro tenants: iguales antes/después. Entrega ausente y bearer revocado
+devolvieron 503 con pools calientes; reemplazo diario limitado recuperó acceso,
+sin fallback ni cambios en el día.
+
+562 tests offline correctos, incluidos límites HTTP/concurrencia, spool/hash,
+corrupción/truncado del original, pérdida de permiso y desconexión. Ruff check/format,
+check_docs y diff check correctos. Advertencia Starlette/httpx previa sin fallo.
+Postensayo: 0 descriptores temporales en /tmp del proceso API; permisos privados y
+tamaño tmpfs 67 108 864 bytes. Inspección interna de logs: token de aplicación=false,
+patrón JWT=false, cuerpo documental=false, traceback=false. No logs brutos publicados.
+
+Primer lanzador desde worktree falló por buscar .env.f02 allí; se añadió --f02-env
+explícito, usando la configuración operativa sin copiar secretos, y ensure repetido
+correcto. Ajustes de drivers previos a HTTP: perfil Compose explícito para validar
+configuración, tipo normalizado de mem_limit y PYTHONPATH de herramientas al montar
+el script de prueba. No se presentan como fallos del flujo funcional ni como PASS.
+La API candidata mantiene exactamente las fuentes de runtime probadas.
+
+Pendientes: CI/revisión/integración del PR T002/T006, promoción controlada de esa
+imagen al servicio API existente y validación posterior. Seguir T007 con observadores,
+negativas adicionales y regresiones. F03 permanece abierta; sin iniciar F04.

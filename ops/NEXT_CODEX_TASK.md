@@ -31,19 +31,22 @@ logout; reboot elimina archivos y unseal permanece con Diego.
 Conservar F00/F01/F02, sus fixtures/datos, versiones y clon T007 F01. Sin main/tag,
 producción, cambio de visibilidad, borrado/downgrade destructivo o relajación de aislamiento.
 
-## Punto de continuación F03 — finalizar recepción T005 y seguir T006
+## Punto de continuación F03 — T005 integrada, ejecutar T002/T006 ahora
 
 PR #28: bootstrap real completado y verificado; PR #29 lock de mantenimiento;
 PR #30 T003 y PR #31 T004 integradas con CI/revisión/postmerge correctos.
-Base actual develop@ea4554fb70425b3df61d9198aeb907e1216fec82.
+PR #32 T005 integrado con revisión/CI/postmerge en develop@752036e2533f96e54deedbd6d782818a583e3460.
+512 tests; batería real cuatro fixtures, 12 secuencias 412→HEAD y regresión T004 correctas.
+40 documentos y cuatro colisiones sintéticas del run final conservados.
 No repetir configure ni pedir otra contraseña. Día vigente emite AppRole read-only
 de una hora con SecretID de un uso; no bearer infra en runtime.
 
 Worktree ragdev01 /home/diego/proyectos/rag-platform-f03-schema,
-feat/F03-T005-document-receipt. Checkout operativo /home/diego/proyectos/rag-platform.
+feat/F03-T006-api-proxy. Checkout operativo /home/diego/proyectos/rag-platform.
 T005 implementa validación acotada, objeto condicional privado y diario SQL con
 fencing/cuota/recuperación. Ver receipt.md/evidence.md para resultados y límites.
-Completar CI, revisión del mismo agente e integración/postmerge del PR correspondiente.
+T005 cerrada como componente. Ejecutar T002 handoff/T006 API-proxy ahora; no detenerse
+al comunicar PR #32 ni esperar otra instrucción. Diego reiteró esta regla tras ese cierre.
 
 Repos semilla: ops/f03/repositories-fixture.json. Alice owner explícita de tenants ORG
 F03; Bob editor, Carol reader, Dave admin. Repo a: Alice owner/Bob editor/Carol reader,
@@ -58,3 +61,17 @@ F03 verificada; nunca día/admin/migrator/MinIO admin. Reutilizar servicio API e
 con cuota y concurrencia de carga/descarga; verificar original antes de HTTP exitoso.
 Pruebas de cabeceras/errores v1, ACL/cruces y regresiones T007 antes de aceptar F03.
 No iniciar F04 ni elegir parser antes de esa aceptación; conservar DDL histórico.
+
+
+### Estado actual T002/T006
+
+Handoff y API/proxy implementados en feat/F03-T006-api-proxy; candidato efímero
+rag-f03-api-candidate activo, sin puertos ni alias api. Instancia F02 previa intacta.
+562 tests y dos baterías HTTPS reales correctos en cuatro fixtures; mismo conjunto
+de 16 documentos en ops/f03/http-fixture.json; temporales cerrados/log flags false.
+Candidato usa entrega privada compartida, consumidor único. Antes de promover: cerrar
+candidato (revoca su bearer), emitir replace con día vigente y recrear solo api con
+ops/f03/handoff.compose.yaml + .env.f03 y .env.f02 operativo. No reiniciar otros servicios.
+Validar CI/revisión del mismo agente/merge/postmerge. Continuar T007 inmediatamente,
+sin terminar el turno al entregar el PR. Pendientes observadores de denegación,
+negativas adicionales API, A→B→A y regresiones F00/F01/F02 antes de aceptar F03.

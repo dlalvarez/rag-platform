@@ -63,3 +63,15 @@ registra su autorización; no es una ampliación inferida por Codex.
 La continuidad no permite saltar AC, ignorar CI, ampliar el roadmap, promover a main/tag,
 desplegar producción, cambiar visibilidad, borrar datos ni alterar contratos/arquitectura
 sin la decisión expresa que corresponda. Conservar sus controles; evitar pausas de trámite.
+
+### Reiteración expresa de Diego — no cerrar el turno por completar un PR
+
+Diego reiteró después de PR #32 que solo debe detenerse el trabajo si hace falta revisar
+algo fuera del plan o tomar una decisión con él.
+Cerrar una tarea, pasar CI, fusionar un PR o actualizar evidencia no autoriza terminar
+el turno. Comunicar esos hitos como avances y empezar la siguiente actividad autorizada.
+No pedir «procede» ni presentar una lista de próximos pasos como sustituto de ejecutarlos.
+Al recuperar contexto, leer NEXT_CODEX_TASK y continuar desde la primera actividad
+pendiente. Consultar solo cuando exista una decisión real con los criterios ya definidos;
+ante bloqueo parcial, avanzar en lo independiente. Mantener los controles de seguridad,
+specs, CI y revisión; la continuidad no permite omitirlos.

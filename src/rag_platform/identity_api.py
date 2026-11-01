@@ -43,18 +43,29 @@ def private_file(path, max_size):
         raise ValueError("Invalid private API configuration") from None
 
 
-def create_app(engine, verifier, key: bytes, *, close_resources=False):
-    queries, authority = IdentityQueries(engine, key), TenantAuthorizer(engine, key)
+def create_app(engine, verifier, key: bytes, *, close_resources=False, profiles=("identity",)):
+    queries, authority = (
+        IdentityQueries(engine, key, profiles=profiles),
+        TenantAuthorizer(engine, key),
+    )
 
     @asynccontextmanager
     async def lifespan(app):
-        yield
-        if close_resources:
-            verifier.close()
-            engine.dispose()
+        try:
+            yield
+        finally:
+            try:
+                for close in reversed(app.state.resource_closers):
+                    close()
+            finally:
+                if close_resources:
+                    verifier.close()
+                    engine.dispose()
 
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
     app.state.authority, app.state.queries = authority, queries
+    app.state.resource_closers = []
+    app.state.phase = "F02"
 
     def error(request, code, status):
         LOGGER.info(
@@ -68,6 +79,8 @@ def create_app(engine, verifier, key: bytes, *, close_resources=False):
             status_code=status,
             headers=headers,
         )
+
+    app.state.error_response = error
 
     def denial(request, reason):
         with engine.begin() as c:
@@ -147,7 +160,7 @@ def create_app(engine, verifier, key: bytes, *, close_resources=False):
 
     @app.get("/healthz")
     def health():
-        return {"status": "ok", "phase": "F02"}
+        return {"status": "ok", "phase": app.state.phase}
 
     @app.get("/api/v1/me")
     def me(request: Request, actor=Depends(principal)):  # noqa: B008
@@ -186,4 +199,25 @@ def create_configured_app():
     if len(key) != 32:
         raise ValueError("Invalid private API configuration")
     engine = control_engine(Target("postgres", 5432, Path("/run/f01-ca.crt")), credential)
-    return create_app(engine, OIDCVerifier(settings), key, close_resources=True)
+    enabled = os.environ.get("RAG_F03_ENABLED", "0")
+    if enabled not in ("0", "1"):
+        engine.dispose()
+        raise ValueError("Invalid private API configuration")
+    verifier = OIDCVerifier(settings)
+    try:
+        app = create_app(
+            engine,
+            verifier,
+            key,
+            close_resources=True,
+            profiles=("identity", "documents") if enabled == "1" else ("identity",),
+        )
+        if enabled == "1":
+            from rag_platform.documents.api import configure
+
+            configure(app, engine, key)
+        return app
+    except BaseException:
+        verifier.close()
+        engine.dispose()
+        raise
