@@ -24,7 +24,17 @@ Los documentos o mocks no acreditan integración real; un AC esencial pendiente 
 - [x] Validación y secretos mínimos: 512 tests offline correctos.
 - [x] Recepción real/idempotencia/fallos/concurrencia/cuotas en cuatro fixtures.
 - [x] Objetos y reservas conservados, colisión ajena sin adopción/borrado.
-- [ ] CI/revisión/integración/postmerge del PR T005.
+- [x] CI/revisión/integración/postmerge de T005 en PR #32.
 - [ ] T002 handoff/runtime, T006 API/proxy y aceptación final T007.
 
 T005 marcada como componente verificado; no equivale a aceptar AC-F03 por HTTP.
+
+
+## Entrega T002/T006
+
+- [x] Identidad limitada por tmpfs, consumidor único, reemplazo y revocación reales.
+- [x] Candidato HTTPS sin infra/admin/puertos; límite API y tmpfs comprobados.
+- [x] Dos baterías completas: CRUD/ACL, cuatro formatos, idempotencia/proxy y negativas.
+- [x] 562 tests offline; temporales cerrados y logs sin token/JWT/contenido/trazas.
+- [ ] CI/revisión/integración y promoción controlada al servicio API existente.
+- [ ] T007: aceptación final, observadores y regresiones sobre el servicio promovido.

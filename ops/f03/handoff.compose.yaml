@@ -1,0 +1,53 @@
+services:
+  application-issue:
+    profiles: [admin]
+    image: rag-f03-tools:t006
+    build:
+      context: ../..
+      dockerfile: ops/f02/tools.Dockerfile
+    user: "${RAG_F03_UID:?Prepare F03}:${RAG_F03_GID:?Prepare F03}"
+    entrypoint: [python, scripts/f03_application_issue.py]
+    volumes:
+      - type: bind
+        source: /run/user/${RAG_F03_UID:?Prepare F03}/rag-f01-access
+        target: /run/f01-access
+        bind: {create_host_path: false}
+      - type: bind
+        source: /run/user/${RAG_F03_UID:?Prepare F03}/rag-f03-application
+        target: /run/f03-application
+        bind: {create_host_path: false}
+      - type: bind
+        source: /srv/rag-data/rag-platform/f01/tls/ca.crt
+        target: /run/f01-ca.crt
+        read_only: true
+        bind: {create_host_path: false}
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=8m"]
+    networks: [control]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    cpus: 0.5
+    mem_limit: 768m
+    memswap_limit: 768m
+    ulimits: {core: {soft: 0, hard: 0}}
+
+  isolation-check:
+    image: rag-f03-tools:t006
+    volumes:
+      - type: bind
+        source: /run/user/${RAG_F03_UID:?Prepare F03}/rag-f03-application
+        target: /run/f03-application
+        bind: {create_host_path: false}
+
+  api:
+    image: rag-f03-api:t006
+    environment:
+      RAG_F03_ENABLED: "1"
+    volumes:
+      - type: bind
+        source: /run/user/${RAG_F03_UID:?Prepare F03}/rag-f03-application
+        target: /run/f03-application
+        read_only: true
+        bind: {create_host_path: false}
+    tmpfs: !override
+      - /tmp:rw,noexec,nosuid,size=64m,mode=700,uid=${RAG_F03_UID:?Prepare F03},gid=${RAG_F03_GID:?Prepare F03}

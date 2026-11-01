@@ -64,3 +64,14 @@ continuar con /tenants y su cursor. /tenants admite limit 1..100 (default 50) y
 cursor opaco ligado al principal. No se habilitan rutas tenant ni administrativas.
 Errores: {error: {version: "v1", code}, request_id}; sin input rechazado ni excepción
 de proveedor. Cache-Control no-store y X-Request-ID. JWT solo en Authorization Bearer.
+
+
+## Perfil F03 de repositorios y documentos
+
+Rutas y cuerpos concretos en [perfil F03](../specs/F03-repositorios-documentos/api.md),
+implementado como extensión opt-in de la API existente. JSON CRUD/ACL acotado; carga
+binaria directa con filename en query, Content-Type e Idempotency-Key. Respuesta
+201 al recibir y 200 al repetir la misma petición; 409 si cambia su huella.
+Original por proxy autorizado, attachment/no-store/nosniff y hash verificado antes
+de HTTP 200. Sin URL pública ni endpoint histórico de versiones antes de F04.
+La activación y aceptación se acreditan en evidencia de F03; no se altera el contrato F02.

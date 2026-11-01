@@ -43,6 +43,10 @@ class Received:
         return "Received(<private>)"
 
 
+def valid_key(key):
+    return isinstance(key, str) and re.fullmatch("[A-Za-z0-9._:-]{16,128}", key) is not None
+
+
 def quota_key(tenant):
     return int.from_bytes(
         hashlib.sha256(b"F03/quota:" + tenant.bytes).digest()[:8], "big", signed=True
@@ -318,12 +322,7 @@ class ReceiptService:
 
     def receive(self, context, trace, repo, key, file):
         self.preflight(context, trace, repo)
-        if (
-            not isinstance(repo, UUID)
-            or not isinstance(key, str)
-            or re.fullmatch("[A-Za-z0-9._:-]{16,128}", key) is None
-            or not isinstance(file, ValidatedFile)
-        ):
+        if not isinstance(repo, UUID) or not valid_key(key) or not isinstance(file, ValidatedFile):
             raise DocumentError("INPUT_INVALID")
         context = self.authority.validate(context, trace)
         plan = self._reserve(context, trace, repo, key, file)
