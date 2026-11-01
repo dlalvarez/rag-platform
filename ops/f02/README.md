@@ -272,3 +272,25 @@ tmpfs se borra al reiniciar el host: no hay persistencia de credenciales en disc
 Reversión del ajuste de runtime: loginctl disable-linger diego (invalidaría continuidad
 tras logout; ejecutar solo al retirar el uso diario). El token mantiene su TTL.
 El lanzador F02 prepara y verifica el directorio vacío de JWT temporales cuando hace falta.
+
+## T006 — batería preparada, pendiente de ejecución real
+
+Construir `python3 scripts/f02_host.py build-isolation` y, tras verificar daily
+status/canary, ejecutar `python3 scripts/f02_host.py isolation`.
+La batería requiere autorización diaria vigente y las cuatro fixtures T004.
+No ejecutarla en paralelo con otra herramienta que use la sesión diaria.
+El servicio normal de API no incorpora estas rutas ni los secretos de pruebas.
+
+isolation-check usa credenciales de fixtures exclusivamente y un proceso HTTPS temporal
+ligado a 127.0.0.1 dentro del contenedor. Tiene contadores de lecturas de secretos,
+intentos de conexión (incluso fallidos), consultas tenant y llamadas S3. Comprueba rechazo previo a esos
+cuatro efectos con pools fríos/calientes, roles A/B/A en misma y distintas instancias,
+UUID/cabecera/payload/contexto de otra solicitud, usuario/membresía/tenant suspendidos
+y versión incompatible. Pruebas SQL/S3 cruzadas directas fuera de la API añaden la
+verificación del proveedor. Cambios de estado se restauran en finally; membresías
+auxiliares nuevas se conservan revocadas, sin borrar historial. No nuevas bases/buckets.
+
+El proceso temporal se termina y libera su conexión al almacén al cerrar, sin revocar
+el día. Logs privados en tmpfs se inspeccionan localmente y se borran; nunca se imprimen.
+Esta preparación no acredita PASS ni aceptación: registrar resultados reales y corregir
+cualquier fallo antes de completar T006, abrir T007 o fusionar su PR.

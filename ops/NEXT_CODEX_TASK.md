@@ -11,9 +11,11 @@ D-04 resuelta expresamente por Diego: Keycloak solo para desarrollo según
 Ejecutar T001..T007 en PR acotados a develop con revisión delegada ADR-0007,
 CI, evidencia real y postmerge, sin nuevas preguntas rutinarias.
 T001..T004 integradas en PR #20..#23 con CI y postmerge.
-T005 implementada y ensayada: contexto firmado/revalidado, API TLS de mínimo privilegio,
-GET /me y /tenants con paginación y negativos. Revisar/integrar PR T005 y continuar T006
-con contadores reales SQL/S3 y ambas topologías; después T007, evidencia/aceptación.
+T005 integrada en PR #24 con CI/postmerge: contexto firmado/revalidado, API TLS de
+mínimo privilegio y GET /me, /tenants. T006 preparada en feat/F02-T006-isolation:
+reconstruir herramientas tras cualquier ajuste, comprobar daily status/verify y ejecutar
+isolation. Revisar/corregir resultados reales y restauraciones antes de merge; no
+marcar por disponer del harness. Después T007, evidencia/aceptación.
 No detenerse entre tareas ni pedir confirmaciones rutinarias; continuar hasta completar
 F02, salvo bloqueo real o desvío de los contratos/specs.
 No confundir discovery/JWKS de T001 con validación de tokens o aceptación de F02.

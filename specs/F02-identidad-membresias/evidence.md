@@ -200,3 +200,17 @@ T005 no requiere esa sesión; T006 con secretos reales permanece pendiente de re
 
 T005 regresión: 287 tests offline correctos, Ruff check y 91 archivos formateados;
 check_docs correcto. Manifiesto: docs/evidence/f02-t005-source-sha256.txt.
+
+## Preparación T006 — integración todavía pendiente
+
+Base develop@b23b6bedc018b36a57cea269a05ccdb2f2292c3c (T005 integrada PR #24;
+docs/lint/tests del merge correctos y hashes postmerge verificados en ragdev01).
+Rama feat/F02-T006-isolation: herramienta de pruebas y fixture HTTPS loopback
+preparadas para contadores secretos/conexiones/queries/S3 y topologías SAME_INSTANCE/
+TWO_INSTANCES. Sin modificar código de producto ni crear rutas públicas de contenido.
+Construcción/configuración/lint no acreditan ejecución real.
+
+La ejecución queda bloqueada por ausencia del archivo de sesión diaria. El ajuste
+Linger=yes está comprobado; daily start sigue siendo una acción del operador con su
+contraseña en su terminal. No recuperar root, almacenar contraseña, renovar el token
+automáticamente ni simular las pruebas. T006/T007 y aceptación F02 siguen pendientes.
