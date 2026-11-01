@@ -133,6 +133,7 @@ def prepare():
     finally:
         os.umask(previous)
     prepare_tokens()
+    prepare_identity()
     print("PASS F02 PREP: private paths/TLS/SQL prepared; no users or product memberships.")
 
 
@@ -217,6 +218,24 @@ def prepare_tokens():
     print("PASS T002 PREP: isolated realm fixture; credentials private, no master admin.")
 
 
+def prepare_identity():
+    validate(True)
+    parent = DATA / "secrets"
+    if not parent.is_dir() or parent.is_symlink():
+        raise ValueError("PATH")
+    paths = [parent / (name + "_password") for name in ("identity_app", "identity_admin")]
+    if any(p.exists() or p.is_symlink() for p in paths):
+        raise ValueError("EXISTS")
+    previous = os.umask(0o077)
+    try:
+        for p in paths:
+            with p.open("x") as output:
+                output.write(secrets.token_urlsafe(36))
+    finally:
+        os.umask(previous)
+    print("PASS T003 PREP: private SQL runtime/admin credentials; no identity auto-grants.")
+
+
 def compose(*args):
     validate(args[0] in {"up", "build"})
     if not ENV.is_file() or ENV.is_symlink():
@@ -246,6 +265,9 @@ def main():
         choices=[
             "prepare",
             "prepare-tokens",
+            "prepare-identity",
+            "build-control",
+            "control",
             "build",
             "build-tools",
             "tokens",
@@ -261,6 +283,12 @@ def main():
             prepare()
         elif args.action == "prepare-tokens":
             prepare_tokens()
+        elif args.action == "prepare-identity":
+            prepare_identity()
+        elif args.action == "build-control":
+            compose("build", "control-check")
+        elif args.action == "control":
+            compose("run", "--rm", "-T", "--no-deps", "control-check")
         elif args.action == "build-tools":
             compose("build", "token-check")
         elif args.action == "tokens":

@@ -13,8 +13,11 @@ CI, evidencia real y postmerge, sin nuevas preguntas rutinarias.
 T001 implementada y ensayada con Keycloak 26.8.1 por digest, TLS, PostgreSQL propio
 y presupuesto medido. T001 integrada en PR #20. T002 implementada y ensayada con tokens Keycloak reales,
 rotación reversible y expiración real; revisar/integrar su PR con CI y postmerge.
-Continuar T003: identidad issuer+sub, membresías/tipos/roles y auditoría de control
-con migración aditiva, constraints, grants mínimos y pruebas PostgreSQL reales.
+T003 aplicada y ensayada en PostgreSQL real: migración aditiva, identidad issuer+sub,
+roles/tipos/membresías/auditoría y grants mínimos. Revisar/integrar su PR y continuar
+T004: CLI autenticada, bootstrap explícito y último owner protegido concurrentemente.
+No detenerse entre tareas ni pedir confirmaciones rutinarias; continuar hasta completar
+F02, salvo bloqueo real o desvío de los contratos/specs.
 No confundir discovery/JWKS de T001 con validación de tokens o aceptación de F02.
 
 Toda ejecución y dependencias en ragdev01. Sesión de pruebas de ADR-0008 activa
