@@ -399,3 +399,28 @@ objeto de prueba; corregido,14focalizados pasan. No cambio de producción.
 Suite979passed68.08s,14focalizados finales3.79s, ruff/formato/docs correctos.
 La espera QA no se atribuye a latencia del modelo; token de cerca viejo permanece
 solo en memoria del proceso de recuperación, nunca se guarda ni imprime.
+
+## Corrección del corpus para recuperación real
+PR65 396870c integrado con cuatro checks previos/tres postmerge success.
+Primer prepare sobre manifest API a75adb4c: cuatro presupuestos1chunk/16tokens
+correctos; petición rechazada por control de ingesta, sin hard exit. El flujo F04
+había dado de baja esos positive deliberadamente. Diagnóstico con savepoints
+revertidos: los cuatro intents no existen; recursos/journal212416ed conservados.
+Primer diagnóstico -c omitió /app/scripts y falló antes de abrir runtime; corregido.
+
+Se elige positive-txt del manifest worker15bbc3e9 conservado, sin revivir documentos
+ni crear corpus. Se comprueba estado/permiso de ingesta antes de leer/tokenizar
+chunks. Dos pruebas nuevas: tombstone impide lectura/tokenización/intent/checkpoint,
+y error desconocido no expone su cuerpo. Recuperación real todavía pendiente.
+
+API compatible t006 cerrada/reabierta para reemplazar entrega F03 bajo lock y día
+existente; HTTPS health200 tras arranque, contenedor/imagen conservados. Primer intento
+de reemplazo usó ruta de lock inexistente, corregida antes de emitir entrega.
+Comprobación de salud inicial apuntó8443; puerto configurado9443 verificado con TLS.
+Sin root/políticas/día nuevo ni cambio de servicios de datos.
+
+Diego aprobó «Sí, usar la conexión privada propuesta»: API->trabajador Qwen existente,
+una copia del modelo, sin puerto público/terceros, CPU compartida/espera acotada y
+reautorización antes de fragmentos, solo desarrollo. Registrar ADR0012 y probar
+transporte antes de habilitar HTTP; la aprobación de este contrato ya existe.
+Suite981passed68.73s; ruff/formato/docs correctos. Warn httpx/TestClient heredado.

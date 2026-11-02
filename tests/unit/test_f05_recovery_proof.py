@@ -40,10 +40,10 @@ def test_positive_selection_explicit_and_atomic_default_unchanged(fixture_data):
     module, manifest, actors, scope = fixture_data
     first = module.selection(manifest, actors, scope)
     for fixture in manifest["fixtures"]:
-        positive = dict(fixture["documents"][0], case="positive", document=str(uuid4()))
+        positive = dict(fixture["documents"][0], case="positive-txt", document=str(uuid4()))
         fixture["documents"].append(positive)
     assert module.selection(manifest, actors, scope) == first
-    selected = module.selection(manifest, actors, scope, case="positive")
+    selected = module.selection(manifest, actors, scope, case="positive-txt")
     assert {r["document"] for r in first}.isdisjoint(r["document"] for r in selected)
     with pytest.raises(ValueError):
         module.selection(manifest, actors, scope, case="scan")
@@ -51,7 +51,7 @@ def test_positive_selection_explicit_and_atomic_default_unchanged(fixture_data):
 
 def test_all_budgets_checked_before_any_request(module, monkeypatch):
     @contextmanager
-    def connection(*_args):
+    def connection(*_args, **_kwargs):
         yield SimpleNamespace(
             execute=lambda _statement: SimpleNamespace(
                 scalars=lambda: SimpleNamespace(all=lambda: ["synthetic"])
@@ -59,11 +59,14 @@ def test_all_budgets_checked_before_any_request(module, monkeypatch):
         )
 
     monkeypatch.setattr(module, "connect", connection)
+    monkeypatch.setattr(module.journal, "require", lambda *_args: None)
     calls = []
     monkeypatch.setattr(module.processing, "request", lambda *_args: calls.append("request"))
     monkeypatch.setattr(module.f05_adopt, "save", lambda *_args: calls.append("save"))
     provider = SimpleNamespace(profile=qwen_profile(), count_tokens=lambda *_args: 513)
-    record = dict(name="same-a", version=str(uuid4()))
+    record = dict(
+        name="same-a", version=str(uuid4()), repository=str(uuid4()), document=str(uuid4())
+    )
     with pytest.raises(AssertionError):
         module.prepare(None, provider, uuid4(), [record] * 4)
     assert calls == []
@@ -102,3 +105,30 @@ def test_hard_exit_requires_durable_checkpoint_and_heartbeats(
     with pytest.raises(AssertionError):
         worker._stage(stage, claim)
     assert saved == []
+
+
+def test_tombstone_refused_before_reading_or_tokenizing_chunks(module, monkeypatch):
+    calls = []
+
+    @contextmanager
+    def connection(*_args, **_kwargs):
+        yield SimpleNamespace(execute=lambda *_args: calls.append("read"))
+
+    def tombstone(*_args):
+        raise module.journal.IngestionError("TOMBSTONED")
+
+    monkeypatch.setattr(module, "connect", connection)
+    monkeypatch.setattr(module.journal, "require", tombstone)
+    monkeypatch.setattr(module.processing, "request", lambda *_args: calls.append("request"))
+    monkeypatch.setattr(module.f05_adopt, "save", lambda *_args: calls.append("save"))
+    provider = SimpleNamespace(count_tokens=lambda *_args: calls.append("tokenize"))
+    record = dict(name="same-a", repository=str(uuid4()), document=str(uuid4()))
+    with pytest.raises(module.journal.IngestionError, match="TOMBSTONED"):
+        module.prepare(None, provider, uuid4(), [record])
+    assert calls == []
+
+
+def test_diagnostic_never_echoes_unknown_error_body(module):
+    assert module.closed_error(RuntimeError("PRIVATE_PROVIDER_BODY")) == "REFUSED"
+    assert module.closed_error(module.journal.IngestionError("TOMBSTONED")) == "TOMBSTONED"
+    assert module.closed_error(SimpleNamespace(code={"PRIVATE_PROVIDER_BODY": 1})) == "REFUSED"

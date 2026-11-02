@@ -24,6 +24,7 @@ from rag_platform.embeddings.runtime import Runtime
 from rag_platform.embeddings.space_ddl import vector_table
 from rag_platform.embeddings.worker import Worker
 from rag_platform.identity_api import private_file
+from rag_platform.ingestion import journal
 from rag_platform.ingestion.claims import ClaimExpired, locked_claim
 from rag_platform.providers.secrets import Credential
 from rag_platform.provisioning.postgres import Target
@@ -44,7 +45,7 @@ def records():
     manifest = json.loads(private_file("/run/f04-qa/manifest.json", 512 * 1024))
     actors = {key: UUID(value) for key, value in manifest["actors"].items()}
     scope = json.loads(Path("/app/ops/f03/application-scope.json").read_text())["fixtures"]
-    return actors["alice"], selection(manifest, actors, scope, case="positive")
+    return actors["alice"], selection(manifest, actors, scope, case="positive-txt")
 
 
 @contextmanager
@@ -205,7 +206,9 @@ def prepare(runtime, provider, actor, selected):
     budget = []
     for record in selected:
         PHASE = "PREPARE/" + record["name"] + "/TOKEN_GATE"
-        with connect(runtime, actor, record) as c:
+        with connect(runtime, actor, record, write=True) as c:
+            # Reject historical tombstones before reading or tokenizing their chunks.
+            journal.require(c, actor, UUID(record["repository"]), UUID(record["document"]))
             rows = (
                 c.execute(
                     sa.select(processing.chunks.c.text)
@@ -241,6 +244,7 @@ def prepare(runtime, provider, actor, selected):
     # Check all four budgets before creating any new intent.
     f05_adopt.save("selection.json", dict(records=selected, budget=budget))
     for record in selected:
+        PHASE = "PREPARE/" + record["name"] + "/REQUEST"
         with connect(runtime, actor, record, write=True) as c:
             processing.request(
                 c,
@@ -377,6 +381,27 @@ def run(mode, name):
         engine.dispose()
 
 
+def closed_error(error):
+    allowed = {
+        "INPUT_INVALID",
+        "STATE_CONFLICT",
+        "PROFILE_MISMATCH",
+        "QUOTA_EXCEEDED",
+        "AUTHORIZATION_CHANGED",
+        "TOMBSTONED",
+        "NOT_FOUND",
+        "ROLE_DENIED",
+        "DEPENDENCY_UNAVAILABLE",
+        "INPUT_TOO_LONG",
+        "LIMIT_EXCEEDED",
+    }
+    code = getattr(error, "code", None)
+    if isinstance(code, str) and code in allowed:
+        return code
+    state = getattr(getattr(error, "orig", error), "sqlstate", None)
+    return state if isinstance(state, str) and re.fullmatch("[A-Z0-9]{5}", state) else "REFUSED"
+
+
 if __name__ == "__main__":
     logging.disable(logging.CRITICAL)
     parser = argparse.ArgumentParser()
@@ -386,7 +411,6 @@ if __name__ == "__main__":
     try:
         run(args.mode, args.name)
     except Exception as error:
-        state = getattr(getattr(error, "orig", error), "sqlstate", None)
-        code = state if isinstance(state, str) and re.fullmatch("[A-Z0-9]{5}", state) else "REFUSED"
+        code = closed_error(error)
         print("F05 RECOVERY " + PHASE + " " + code + "; resources retained.")
         raise SystemExit(1) from None
