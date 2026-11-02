@@ -23,9 +23,10 @@ Cada tarea conserva evidencia y PR propio cuando el alcance lo requiera.
   R01..06; AC01..05. PR39..42, 675 tests; worker/S3/parser reales cuatro fixtures,
   crash/retry sin duplicados, A→B→A, SIGTERM/baja/ACL/membresía en ambas topologías,
   logs con controles positivos/canary ausente y temporales limpios. Ver evidencia.
-- [ ] T006 — API F04 de versiones/jobs y tombstone, operación limitada, manual y
+- [x] T006 — API F04 de versiones/jobs y tombstone, operación limitada, manual y
   errores/cursores sin contenido sensible en control/logs.
-  R01/R04/R05/R06; AC-01/03/04. Negativas HTTP/ACL, revocación y parada/reinicio.
+  R01/R04/R05/R06; AC-01/03/04. PR43:702 tests y HTTPS/SQL cuatro fixtures,
+  readonly/ACL/cursor/cruces/jobs/bajas y rollback/recuperación reales correctos.
 - [ ] T007 — Batería real ambas topologías y regresiones F00..F03; evidencia de todos
   los AC, logs/temporales/permisos, CI/revisión/merge/postmerge.
   R01..06; AC-01..05. No declarar cierre por tests offline ni marcar PUBLISHED

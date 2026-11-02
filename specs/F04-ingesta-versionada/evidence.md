@@ -572,3 +572,27 @@ objeto retenido. Tras caducidad real del lease, recuperación confirma mismo ori
 dos versiones/una intención; replay no duplica. Esto prueba rollback SQL real y
 recuperación hacia adelante, no backup/restore ni atomicidad entre bases.
 Worker/verify final aún pendientes; no declarar T006 aceptada por este seed.
+
+## T006 — resultado final real
+
+Head16005a4a6513d875a2884e691ae6ef9763e6c8f8, cuatro checks correctos,
+revisión delegada y helper de imagen con hash exacto antes de verify.
+Worker normal t006 procesó los veinte envelopes del run a75adb4c:12NONE/READY,
+4NEEDS_OCR y4TOMBSTONED, cuatro RO y canario ausente; parada limpia exit0.
+No resultado PUBLISHED ni cambios de current_version_id: los veinte siguen apuntando
+al ORIGINAL y conservan exactamente ORIGINAL+PROCESSED.
+
+Verify HTTPS/SQL pasó SAME_A/SAME_B/TWO_A/TWO_B: owner/editor/reader ven metadata
+de versiones/jobs propios; reader conserva readonly sin ops. Dave403, sin JWT401,
+job/doc de otro tenant404, query desconocida/cursor adulterado o de otro actor/doc422.
+Paginación de dos páginas sin repetición, estado real y vínculo job/version/procedencia
+correctos. NEEDS_OCR sin chunks; cuatro bajas previas tienen envelope FAILED/TOMBSTONED.
+ACL de Bob retirada para probar negativas y restaurada en finally.
+Baja repetida de resultado completo: versiones/job404, chunks/historial retenidos y
+un solo evento DOCUMENT_TOMBSTONED. Checkpoints predelete/verified retenidos.
+A→B→A HTTP pasó en misma instancia y dos instancias, metadata propia.
+
+702 tests y controles estáticos ya correctos; no hubo cambio de runtime después de
+la revisión inicial, solo dos asserts QA y evidencia. Aceptación técnica T006 en PR43;
+registrar CI/revisión del head final e integración/postmerge antes de T007/cierre F04.
+F04 sigue abierta por regresiones y aceptación T007. Sin backup/restore acreditado.
