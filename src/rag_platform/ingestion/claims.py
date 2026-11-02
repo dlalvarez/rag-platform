@@ -20,6 +20,7 @@ class CommitGuard:
     claim: Claim
     connection: object = field(repr=False)
     intent_id: object = field(repr=False)
+    max_attempts: int
     active: bool = True
 
     def __repr__(self):
@@ -69,7 +70,10 @@ def locked_claim(queue, claim):
         intent_id = c.scalar(sa.select(jobs.c.idempotency_id).where(queue._fence(claim, _now(c))))
         if intent_id is None:
             raise ClaimExpired()
-        guard = CommitGuard(queue, claim, c, intent_id)
+        max_attempts = c.scalar(sa.select(jobs.c.max_attempts).where(queue._fence(claim, _now(c))))
+        if max_attempts is None:
+            raise ClaimExpired()
+        guard = CommitGuard(queue, claim, c, intent_id, max_attempts)
         try:
             guard.check()  # Recheck the database clock after acquiring the lock.
             yield guard

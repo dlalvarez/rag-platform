@@ -74,3 +74,25 @@ y prueba resultado/rollback, lease, dos procesos y locks administrativos.
 No realiza extracción S3 ni commit tenant persistente: conserva datos, roles y head.
 Envelopes sintéticos de QA retenidos en f04_intent_probe_0001.
 No confundir estas pruebas con un worker de aplicación aceptado.
+
+## Runtime de worker, pendiente de adopción
+
+[Contrato de runtime y puertas pendientes](../../specs/F04-ingesta-versionada/runtime.md).
+worker.compose.yaml separa worker (cuatro RO, sin día/admin) y worker-issue (emisor).
+No lanzar worker contra head F03; preflight rechaza versiones incompatibles.
+
+    python3 scripts/f04_runtime_host.py prepare --f02-env /home/diego/proyectos/rag-platform/.env.f02
+    python3 scripts/f04_runtime_host.py ensure --f02-env /home/diego/proyectos/rag-platform/.env.f02
+
+El emisor usa el día vigente sin contraseña y entrega solo AppRole limitado ya aprobado.
+replace se usa tras revocación o cierre/reinicio del consumidor, no renueva el día.
+La entrega del worker es distinta de la API; el consumer.lock no se comparte.
+
+api-compat.compose.yaml selecciona perfil F04 explícito, manteniendo rutas F03.
+Combinar con ops/f02/compose.yaml + ops/f03/handoff.compose.yaml y sus envfiles.
+Construir imagen no cambia servicios. La adopción y promoción coordinada se documentan
+y prueban en la entrega operativa; no promover por pasar tests con dobles.
+
+Worker: un job, lease 180 s, pool de un socket por engine/cuatro engines, rootfs RO,
+tmpfs 64 MiB privado, 768 MiB RAM y 0.5 CPU. Stop deja de tomar jobs y confirma solo
+resultados íntegros con fencing; no borra recursos. No activar F05/embeddings.

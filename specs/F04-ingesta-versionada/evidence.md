@@ -324,3 +324,64 @@ logins reales/autoridad F04 en vivo, S3+parser, crash del proceso después de un
 tenant persistente y antes del ack, carreras HTTP, parada/reinicio completos,
 migración persistente y recuperación del catálogo. T002/T003/T005 siguen abiertas;
 no aceptar F04 ni anticipar F05 por estas pruebas.
+
+## T005 fencing integrado — PR #40
+
+Head 4b36706abdce2ffdb5a1d4175e297d20dd424d4b, merge
+3ec113a6a60ee3c20bdb178c6ba8f93e949f96c7. Cuatro checks de head y tres del merge,
+revisión delegada del mismo agente, ambos checkouts limpios y docs válidas.
+25 tests postmerge de guard/journal y dieciséis hashes de imagen correctos.
+[Postmerge](https://github.com/dlalvarez/rag-platform/pull/40#issuecomment-6569726151).
+
+## T005 runtime limitado preparado, todavía sin activación
+
+Contrato [runtime.md](runtime.md) previo al código; alcance R01..06/AC01..05.
+worker.py implementa relay y consumo secuencial con autorización original antes de
+I/O, descarga verificada, parser aislado y contexto nuevo antes del commit protegido.
+Reconcilia resultado READY ya confirmado mediante metadata/IDs, sin volver a leer
+contenido. Caducidad/parada/revocación no generan fallback administrativo.
+Dependencia temporal se reintenta; parser inválido/NEEDS_OCR permanece cerrado.
+Si no es posible escribir diagnóstico tenant tras revocación, el envelope terminal
+inspeccionable conserva el resultado operacional; no forzar acceso privilegiado.
+
+Runtime con AppRole F03 ya existente, entrega propia rag-f04-worker y cuatro tenants
+explícitos. Un socket por engine, hasta cuatro engines; registry/destino por catálogo.
+Worker recibe solo control app, clave de autoridad, CA y entrega limitada, todos RO.
+Emisor separado con día vigente publica una identidad de aplicación de una hora;
+el worker no renueva ni recibe el día. Sin root/roles nuevos/contraseñas nuevas.
+Imagen runtime no contiene scripts administrativos ni archivos de migración.
+
+La API puede seleccionar explícitamente el perfil ingestion para adoptar el head F04
+sin relajar el rechazo de heads desconocidos. RAG_F04_ENABLED requiere F03_ENABLED;
+default F02/F03 intacto y mismas rutas F03. El perfil no habilita endpoints T006.
+Helper DocumentStateService prepara baja lógica con permisos manage y auditoría,
+sin eliminar objetos/versiones/chunks; su carrera real se prueba en la entrega operativa.
+
+Pruebas ejecutadas solo en ragdev01:
+
+- 675 tests correctos (656 anteriores +19), lint/formato/docs/diff. Treinta tests
+  focalizados de runtime/guard correctos. Advertencia Starlette/httpx ya conocida.
+- Fixtures offline: scope fijo/duplicados/malformación, expansión del pool rechazada,
+  un socket sin overflow, stop antes del claim, autoridad revocada/suspendida sin I/O,
+  dependencia de catálogo en RETRY, reconciliación solo por outcome y spool cerrado
+  ante fallo de parser o excepción privada. Son dobles para la orquestación: no
+  acreditan integración S3/runtime/worker.
+- Worker/emisor/API compatible construidos sin sustituir servicios. Composición
+  worker: cuatro RO, non-root, cap_drop ALL, sin puertos/privileged/día/admin.
+  Emisor separado: solo tres montajes de día/entrega/CA.
+- Las tres imágenes rag-f04-worker:t005, rag-f04-api:t005 y
+  rag-f04-tools:t005-runtime contienen exactamente los 66 módulos Python de
+  fuentes actuales, comprobados tanto en src como en el paquete instalado ejecutado.
+  Worker con manifiesto correcto; imágenes API/worker sin scripts/admin/migraciones.
+
+Pendientes antes de aceptar T005: adopción persistente y rollback/recovery real del
+catálogo, autoridad/logins F04 en vivo, S3+parser completo, crash tras commit persistente
+antes del ack, revocación/baja/parada reales y regresiones. Preparación operativa en
+PR separado para mantener revisión acotada. API actual F03 y recursos intactos;
+no hay worker/esquema F04 activados ni aceptación de fase o avance a F05.
+
+Revalidación SQL adicional con rag-f04-tools:t005-runtime (paquete instalado actual):
+toda la batería de esquema/journal/fencing pasó otra vez en las cuatro fixtures,
+incluidos dos procesos/locks administrativos, rollback de chunks, parada y baja.
+Logs con controles positivos/ERROR y canary ausente en ambas instancias. Sin activar
+esquemas/perfiles/worker F04; esta prueba no sustituye la integración S3 pendiente.

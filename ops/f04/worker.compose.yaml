@@ -1,0 +1,74 @@
+services:
+  worker-issue:
+    profiles: [admin]
+    image: rag-f04-tools:t005-runtime
+    build:
+      context: ../..
+      dockerfile: ops/f04/tools.Dockerfile
+    user: "${RAG_F02_UID:?Prepare F02}:${RAG_F02_GID:?Prepare F02}"
+    entrypoint: [python, scripts/f04_application_issue.py]
+    volumes:
+      - type: bind
+        source: /run/user/${RAG_F02_UID:?Prepare F02}/rag-f01-access
+        target: /run/f01-access
+        bind: {create_host_path: false}
+      - type: bind
+        source: /run/user/${RAG_F02_UID:?Prepare F02}/rag-f04-worker
+        target: /run/f04-worker
+        bind: {create_host_path: false}
+      - type: bind
+        source: /srv/rag-data/rag-platform/f01/tls/ca.crt
+        target: /run/f01-ca.crt
+        read_only: true
+        bind: {create_host_path: false}
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=8m"]
+    networks: [control]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    cpus: 0.5
+    mem_limit: 768m
+    memswap_limit: 768m
+    ulimits: {core: {soft: 0, hard: 0}}
+  worker:
+    profiles: [ingestion]
+    image: rag-f04-worker:t005
+    build:
+      context: ../..
+      dockerfile: ops/f04/worker.Dockerfile
+    user: "${RAG_F02_UID:?Prepare F02}:${RAG_F02_GID:?Prepare F02}"
+    volumes:
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/secrets/identity_app_password
+        target: /run/secrets/identity_app_password
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/secrets/api_authority_key
+        target: /run/secrets/api_authority_key
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /srv/rag-data/rag-platform/f01/tls/ca.crt
+        target: /run/f01-ca.crt
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /run/user/${RAG_F02_UID:?Prepare F02}/rag-f04-worker
+        target: /run/f04-worker
+        read_only: true
+        bind: {create_host_path: false}
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m,mode=700,uid=${RAG_F02_UID:?Prepare F02},gid=${RAG_F02_GID:?Prepare F02}
+    networks: [control]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    cpus: 0.5
+    mem_limit: 768m
+    memswap_limit: 768m
+    stop_grace_period: 70s
+    ulimits: {core: {soft: 0, hard: 0}}
+    logging:
+      driver: json-file
+      options: {max-size: 5m, max-file: '2'}

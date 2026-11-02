@@ -124,16 +124,16 @@ class OriginalResponse(StreamingResponse):
 
 
 class Runtime:
-    def __init__(self, engine, key, path, endpoint, ca):
+    def __init__(self, engine, key, path, endpoint, ca, *, profile="documents"):
         self.store, self.registry = None, None
         try:
             self.store = FileApplicationStore(path, endpoint, ca)
-            self.authority = TenantAuthorizer(engine, key, profile="documents")
+            self.authority = TenantAuthorizer(engine, key, profile=profile)
             self.registry = ConnectionRegistry(
-                CatalogResolver(engine, profile="documents"), self.store, ca
+                CatalogResolver(engine, profile=profile), self.store, ca
             )
             connections = AuthorizedConnections(self.authority, self.registry)
-            self.repositories = RepositoryService(connections, engine, key)
+            self.repositories = RepositoryService(connections, engine, key, profile=profile)
             self.gateway = ObjectGateway(self.repositories, self.store, ca)
             self.receipts = ReceiptService(self.repositories, self.gateway)
             self.documents = DocumentService(self.repositories, self.gateway)
@@ -313,12 +313,19 @@ def install(app, runtime):
             raise
 
 
-def configure(app, engine, key):
+def configure(app, engine, key, *, profile="documents"):
     runtime = Runtime(
-        engine, key, Path("/run/f03-application"), "https://openbao:8200", Path("/run/f01-ca.crt")
+        engine,
+        key,
+        Path("/run/f03-application"),
+        "https://openbao:8200",
+        Path("/run/f01-ca.crt"),
+        profile=profile,
     )
     try:
         install(app, runtime)
+        if profile == "ingestion":
+            app.state.phase = "F04"
         app.state.resource_closers.append(runtime.close)
     except BaseException:
         runtime.close()

@@ -30,7 +30,8 @@ Cada tarea conserva evidencia y PR propio cuando el alcance lo requiera.
   R01..06; AC-01..05. Componente de intención/relay probado: 14 tests nuevos y
   cuatro fixtures SQL; ack perdido recupera un job. Worker, autorización global,
   fencing SQL probado en ambas instancias/dos procesos, 656 tests y rollback íntegro.
-  Runtime/S3/crash tras commit persistente y parada completa pendientes.
+  Runtime limitado preparado: 675 tests y tres imágenes con 66 módulos exactos;
+  activación/S3/crash tras commit persistente y parada completa pendientes.
   Ver worker.md; T005 sigue abierta.
 - [ ] T006 — API F04 de versiones/jobs y tombstone, operación limitada, manual y
   errores/cursores sin contenido sensible en control/logs.
