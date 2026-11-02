@@ -140,3 +140,13 @@ HTTP/ACL/readonly/cursor/cruces/jobs y bajas repetidas, recursos/chunks conserva
 Checkpoints privados predelete/verified permiten reanudar verificación; no omitir pruebas
 por editar sus archivos. No ejecutar seed dos veces en el mismo run ni borrar fixtures.
 No declarar aceptación por construir imágenes; registrar resultados reales/CI/postmerge.
+
+## Aceptación T007
+
+[Contrato y matriz](../../specs/F04-ingesta-versionada/acceptance.md).
+regression.compose.yaml define f04-regression-check con tools:t007 y perfil limitado.
+Reutiliza manifest T006, sin seed ni borrar recursos; necesita API activa/ensure y
+entrega worker reemplazada después del cierre previo. Probe SQL de privacidad hace
+LOG fijo y error controlado con savepoint; analizar logs solo en VM y publicar PASS.
+f04_f00_check.py se monta RO en smoke F00 con modo seed/verify y UUID nuevo; conserva
+SQL/S3 sintéticos. No ejecutar smoke clean ni borrar volúmenes, fixtures o checkpoints.
