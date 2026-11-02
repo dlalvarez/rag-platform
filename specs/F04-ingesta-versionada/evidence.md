@@ -444,3 +444,43 @@ Controlador f04_worker_check.py y overlay RO preparados para pruebas reales con 
 imagen worker, sin día/admin/migrator/OIDC passwords. Modos positivos/replay,
 solicitud explícita, parser cerrado, dependencia, crash/ack y pausa para cambios de
 autorización/parada. Todavía no se atribuyen estos resultados como ejecutados.
+
+## Worker real — positivos y fallos, run 15bbc3e9-06dd-4cdb-ad15-1c9ab055d8d3
+
+Seed corregido desde df2df77a83ce57deb19917892dad7a2f17fbe9df con CI/revisión:
+52 originales HTTPS nuevos en cuatro repos propios, replay sin duplicados y 16
+intenciones positivas explícitas. Manifest/journal retenidos; primer run fallido
+cfe3... conservado sin recursos. Identidad del seed revocada al cerrar y reemplazada
+antes del consumidor siguiente. Sin contraseñas ni renovación del día.
+
+Worker real rag-f04-worker:t005, paquete de 66 módulos exactos. Inspección real de
+contenedor: non-root/rootfs RO, seis montajes RO (cuatro runtime + script/manifest),
+sin día/admin/migrator/OIDC passwords. En SAME_A/SAME_B/TWO_A/TWO_B pasaron S3 y
+PDF/DOCX/MD/TXT: hash/tamaño del original retenidos, normalized_hash/config,
+bloques/chunks/offsets/páginas/secciones, rol/destino/TLS propios y replay sin nueva
+versión/envelope/chunks. Hasta cuatro engines y cero préstamos pendientes.
+Dieciséis resultados READY_FOR_EMBEDDING, no PUBLISHED.
+[Registro](https://github.com/dlalvarez/rag-platform/pull/42#issuecomment-6571654156).
+
+Negativos reales en same-a (instancia compartida) y two-b (segunda instancia):
+scan -> NEEDS_OCR; PDF con fallo después de página válida -> FAILED_TERMINAL/
+PARSER_INVALID; cifrado -> FAILED_TERMINAL/PARSER_ENCRYPTED. Todos sin chunks;
+originales retenidos. No se simula OCR ni se inventa texto.
+
+Crash real en ambas topologías: os._exit(85) en RESULT_COMMITTED, después del commit
+tenant y antes del ack control. Nuevo proceso observa resultado íntegro persistente,
+espera caducidad real y recupera el mismo envelope con intento 2; extractor configurado
+para fallar si se invocara de nuevo, no se llamó. Chunks/conteos/versiones sin duplicar.
+Tras el crash se reutilizó la identidad de aplicación aún válida (ensure); su cierre
+normal posterior la revocó, evitando dejar una copia activa perdida.
+
+Dependencia de etapa inyectada tras descargar original, en ambas topologías:
+FAILED_RETRYABLE + RETRY, cero chunks; backoff real y segundo intento con extractor
+real recuperan la misma versión/job/original, sin rotación ni duplicados.
+
+Aún pendientes: secuencia A→B→A explícita, SIGTERM/parada y bajas/revocaciones durante
+PARSED, logs/canary/temporales finales y revisión/CI/postmerge. Controladores adicionales
+de operador restringen tenant, repo/run, owner y usuarios sintéticos antes de cambiar
+ACL/membresía o tombstone; no son el worker y no reciben bootstrap/migrator/S3 admin.
+Regresión de preparación: 675 tests correctos y ruff/formato/docs/diff.
+F04/T005 siguen abiertas hasta completar esas puertas y T006/T007.

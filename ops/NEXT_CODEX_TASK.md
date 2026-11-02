@@ -27,21 +27,35 @@ tmpfs /run/f02-auth ausente. Directorio conservado con solo started.json en
 No reutilizarlo ni borrarlo: seed crea started.json exclusivo. Corrección tmpfs 1MiB
 0700 + cleanup ya implementada; smoke del helper OIDC real pasó en imagen reconstruida.
 
-PR42 siguiente commit incluye ese arreglo, controlador scripts/f04_worker_check.py y
-ops/f04/worker-check.compose.yaml. Cerrar CI/revisión/head/hashes y crear run QA nuevo
-0700 fuera del repo con envfile solo RAG_F04_QA_ROOT. Reutilizar/emitir entrega del
-worker con f04_runtime_host.py ensure desde día vigente; no pedir contraseñas.
-Ejecutar seed-f04: nuevos originales HTTPS/replay/intenciones positivas explícitas.
-Al terminar Runtime.close revoca esa identidad: replace ANTES del siguiente consumidor.
+Run ACTUAL correcto: 15bbc3e9-06dd-4cdb-ad15-1c9ab055d8d3, directorio
+/home/diego/proyectos/rag-platform-f04-worker-runs/15bbc3e906dd4cdbad151c9ab055d8d3
+y envfile /tmp/f04-worker-qa-15bbc3e906dd4cdbad151c9ab055d8d3.env.
+Seed HTTPS/replay pasó: 52 originales, 16 intenciones positivas, manifest privado.
+Worker real pasó los 16 positivos/4formatos/4fixtures: procedencia/hash/offsets/páginas/
+TLS/rol/destino/replay correctos. Seis RO reales, sin día/admin/migrator/OIDC passwords.
+Scan/malformado/cifrado en same-a/two-b quedaron terminales sin chunks.
+Crash real os._exit85 después del commit tenant antes del ack, y recuperación con
+intento2 SIN reparse/duplicados, pasaron en ambas topologías. Dependencia/retry también.
+No repetir esos casos ya terminales ni reseed. Originales/resultados conservados.
 
-Después QA overlay: misma imagen rag-f04-worker:t005 y cuatro montajes limitados,
-más script/manifiesto RO; sin día/admin/migrator/OIDC passwords. Modos positive,
-request/process, crash/resume, dependency, pause-stop/tombstone/acl/membership.
-Completar acciones externas controladas para las pausas; conservar todos los recursos.
-Probar S3/parser/offsets/páginas/hash, replay, NEEDS_OCR/cifrado/fallo en segunda página,
-crash tras commit antes de ack, retry/parada/revocación/baja, A→B→A y logs/temporales.
-Evidencia real y CI/revisión final/merge/postmerge antes de aceptar T002/T003/T005.
-No aceptar F04 ni avanzar F05 antes de T006/T007. No terminar por PR/hito.
+Primera actividad: publicar/CI/revisar cambios de controlador A→B→A/config y operador
+scripts/f04_worker_actions.py + actions.compose.yaml + perfil opcional en f03_testing.py.
+675 tests y build/config del operador correctos. Luego ejecutar modo sequence y
+pausas stop/tombstone/acl/membership en same-a/two-b. El operador separado valida
+repo/run/owner/actores; el worker permanece sin día/admin. Restaurar ACL y membresía
+siempre. Para pause-stop enviar SIGTERM al QA propio; para otras pausas aplicar
+acción y enviar SIGUSR1 al contenedor QA propio para continuar.
+No editar el script QA mientras haya un contenedor usándolo como bind RO.
+
+Cada consumidor normal cierra y revoca su app token: f04_runtime_host.py replace
+ANTES del siguiente. Tras crash, usar ensure para reutilizar token aún activo y
+revocarlo al cerrar recuperación. Todo desde día vigente, sin password por prueba.
+API puede requerir ensure de su entrega al pasar una hora, sin reinicio ni día nuevo.
+
+Completar canary/logs/temporales/capacidad/fingerprints y controles finales; CI/revisión/
+merge/postmerge del PR42 antes de aceptar T002/T003/T005 y continuar T006.
+El PR42 permanece borrador. No cerrar F04 hasta T006/T007 ni anticipar F05.
+Continuar sin pausas de trámite, guardar evidencia real, no declarar éxito por mocks.
 
 ## Límites, fuentes y acceso
 

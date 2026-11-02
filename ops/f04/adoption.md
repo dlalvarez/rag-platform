@@ -66,3 +66,17 @@ duplicados, NEEDS_OCR/cifrado/fallo parcial, crash real después del commit ante
 dependencia/reintento, parada/reinicio, baja/ACL/membresía durante procesamiento,
 A→B→A y logs/temporales/permisos. Los controladores y sus resultados pasan por el PR.
 No marcar T002/T003/T005 ni F04 completas por instalar imágenes o por checks offline.
+
+## Pausas y acciones del operador
+
+worker-check.compose.yaml ejecuta la imagen real con solo dos archivos QA RO extra.
+El controlador pausa en PARSED o sale con código85 en RESULT_COMMITTED para comprobar
+el commit real antes del ack. La recuperación reutiliza la identidad válida tras
+crash; un cierre normal sí requiere replace.
+
+actions.compose.yaml es un operador separado: usuarios OIDC/control RBAC y día solo
+para emitir la identidad limitada de la baja. No montar ese perfil en worker.
+Comprueba tenant fijo, nombre del repo/run, owner y actores antes de ACL/membresía/
+tombstone. Restaurar ACL y membresía tras la prueba incluso si falla; nunca resucitar
+ni purgar el documento con tombstone. SIGUSR1 libera solo el proceso QA propio;
+SIGTERM comprueba la parada del worker, sin tocar servicios de datos.

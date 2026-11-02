@@ -31,9 +31,13 @@ PHASE = "START"
 STOP, RELEASE = Event(), Event()
 
 
+def configuration(item):
+    return ChunkConfig(*item.get("configuration", (1024, 128)))
+
+
 def version(item):
     return uuid5(
-        UUID(item["original"]), "F04/processing/v1:" + ChunkConfig().fingerprint(item["mime"])
+        UUID(item["original"]), "F04/processing/v1:" + configuration(item).fingerprint(item["mime"])
     )
 
 
@@ -91,6 +95,9 @@ def verify(runtime, queue, fixture, item, *, ready=True):
     assert v["original_version_id"] == UUID(item["original"])
     assert v["content_hash"] == item["sha256"] and v["byte_size"] == item["byte_size"]
     assert v["blob_key"] is None and v["kind"] == "PROCESSED"
+    config = configuration(item)
+    assert (v["chunk_size"], v["chunk_overlap"]) == (config.size, config.overlap)
+    assert v["config_hash"] == config.fingerprint(item["mime"])
     if not ready:
         assert v["state"] != "READY_FOR_EMBEDDING" and count == 0
         return v, row, doc_state
@@ -177,7 +184,7 @@ def request(runtime, queue, fixture, item):
     ctx = runtime.authority.authorize(actor, tenant, trace)
     runtime.repositories.require(ctx, trace, repo, "upload")
     with runtime.repositories.connections.connection(ctx, trace) as c, c.begin():
-        plan = journal.request(c, actor, repo, doc, trace)
+        plan = journal.request(c, actor, repo, doc, trace, configuration(item))
         assert plan.version_id == version(item)
     identity = journal.enqueue(queue, tenant, plan)
     with runtime.repositories.connections.connection(ctx, trace) as c, c.begin():
@@ -220,6 +227,7 @@ def run():
         "mode",
         choices=[
             "positive",
+            "sequence",
             "request",
             "process",
             "crash",
@@ -257,6 +265,36 @@ def run():
         queue = DurableQueue(
             control, tenant_scope=runtime.scope, lease_seconds=10 if args.mode == "crash" else 180
         )
+        if args.mode == "sequence":
+            for labels in (("same-a", "same-b", "same-a"), ("two-a", "two-b", "two-a")):
+                selected = []
+                for label, size in zip(labels, (384, 512, 768), strict=True):
+                    fixture = next(f for f in MANIFEST["fixtures"] if f["name"] == label)
+                    original = next(i for i in fixture["documents"] if i["case"] == "positive-txt")
+                    item = dict(original, configuration=(size, 64))
+                    request(runtime, queue, fixture, item)
+                    selected.append((fixture, item))
+
+                class RecordedWorker(Worker):
+                    def __init__(self, *args, **kwargs):
+                        super().__init__(*args, **kwargs)
+                        self.observed = []
+
+                    def _stage(self, stage, claim):
+                        if stage == "STARTED":
+                            self.observed.append(claim.version_id)
+
+                worker = RecordedWorker(runtime, queue, stop=STOP)
+                for fixture, item in selected:
+                    wait_terminal(worker, queue, fixture, item)
+                    verify(runtime, queue, fixture, item)
+                assert worker.observed == [version(item) for _, item in selected]
+                print(
+                    "PASS T005 A_B_A: mismo proceso; rol/TLS/destino propios; historial retenido.",
+                    flush=True,
+                )
+            assert not worker.step() and runtime.registry.stats()["leases"] == 0
+            return
         if args.mode == "positive":
             worker = Worker(runtime, queue, stop=STOP)
             worker.relay()
