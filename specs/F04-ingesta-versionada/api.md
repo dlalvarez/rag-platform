@@ -48,7 +48,7 @@ dependencias reintentan con backoff/cota del worker; cambio de permisos no reint
 ## Baja documental
 
 DELETE /api/v1/tenants/{tenant_id}/documents/{doc_id}
-sin body ni parámetros; permiso delete existente del tenant y repo (owner/admin).
+sin body ni parámetros (cuerpo rechazado con413/422 según framing); permiso delete existente del tenant y repo (owner/admin).
 Baja lógica idempotente: state TOMBSTONED, actor/fecha y un evento local. Conservar
 originales, versiones/chunks e historial. Lock repo/documento serializa con commit worker.
 Respuesta request_id y document con document_id/state. Repetir devuelve mismo estado

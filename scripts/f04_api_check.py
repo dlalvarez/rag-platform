@@ -23,6 +23,7 @@ from rag_platform.documents.schema import document_receipts
 from rag_platform.documents.validation import UploadSpool
 from rag_platform.identity_api import private_file
 from rag_platform.ingestion.extraction import ChunkConfig
+from rag_platform.ingestion.queue_schema import jobs
 from rag_platform.ingestion.receipt import IngestionReceiptService
 from rag_platform.ingestion.runtime import Runtime
 from rag_platform.ingestion.schema import audit, chunks, documents, intents, versions
@@ -313,11 +314,24 @@ def verify(api, runtime, actors, manifest):
                     )
                     job_id = str(intent["job_id"])
                     assert UUID(job_id).int
+                    assert c.scalar(
+                        sa.select(documents.c.current_version_id).where(
+                            documents.c.id == UUID(item["document"])
+                        )
+                    ) == UUID(item["original"])
                 job_path = prefix + "/jobs/" + job_id
                 if item["case"] == "tombstone":
                     list_versions(api, "alice", fixture, item, expected=404)
                     api.json("alice", "GET", job_path, expected=404)
                     assert n == 0
+                    with runtime.repositories.control.connect() as control:
+                        terminal = control.execute(
+                            sa.select(jobs.c.status, jobs.c.error_code).where(
+                                jobs.c.id == UUID(job_id),
+                                jobs.c.tenant_id == UUID(fixture["tenant"]),
+                            )
+                        ).one()
+                        assert tuple(terminal) == ("FAILED", "TOMBSTONED")
                     with local(runtime, actors, fixture) as c:
                         assert (
                             c.scalar(

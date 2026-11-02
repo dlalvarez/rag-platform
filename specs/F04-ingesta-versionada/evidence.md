@@ -545,3 +545,30 @@ solo warning conocido Starlette/httpx. Sin nueva dependencia/migración/polític
 Imágenes T006 y batería real HTTP/rollback preparadas; no atribuir aún despliegue ni
 aceptación real T006. La batería conserva un run exclusivo y checkpoints antes/después
 de baja de resultados para poder recuperar un ensayo interrumpido sin repetir cambios.
+
+## T006 — activación e ingreso reales
+
+Desde PR43 head26b92958ae2288e0e74dfec5c048767d54611bf7, cuatro checks y
+revisión delegada previa: solo API promovida a rag-f04-api:t006, siete RO/usuario1000,
+TLS/health F04 y entrega limitada reemplazada después del cierre anterior.
+IDs PostgreSQL/MinIO/Bao/IdP iguales antes/después; sin reiniciar esos servicios.
+Historial T005 consultado por HTTPS con reader en cuatro fixtures, versiones/jobs
+correctos sin grants ops. Un primer smoke auxiliar no encontró sus módulos al invocarse
+con -c; se corrigió sys.path del lanzamiento. Consultas posteriores503 se resolvieron
+con ensure de la entrega app caducada (TTL una hora), sin password/renovar el día ni
+cambio de código/permisos. No atribuir a esos intentos un fallo de datos.
+
+Run nuevo a75adb4c-445c-46d6-98ab-c558a8308112 conservado, directorio privado
+/home/diego/proyectos/rag-platform-f04-api-runs/a75adb4c445c46d698abc558a8308112.
+Seed pasó en SAME_A/SAME_B/TWO_A/TWO_B: cuatro repos nuevos, veinte originales,
+recepción HTTPS/replay sin duplicados y candidato/intención automáticos. Alice/Bob/
+Carol consultan versiones (reader sin ops); Dave403/sin JWT401, originales exactos.
+Baja HTTP repetida antes de worker -> versiones/original404; editor/reader no pueden
+borrar. Manifest solo UUID/hash/tamaño/actor sintéticos, sin texto/credenciales.
+
+Por fixture, fallo inyectado después de INSERT candidato/intención dentro del commit:
+recepción conserva OBJECT_STORED pero documento/versiones/intención no existen,
+objeto retenido. Tras caducidad real del lease, recuperación confirma mismo original,
+dos versiones/una intención; replay no duplica. Esto prueba rollback SQL real y
+recuperación hacia adelante, no backup/restore ni atomicidad entre bases.
+Worker/verify final aún pendientes; no declarar T006 aceptada por este seed.
