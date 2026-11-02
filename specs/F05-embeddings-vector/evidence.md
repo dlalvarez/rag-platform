@@ -301,3 +301,18 @@ existente verificada con --pull never y sin dependencias. Orphan F04 se conserva
 No credencial nueva, servicio reiniciado, inferencia ni migración persistente.
 PR58 integrado con cuatro checks previos/tres postmerge success; PR59 contrato aprobado
 integrado con cuatro checks previos, postmerge pendiente al registrar esta evidencia.
+
+## T007 parcial — runtime de publicación preparado
+Imágenes API/INGEST/tools t006 construidas en ragdev01 con Dockerfiles/lock existentes.
+Smoke sin red/credenciales: importación y SHA de90 módulos igual al código probado
+en cada imagen; ninguna contiene Torch. Wrapper QA final importado sin ejecutar la
+batería; sus hashes y el controlador coinciden con las fuentes (dos scripts).
+Overlay opt-in fija tenant0006 para API/INGEST; regresión reutilizada con perfil
+embedding_publication. Composición conjunta validada con variables F02/F03 necesarias,
+sin iniciar servicios. Primera validación omitió RAG_F03_UID/GID y fue rechazada antes
+de ejecutar; corregida. Ruff/formato/docs/diff correctos.
+
+No cambia src ni dependencias. Baseline925tests del controlador correcto; la batería
+HTTP/SQL/S3 de este perfil no ejecutada hasta adoptar. No servicio nuevo, entrega
+emitida ni DDL persistente. PR60 integrado a6c2c56, cuatro checks previos success;
+postmerge todavía en curso al registrar. PR59 postmerge tres checks success.

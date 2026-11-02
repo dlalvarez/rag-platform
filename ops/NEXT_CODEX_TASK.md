@@ -1,19 +1,19 @@
 # Continuidad F05 — controlador de publicación en revisión
 
-Develop 2d15baf (PR59). PR58 8f8f113: cuatro checks previos y tres postmerge success.
+Develop a6c2c56 (PR60). PR58 8f8f113: cuatro checks previos y tres postmerge success.
 PR59 registra la aprobación expresa de Diego de búsqueda HTTP de fragmentos en F05;
-cuatro checks previos success, comprobar tres postmerge. No requiere otra decisión
+cuatro checks previos y tres postmerge success. No requiere otra decisión
 sobre assistant_id/generación: request repository_ids/space_id/query/top_k y hits con
 procedencia, similitud y uso embeddings, conforme a docs07. La ruta sigue sin habilitar.
 
-Rama actual feat/F05-T005-publication-adoption-review en worktree f03-schema.
+Rama actual feat/F05-T007-publication-runtime-review en worktree f03-schema.
 Controlador/composición/manual preparados. 925 tests (63.44s), 18 focalizados,
 ruff/formato y dos preflights reales en cuatro fixtures/dos instancias correctos.
 Journal nuevo privado fuera del repo:
  /home/diego/proyectos/rag-platform-f05-publication-adoption-runs/8d87357ea8c24100a1f25b6a14959751
 Conservar también journal anterior 8f9a197defd04a3baacde6bac5a56886.
 Preflight no ejecuta DDL; adopt completo aún no ejecutado. Cerrar revisión propia,
-CI del HEAD exacto, merge y postmerge antes de usar la ventana de cambio.
+CI del HEAD exacto, merge y postmerge antes de usar la ventana de cambio. PR60 integrado, comprobar postmerge.
 
 Persistente: control f04_control_0006; cuatro tenants f05_tenant_0004 con único espacio
 Qwen vacío. API F05t003 activa; worker F04 detenido y conservado. Ningún servicio
@@ -21,8 +21,11 @@ recreado ni entrega nueva emitida. Sesión diaria ACTIVE verificada el 2026-11-0
 vence 2026-11-03T07:14:15-05:00; comprobar estado/hora antes de usar, no renovar.
 No root, configure, reinicios Bao, nuevas políticas, purgas, main/tags/producción.
 
-Próximo paso: imágenes compatibles API/INGEST desde código revisado, hashes/smoke,
-overlays opt-in publicación y QA de regresión del perfil embedding_publication.
+Imágenes API/INGEST/tools t006 construidas; smoke sin red/credenciales90módulos
+iguales al código probado, sin Torch; dos scripts QA/controlador hash correctos.
+Overlay publicación y wrapper de regresión exacta preparados/config validados.
+Próximo: revisión/CI/merge/postmerge de esta configuración, luego ventana controlada.
+Ver publication-runtime.md. Todavía no se ha ejecutado regresión HTTP/SQL/S3.
 EMBED rag-f05-embedding:t004 ya preparado, lock opcional separado y smoke90 módulos,
 sin inferencia del modelo. Ver embedding-operations.md y publication-adoption.md.
 Con CI/revisión y preflight, ventana limitada: cierre de consumidores/conexiones/locks,
