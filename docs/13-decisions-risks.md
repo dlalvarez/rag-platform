@@ -25,7 +25,7 @@
 | D-03 | OpenBao 2.7.2 dev aprobado/instalado, custodia gestor y copia fuera de línea confirmada por Diego; producción/HA sin decidir | Ratificar F01; custodiar antes de inicializar | Refs opacas, políticas, TLS y recuperación sin secretos en Git/control |
 | D-04 | Keycloak solo dev aprobado por Diego en PR #19/ADR-0009; producción sin decidir | F02 dev; producción antes de promover | Seguridad, operación, coste |
 | D-05 | pypdf/python-docx locales seleccionados dentro del adaptador previsto; [límites y alternativas](../specs/F04-ingesta-versionada/parsers.md) | F04, validar con corpus antes de cierre | Texto/tablas y resiliencia; sin OCR ni garantías de layout complejo |
-| D-06 | Modelo embedding inicial + dimensiones; [ADR0011 aprobado](adr/0011-development-embedding-profile.md), E5-small local dev384/coseno, gates pendientes | F05 | Evaluación español/inglés, coste y pgvector |
+| D-06 | Modelo embedding inicial + dimensiones; [ADR0011 aprobado](adr/0011-development-embedding-profile.md), Qwen3-Embedding-0.6B local dev384/coseno, gates pendientes | F05 | Evaluación español/inglés, coste y pgvector |
 | D-07 | Perfil LLM y política de retención chat | F07 | Privacidad, costo, groundedness |
 | D-08 | UI framework y diseño visual | F08 | Simplicidad y soporte |
 | D-09 | Adaptador Google Drive y permisos | F09 | Cambio/borrado seguro, cuotas |

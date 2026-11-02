@@ -24,3 +24,11 @@ PR45/ADR0011 de desarrollo, 384/coseno/512 y gates ES/EN/capacidad. Se registra 
 aprobación sin inferir resultados, producción o calidad ya medida. Ningún peso,
 modelo, dependencia de inferencia, índice o migración ejecutados por esta actualización.
 T002 independiente tiene 45 tests / 747 completos en el checkout, aún sin integrar.
+
+## Sustitución expresa por Qwen (2026-11-02)
+
+Diego pausó E5 antes del merge/descarga/migraciones y eligió «ok, adoptemos qwen».
+ADR0011 pasa a Qwen3-Embedding-0.6B/1024/coseno/L2, cota inicial 512/batch4, CPU local.
+Metadatos públicos verificados desde ragdev01: revisión97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3,
+Apache-2.0, hidden_size1024/max_positions32768, SHA256 de safetensors en ADR.
+No hay benchmark ni AC acreditados por la selección; sin cambio de vCPU/servicios/datos.

@@ -1,7 +1,7 @@
 # Continuidad F05 — D-06 APROBADO, registrar e implementar
 
-Diego respondió expresamente «Aprobar E5-small local (recomendado)» el 2026-11-02.
-No volver a preguntar modelo. ADR0011 actualizado para desarrollo384/coseno/512 y
+Diego respondió expresamente «ok, adoptemos qwen» el 2026-11-02.
+No volver a preguntar modelo. ADR0011 actualizado para Qwen3-Embedding-0.6B local 1024/coseno, cota operativa inicial512 y
 gates ES/EN/capacidad; no hay benchmark realizado. Completar CI/revisión/integración
 PR45 y postmerge. T002 independiente en feat/F05-T002-provider-contract conserva
 archivos nuevos de contracts/fixture/tests sin commit aún:45 tests / 747 completos.

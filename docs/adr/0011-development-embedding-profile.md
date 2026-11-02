@@ -1,80 +1,83 @@
 # ADR 0011 — Perfil inicial de embeddings de desarrollo (D-06 aprobada)
 
-**Estado:** APROBADO por Diego en conversación el 2026-11-02: «Aprobar E5-small local (recomendado)».
-Aprobación del perfil de desarrollo y sus gates; no acredita resultados aún no medidos.
-**Ámbito:** F05 original, desarrollo en ragdev01; no selecciona proveedor de producción.
-F05-R01 exige selección por ADR; P10/ADR0007 reservan arquitectura a Diego.
-La continuidad ADR0010 autoriza planificar la fase, no fingir esta decisión.
+**Estado:** APROBADO por Diego el 2026-11-02: «ok, adoptemos qwen».
+Sustituye la elección inicial de E5-small, pausada por Diego antes de fusionar PR45,
+descargar pesos o ejecutar migraciones. No se atribuye aprobación de benchmarks.
+**Ámbito:** F05 original, desarrollo local en ragdev01. Sin decisión de producción.
+F05-R01/P10/ADR0007 requieren esta decisión humana; ADR0010 mantiene continuidad.
 
-## Propuesta concreta
+## Perfil elegido
 
-Evaluar y adoptar como baseline de desarrollo intfloat/multilingual-e5-small,
-revisión 614241f622f53c4eeff9890bdc4f31cfecc418b3, embeddings de384 dimensiones,
-métrica coseno y normalización L2. Tokenizador/revisión, prefijos query: y passage:,
-límite512 tokens incluyendo prefijo/especiales y dtype se congelan en el space.
-No truncar silenciosamente: entrada excedida falla de forma cerrada; otra configuración
-de chunking crea otra versión sin sustituir original/chunks anteriores.
+Qwen/Qwen3-Embedding-0.6B, revisión
+97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3, 1024 dimensiones, coseno,
+normalización L2 y salida float32. Modelo local CPU; no enviar textos a terceros.
+Pesos públicos Apache-2.0; safetensors SHA256
+0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd.
+Congelar revisión del tokenizador y hashes de todos los artefactos en manifest.
 
-Modelo local en CPU, sin enviar textos a terceros ni contratar API. Artefacto público
-safetensors y tokenizer con revisión/hash verificados; no trust_remote_code, pickle
-o descargas durante inferencia. Pesos compartidos RO son públicos; contenidos/vectores
-y caches de usuario siguen aislados por tenant. Sin servicio/GPU/plataforma nuevos.
-Dependencias de inferencia se fijarán aparte, sin upgrades silenciosos del lock actual.
+Consulta con instrucción fija oficial:
+Instruct: Given a web search query, retrieve relevant passages that answer the query
+seguida de salto de línea y Query: y la consulta. Documento sin instrucción.
+Pooling del último token válido y L2 según implementación oficial; preservar EOS
+y padding correctos del tokenizador fijado. No copiar mean pooling/prefijos de E5.
 
-Es una propuesta por el presupuesto de la VM (2vCPU/16GiB), no un benchmark realizado
-ni una afirmación de calidad/latencia. Batch inicial acotado y un trabajo simultáneo;
-medir RSS/CPU/frío/caliente antes de aceptar. No cambiar producción por este ADR.
+Capacidad publicada: 32768 tokens. Límite operativo inicial: 512 tokens por entrada,
+incluyendo instrucción/especiales; batch máximo 4, un trabajo de inferencia simultáneo.
+Estas cotas permiten comparar coste en la VM; no cambian la capacidad del modelo.
+No truncar: exceso falla cerrado. Otra cota/instrucción/dimensión/precisión/revisión
+crea perfil y espacio nuevos, con evidencia; no sobrescribir embeddings previos.
+No reducir dimensiones ni cuantizar antes de medir la referencia float32 en CPU.
 
-## Alternativas para la decisión
+Artefactos compartidos públicos RO, descarga explícita verificada, sin pickle,
+trust_remote_code o red durante inferencia. Dependencias opcionales fijadas en entorno
+separado; no actualizar silenciosamente el lock o servicios F00..F04.
+Contenido, vectores y caches de usuario permanecen aislados por tenant.
 
-| Opción | Hecho verificable | Implicación a evaluar |
-|---|---|---|
-| E5-small local propuesto |384 dimensiones, límite512, MIT, multilingüe | baseline CPU pequeño; calidad español/inglés y latencia aún sin medir |
-| BAAI/bge-m3 local |1024 dimensiones, contexto8192, MIT, multilingüe | otra dimensión/espacio y evaluación de recursos; no activar sparse/ColBERT/F06 |
-| API externa configurable | proveedor separado del core según arquitectura | requiere decisión de salida de textos/coste/credencial y benchmark; no seleccionada |
+## Recursos y alternativas
 
-Ninguna alternativa está aprobada por esta tabla. No mezclar modelo/dimensión en un
-índice. Otro modelo/revisión/tokenizador/normalización crea space nuevo y reindexación,
-sin sobreescribir vectores incompatibles ni borrar el espacio anterior.
+ragdev01 tiene 2 vCPU/16 GiB. Diego permite considerar 4 vCPU si las mediciones
+demuestran necesidad y beneficio; no se ha cambiado VMM ni se promete duplicar capacidad.
+Mantener límites, medir RSS/frío/caliente/CPU y efecto sobre servicios/NAS.
+Más contexto aumenta coste y no implica mejor recuperación ni mejores citas.
 
-## Gate de evaluación después de la decisión
+E5-small (384/512/MIT) queda como referencia de eficiencia, no perfil activo.
+BGE-M3 (1024/8192/MIT) es otra alternativa no seleccionada.
+API comercial, nuevas GPU/servicios y selección de producción no están autorizados.
+Reconocimiento de marca o dimensiones no acreditan calidad.
 
-Corpus sintético ES/EN de temas SQL/PostgreSQL/RAG, con pares relevantes y negativos,
-mismas frases en tenants/repos autorizados y no autorizados. Congelar manifest/dataset
-antes de ejecutar; medir top-k exacto/ANN, recall por idioma, fallos/límites y recursos.
-Criterio inicial del fixture: recall@3 >=0.8 por idioma, cero cruces y dimensiones/
-valores finitos correctos. No confundir este umbral de desarrollo con evaluación F06
-ni SLA. Si falla calidad/capacidad, no publicar ni declarar MVP: documentar resultados
-y proponer alternativa bajo D-06. No inventar medidas ni elegir comercial sin benchmark.
+## Gates de evaluación
+
+Congelar corpus sintético ES/EN, gold y SHA antes de medir. Recall@3 >= 0.8 por
+idioma, salida finita/dimensión exacta, cero cruces tenant/repo. El fixture pequeño
+valida integración, no basta para calidad de dominio ni aceptación F06.
+Para comparar modelos usar primero los mismos fragmentos compatibles, después medir
+contexto distinto por separado. Documentar latencia p50/p95, indexación, RSS, frío,
+caliente y concurrencia limitada, sin inventar SLA ni resultados en nuestra VM.
+Si falla, conservar recursos/evidencia y plantear ajuste/alternativa antes de aceptar.
 
 ## Datos, publicación y reversión
 
-vector(384) e HNSW cosine en tabla tipada por space dentro de cada DB tenant,
-nombres solo de UUIDs/DDL confiable. El perfil queda inmutable; baseline exacto sirve
-para contrastar ANN y ACL. La reindexación nueva no interrumpe el espacio previo.
-Adaptador local y fake determinista de tests usan el mismo contrato de validación.
+vector(1024), HNSW/cosine por espacio en cada DB tenant. Nombres por UUID validado,
+DDL confiable y privilegios mínimos. Exacto como referencia ANN/ACL.
+Perfil inmutable; modelo nuevo necesita vectores/índice nuevos, conserva el anterior.
+Adaptador real y fake usan validación común; fake no acredita calidad semántica.
 
-F05 evoluciona explícitamente perfil/esquema desde F04. Conservar ancla original para
-upload/replay/download F03, mientras current_version_id se usa solo para resultado
-publicado completo. Publicación/bindings por versión+space transaccionales y con
-fencing, ACL/membresía/tombstone vigentes; ningún índice parcial es recuperable.
-No purge ni downgrade. Reversión operativa: no activar espacio nuevo; mantener anterior
-y toda evidencia/datos. Migraciones históricas F01..F04 no se reescriben.
+F05 evoluciona explícitamente esquema/perfil desde F04, sin modificar migraciones
+históricas. Conservar ancla original de upload/replay/download F03; pointer publicado
+solo a versión completa. Publicación por versión+space atómica, guards/fencing/ACL/
+membresía/tombstone vigentes, sin índice parcial recuperable ni ACID entre bases.
+Reversión operativa sin purge/downgrade: no activar espacio fallido, conservar datos.
 
-## Fuentes verificadas (2026-11-02)
+## Fuentes verificadas y decisión
 
-- [Ficha oficial E5-small](https://huggingface.co/intfloat/multilingual-e5-small):
-  dimensión, límite, prefijos y licencia. Su benchmark publicado no mide nuestro corpus.
-- [Config de revisión propuesta](https://huggingface.co/intfloat/multilingual-e5-small/blob/614241f622f53c4eeff9890bdc4f31cfecc418b3/config.json).
-  Metadatos públicos consultados desde ragdev01 confirman384/max_positions512/MIT y
-  model.safetensors disponible; no se descargaron pesos.
-- [Ficha oficial BGE-M3](https://huggingface.co/BAAI/bge-m3).
-- [pgvector0.8.7](https://github.com/pgvector/pgvector/blob/v0.8.7/README.md):
-  búsqueda exacta, vector tipado y HNSW/cosine; no actualizar la extensión de F00.
+- [Ficha oficial Qwen](https://huggingface.co/Qwen/Qwen3-Embedding-0.6B):
+  licencia, dimensión, contexto, instrucciones y pooling.
+- [Config fijada](https://huggingface.co/Qwen/Qwen3-Embedding-0.6B/blob/97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3/config.json).
+- [Código oficial](https://github.com/QwenLM/Qwen3-Embedding).
+- [E5-small](https://huggingface.co/intfloat/multilingual-e5-small).
+- [pgvector](https://github.com/pgvector/pgvector/blob/v0.8.7/README.md).
 
-## Decisión registrada
-
-Diego eligió expresamente E5-small local de desarrollo con 384 dimensiones/coseno y
-los gates propuestos. Mantener benchmark ES/EN/capacidad y revisión de migraciones
-antes de aceptar el MVP; si fallan, registrar evidencia y proponer alternativa.
-No es aprobación de producción ni de resultados por ejecutar.
+Metadatos públicos consultados desde ragdev01 confirman revisión/1024/32768/
+Apache-2.0 y huella LFS. Descargar/verificar no equivale a benchmark aprobado.
+Diego eligió Qwen 0.6B tras revisar calidad, dimensiones, recursos y cambio futuro.
+Esta decisión sustituye E5; no fusionar PR45 con la elección anterior.
