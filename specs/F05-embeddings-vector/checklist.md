@@ -3,7 +3,7 @@
 - [x] F04 aceptada PR44/postmerge; continuidad original ADR0010.
 - [x] Plan/tareas y propuesta concreta ADR0011 preparados antes de implementación.
 - [x] D-06 decidido expresamente por Diego: Qwen3-Embedding-0.6B local dev, ADR0011.
-- [ ] Benchmark ES/EN/capacidad y fuentes/pins/pesos/licencia verificados.
+- [x] Benchmark inicial ficticio ES/EN/capacidad CPU2 y fuentes/pins/pesos/licencia verificados; no calidad F06.
 - [x] T002 provider/fake offline y rechazo mismatch/NaN/Inf/longitud correctos.
 - [ ] T003 migraciones/espacios/roles/TLS/rollback/recovery en ambas topologías.
 - [ ] T004/T005 batch/retry/crash/publicación/reindexación/bajas reales.
