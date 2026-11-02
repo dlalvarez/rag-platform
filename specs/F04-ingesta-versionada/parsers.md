@@ -38,3 +38,9 @@ Si el corpus revela que esta selección no satisface el requisito de estructura,
 el hallazgo y preparar alternativa antes de ampliar dependencias o alcance. Cambiar
 un parser conserva originales/versiones y requiere nueva versión de procesamiento;
 no reescribir resultados previos ni afirmar compatibilidad de offsets entre parsers.
+
+Pins verificados en T004: pypdf 6.21.4, python-docx 1.2.0, lxml 6.1.3 (BSD-3-Clause).
+Metadatos de distribución y lock comprobados en ragdev01; versiones anteriores
+conservadas. Límites/procedencia e integración del componente en [contrato](extraction.md)
+y [evidencia](evidence.md). No se garantiza interpretar texto en imágenes ni detectar
+todo escaneo que tenga texto residual; las páginas sin texto extraíble sí se bloquean.

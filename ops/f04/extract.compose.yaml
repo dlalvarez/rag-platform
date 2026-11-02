@@ -1,0 +1,19 @@
+services:
+  extraction-check:
+    profiles: [test]
+    image: rag-f04-tools:t004
+    build:
+      context: ../..
+      dockerfile: ops/f04/tools.Dockerfile
+    user: "${RAG_F02_UID:?Prepare F02}:${RAG_F02_GID:?Prepare F02}"
+    entrypoint: [python, scripts/f04_extraction_check.py]
+    network_mode: none
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m,mode=700,uid=${RAG_F02_UID:?Prepare F02},gid=${RAG_F02_GID:?Prepare F02}
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    cpus: 0.5
+    mem_limit: 768m
+    memswap_limit: 768m
+    ulimits: {core: {soft: 0, hard: 0}}
