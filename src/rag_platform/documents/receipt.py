@@ -143,6 +143,9 @@ class ReceiptService:
     def _stage(self, stage, plan):
         """Integration subclasses can stop a real process at durable boundaries."""
 
+    def _accepted(self, connection, checked, trace, plan):
+        """Optional phase extension, inside the tenant receipt transaction."""
+
     def preflight(self, context, trace, repo):
         return self.repositories.require(context, trace, repo, "upload")
 
@@ -309,6 +312,7 @@ class ReceiptService:
             self.repositories.event(
                 c, checked, trace, plan.repository_id, plan.document_id, "DOCUMENT_RECEIVED"
             )
+            self._accepted(c, checked, trace, plan)
             return Received(document_view(c, plan), True)
 
         return self.repositories._run(context, trace, "upload", operation)

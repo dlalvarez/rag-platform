@@ -1,60 +1,58 @@
-# Tarea activa Codex — F04 T006, continuidad autónoma
+# Tarea activa Codex — F04 T007, continuidad autónoma
 
-Leer AGENTS/ADR-0010 y documentos rectores. No cerrar turno por tarea/PR/fase;
-seguir el roadmap original. Solo consultar decisiones reales, desvíos o bloqueo externo
-que requiera intervención. Todo código/tests/build/servicios en ragdev01, nunca Mac.
+No cerrar turno por tarea/PR/fase. AGENTS/ADR0010: consultar solo decisión real/desvío/
+bloqueo que requiera intervención; ejecutar código/tests/build/servicios en ragdev01.
+PR42 aceptado, develop4405f848546ebccd2203f902e9032ab88a770ea9, CI/postmerge correctos.
 
-## Primera actividad y estado
+Worktree /home/diego/proyectos/rag-platform-f03-schema, feat/F04-T006-document-api,
+PR43. T006 REAL completada:702 tests, cuatro checks de los heads de código, revisión
+delegada previa, tres imágenes t006 con69 módulos exactos, API siete RO y worker cuatro RO.
+Ingreso atómico/replay/rollback y recuperación, veinte envelopes (12READY/4NEEDS_OCR/
+4TOMBSTONED), HTTP versiones/jobs/readonly/ACL/cursores/cruces/baja repetida con chunks
+retenidos, A→B→A ambas topologías. Evidencia/correcciones de lanzamiento documentadas.
+No nuevas migraciones/dependencias/permisos ni runtime cambiado después de revisión.
+Primera actividad: finalizar CI/revisión/merge/postmerge PR43 y aceptar T006, luego T007
+sin pausa rutinaria. F04 todavía abierta; no empezar implementación F05 antes de aceptación.
 
-PR #42 acredita T002/T003/T005 en ragdev01: adopción persistente, cola, cuatro
-fixtures READY F04, worker real/S3/cuatro formatos, negativos, crash después del commit
-antes del ack, reintento, A→B→A, bajas/revocaciones, SIGTERM y privacidad/temporales.
-675 tests. Completar CI/revisión/integración develop y comprobación postmerge del PR42;
-registrar hashes/checks/evidencia en su conversación. Después continuar T006 sin pedir
-aprobación rutinaria. F04 sigue abierta hasta T006/T007.
+## T007 pendiente
 
-Checkout /home/diego/proyectos/rag-platform-f03-schema. No repetir adopción ni seed.
-API rag-f04-api:t005 usa perfil F04 con superficie HTTP F03 todavía; solo API fue
-recreada, datos/IdP/Bao intactos. Worker operativo probó dos jobs y quedó detenido
-limpiamente (exit0); no confundir con servicio continuamente activo.
+Regresión real F00 solo lecturas (salud API/MinIO, vector SELECT y fixture persistente),
+F01 SQL/S3 propios/cruzados con credenciales limitadas, F02 identidad/membresía/negativas,
+F03 CRUD/ACL/upload/original/historial con perfil F04 conocido. Reutilizar evidencia
+real sin fingir ejecución de scripts antiguos que rechazan correctamente head futuro.
+Completar logs/canary/temporales/fingerprints y mapeo AC, CI/revisión/PR propio/postmerge.
+No aceptar por offline solo ni omitir gate esencial. T006 ya da HTTP y baja de cuatro
+fixtures y esquema/permisos; pruebas T002..T005 y controles F00..F03 previos permanecen.
+No repetir seed/migraciones/fixtures terminales ni borrar recursos.
 
-Run correcto retenido: 15bbc3e9-06dd-4cdb-ad15-1c9ab055d8d3,
-directorio /home/diego/proyectos/rag-platform-f04-worker-runs/15bbc3e906dd4cdbad151c9ab055d8d3,
-envfile /tmp/f04-worker-qa-15bbc3e906dd4cdbad151c9ab055d8d3.env.
-52 originales HTTPS/cuatro repos; manifiesto privado. Negativos/pausas ya terminales,
-no repetirlos esperando nuevas etapas. ACL/membresía restauradas; tombstones retenidos.
-Primer run cfe3a53d-09e7-4626-993c-641df19f8ca7 conserva solo started.json, sin recursos.
-No sobrescribir ni purgar. Originales F00..F03 y corpus F04 conservados.
+## Estado operativo y recursos
 
-## T006 y controles
+API YA es rag-f04-api:t006, perfil F04 con F03 conservada; entrega limitada renovada
+por ensure al caducar TTL1h, sin password/día nuevo. Solo API fue recreada, IDs de datos/
+IdP/Bao conservados. Worker normal t006 está detenido limpiamente tras el run.
+T006 run a75adb4c-445c-46d6-98ab-c558a8308112:
+dir /home/diego/proyectos/rag-platform-f04-api-runs/a75adb4c445c46d698abc558a8308112
+env /tmp/f04-api-qa-a75adb4c445c46d698abc558a8308112.env
+Manifest/checkpoints cuatro verified privados, veinte originales/cuatro repos retenidos.
+No repetir seed ni verify esperando positivos ya tombstoned; checkpoints acreditan
+los prechecks y baja final. ACL Bob restaurada; originales/chunks/historial retenidos.
+Servicio QA se llama f04-api-check; api-check es F02 histórico con otros mounts.
+Normal qa siete mounts y solo journal RW, sin día/admin/migrator.
 
-Crear rama específica desde develop postmerge. Formalizar contrato detallado antes del
-código: GET documentos/{doc_id}/versions y jobs/{job_id} de docs07; DELETE documental
-con tombstone del plan F04. Borrador preparado en /tmp/f04-api-contract-draft.md:
-validarlo contra fuentes antes de incorporarlo. Recepción nueva F04 debe crear
-ORIGINAL/recibo/candidato/intención en la misma TX tenant; relay posterior sin falsa
-atomicidad entre bases. Replay COMMITTED no crea nuevos candidatos, no ingesta retroactiva.
-Mantener respuestas/límites/ACL/upload/original F03, perfil opt-in conocido.
-Lista versiones acotada/cursor firmado; jobs filtra tenant+vínculo documental/ACL;
-sin texto/chunks/blob/secretos/tokens en control o respuestas de progreso.
-Reader conserva SQL readonly sin permisos ops: vincular jobs mediante metadata pública
-de control y conocimiento autorizado, no ampliar grants para consultar el journal.
-DocumentStateService ya probado preserva objetos/versiones y bloquea commit tardío.
-Pruebas HTTP/SQL reales de ambas topologías, permisos/revocaciones, errores y regresión.
-Luego T007 aceptación F04 completa y postmerge; solo después F05, cuya decisión D06
-modelo/dimensión debe tratarse bajo su gobernanza, sin anticiparla.
+T005 run15bbc3e9-06dd-4cdb-ad15-1c9ab055d8d3 y fallido cfe3... retenidos,
+52 originales/resultado/historial; bajas conservadas, ACL/membresía restauradas.
+Cuatro tenants fijos READY f04_tenant_0003, cola f04_control_0006; no repetir adopción.
+No cambiar current_version_id ni marcar PUBLISHED. No purge/downgrade/main/tag/prod/visibilidad.
 
-## Acceso y operación
+## Acceso
 
-Sesión diaria hasta 2026-11-02T06:38:16-05:00. Reutilizar sin password/exportar bearer,
-renovar día/root/unseal por iniciativa. Entregas limitadas API/worker separadas.
-Cada consumidor normal cierra y revoca su app token: replace ANTES del siguiente;
-tras crash, ensure reutiliza token aún activo y recuperación lo revoca al cerrar.
-API puede necesitar ensure después de una hora, sin reinicio ni password.
-No ejecutar en paralelo herramientas que toman el día; no compartir consumer.lock.
+Día hasta2026-11-02T06:38:16-05:00=11:38:16UTC. Reusar sin password/exportar bearer,
+renovar día/root/unseal. Entregas API/worker separadas TTL1h: ensure si caducó; cierre
+normal revoca app, replace antes del siguiente consumidor, tras crash ensure conserva
+vigente. No emisores del día en paralelo ni consumer.lock compartido.
+Host --f02-env /home/diego/proyectos/rag-platform/.env.f02. Venv externo f04-parser-venv,
+PYTHONPATH=src. Logs brutos solo VM, PASS/códigos. No editar QA mientras haya bind activo.
 
-Scripts f04_runtime_host.py y f03_runtime_host.py aceptan --f02-env del checkout operativo.
-Venv /home/diego/proyectos/rag-platform-f04-parser-venv, PYTHONPATH=src, pytest/ruff.
-No editar el comprobador mientras un contenedor use su bind. Logs privados solo en VM;
-salidas PASS/códigos cerrados. Sin F05/PUBLISHED/main/tag/producción/cambio de visibilidad,
-purge/downgrade/passwords/políticas nuevas. Conservar historial/current_version_id original.
+Tras aceptar F04 con CI/revisión/postmerge, preparar plan F05 original y revisar D06
+modelo/dimensión bajo gobernanza; decisión de arquitectura real puede requerir Diego.
+Mientras no exista ese bloqueo, continuar trabajo independiente sin pausa de trámite.

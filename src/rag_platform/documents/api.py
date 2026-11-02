@@ -137,6 +137,14 @@ class Runtime:
             self.gateway = ObjectGateway(self.repositories, self.store, ca)
             self.receipts = ReceiptService(self.repositories, self.gateway)
             self.documents = DocumentService(self.repositories, self.gateway)
+            if profile == "ingestion":
+                from rag_platform.ingestion.document_state import DocumentStateService
+                from rag_platform.ingestion.receipt import IngestionReceiptService
+                from rag_platform.ingestion.service import IngestionService
+
+                self.receipts = IngestionReceiptService(self.repositories, self.gateway)
+                self.ingestion = IngestionService(self.repositories)
+                self.document_state = DocumentStateService(self.repositories)
         except BaseException:
             self.close()
             raise
@@ -311,6 +319,11 @@ def install(app, runtime):
                 prepared.close()
             downloads.release()
             raise
+
+    if getattr(runtime, "ingestion", None) is not None:
+        from rag_platform.ingestion.api import install as install_ingestion
+
+        install_ingestion(app, runtime, authorized, reply)
 
 
 def configure(app, engine, key, *, profile="documents"):

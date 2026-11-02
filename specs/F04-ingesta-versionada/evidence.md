@@ -524,3 +524,75 @@ reinicio de datos o activación F05. No backup/restore acreditado por estas prue
 Aceptación técnica de T002/T003/T005; CI/revisión del head final y postmerge deben
 quedar registrados en la conversación de PR42 antes de empezar implementación T006.
 F04 sigue abierta: API T006 y regresiones/aceptación T007 pendientes.
+
+## T006 en preparación — posterior a aceptación de PR42
+
+PR42 integrado en develop@4405f848546ebccd2203f902e9032ab88a770ea9:
+cuatro checks de head/tres de merge, ambos checkouts limpios, docs correctos y
+19 tests de runtime postmerge.
+[Registro](https://github.com/dlalvarez/rag-platform/pull/42#issuecomment-6572748022).
+
+Contrato api.md formalizado antes del código. Perfil ingestion añade recepción con
+intención/candidato dentro del mismo commit tenant, sin control I/O en la recepción,
+y rutas de versiones/jobs/tombstone. Perfil documents y superficies F03 conservados.
+Versiones/progreso exponen solo metadata explícita, con vínculo de tenant/doc/actor/
+intención y ACL; reader mantiene readonly sin grants ops. Nueva ruta DELETE conserva
+originales/chunks/historial e idempotencia del servicio ya probado.
+
+702 tests correctos en ragdev01, incluidos 27 nuevos de HTTP, vínculos de envelope,
+minimización y cursor; 67 junto a recepción/API F03. Ruff/formato/docs/diff correctos,
+solo warning conocido Starlette/httpx. Sin nueva dependencia/migración/política Bao.
+Imágenes T006 y batería real HTTP/rollback preparadas; no atribuir aún despliegue ni
+aceptación real T006. La batería conserva un run exclusivo y checkpoints antes/después
+de baja de resultados para poder recuperar un ensayo interrumpido sin repetir cambios.
+
+## T006 — activación e ingreso reales
+
+Desde PR43 head26b92958ae2288e0e74dfec5c048767d54611bf7, cuatro checks y
+revisión delegada previa: solo API promovida a rag-f04-api:t006, siete RO/usuario1000,
+TLS/health F04 y entrega limitada reemplazada después del cierre anterior.
+IDs PostgreSQL/MinIO/Bao/IdP iguales antes/después; sin reiniciar esos servicios.
+Historial T005 consultado por HTTPS con reader en cuatro fixtures, versiones/jobs
+correctos sin grants ops. Un primer smoke auxiliar no encontró sus módulos al invocarse
+con -c; se corrigió sys.path del lanzamiento. Consultas posteriores503 se resolvieron
+con ensure de la entrega app caducada (TTL una hora), sin password/renovar el día ni
+cambio de código/permisos. No atribuir a esos intentos un fallo de datos.
+
+Run nuevo a75adb4c-445c-46d6-98ab-c558a8308112 conservado, directorio privado
+/home/diego/proyectos/rag-platform-f04-api-runs/a75adb4c445c46d698abc558a8308112.
+Seed pasó en SAME_A/SAME_B/TWO_A/TWO_B: cuatro repos nuevos, veinte originales,
+recepción HTTPS/replay sin duplicados y candidato/intención automáticos. Alice/Bob/
+Carol consultan versiones (reader sin ops); Dave403/sin JWT401, originales exactos.
+Baja HTTP repetida antes de worker -> versiones/original404; editor/reader no pueden
+borrar. Manifest solo UUID/hash/tamaño/actor sintéticos, sin texto/credenciales.
+
+Por fixture, fallo inyectado después de INSERT candidato/intención dentro del commit:
+recepción conserva OBJECT_STORED pero documento/versiones/intención no existen,
+objeto retenido. Tras caducidad real del lease, recuperación confirma mismo original,
+dos versiones/una intención; replay no duplica. Esto prueba rollback SQL real y
+recuperación hacia adelante, no backup/restore ni atomicidad entre bases.
+Worker/verify final aún pendientes; no declarar T006 aceptada por este seed.
+
+## T006 — resultado final real
+
+Head16005a4a6513d875a2884e691ae6ef9763e6c8f8, cuatro checks correctos,
+revisión delegada y helper de imagen con hash exacto antes de verify.
+Worker normal t006 procesó los veinte envelopes del run a75adb4c:12NONE/READY,
+4NEEDS_OCR y4TOMBSTONED, cuatro RO y canario ausente; parada limpia exit0.
+No resultado PUBLISHED ni cambios de current_version_id: los veinte siguen apuntando
+al ORIGINAL y conservan exactamente ORIGINAL+PROCESSED.
+
+Verify HTTPS/SQL pasó SAME_A/SAME_B/TWO_A/TWO_B: owner/editor/reader ven metadata
+de versiones/jobs propios; reader conserva readonly sin ops. Dave403, sin JWT401,
+job/doc de otro tenant404, query desconocida/cursor adulterado o de otro actor/doc422.
+Paginación de dos páginas sin repetición, estado real y vínculo job/version/procedencia
+correctos. NEEDS_OCR sin chunks; cuatro bajas previas tienen envelope FAILED/TOMBSTONED.
+ACL de Bob retirada para probar negativas y restaurada en finally.
+Baja repetida de resultado completo: versiones/job404, chunks/historial retenidos y
+un solo evento DOCUMENT_TOMBSTONED. Checkpoints predelete/verified retenidos.
+A→B→A HTTP pasó en misma instancia y dos instancias, metadata propia.
+
+702 tests y controles estáticos ya correctos; no hubo cambio de runtime después de
+la revisión inicial, solo dos asserts QA y evidencia. Aceptación técnica T006 en PR43;
+registrar CI/revisión del head final e integración/postmerge antes de T007/cierre F04.
+F04 sigue abierta por regresiones y aceptación T007. Sin backup/restore acreditado.

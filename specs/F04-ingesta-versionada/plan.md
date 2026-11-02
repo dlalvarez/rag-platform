@@ -71,7 +71,7 @@ propio y alta explícita, conservando recursos y estado previo.
 
 Cambios HTTP habilitan solo rutas F04 previstas de versiones/jobs y baja documental
 con tombstone coherente; mantener errores, autorización, cursores y cuerpos acotados
-de F02/F03. Contrato detallado antes del código afectado. No devolver chunks desde
+de F02/F03. Contrato detallado antes del código afectado: [API F04](api.md). No devolver chunks desde
 control, paths físicos o secretos. Documentar política de reintento terminal/NEEDS_OCR.
 
 CI obligatorio, revisión delegada del mismo agente (sin fingir independencia), merge

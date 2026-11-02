@@ -6,7 +6,7 @@
 - [x] T003: esquema/procedencia y adopción/login/carreras reales acreditados PR38..42.
 - [x] T004 acreditada en 618 tests/contenedor y PR #37 con CI/revisión/postmerge.
 - [x] T005: worker real/S3/crash/retry/ACL/baja/parada/logs/temporales acreditados PR42.
-- [ ] T006 autorización/API/tombstone/operación verificadas.
+- [x] T006: HTTP/SQL/ACL/readonly/cursor/cruces/jobs/tombstone reales acreditados PR43.
 - [ ] T007 ambas topologías, regresiones y cierre postmerge.
 
 | Validación | Requisitos | Criterios | Evidencia requerida |
