@@ -3,9 +3,9 @@
 - [x] F03 aceptada en PR #34, continuidad autorizada ADR-0010.
 - [x] T001 integrada en PR #35 con cuatro checks de head/tres de merge y postmerge.
 - [ ] T002: núcleo/carreras reales correctos; faltan activación/grants y parada con T005.
-- [ ] T003 núcleo probado con rollback/datos conservados; falta activación/integración.
+- [ ] T003 núcleo integrado PR #38 con CI/postmerge; falta activación/integración.
 - [x] T004 acreditada en 618 tests/contenedor y PR #37 con CI/revisión/postmerge.
-- [ ] T005 idempotencia, crash, reconciliación y fencing reales.
+- [ ] T005 intención/relay probados; worker, crash y fencing de commit pendientes.
 - [ ] T006 autorización/API/tombstone/operación verificadas.
 - [ ] T007 ambas topologías, regresiones y cierre postmerge.
 

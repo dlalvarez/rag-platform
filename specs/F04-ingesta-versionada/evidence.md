@@ -205,3 +205,55 @@ con este perfil antes de persistir chunks en la activación.
 T003 sigue abierta hasta migración/operación persistente y gates de integración.
 CI/revisión/merge/postmerge del PR de núcleo pendientes al redactar. Continuar T005
 tras esa puerta; no esperar aprobación de trámite ni declarar cierre F04.
+
+## T003 núcleo integrado — PR #38
+
+Head 04c7de3afac4c27ad0d3b9cd8893e8ca6e1e6d32, merge
+e69a3af31433291e42158854fca8123675368e47. Cuatro checks de head y tres de merge
+correctos. Revisión delegada del mismo agente registrada, sin atribuir independencia
+o aprobación personal nueva. Ambos checkouts limpios/exactos, docs válidas,
+13 tests postmerge y diez hashes de imagen correctos.
+[Postmerge](https://github.com/dlalvarez/rag-platform/pull/38#issuecomment-6569343145).
+T003 permanece abierta para activación y validaciones del runtime.
+
+## T005 componente de intención y reconciliación
+
+Contrato previo: [worker.md](worker.md), R01/R04/R05/R06; AC01/03/04.
+journal.py crea versión PROCESSED e intención con IDs estables por original/config
+y auditoría en la transacción tenant del llamador. Repetir identidad conserva el
+actor y recupera la misma versión; distinta configuración crea otra sin cambiar
+originales. Lock de repositorio/documento serializa con ACL/baja existentes.
+El componente exige autorización global verificada del llamador: su chequeo local
+de ACL no es una autoridad de usuario ni un endpoint HTTP.
+
+El dispatcher transmite exclusivamente UUIDs a DurableQueue y confirma localmente
+después. El UUID de intención es la clave idempotente. Repetir tras perder el ack
+recupera el mismo job; cambio de actor/documento/identidad no adopta el envelope.
+
+Pruebas en ragdev01:
+
+- 14 tests nuevos offline: ack perdido, actor/documento/identidad, límites/IDs
+  antes de SQL, representación privada y errores cerrados.
+- QA PostgreSQL real en cuatro fixtures SAME_A/SAME_B/TWO_A/TWO_B, dos instancias.
+  Versión/intención/auditoría atómicas, tres repeticiones sin duplicados, config
+  distinta y actor distinto rechazado. Baja impide nueva petición.
+- En esquema QA control propio f04_intent_probe_0001, commit real del enqueue y
+  reenvío sin registrar su primer ack: un solo job. Despacho local repetido no
+  modifica identidad; otro job o versión se rechazan. Job QA termina STOP_REQUESTED.
+  Conservadas las tablas/envelopes de QA, solo IDs sintéticos; no trabajos públicos.
+- Se repite toda la batería de esquema T003: FK, procedencia, duplicados,
+  completitud, auditoría, roles, tombstone/ACL. Cada transacción tenant revertida;
+  fingerprint de control/datos originales, head/tablas y defaults de roles intactos.
+- Imagen rag-f04-tools:t005-intent con doce hashes exactos; cuatro montajes SQL/TLS
+  RO, sin Bao/sesión diaria/S3/IdP/puertos. Logs de ambas instancias: controles
+  positivos y errores observados, sin canary de texto. Nunca se copiaron logs brutos.
+
+Estas pruebas ejercen componentes con contexto administrativo QA. No acreditan un
+worker de aplicación ni autorización global de runtime, extracción S3 asíncrona,
+crash real del worker tras commit, fencing de finalización, parada, migración
+persistente o API F04. T002/T003/T005 siguen abiertas hasta completar esas puertas.
+No originales/chunks persistidos, rotación, reinicio de infraestructura ni F05.
+
+Regresión completa del componente en ragdev01: 645 tests correctos (631 previos +14),
+ruff check/format, check_docs y diff --check correctos. Solo advertencia ya conocida
+de Starlette/httpx, sin cambios de dependencias en este componente.

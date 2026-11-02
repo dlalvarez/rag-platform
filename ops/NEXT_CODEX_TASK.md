@@ -12,23 +12,27 @@ revisión delegada y postmerge correctos; 22 tests postmerge/hash de imagen corr
 Cola probada en esquema QA retenido, no migración pública ni worker activos.
 T002 sigue abierta hasta activación/grants/parada con T005.
 
-Worktree /home/diego/proyectos/rag-platform-f03-schema, feat/F04-T003-versioned-schema.
-Checkout operativo /home/diego/proyectos/rag-platform en develop, limpio.
-T004 integrada en PR #37, develop@f1a7a3ddc077302b4c1bdebaeef3ba60b3489716.
-Cuatro checks del head/tres del merge, revisión delegada y postmerge correctos.
-618 tests previos y 34 postmerge; imagen con diez hashes correctos.
-T003 núcleo implementado y probado: 631 tests, lint/formato/docs/diff; cuatro fixtures
-SQL/ambas instancias, diez hashes de imagen, migración repetida, FKs/procedencia/roles,
-completitud/auditoría/tombstone/ACL y rollback correctos. Logs con errores/control
-positivo y canary de cuerpo ausente. Todavía sin esquema/perfil/worker F04 persistidos.
-Publicar PR del núcleo, revisar head, CI/merge/postmerge; continuar T005 sin pausa.
+Worktree /home/diego/proyectos/rag-platform-f03-schema, feat/F04-T005-intent-reconciliation.
+Checkout operativo /home/diego/proyectos/rag-platform, limpio, en develop.
+T004 aceptada PR #37. T003 núcleo integrado PR #38,
+develop@e69a3af31433291e42158854fca8123675368e47: 631 tests, cuatro fixtures SQL,
+CI/revisión/postmerge correctos; 13 tests postmerge y diez hashes exactos.
+Todavía sin esquema/perfil/worker F04 persistidos.
 
-T003: esquema tenant aditivo para versiones de procesamiento/chunks, intención durable
-y tombstone; conservar originales/recepciones/versiones F03 y factoría histórica.
-Leer plan/spec, docs/04-data-model.md, docs/05-ingestion.md, docs/07-api-contracts.md y
-migraciones/perfiles actuales antes de fijar detalle. schema.md fija el contrato ya implementado; revisar antes de integrar worker. No fingir atomicidad entre bases ni PUBLISHED sin embeddings.
+T005 contrato en worker.md. Primer componente journal/relay implementado:
+14 tests nuevos, PostgreSQL cuatro fixtures/ambas instancias; versión/intención/
+auditoría atómicas, config estable, actor conservado, ack perdido recupera un job.
+QA tenant revertido, envelopes sintéticos de control retenidos; doce hashes y logs
+con controles positivos/errores sin texto. No acredita worker/runtime.
+Cerrar regresión y PR específico de componente, CI/revisión/merge/postmerge.
+Continuar inmediatamente worker/fencing/parada y activación coordinada con API F04.
+T002/T003/T005 abiertas; no fingir ACID entre bases ni PUBLISHED sin embeddings.
+
+Conservar originales/recepciones/versiones F03 y factorías históricas.
+Leer schema.md/worker.md, docs/04-data-model.md, docs/05-ingestion.md,
+docs/07-api-contracts.md y migraciones/perfiles actuales antes de integrar.
 No consumir indiscriminadamente documentos previos; usar manifiesto/corpus propio.
-T004 no acredita aún AC E2E ni integración del worker.
+T004 y journal no acreditan aún AC E2E ni integración del worker.
 
 ## Fuentes y pruebas
 
