@@ -34,7 +34,7 @@ def queue_code(code):
 class Worker:
     def __init__(self, runtime, queue, *, stop=None, extractor=extract):
         if (
-            runtime.authority.profile != "ingestion"
+            runtime.authority.profile not in ("ingestion", "embeddings")
             or runtime.authority.engine is not queue.engine
             or not queue.scope
             or tuple(queue.scope) != tuple(runtime.scope)

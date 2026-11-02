@@ -1,0 +1,5 @@
+services:
+  worker:
+    image: rag-f05-ingestion:t003
+    environment:
+      RAG_F05_ENABLED: '1'

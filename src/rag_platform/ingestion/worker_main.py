@@ -1,6 +1,7 @@
 """Development worker process; credentials stay in private mounted files."""
 
 import logging
+import os
 import resource
 import signal
 from pathlib import Path
@@ -17,6 +18,10 @@ from rag_platform.tenancy.resolver import control_engine
 
 def main():
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
+    enabled = os.environ.get("RAG_F05_ENABLED", "0")
+    if enabled not in ("0", "1"):
+        raise ValueError("Invalid worker profile")
+    profile = "embeddings" if enabled == "1" else "ingestion"
     stop = Event()
     for value in (signal.SIGTERM, signal.SIGINT):
         signal.signal(value, lambda _number, _frame: stop.set())
@@ -37,6 +42,7 @@ def main():
             "https://openbao:8200",
             ca,
             Path("/app/ops/f03/application-scope.json"),
+            profile=profile,
         )
         runtime.preflight()
         queue = DurableQueue(engine, lease_seconds=180, tenant_scope=runtime.scope)

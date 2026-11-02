@@ -137,7 +137,7 @@ class Runtime:
             self.gateway = ObjectGateway(self.repositories, self.store, ca)
             self.receipts = ReceiptService(self.repositories, self.gateway)
             self.documents = DocumentService(self.repositories, self.gateway)
-            if profile == "ingestion":
+            if profile in ("ingestion", "embeddings"):
                 from rag_platform.ingestion.document_state import DocumentStateService
                 from rag_platform.ingestion.receipt import IngestionReceiptService
                 from rag_platform.ingestion.service import IngestionService
@@ -337,8 +337,8 @@ def configure(app, engine, key, *, profile="documents"):
     )
     try:
         install(app, runtime)
-        if profile == "ingestion":
-            app.state.phase = "F04"
+        if profile in ("ingestion", "embeddings"):
+            app.state.phase = "F05" if profile == "embeddings" else "F04"
         app.state.resource_closers.append(runtime.close)
     except BaseException:
         runtime.close()

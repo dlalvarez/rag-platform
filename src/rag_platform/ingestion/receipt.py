@@ -7,7 +7,7 @@ from rag_platform.ingestion import journal
 
 class IngestionReceiptService(ReceiptService):
     def __init__(self, repositories, gateway, **kwargs):
-        if repositories.authority.profile != "ingestion":
+        if repositories.authority.profile not in ("ingestion", "embeddings"):
             raise ValueError("Ingestion authority required")
         super().__init__(repositories, gateway, **kwargs)
 
