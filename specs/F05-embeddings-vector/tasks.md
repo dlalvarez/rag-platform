@@ -1,7 +1,8 @@
 # Tareas F05
 
-- [ ] T001 — D-06/ADR0011 y benchmark de perfil. R01; AC01/04. Perfil Qwen local 1024/cosine/cota operativa 512
-  aprobado expresamente por Diego; benchmark/calidad/capacidad todavía pendientes.
+- [x] T001 — D-06/ADR0011 y benchmark inicial de perfil. R01; AC01/04.
+  Qwen local 1024/coseno/cota512 aprobado; fixture ES/EN y capacidad CPU2 probados.
+  No acredita calidad de dominio F06 ni aislamiento/publicación/búsqueda pendientes.
 - [x] T002 — Contrato provider/fake determinista y validación de lotes/perfiles/límites.
   R03/R05; AC01/03/04. Agnóstico a D-06; offline no red/descargas/keys.
 - [ ] T003 — Esquema control/tenant/space/vector tipado y migraciones separadas.

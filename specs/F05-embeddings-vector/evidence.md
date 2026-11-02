@@ -117,3 +117,13 @@ documentales; API/MinIO/Bao también sin canaries. Logs raw no se exportaron.
 
 T003 parcial: fundación+compatibilidad adoptadas, colaEMBED y T004..T008 pendientes.
 No vectores documentales generados, PUBLISHED, búsqueda F05 ni cierre de fase.
+
+## T001 — límite operativo real y CPU
+
+Caso de capacidad declarado antes de medir:4 pasajes ficticios de512 tokens, cota
+RSS6144MiB por proceso. Resultado qwen-capacity-01.json:2vCPU, batch63.601s,
+CPU85.608s/134.6% medio, pico3774.2MiB; llamada simultánea rechazada y llamada
+posterior correcta. Dimensión/norma/finitos validados por proveedor real. Sin red,
+cambios de vCPU, datos tenant, modelo externo ni procesos persistentes.
+T001 inicial completada con fixture semántico previo y capacidad; AC completos
+F05/calidad de dominio/carga multi-proceso siguen pendientes. Modelo/space intactos.

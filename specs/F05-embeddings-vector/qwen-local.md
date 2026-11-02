@@ -48,3 +48,19 @@ Es evidencia de integración/viabilidad inicial en desarrollo, no SLA/capacidad 
 concurrencia, comparación E5, calidad de dominio o aceptación F06. Longitudes del
 fixture son cortas, no extrapolar throughput a512/32768 tokens. Mantener gates F05
 SQL/ANN/aislamiento/publicación y evaluación representativa de calidad pendientes.
+
+## Capacidad al máximo operativo, 2026-11-02
+
+qwen-capacity-01.json: proceso nuevo, 2 vCPU/2 hilos torch, cuatro pasajes ficticios
+de 512 tokens cada uno (2048 totales), sin red ni datos tenant. Lote 63.601s,
+85.608 segundos CPU (134.6% medio del proceso), pico RSS3774.2MiB. Cota previa
+de prueba:6144MiB por proceso; no requisito mínimo ni presupuesto multi-proceso.
+Carga13.643s con caché del SO posiblemente caliente; no mejora atribuida al modelo.
+Llamada simultánea rechazada por LIMIT_EXCEEDED; siguiente llamada tras liberar
+correcta. Las dimensiones/finitos/norma/cantidad pasan el validador real.
+
+No es concurrencia entre procesos/API+worker, comparación4vCPU o SLA. Scheduler
+y cargas del NAS influyen. El worker debe reautorizar después de cada lote, porque
+el contexto30s puede vencer durante inferencia; lease mayor y heartbeat entre lotes.
+Esta medición completa la comprobación inicial del perfil, no los AC vectoriales
+ni calidad de dominio/F06. No ampliar tokens/batch sin perfil/evidencia nuevos.
