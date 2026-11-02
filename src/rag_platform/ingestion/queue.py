@@ -60,7 +60,10 @@ class DurableQueue:
         self.max_attempts, self.scope = max_attempts, tenant_scope
 
     def _scope(self):
-        return jobs.c.tenant_id.in_(self.scope) if self.scope is not None else sa.true()
+        return sa.and_(
+            jobs.c.kind == "INGEST",
+            jobs.c.tenant_id.in_(self.scope) if self.scope is not None else sa.true(),
+        )
 
     def enqueue(self, tenant, actor, document, version, idempotency):
         _ids(tenant, actor, document, version, idempotency)

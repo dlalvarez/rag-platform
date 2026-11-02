@@ -1,21 +1,25 @@
-# Continuidad F05 — T003 fundación y compatibilidad pendiente
+# Continuidad F05 — compatibilidad preparada, adoptar con controles
 
-Qwen aprobado: PR45/46/47 integrados; developce4b97d, CI/postmerge correctos.
-Qwen local1024/coseno,2vCPU intactas; primera medición ficticia conservada.
-Rutas/lock/limitaciones en ADR0011 y qwen-local.md; no repetir selección.
+PR45/46/47/48 integrados; develop108a385, CI/postmerge.
+Qwen aprobado local1024/coseno/L2,2vCPU intactas. Benchmark ficticio no F06.
+T003 fundación tenant0004 probada en rollback4 fixtures/ambas instancias.
 
-feat/F05-T003-space-schema contiene fundación tenant0004/space/vector/HNSW,
-savepoints y ensayo rollback sobre cuatro fixtures/ambas instancias.
-Completar evidencia/CI/revisión/merge/postmerge; seguir perfil F05 explícito de
-migración/resolver/API y control EMBED, luego worker/publicación/consulta.
-T003 sigue abierta. NO adoptar head0004 en fixtures hasta runtime compatible.
-Migraciones F01..F04, originales, chunks, roles/refs y recursos retenidos.
+feat/F05-T003-runtime-compat: perfil embeddings con head exacto, proof separado,
+API/worker INGEST opt-in, claim/fence INGEST excluye futuros EMBED.
+796 tests y builds API/INGEST correctos,75 módulos instalados SHA coinciden.
+Completar CI/revisión/merge/postmerge y SEGUIR adopción controlada en PR separado.
+Imágenes preparadas rag-f05-api:t003/rag-f05-ingestion:t003, NO desplegadas aún.
+API vigenteF04t006/workerF04t006 detenido, fixtures aún tenant0003.
+Mantener originales/chunks/objetos/roles/refs; no nuevos tenants ni downgrade.
 
-Sesión diaria renovada por Diego, activa hasta2026-11-03T07:14:15-05:00.
-No extraer bearer/renovar/revocar sesión activa. Para futura sesión vencida,
-start rechaza copia local existente: verificar rechazo servidor y usar procedimiento
-daily revoke antes de volver a pedir start. Ya se retiró la copia caducada anterior.
-No password por prueba/root/unseal. Usar sesión vigente secuencialmente.
+Preparar snapshots, intentoDDL fallido=>FAILED/observedNULL real, recovery/repetición
+bajo migración controlada, registro idempotente espacioQwen y rol/log/TLS. APIcompatible
+preparada antes de adoptar: cierre de consumidor, replace identidad limitada DESPUÉS,
+migración4 fixtures, inicio API F05; no infraestructura/IdP/Bao reiniciados.
+Luego control EMBED sin que INGEST lo reclame, worker/publicación/consulta/aceptación.
+T003..T008 siguen abiertas; no cerrar turno por PR.
 
-API F04 t006/worker t006 detenido; no nuevas credenciales/tenants/servicios.
-Sin main/prod/visibilidad/purge. AGENTS/ADR0010: continuar entre tareas y PR.
+Sesión diaria activa hasta2026-11-03T07:14:15-05:00; no exportar bearer/renovar/revocar.
+Start rechazó copia vencida anterior; daily revoke verificó403 y retiró solo esa copia.
+No pedir password por prueba/root/unseal. Todo en ragdev01. Sin main/prod/visibilidad/
+purge. AGENTS/ADR0010: continuidad autónoma entre tareas/PR/fases con evidencia.

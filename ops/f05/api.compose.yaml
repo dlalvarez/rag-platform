@@ -1,0 +1,7 @@
+services:
+  api:
+    image: rag-f05-api:t003
+    environment:
+      RAG_F03_ENABLED: '1'
+      RAG_F04_ENABLED: '1'
+      RAG_F05_ENABLED: '1'

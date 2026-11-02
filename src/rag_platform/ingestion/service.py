@@ -65,7 +65,7 @@ def version_view(row, envelope):
 
 class IngestionService:
     def __init__(self, repositories):
-        if repositories.authority.profile != "ingestion":
+        if repositories.authority.profile not in ("ingestion", "embeddings"):
             raise ValueError("Ingestion authority required")
         self.repositories = repositories
 

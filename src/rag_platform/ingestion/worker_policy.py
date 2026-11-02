@@ -35,7 +35,7 @@ def policy_guard(guard, authority, context, trace):
     if (
         not guard.active
         or guard.connection.engine is not authority.engine
-        or authority.profile != "ingestion"
+        or authority.profile not in ("ingestion", "embeddings")
         or not isinstance(context, AuthorizedTenantContext)
         or context.tenant_id != guard.claim.tenant_id
         or context.principal_id != guard.claim.actor_id

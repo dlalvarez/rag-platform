@@ -50,6 +50,7 @@ class RepositoryService:
         if profile not in (
             "documents",
             "ingestion",
+            "embeddings",
         ) or connections.authority.version != version_for(profile):
             raise ValueError("Document authority profile required")
         self.connections, self.control = connections, control_engine

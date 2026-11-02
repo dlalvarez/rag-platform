@@ -201,13 +201,19 @@ def create_configured_app():
     engine = control_engine(Target("postgres", 5432, Path("/run/f01-ca.crt")), credential)
     enabled = os.environ.get("RAG_F03_ENABLED", "0")
     ingestion = os.environ.get("RAG_F04_ENABLED", "0")
+    embeddings = os.environ.get("RAG_F05_ENABLED", "0")
     if (
         enabled not in ("0", "1")
         or ingestion not in ("0", "1")
+        or embeddings not in ("0", "1")
+        or (embeddings == "1" and ingestion != "1")
         or (ingestion == "1" and enabled != "1")
     ):
         engine.dispose()
         raise ValueError("Invalid private API configuration")
+    profile = (
+        "embeddings" if embeddings == "1" else ("ingestion" if ingestion == "1" else "documents")
+    )
     verifier = OIDCVerifier(settings)
     try:
         app = create_app(
@@ -215,14 +221,12 @@ def create_configured_app():
             verifier,
             key,
             close_resources=True,
-            profiles=("identity", "ingestion" if ingestion == "1" else "documents")
-            if enabled == "1"
-            else ("identity",),
+            profiles=("identity", profile) if enabled == "1" else ("identity",),
         )
         if enabled == "1":
             from rag_platform.documents.api import configure
 
-            configure(app, engine, key, profile="ingestion" if ingestion == "1" else "documents")
+            configure(app, engine, key, profile=profile)
         return app
     except BaseException:
         verifier.close()

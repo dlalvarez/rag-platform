@@ -190,3 +190,18 @@ def register_space(connection, names, space_id, profile):
 def migrate_spaces(target, names, credential, repository):
     with migration_session(target, names, credential) as connection:
         return apply_spaces(connection, names, repository)
+
+
+def migrate_spaces_controlled(engine, tenant_id, actor, store, ca, repository):
+    from rag_platform.provisioning.migration_control import migrate_controlled
+
+    return migrate_controlled(
+        engine,
+        tenant_id,
+        actor,
+        store,
+        ca,
+        repository,
+        runner=migrate_spaces,
+        profile="embeddings",
+    )

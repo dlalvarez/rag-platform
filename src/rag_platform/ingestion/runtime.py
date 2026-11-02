@@ -47,20 +47,22 @@ def scope(path):
 
 
 class Runtime:
-    def __init__(self, engine, key, path, endpoint, ca, scope_path):
+    def __init__(self, engine, key, path, endpoint, ca, scope_path, *, profile="ingestion"):
+        if profile not in ("ingestion", "embeddings"):
+            raise ValueError("Known ingestion profile required")
         self.store, self.registry = None, None
         try:
             self.scope = scope(scope_path)
             self.store = FileApplicationStore(path, endpoint, ca)
-            self.authority = TenantAuthorizer(engine, key, profile="ingestion")
+            self.authority = TenantAuthorizer(engine, key, profile=profile)
             self.registry = ConnectionRegistry(
-                CatalogResolver(engine, profile="ingestion"),
+                CatalogResolver(engine, profile=profile),
                 self.store,
                 ca,
                 engine_factory=partial(tenant_engine, pool_size=1),
             )
             connections = AuthorizedConnections(self.authority, self.registry)
-            self.repositories = RepositoryService(connections, engine, key, profile="ingestion")
+            self.repositories = RepositoryService(connections, engine, key, profile=profile)
             self.gateway = ObjectGateway(self.repositories, self.store, ca)
             self.documents = DocumentService(self.repositories, self.gateway)
         except BaseException:

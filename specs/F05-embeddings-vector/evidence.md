@@ -69,3 +69,15 @@ Ensayo final conserva snapshot/control y revierte DDL/datos en cuatro fixtures,
 ambas instancias. No hay adopción persistente ni nuevos tenants/objetos S3.
 18 negativos/DDL offline;776 tests completos passed en39.55s, ruff/docs/diff correctos.
 Manual space-foundation.md detalla límites; no cierre T003 ni AC02/03 completos.
+
+## T003 parcial — compatibilidad F05 opt-in
+
+Perfil embeddings=head tenant0004, fuentes soloF04/head propio, HMAC de contexto
+separado. RAG_F05_ENABLED exigeF03/F04; sin bandera conserva configuración previa.
+API/worker INGEST compatibles con head exacto, sin rutas embedding/search nuevas.
+Claim/fencing INGEST filtran kind para no tomar ni confirmar futurosEMBED.
+796 tests completos passed en39.99s (20 nuevos), ruff/docs/diff correctos.
+Imágenes rag-f05-api:t003/rag-f05-ingestion:t003 construidas en ragdev01,
+75 módulos instalados coinciden por SHA256 con fuentes, comprobado sin red.
+No servicios recreados/adopción persistente todavía; no atribuir pruebas HTTP F05
+ni cierre deT003. Próxima entrega: adopción controlada y cola EMBED separada.
