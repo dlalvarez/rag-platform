@@ -1,12 +1,12 @@
 # Continuidad F05 — controlador de publicación en revisión
 
-Develop a6c2c56 (PR60). PR58 8f8f113: cuatro checks previos y tres postmerge success.
+Develop 8f74595 (PR61). PR58 8f8f113: cuatro checks previos y tres postmerge success.
 PR59 registra la aprobación expresa de Diego de búsqueda HTTP de fragmentos en F05;
 cuatro checks previos y tres postmerge success. No requiere otra decisión
 sobre assistant_id/generación: request repository_ids/space_id/query/top_k y hits con
 procedencia, similitud y uso embeddings, conforme a docs07. La ruta sigue sin habilitar.
 
-Rama actual feat/F05-T007-publication-runtime-review en worktree f03-schema.
+Rama actual feat/F05-T004-real-worker-proof en worktree f03-schema.
 Controlador/composición/manual preparados. 925 tests (63.44s), 18 focalizados,
 ruff/formato y dos preflights reales en cuatro fixtures/dos instancias correctos.
 Journal nuevo privado fuera del repo:
@@ -46,3 +46,16 @@ Todo ejecución/dependencias en ragdev01, Mac solo SSH/documentos. Seguir AGENTS
 ADR0007/0010 autónomamente, sin detener por PR ni pedir confirmaciones rutinarias.
 Git push servidor sin auth: conector GitHub, transferencias pequeñas y SHA árbol igual
 al probado ANTES crear commit. Conservar ramas locales de prueba; no reset destructivo.
+
+BLOQUEO de adopción: auto-review rechazó la ejecución persistente por falta de
+permiso explícito del usuario. Se pidió por pregunta asíncrona; esperar su respuesta,
+no reintentar ni ejecutar por otra vía mientras siga pendiente. Adopt NO se ejecutó.
+API t003 restablecida en el mismo contenedor/imagen y entrega limitada nueva bajo
+lock; OIDC/me y original HTTP/SHA correctos. Ningún cambio de esquema. PR61 integrado
+con cuatro checks previos/tres postmerge success comentados.
+
+Trabajo independiente: QA real preparada en scripts/f05_real_embedding_check.py,
+ops/f05/real-embedding.compose.yaml y manual. Solo atomic de cuatro fixtures,
+request/verify con contexto fresco, manifest RO/journal nuevo; 9tests,934 completos.
+No ejecutada ni solicitudes EMBED nuevas. Revisar/CI antes de uso. Mientras se espera
+permiso puede avanzar búsqueda interna y pruebas offline/SQL rollback autorizadas.

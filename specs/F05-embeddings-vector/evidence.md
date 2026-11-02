@@ -316,3 +316,19 @@ No cambia src ni dependencias. Baseline925tests del controlador correcto; la bat
 HTTP/SQL/S3 de este perfil no ejecutada hasta adoptar. No servicio nuevo, entrega
 emitida ni DDL persistente. PR60 integrado a6c2c56, cuatro checks previos success;
 postmerge todavía en curso al registrar. PR59 postmerge tres checks success.
+
+## T004 parcial — QA real preparada, migración bloqueada
+La revisión automática rechazó ejecutar adopt por requerir autorización explícita
+para migraciones persistentes. La acción no se ejecutó; se pidió autorización al
+usuario y quedó pendiente. Control0006/tenants0004 permanecen. Se restableció el mismo
+contenedor/imagen API t003, con entrega limitada existente emitida bajo consumer.lock;
+OIDC/me y original histórico HTTP/SHA correctos. Día no renovado, políticas intactas.
+
+Se prepara QA request/verify para atomic de cuatro fixtures, scope/actores OIDC
+verificados, journal propio y manifest RO. Solicita explícitamente esas versiones;
+verifica binding/usage/vectores/publicación/ack y original HTTP/SHA después de Qwen.
+Nueve tests nuevos de selección repetible y rechazo de deriva de actores/tenant/
+fixtures/documentos; 934 passed en 58.18s, ruff/formato/composición correctos.
+Detectado durante revisión: manifest almacena alias alice, no UUID en el campo actor;
+se contrasta el alias y el mapa de actores completo contra identidades reales.
+No se ejecutaron request, modelo ni verify. No hay intent/embedding persistente nuevo.

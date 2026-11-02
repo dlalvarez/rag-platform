@@ -1,0 +1,85 @@
+services:
+  f05-real-embedding-check:
+    profiles:
+    - test
+    image: rag-f05-tools:t006
+    user: ${RAG_F02_UID:?Prepare F02}:${RAG_F02_GID:?Prepare F02}
+    entrypoint:
+    - python
+    - scripts/f05_real_embedding_check.py
+    environment:
+      RAG_OIDC_ISSUER: https://idp:8443/realms/rag-dev-identity-fixture-v2
+      RAG_OIDC_AUDIENCE: rag-api
+      RAG_OIDC_JWKS: https://idp:8443/realms/rag-dev-identity-fixture-v2/protocol/openid-connect/certs
+    volumes:
+    - type: bind
+      source: ${RAG_F02_ROOT:?Prepare F02}/tls/ca.crt
+      target: /tls/ca.crt
+      read_only: true
+      bind:
+        create_host_path: false
+    - type: bind
+      source: /srv/rag-data/rag-platform/f01/tls/ca.crt
+      target: /run/f01-ca.crt
+      read_only: true
+      bind:
+        create_host_path: false
+    - type: bind
+      source: ${RAG_F02_ROOT:?Prepare F02}/secrets/identity_app_password
+      target: /run/secrets/identity_app_password
+      read_only: true
+      bind:
+        create_host_path: false
+    - type: bind
+      source: ${RAG_F02_ROOT:?Prepare F02}/secrets/api_authority_key
+      target: /run/secrets/api_authority_key
+      read_only: true
+      bind:
+        create_host_path: false
+    - type: bind
+      source: ${RAG_F02_ROOT:?Prepare F02}/secrets/identity-fixture-v2.json
+      target: /run/secrets/identity-fixture.json
+      read_only: true
+      bind:
+        create_host_path: false
+    - type: bind
+      source: /run/user/${RAG_F02_UID:?Prepare F02}/rag-f04-worker
+      target: /run/f04-worker
+      read_only: true
+      bind:
+        create_host_path: false
+    - type: bind
+      source: ${RAG_F04_QA_ROOT:?Prepare F04 QA run}
+      target: /run/f04-qa
+      read_only: true
+      bind:
+        create_host_path: false
+    - type: bind
+      source: ${RAG_F05_EMBED_QA_ROOT:?Prepare F05 embedding proof journal}
+      target: /run/f05-qa
+      bind: {create_host_path: false}
+    - type: bind
+      source: ../../scripts/f05_real_embedding_check.py
+      target: /app/scripts/f05_real_embedding_check.py
+      read_only: true
+      bind: {create_host_path: false}
+    read_only: true
+    tmpfs:
+    - /tmp:rw,noexec,nosuid,size=64m,mode=700,uid=${RAG_F02_UID:?Prepare F02},gid=${RAG_F02_GID:?Prepare
+      F02}
+    - /run/f02-auth:rw,noexec,nosuid,size=1m,mode=700,uid=${RAG_F02_UID:?Prepare F02},gid=${RAG_F02_GID:?Prepare
+      F02}
+    networks:
+    - f02
+    - control
+    cap_drop:
+    - ALL
+    security_opt:
+    - no-new-privileges:true
+    cpus: 0.5
+    mem_limit: 768m
+    memswap_limit: 768m
+    ulimits:
+      core:
+        soft: 0
+        hard: 0
