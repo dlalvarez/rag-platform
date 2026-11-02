@@ -1,18 +1,17 @@
-# Continuidad F05 — Qwen aprobado y T002
+# Continuidad F05 — Qwen real medido, seguir T003
 
-D-06: Diego eligió «ok, adoptemos qwen». PR45 integrado develop58e4a40 con CI y
-postmerge correctos. Qwen0.6B/1024/coseno/L2, revisión fijada ADR0011; no volver
-a preguntar modelo ni confundir selección con benchmark. 2vCPU siguen intactas.
+D-06 Qwen aprobado por Diego. PR45/46 integrados en develop9284e56, CI/postmerge.
+T001 adaptador Qwen local CPU/1024/coseno/L2 y primera medición en
+feat/F05-T001-qwen-local. Terminar CI/revisión/merge/postmerge, seguir T003
+esquemas/índices por space sin modificar migraciones históricas F01..F04.
+No cerrar turno al integrar PR, conservar todos los datos y fixtures.
 
-T002 contrato/fake/corpus congelado en feat/F05-T002-provider-contract. Completar
-CI/revisión/merge/postmerge y continuar T001 adaptador local/benchmark, luego T003
-esquemas preservando F04. Pesos10 archivos públicos verificados en
-/srv/rag-data/rag-platform/models/qwen3-embedding-0.6b/97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3.
-Inferencia separada /home/diego/proyectos/rag-platform-f05-inference-venv, torchCPU
-2.7.1/transformers4.51.3/safetensors0.5.3; freeze completo /tmp/f05-inference-installed.txt.
-No tocar lock/runtime existentes ni descargar en inferencia. Corpus ficticio no F06.
+Leer ADR0011, qwen-local.md y evidencia: corpus ficticio no calidad F06.
+Recall@3=1.0 ES/EN, p50=2.154s/p95=3.95s, picoRSS3796.6MiB en2vCPU;
+sin carga concurrente ni SQL/ANN/ACL en este benchmark. No cambiar4vCPU aún.
+Pesos y entorno separados, rutas públicas en manual; no red durante inferencia.
 
-Sesión diaria anterior venció11:38:16UTC; no renovarla/exportar bearer/root/unseal.
-Seguir modelo/offline sin Bao; pedir acción solo al necesitar live y sin trabajo
-independiente. F04 aceptada PR44, API t006/worker t006 detenido, fixtures conservadas.
-Sin main/prod/visibilidad/purge/nuevos tenants. AGENTS/ADR0010: continuar entre PR/fases.
+Sesión diaria anterior venció11:38:16UTC; no renovar/exportar bearer/root/unseal.
+Preparar T003 offline y pedir daily start solo al necesitar ensayos reales y
+sin trabajo independiente. F04 API t006/worker t006 detenido; fixtures conservadas.
+Sin main/prod/visibilidad/purge/nuevos tenants. Mantener AGENTS/ADR0010.

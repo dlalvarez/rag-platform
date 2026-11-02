@@ -1,0 +1,29 @@
+{
+  "model": "Qwen/Qwen3-Embedding-0.6B",
+  "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+  "profile_fingerprint": "877b3533c0ebeb369bfc3cd88603b0cbcf68ee1f128b1f4552fd60bffc86747c",
+  "corpus_sha256": "ca4d53dd72713febe740eebd958b384aae6dd9f2793c8433314c224b3284340e",
+  "synthetic_only": true,
+  "documents": 16,
+  "queries": 16,
+  "dimension": 1024,
+  "operational_max_tokens": 512,
+  "batch_max": 4,
+  "torch_threads": 2,
+  "load_seconds": 26.203,
+  "index_seconds": 19.764,
+  "index_fragments_per_second": 0.81,
+  "query_p50_seconds": 2.154,
+  "query_p95_seconds": 3.95,
+  "warm_repeated_query_p50_seconds": 2.165,
+  "process_max_rss_mib": 3796.6,
+  "usage_tokens_primary_batches": 961,
+  "recall_at_3": {
+    "es": 1.0,
+    "en": 1.0
+  },
+  "repeat_within_1e_6": true,
+  "over_limit_rejected_before_model": true,
+  "scope": "provider/exact synthetic integration only; not SQL/ANN/ACL/domain quality/F06",
+  "passed": true
+}

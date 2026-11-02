@@ -45,3 +45,15 @@ No mide calidad de dominio ni aceptación F06; sin AC SQL/indexación acreditado
 
 Validación ragdev01: 47 casos específicos (incluidos en 749 tests completos),
 749 passed en38.91s; ruff/docs/diff correctos. Advertencia Starlette/httpx ya existente.
+
+## T001 — adaptador Qwen y primera medición real
+
+Pesos10 artefactos públicos fijados/verificados en ragdev01. EntornoCPU separado
+con lock propio; sin tocar lock principal/servicios/BD/vCPU. Corpus SHA congelado
+antes de inferir. Red desactivada, tokenizer/modelo locales, no descargas en ejecución.
+Resultado agregado qwen-benchmark-01.json y manual qwen-local.md: recall@3=1.0
+ES/EN en16 preguntas ficticias, p50=2.154s/p95=3.95s, picoRSS3796.6MiB.
+No afirmar calidad representativa, capacidad concurrente, aislamiento o cierre F05.
+
+Validación entrega Qwen:758 tests completos passed en38.88s (9 nuevos límites/privacidad),
+ruff/docs/diff correctos. uv sync --locked separado comprobó25 paquetes sin cambios.
