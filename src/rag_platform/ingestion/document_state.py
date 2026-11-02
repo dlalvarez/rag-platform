@@ -9,7 +9,11 @@ from rag_platform.ingestion.schema import documents
 
 class DocumentStateService:
     def __init__(self, repositories):
-        if repositories.authority.profile not in ("ingestion", "embeddings"):
+        if repositories.authority.profile not in (
+            "ingestion",
+            "embeddings",
+            "embedding_publication",
+        ):
             raise ValueError("Ingestion authority required")
         self.repositories = repositories
 

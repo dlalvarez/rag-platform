@@ -5,6 +5,7 @@ import logging
 import re
 from dataclasses import replace
 from pathlib import Path
+from types import SimpleNamespace
 from uuid import UUID, uuid4
 
 import sqlalchemy as sa
@@ -14,6 +15,9 @@ from sqlalchemy.pool import NullPool
 
 from rag_platform.control.identity_models import IdentityBase
 from rag_platform.control.models import Base, DbLocation, Instance, ProvisioningOperation, Tenant
+from rag_platform.documents.content import selection
+from rag_platform.documents.receipt import document_view
+from rag_platform.documents.schema import documents
 from rag_platform.embeddings.publication_migrations import (
     apply_publication,
     register_publication_space,
@@ -22,6 +26,7 @@ from rag_platform.embeddings.publication_schema_f05_0006 import VERSION, build_m
 from rag_platform.embeddings.qwen import qwen_profile
 from rag_platform.embeddings.space_ddl import table_name
 from rag_platform.identity_api import private_file
+from rag_platform.ingestion import journal
 from rag_platform.ingestion.logging_setup import local_private_logging
 from rag_platform.ingestion.schema import audit, versions
 from rag_platform.ingestion.schema_f04_0003 import build_metadata as historical
@@ -339,6 +344,47 @@ def prove(target, names, bootstrap):
                             .where(versions.c.id == version)
                             .values(state="READY_FOR_EMBEDDING")
                         ),
+                    )
+                    PHASE = "ORIGINAL_SELECTION"
+                    original = c.execute(
+                        selection("embedding_publication").where(documents.c.id == f["doc"])
+                    ).one()
+                    assert original.version_id == f["raw"] and original.blob_key is not None
+                    PHASE = "ORIGINAL_RECEIPT_REPLAY"
+                    replay = document_view(
+                        c,
+                        SimpleNamespace(
+                            document_id=f["doc"], repository_id=f["repo"], version_id=f["raw"]
+                        ),
+                        profile="embedding_publication",
+                    )
+                    assert replay["version_id"] == str(f["raw"])
+                    PHASE = "ORIGINAL_INGEST_REQUEST"
+                    requested = journal.request(
+                        c,
+                        f["actor"],
+                        f["repo"],
+                        f["doc"],
+                        uuid4(),
+                        profile="embedding_publication",
+                    )
+                    PHASE = "ORIGINAL_INGEST_REPLAY"
+                    again = journal.request(
+                        c,
+                        f["actor"],
+                        f["repo"],
+                        f["doc"],
+                        uuid4(),
+                        profile="embedding_publication",
+                    )
+                    assert requested.id == again.id
+                    assert (
+                        c.scalar(
+                            sa.select(versions.c.original_version_id).where(
+                                versions.c.id == requested.version_id
+                            )
+                        )
+                        == f["raw"]
                     )
                     PHASE = "RELAY_AFTER_COMPLETE"
                     c.execute(

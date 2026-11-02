@@ -35,7 +35,7 @@ class Worker:
     def __init__(self, runtime, queue, *, stop=None, extractor=extract):
         if (
             getattr(queue, "_kind", None) != "INGEST"
-            or runtime.authority.profile not in ("ingestion", "embeddings")
+            or runtime.authority.profile not in ("ingestion", "embeddings", "embedding_publication")
             or runtime.authority.engine is not queue.engine
             or not queue.scope
             or tuple(queue.scope) != tuple(runtime.scope)
@@ -105,7 +105,7 @@ class Worker:
                 AdministrativeTenant(claim.tenant_id), "app"
             ) as c:
                 row = processing.inspect(c, guard)
-            if row.state == "READY_FOR_EMBEDDING":
+            if row.state in ("READY_FOR_EMBEDDING", "PUBLISHED"):
                 guard.complete()
                 return True
             terminal = row.state in processing.FINAL

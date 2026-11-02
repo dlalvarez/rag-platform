@@ -60,6 +60,7 @@ class TenantAuthorizer:
             "documents": b"F03/context/v1:",
             "ingestion": b"F04/f04_tenant_0003/context/v1:",
             "embeddings": b"F05/f05_tenant_0004/context/v1:",
+            "embedding_publication": b"F05/f05_tenant_0006/context/v1:",
         }[self.profile]
         return hmac.new(self._key, purpose + payload(context), hashlib.sha256).hexdigest()
 

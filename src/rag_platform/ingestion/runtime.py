@@ -48,7 +48,7 @@ def scope(path):
 
 class Runtime:
     def __init__(self, engine, key, path, endpoint, ca, scope_path, *, profile="ingestion"):
-        if profile not in ("ingestion", "embeddings"):
+        if profile not in ("ingestion", "embeddings", "embedding_publication"):
             raise ValueError("Known ingestion profile required")
         self.store, self.registry = None, None
         try:
@@ -64,7 +64,7 @@ class Runtime:
             connections = AuthorizedConnections(self.authority, self.registry)
             self.repositories = RepositoryService(connections, engine, key, profile=profile)
             self.gateway = ObjectGateway(self.repositories, self.store, ca)
-            self.documents = DocumentService(self.repositories, self.gateway)
+            self.documents = DocumentService(self.repositories, self.gateway, profile=profile)
         except BaseException:
             self.close()
             raise
