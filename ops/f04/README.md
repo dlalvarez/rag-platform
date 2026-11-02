@@ -53,3 +53,13 @@ revierte cada transacción y se verifica que datos, roles y head anteriores se c
 No instala persistentemente F04 ni cambia el catálogo. Validar logs solo en servidor
 con controles positivos y canary, sin copiar salida bruta.
 [Contrato físico y límites](../../specs/F04-ingesta-versionada/schema.md).
+
+## Intención y confirmación de despacho
+
+    docker compose --env-file /home/diego/proyectos/rag-platform/.env.f02 -f ops/f02/compose.yaml -f ops/f04/intent.compose.yaml build intent-check
+    docker compose --env-file /home/diego/proyectos/rag-platform/.env.f02 -f ops/f02/compose.yaml -f ops/f04/intent.compose.yaml run --rm -T --no-deps intent-check
+
+Mismos cuatro RO SQL/TLS que schema-check; no usar como worker. Transacciones tenant
+revertidas; envelopes QA con UUIDs conservados en f04_intent_probe_0001. Prueba una
+confirmación perdida y reenvío, no el crash de un worker real ni migración persistente.
+[Contrato T005](../../specs/F04-ingesta-versionada/worker.md).

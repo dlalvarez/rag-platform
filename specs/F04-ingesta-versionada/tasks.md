@@ -16,7 +16,8 @@ Cada tarea conserva evidencia y PR propio cuando el alcance lo requiera.
   R04/R05/R06; AC-01/03/04/05. Núcleo probado con 631 tests y cuatro fixtures SQL:
   migración repetida/procedencia/completitud/auditoría/roles/baja y rollback correctos.
   Perfil de logs probado con control positivo y canary ausente; activación persistente,
-  login de runtime y carreras pendientes con T005/T006/T007.
+  login de runtime y carreras pendientes con T005/T006/T007. PR #38 integrado,
+  CI/revisión/postmerge correctos; 13 tests postmerge y diez hashes exactos.
 - [x] T004 — Corpus sintético nuevo, cuatro extractores y chunker determinista,
   sandbox de proceso, límites y errores saneados, NEEDS_OCR.
   R02/R03/R06; AC-02/03/05. Fixtures de páginas, tablas/títulos, Unicode/código,
@@ -26,7 +27,9 @@ Cada tarea conserva evidencia y PR propio cuando el alcance lo requiera.
   34 tests desde develop e imagen con diez hashes correctos.
 - [ ] T005 — Worker y reconciliación de intención/cola, autorización vigente,
   recuperación tras crash/fencing y commit tenant antes del ack de control.
-  R01..06; AC-01..05. Repetición no duplica; fallos parciales no publican; A→B→A.
+  R01..06; AC-01..05. Componente de intención/relay probado: 14 tests nuevos y
+  cuatro fixtures SQL; ack perdido recupera un job. Worker, autorización global,
+  fencing de commit y crash/parada pendientes. Ver worker.md; T005 sigue abierta.
 - [ ] T006 — API F04 de versiones/jobs y tombstone, operación limitada, manual y
   errores/cursores sin contenido sensible en control/logs.
   R01/R04/R05/R06; AC-01/03/04. Negativas HTTP/ACL, revocación y parada/reinicio.
