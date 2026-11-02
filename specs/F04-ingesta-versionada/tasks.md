@@ -25,12 +25,13 @@ Cada tarea conserva evidencia y PR propio cuando el alcance lo requiera.
   logs con controles positivos/canary ausente y temporales limpios. Ver evidencia.
 - [x] T006 — API F04 de versiones/jobs y tombstone, operación limitada, manual y
   errores/cursores sin contenido sensible en control/logs.
-  R01/R04/R05/R06; AC-01/03/04. PR43:702 tests y HTTPS/SQL cuatro fixtures,
+  R01/R04/R05/R06; AC-01/03/04. PR #43:702 tests y HTTPS/SQL cuatro fixtures,
   readonly/ACL/cursor/cruces/jobs/bajas y rollback/recuperación reales correctos.
-- [ ] T007 — Batería real ambas topologías y regresiones F00..F03; evidencia de todos
+- [x] T007 — Batería real ambas topologías y regresiones F00..F03; evidencia de todos
   los AC, logs/temporales/permisos, CI/revisión/merge/postmerge.
-  R01..06; AC-01..05. No declarar cierre por tests offline ni marcar PUBLISHED
-  sin embedding completo. Conservar originales/versiones/recursos.
+  R01..06; AC-01..05. PR #44: regresiones reales F00..F03, SQL/S3/OIDC/historial,
+  logs con positivo/canary ausente y temporales correctos; CI/revisión/postmerge.
+  READY_FOR_EMBEDDING no es PUBLISHED; originales/versiones/recursos retenidos.
 
 No terminar el trabajo por completar un PR. Continuar siguiente tarea independiente;
 consultar solo decisiones reales/desvíos/bloqueos bajo ADR-0010.

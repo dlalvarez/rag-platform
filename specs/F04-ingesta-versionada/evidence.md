@@ -548,7 +548,7 @@ de baja de resultados para poder recuperar un ensayo interrumpido sin repetir ca
 
 ## T006 — activación e ingreso reales
 
-Desde PR43 head26b92958ae2288e0e74dfec5c048767d54611bf7, cuatro checks y
+Desde PR #43 head26b92958ae2288e0e74dfec5c048767d54611bf7, cuatro checks y
 revisión delegada previa: solo API promovida a rag-f04-api:t006, siete RO/usuario1000,
 TLS/health F04 y entrega limitada reemplazada después del cierre anterior.
 IDs PostgreSQL/MinIO/Bao/IdP iguales antes/después; sin reiniciar esos servicios.
@@ -578,7 +578,7 @@ Worker/verify final aún pendientes; no declarar T006 aceptada por este seed.
 Head16005a4a6513d875a2884e691ae6ef9763e6c8f8, cuatro checks correctos,
 revisión delegada y helper de imagen con hash exacto antes de verify.
 Worker normal t006 procesó los veinte envelopes del run a75adb4c:12NONE/READY,
-4NEEDS_OCR y4TOMBSTONED, cuatro RO y canario ausente; parada limpia exit0.
+4 NEEDS_OCR y4 TOMBSTONED, cuatro RO y canario ausente; parada limpia exit0.
 No resultado PUBLISHED ni cambios de current_version_id: los veinte siguen apuntando
 al ORIGINAL y conservan exactamente ORIGINAL+PROCESSED.
 
@@ -593,13 +593,13 @@ un solo evento DOCUMENT_TOMBSTONED. Checkpoints predelete/verified retenidos.
 A→B→A HTTP pasó en misma instancia y dos instancias, metadata propia.
 
 702 tests y controles estáticos ya correctos; no hubo cambio de runtime después de
-la revisión inicial, solo dos asserts QA y evidencia. Aceptación técnica T006 en PR43;
+la revisión inicial, solo dos asserts QA y evidencia. Aceptación técnica T006 en PR #43;
 registrar CI/revisión del head final e integración/postmerge antes de T007/cierre F04.
 F04 sigue abierta por regresiones y aceptación T007. Sin backup/restore acreditado.
 
 ## T007 — preparación de aceptación
 
-PR43 integrado develop6398c62100327b4fbf21716f07d5fdcc12793308, tres checks/67 tests
+PR #43 integrado develop6398c62100327b4fbf21716f07d5fdcc12793308, tres checks/67 tests
 postmerge y69 módulos exactos en tres imágenes, checkouts limpios.
 [Registro](https://github.com/dlalvarez/rag-platform/pull/43#issuecomment-6575138375).
 Contrato/matriz en acceptance.md. Comprobadores actuales de SQL/S3/OIDC/historial
@@ -607,3 +607,57 @@ F03 y privacidad, y F00 aislado con fixture UUID nueva retenida, preparados sin 
 migración/dependencia/runtime/permisos. Todavía sin atribuir resultados online T007.
 La fixture f00_probe antigua está ausente; su limpieza original consta en evidencia F00.
 No se recreó ni se interpreta como pérdida de datos. Nuevos ensayos conservarán recursos.
+
+## T007 — aceptación real final
+
+F00 aislado, source e311ee3: UUID4b7e0b1d-7326-4c35-bbf8-5a7ccf5294ed,
+tabla f04_regression_4b7e0b1d73264c35bbf85a7ccf5294ed y bucket homónimo con
+guiones retenidos. Health API/MinIO, vector SELECT y SQL/S3 pasaron seed y verify
+en procesos separados. Sin reinicios ni limpieza; no se modificaron fixtures viejas.
+La ausencia de f00_probe corresponde a smoke clean original, no pérdida actual.
+
+Desde head50129ca23cd2a4605314d9c92140345f563be72d, cuatro checks/revisión y
+script de imagen exacto: OIDC real/global identity/contexto/negativas pasaron.
+En SAME_A/SAME_B/TWO_A/TWO_B pasaron app/readonly propios con TLS/vector y cinco
+flags de privilegio falsos; DELETE/readonly UPDATE denegados, readonly sin ops,
+CONNECT cruzados y SET ROLE de roles ajenos del mismo nodo rechazados.
+Libpq startup sin SQLSTATE se clasifica con firma FATAL EXACTA ya usada por F01;
+no aceptar None o fallo de red genéricos. Primer intento se detuvo por clasificador,
+se corrigió solo QA. No hubo acceso cruzado ni cambio de grants.
+
+S3 propios stat/get/list y SHA/tamaño correctos; stat/get/list en buckets ajenos
+rechazados AccessDenied en todas las fixtures. Un intento tuvo ProtocolError de
+transporte y NO se contó como denegación. Repetición completa de main con mismo
+head/imagen terminó0 y pasó todas las negativas; sin relajar clasificador/permisos.
+No se ejecutó DELETE cruzado sobre recursos reales.
+
+Historial F03 por HTTPS: originales/metadata/version_id/SHA/bytes/ACL retenidos,
+reader200 y sin ACL403; cada documento histórico conserva una ORIGINAL, job_id null,
+sin ingesta retroactiva. No se relajaron checks de migraciones históricas para ejecutar
+scripts viejos contra head futuro. Regresión combinada:702 tests y probes actuales;
+no afirmar que se repitieron todos los scripts antiguos de cada fase.
+
+Probe privado en cuatro fixtures: siete GUC verificados antes de LOG fijo
+F04_T007_LOG_POSITIVE y SQL23514 por INSERT tardío con savepoint revertido.
+Logs PG/PG2 desde10:55UTC contienen LOG+ERROR; canarios F04_API_PRIVATE_CANARY
+y F04_WORKER_PRIVATE_CANARY ausentes. También ausentes en API/MinIO/Bao.
+Worker normal retenido exit0/cuatro RO/log positivo sin canario. API inactiva tras
+descargas: /tmp sin archivos ni FD de spool/borrados. Datos ext4 con más de10GiB
+libres. Logs brutos no exportados; sin promesa universal de ausencia de fugas.
+
+## Aceptación técnica F04
+
+R01..06/AC01..05 acreditados por PR35..44 y acceptance.md: cola/carreras, parsing
+aislado/corpus/límites, chunks con procedencia, replay/crash/retry, resultado atómico,
+baja/ACL/membresía sin resultado tardío, ambas topologías y operación limitada.
+T001..T007 completas técnicamente; integrar PR #44 solo con CI/revisión del head final
+y verificar postmerge antes de comenzar F05. Registro de integración en conversación
+del PR evita referencia circular al hash del propio informe.
+
+Limitaciones conservadas: corpus sintético y presupuesto de desarrollo ragdev01,
+sin SLA/producción, backup/restore/PITR no acreditados por F04; OCR no implementado
+(NEEDS_OCR explícito), sin embeddings/PUBLISHED/búsqueda/conectores/UI.
+Originales/pointer/historial/versiones/chunks/fixtures retenidos; worker normal parado
+exit0 y API T006 activa. Sin migraciones/dependencias/grants/políticas/passwords/root
+adicionales en aceptación. No promoción main/tag/producción/visibilidad.
+Continuar roadmap original con plan F05 y gobierno D06, sin pausa rutinaria.

@@ -1,7 +1,7 @@
 # F04 T007 — aceptación final y regresiones
 
 Alcance original, sin embeddings/PUBLISHED ni cambios de arquitectura. T006 aceptada
-en PR43, develop6398c62100327b4fbf21716f07d5fdcc12793308: tres checks/67 tests
+en PR #43, develop6398c62100327b4fbf21716f07d5fdcc12793308: tres checks/67 tests
 postmerge, checkouts limpios y69 hashes exactos en tres imágenes.
 
 ## Puertas trazables
@@ -15,7 +15,7 @@ postmerge, checkouts limpios y69 hashes exactos en tres imágenes.
 | F00..F03 | 702 tests y evidencia histórica; T006 HTTP/rollback/historial T005 | fixture F00 nueva retenida; OIDC/historial F03 actual |
 | R06/P08/P09 | PR42 logs con positivo/error y canario ausente, temporales limpios | nuevo canario/log positivo en ambas instancias |
 
-## Comprobadores preparados, aún sin resultado online T007
+## Comprobadores ejecutados y resultados T007
 
 scripts/f04_regression_check.py usa el runtime limitado y el run T006 ya retenido.
 SQL app/readonly propios con TLS/vector y flags limitados; UPDATE/DELETE/CONNECT/
@@ -40,3 +40,14 @@ Registrar resultados reales/límites, matriz AC, revisión delegada, CI exact-he
 PR hacia develop y postmerge. Solo entonces aceptar F04 y preparar F05 original.
 No cambiar main/tag/visibilidad/producción ni recuperar root/renovar día por iniciativa.
 F05 mantiene D06 modelo/dimensión como decisión de arquitectura bajo gobernanza.
+
+
+## Resultado de aceptación
+
+Regresión limitada pasó cuatro fixtures con head50129ca y script exacto: SQL propio/
+cruzado, flags/readonly, S3 stat/get/list propios/cruzados, OIDC/negativas e historial
+F03 SHA/ACL/versiones originales sin ingesta retroactiva. F00 seed/verify con UUID nuevo
+4b7e0b1d-7326-4c35-bbf8-5a7ccf5294ed y recursos retenidos correctos.
+LOG+ERROR positivos en PG/PG2, canarios ausentes; API sin archivos/FD de spool al quedar
+inactiva y worker exit0/cuatro RO. Evidencia detalla intentos no contabilizados y límites.
+R01..06/AC01..05 satisfechos técnicamente; CI/revisión/merge/postmerge de PR #44 antes de F05.
