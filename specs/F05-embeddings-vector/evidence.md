@@ -161,3 +161,23 @@ PR52 integrado7a42556, cuatro checks antes y tres postmerge correctos.
 
 Revisión final: worker INGEST rechaza cola EMBED antes de I/O. Caso adicional;
 837 passed en54.35s,30 nuevas T004; ruff/formato correctos. Sin cambio SQL.
+
+
+## T005 parcial — expansión del ancla original
+tenant0005 añade original_version_id/kind, backfill/FK diferida y guard inmutable;
+no cambia todavía el constraint F04 que mantiene current pointer ORIGINAL.
+Helper explícito rechaza identidad/head desconocido, verifica columnas/constraints/
+función/trigger y usa savepoint. No perfil runtime nuevo ni adopción persistente.
+
+2026-11-02, ragdev01:837 passed42.34s, ruff/formato/docs/diff correctos. SQL real
+en4fixtures/2instancias: fallo DDL22012 rollback, repetición/backfill/snapshots intactos,
+head desconocido y trigger deshabilitado rechazados; app inserta con esquema F04,
+UPDATE ancla app42501, owner no puede cambiarla23514; FK cruzada23503.
+El primer ensayo falló por esperar23514 donde app carece de UPDATE42501; ajustado
+el probe sin otorgar permisos. Constraint FK se referencia con esquema explícito.
+Todos los ensayos revertidos; tenants siguen0004 y control0006. No publicación,
+usage, procesamiento ni descarga HTTP postpublicación acreditados. T005 abierta.
+PR53 integrado5c9b947, cuatro checks antes y tres postmerge correctos.
+
+Revisión final ancla: INSERT explícito debe coincidir con current original inicial.
+Negativo añadido y SQL4fixtures repetido correcto; sin nueva adopción.

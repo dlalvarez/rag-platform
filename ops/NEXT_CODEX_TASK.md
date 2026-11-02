@@ -45,3 +45,11 @@ T004 parcial siguiente: EmbeddingQueue/EmbeddingClaim y guard compartido ensayad
 Cerrar CI/revisión/postmerge de entrega cola. Luego contrato tenant de procesamiento/
 usage/publicación/ancla original, compatibilidad control0007 y worker real. Sin
 adopción0007 ni servicios activados. No confundir cola con T004 terminada.
+
+
+T005 expansión ancla0005 preparada/ensayada:837 pruebas completas y4fixtures SQL
+rollback correctas. Cerrar CI/revisión/postmerge antes de continuar. No adoptada.
+Diseño incremental en specs/F05-embeddings-vector/publication-design.md.
+Después: evolución publicación/bindings/usage, compatibilidad perfil antes de adopción,
+original/read/replay/INGEST con ancla. HTTP búsqueda pendiente decisión de Diego sobre
+concreción sin assistant/generación; propuesta fuera del repo en servidor. Seguir resto.
