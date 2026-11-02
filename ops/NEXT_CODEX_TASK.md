@@ -1,53 +1,45 @@
-# Continuidad F05 — ledger/publicación ensayados, seguir runtime/worker
+# Continuidad F05 — controlador de publicación en revisión
 
-Develop 9bf87f0 (PR57), cuatro checks previos y tres postmerge correctos.
-PR52controlEMBED y PR53consumidor integrado;837 tests baseline. ModeloQwen aprobado
-ADR0011/512/batch4, medición capacidad completada: no repetir sin cambio/riesgo.
+Develop 2d15baf (PR59). PR58 8f8f113: cuatro checks previos y tres postmerge success.
+PR59 registra la aprobación expresa de Diego de búsqueda HTTP de fragmentos en F05;
+cuatro checks previos success, comprobar tres postmerge. No requiere otra decisión
+sobre assistant_id/generación: request repository_ids/space_id/query/top_k y hits con
+procedencia, similitud y uso embeddings, conforme a docs07. La ruta sigue sin habilitar.
 
-Trabajo actual feat/F05-T007-worker-operations en worktree f03-schema.
-tenant0006 ledger/lotes/usage/bindings, guards y wrapperspace explícito preparados;
-ledger/compat integrados; worker código904passed58.62s,77focalizadas y SQL
-componentes tenant/control correctos con rollback. PR57 integrado y postmerge correcto.
-Entorno opcional/imagen/handoff preparados; 910 tests correctos. Cerrar revisión
-propia/CI/merge/postmerge de la entrega operativa. No atribuir revisión independiente.
+Rama actual feat/F05-T005-publication-adoption-review en worktree f03-schema.
+Controlador/composición/manual preparados. 925 tests (63.44s), 18 focalizados,
+ruff/formato y dos preflights reales en cuatro fixtures/dos instancias correctos.
+Journal nuevo privado fuera del repo:
+ /home/diego/proyectos/rag-platform-f05-publication-adoption-runs/8d87357ea8c24100a1f25b6a14959751
+Conservar también journal anterior 8f9a197defd04a3baacde6bac5a56886.
+Preflight no ejecuta DDL; adopt completo aún no ejecutado. Cerrar revisión propia,
+CI del HEAD exacto, merge y postmerge antes de usar la ventana de cambio.
 
-Persistente: control f04_control_0006; cuatro tenants f05_tenant_0004 y espaciosQwen
-vacíos.0007control y0005/0006tenant NO adoptados. APIF05t003 activa; workerF04 detenido.
-No modificar servicios hasta compatibilidad y ventana revisada. Conservar journal
-8f9a197defd04a3baacde6bac5a56886 y recursos/modelo/venvs/pesos/fixtures originales.
+Persistente: control f04_control_0006; cuatro tenants f05_tenant_0004 con único espacio
+Qwen vacío. API F05t003 activa; worker F04 detenido y conservado. Ningún servicio
+recreado ni entrega nueva emitida. Sesión diaria ACTIVE verificada el 2026-11-02,
+vence 2026-11-03T07:14:15-05:00; comprobar estado/hora antes de usar, no renovar.
+No root, configure, reinicios Bao, nuevas políticas, purgas, main/tags/producción.
 
-Perfil opt-in RAG_F05_PUBLICATION_ENABLED preparado, sin activar ni adoptar.
-Siguiente imagen/lock opcional y adopción revisada con workerEMBED real: relay/intents, lotes acotados/uso real,
-heartbeat durante inferencia63s+, reautorizar contexto tras inferir (TTL30s), locks/fence
-antes de tenant commit y ack posterior reconciliable. Pruebas crash/ACL/tombstone/
-mismatch/cuotas y ambos topologías; luego búsqueda exacta/ANN, ops y aceptación.
-No marcar T003/T004/T005 ni F05 completas con solo esquema o SQL sintético.
+Próximo paso: imágenes compatibles API/INGEST desde código revisado, hashes/smoke,
+overlays opt-in publicación y QA de regresión del perfil embedding_publication.
+EMBED rag-f05-embedding:t004 ya preparado, lock opcional separado y smoke90 módulos,
+sin inferencia del modelo. Ver embedding-operations.md y publication-adoption.md.
+Con CI/revisión y preflight, ventana limitada: cierre de consumidores/conexiones/locks,
+adopt control0007/tenant0006, fallo22012/FAILED/rollback/recuperar/repetir, snapshots,
+handoffs independientes válidos sin consumidor activo e inicio solo de servicios
+revisados. No autoarranque de dependencias ni remove-orphans.
 
-HTTP search: Diego aprobó expresamente el 2026-11-02 la búsqueda HTTP de fragmentos
-en F05, sin assistant ni generación F07. Propuesta /home/diego/proyectos/rag-platform-f05-search-contract-proposal.md.
-Registrar la aprobación en docs07/spec y concretar el contrato aprobado antes de implementarlo.
+Después probar worker Qwen real/usage, inferencia larga y reautorización TTL30s,
+heartbeat/fences, crash entre commits control/tenant independientes, retomar parciales,
+originales HTTP/S3 postpublicación; luego búsqueda exacta/ANN/HTTP/ACL y aceptación.
+Solo nuevas ingestas0006 crean intent Qwen; historia READY requiere request explícito.
+No barrer corpus histórico ni repetir benchmark de capacidad sin cambio/riesgo.
+Cuota64chunks/32768tokens persistidos/3intentos; lote perdido sin commit puede repetirse.
+Stop180s antes de token expirado/DENIED/INVALID, sin auto-renew. Conservar recursos.
 
-Todo desarrollo/pruebas en ragdev01. SSHdesdeMacBatchMode/StrictHostKeyChecking.
-GitHTTPS servidor sin auth: publicar con conector GitHub y verificar mismo SHAárbol
-con git fetch, conservando ramas locales de prueba. No extraer tokens ni secretos.
-Sesión diaria registrada hasta2026-11-03T07:14:15-05:00; comprobar estado/hora antes de
-usar; no renovar/revocar/root por iniciativa. AppRoleworkerTTL1h requiere entrega
-propia válida y sin consumidor con lock. Sin main/tags/producción/visibilidad/purge.
-Seguir AGENTS/ADR0007/0010 autónomamente, sin pausas de trámite.
-
-
-Worker nuevo: requests explícitos; solo ingestas completadas bajo0006 crean intent
-Qwen automáticamente. No barrer READY histórico. Cola con fingerprint del provider.
-Quota64chunks/32768tokens de contenido persistido,3intentos; batch sincommit puede
-repetirse. Stop180s antes de TTL o DENIED/INVALID; no auto-renew y nuevo handoff solo
-tras consumidor cerrado. Fuente actual RuntimeSQL-only, sin S3 ni admin/día.
-No declarar E2E por SQLite o guard sintético SQL. Leer ops/f05/embedding-worker.md.
-
-Entorno preparado: ops/f05/embedding-operations.md. Imagen rag-f05-embedding:t004,
-lock separado con pins compartidos sin deriva. Smoke sin red/credenciales/modelo,
-90 módulos SHA iguales. Compose corregido/validado, ningún servicio iniciado.
-Tools privadas prueban exclusión consumidor antes de día. Readonly sin SELECT
-ledgers ops (SQL rollback). No entrega real emitida ni directorio real preparado.
-Siguiente: controlador de adopción publicación/control0007 con journal nuevo,
-conservando el journal previo, fuentes cerradas y snapshots; ensayarlo/revisarlo
-antes de usar una ventana de cambio. No ejecutar f03_application_host configure.
+T003..T008 y F05 abiertas; SQL sintético/SQLite/smoke/preflight no acreditan E2E.
+Todo ejecución/dependencias en ragdev01, Mac solo SSH/documentos. Seguir AGENTS y
+ADR0007/0010 autónomamente, sin detener por PR ni pedir confirmaciones rutinarias.
+Git push servidor sin auth: conector GitHub, transferencias pequeñas y SHA árbol igual
+al probado ANTES crear commit. Conservar ramas locales de prueba; no reset destructivo.

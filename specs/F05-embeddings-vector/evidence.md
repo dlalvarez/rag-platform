@@ -282,3 +282,22 @@ PR57 integrado 9bf87f0 con cuatro checks previos y tres postmerge success.
 propuesta registrada. docs07 y F05-R06 concretan request, hits, procedencia, score y
 uso de embeddings. Se retira del ejemplo de búsqueda la generación que corresponde
 a F07. Esta aprobación no habilita la ruta ni acredita sus pruebas pendientes.
+
+## T005 parcial — controlador y preflight de publicación
+2026-11-02, ragdev01: controlador para fuentes tenant0004/0005/0006 y control0006/0007,
+scope fijo, journal distinto y baseline inmutable; exige preflight previo y repetido
+antes de DDL, jobs detenidos, espacio Qwen único/vacío y conexiones app/readonly cerradas.
+Preparado fallo22012/FAILED/rollback/recuperar/repetir y comprobación de roles reales.
+La ventana adopt completa todavía NO se ha ejecutado; control0006/tenant0004 permanecen.
+
+925 passed en 63.44s, 18 focalizados correctos; ruff/formato correctos. Quince casos
+nuevos: checkpoint/conflicto/symlink del journal nuevo, ausencia de preflight/modo
+inválido antes de DB y catálogos incompatibles/targets ajenos rechazados sin mutación.
+Primer test esperaba FileNotFoundError; helper privado cierra con ValueError, corregido.
+Dos preflights reales correctos en cuatro fixtures/dos instancias, roles/TLS/hashes,
+originales y espacio vacío conservados. Día ACTIVE verificado sin renovación.
+Compose run local no soporta --no-build: rechazó antes de ejecutar; se usó imagen
+existente verificada con --pull never y sin dependencias. Orphan F04 se conserva.
+No credencial nueva, servicio reiniciado, inferencia ni migración persistente.
+PR58 integrado con cuatro checks previos/tres postmerge success; PR59 contrato aprobado
+integrado con cuatro checks previos, postmerge pendiente al registrar esta evidencia.
