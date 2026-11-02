@@ -17,6 +17,7 @@ import sqlalchemy as sa
 from rag_platform.identity_api import private_file
 from rag_platform.ingestion import journal
 from rag_platform.ingestion.extraction import ChunkConfig
+from rag_platform.ingestion.logging_setup import SETTINGS
 from rag_platform.ingestion.queue import DurableQueue
 from rag_platform.ingestion.queue_schema import jobs
 from rag_platform.ingestion.runtime import Runtime
@@ -227,6 +228,7 @@ def run():
         "mode",
         choices=[
             "positive",
+            "privacy",
             "sequence",
             "request",
             "process",
@@ -242,6 +244,8 @@ def run():
     )
     p.add_argument("--fixture", choices=["same-a", "same-b", "two-a", "two-b"])
     p.add_argument("--case")
+    p.add_argument("--chunk-size", type=int, default=1024)
+    p.add_argument("--sequence-sizes", type=int, nargs=3, default=(384, 512, 768))
     args = p.parse_args()
     MANIFEST = json.loads(private_file("/checks/manifest.json", 512 * 1024))
     assert MANIFEST["version"] == 1
@@ -268,7 +272,7 @@ def run():
         if args.mode == "sequence":
             for labels in (("same-a", "same-b", "same-a"), ("two-a", "two-b", "two-a")):
                 selected = []
-                for label, size in zip(labels, (384, 512, 768), strict=True):
+                for label, size in zip(labels, args.sequence_sizes, strict=True):
                     fixture = next(f for f in MANIFEST["fixtures"] if f["name"] == label)
                     original = next(i for i in fixture["documents"] if i["case"] == "positive-txt")
                     item = dict(original, configuration=(size, 64))
@@ -324,7 +328,43 @@ def run():
             return
         fixture = next(f for f in MANIFEST["fixtures"] if f["name"] == args.fixture)
         item = next(i for i in fixture["documents"] if i["case"] == args.case)
+        if args.chunk_size != 1024:
+            item = dict(item, configuration=(args.chunk_size, 128))
         PHASE = args.mode + "/" + fixture["name"] + "/" + item["case"]
+        if args.mode == "privacy":
+            verify(runtime, queue, fixture, item)
+            with tenant_connection(runtime, fixture) as c, c.begin():
+                for setting, expected in SETTINGS.items():
+                    assert (
+                        c.scalar(sa.text("SELECT current_setting(:name)"), {"name": setting})
+                        == expected
+                    )
+                piece = (
+                    c.execute(
+                        sa.select(chunks)
+                        .where(chunks.c.version_id == version(item))
+                        .order_by(chunks.c.ordinal)
+                    )
+                    .mappings()
+                    .first()
+                )
+                assert "F04_WORKER_PRIVATE_CANARY" in piece["text"]
+                c.execute(sa.text("DO $$ BEGIN RAISE LOG 'F04_WORKER_LOG_PROBE_ACTIVE_V1'; END $$"))
+                rejected = False
+                try:
+                    with c.begin_nested():
+                        values = dict(piece)
+                        values["id"] = uuid4()
+                        c.execute(chunks.insert().values(**values))
+                except sa.exc.DBAPIError as error:
+                    assert getattr(error.orig, "sqlstate", None) == "23514"
+                    rejected = True
+                assert rejected
+            print(
+                "PASS T005 PRIVACY: LOG positivo y error real; GUC privados; sin mutación.",
+                flush=True,
+            )
+            return
         if args.mode == "request":
             request(runtime, queue, fixture, item)
             print(
