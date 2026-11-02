@@ -17,7 +17,8 @@ from rag_platform.documents.policy import (
     target_allows,
     tenant_allows,
 )
-from rag_platform.documents.schema import VERSION, audit_events, repositories, repository_acl
+from rag_platform.documents.schema import audit_events, repositories, repository_acl
+from rag_platform.tenancy.profiles import version_for
 
 
 def logical_id(value):
@@ -45,8 +46,11 @@ def view(row):
 
 
 class RepositoryService:
-    def __init__(self, connections, control_engine, cursor_key):
-        if connections.authority.version != VERSION:
+    def __init__(self, connections, control_engine, cursor_key, *, profile="documents"):
+        if profile not in (
+            "documents",
+            "ingestion",
+        ) or connections.authority.version != version_for(profile):
             raise ValueError("Document authority profile required")
         self.connections, self.control = connections, control_engine
         self.authority = connections.authority

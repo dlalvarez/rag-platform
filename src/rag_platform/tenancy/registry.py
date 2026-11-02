@@ -24,7 +24,10 @@ class Entry:
     touched: int = 0
 
 
-def tenant_engine(destination, store, ca: Path):
+def tenant_engine(destination, store, ca: Path, *, pool_size=2):
+    if type(pool_size) is not int or not 1 <= pool_size <= 2:
+        raise ValueError("Invalid tenant pool size")
+
     def connect():
         credential = store.read(destination.credential)
         if credential.username != destination.username:
@@ -37,7 +40,7 @@ def tenant_engine(destination, store, ca: Path):
         "postgresql+psycopg://",
         creator=connect,
         poolclass=QueuePool,
-        pool_size=2,
+        pool_size=pool_size,
         max_overflow=0,
         pool_timeout=5,
         pool_pre_ping=True,
