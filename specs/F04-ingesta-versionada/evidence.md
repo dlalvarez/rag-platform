@@ -257,3 +257,70 @@ No originales/chunks persistidos, rotación, reinicio de infraestructura ni F05.
 Regresión completa del componente en ragdev01: 645 tests correctos (631 previos +14),
 ruff check/format, check_docs y diff --check correctos. Solo advertencia ya conocida
 de Starlette/httpx, sin cambios de dependencias en este componente.
+
+## T005 intención integrada — PR #39
+
+Head 6c41a126f9c0226b601b825959665a9ff22e035e, merge
+78c4653c40b2645bbc6b31854394a8e7f7910f92. Cuatro checks del head y tres del merge;
+revisión delegada del mismo agente y postmerge correctos. Ambos checkouts limpios,
+docs válidas, 14 tests postmerge y doce hashes exactos.
+[Postmerge](https://github.com/dlalvarez/rag-platform/pull/39#issuecomment-6569466967).
+T005 continúa; esto no acepta el worker completo.
+
+## T005 componente de fencing y resultado transaccional
+
+claims.py toma el lock del envelope y verifica reloj/token/intento/identidad después
+de adquirirlo. CommitGuard deja de ser válido al salir del contexto. El llamador
+mantiene el fence corto durante el commit tenant; el ack se hace después. No hay
+ACID distribuido ni ack anticipado. Timeout SQL/lock de control 15/5 segundos.
+
+processing.py registra intento local y resultado mediante transacción del llamador:
+original/config/actor verificados, todos los bloques/chunks con UUID estable,
+hash/contadores/READY_FOR_EMBEDDING y auditoría antes de confirmar. Resultado READY
+repetido no inserta nada. Error durante completitud revierte todas las inserciones;
+no limpiar resultados sospechosos con DELETE. Fallo recuperable pasa a
+FAILED_RETRYABLE y otro claim válido puede recuperarlo; terminales permanecen.
+
+worker_policy.py valida contexto firmado vigente y rol de escritura. Toma locks
+compartidos de los protocolos existentes global/membresía F02 y saga F01, sin
+conceder UPDATE de catálogo. Esto coordina con IdentityAdministration y migraciones
+controladas; SQL directo que ignore esos locks no es una interfaz soportada de
+revocación concurrente. El repositorio/documento se serializa con el flujo F03 de ACL
+y la baja F04. Parada, lease/contexto vencido o tombstone impiden el commit.
+
+Ajuste de reconciliación: el ack local exacto de un enqueue ya confirmado puede
+registrarse tras baja/revocación, solo sobre IDs y sin autorizar contenido. Evita una
+intención perpetuamente PENDING; el worker sigue obligado a autorizar antes de I/O
+y resultado. El contrato worker.md documenta esta frontera antes de su uso runtime.
+
+Pruebas ejecutadas únicamente en ragdev01:
+
+- 656 tests completos (645 anteriores +11 nuevos), lint/formato/docs/diff correctos.
+  Tests nuevos de guard válido/forjado/caducado, rollback del ack, parada, frontera
+  del contexto y revalidación real de usuario/membresía/referencias/head/reader
+  mediante TenantAuthorizer offline. Advertencia Starlette/httpx ya conocida.
+- PostgreSQL real, cuatro fixtures en ambas instancias: fallo de hash al finalizar
+  después de insertar bloques/chunks -> rollback completo y estado EXTRACTING;
+  resultado correcto + repetición -> mismo número de chunks. Reintento de fallo
+  de dependencia -> claim nuevo recupera; claim viejo rechazado.
+- Dos procesos reales: con fence retenido y lease caducado, un segundo proceso no
+  puede tomar el mismo job. Al liberar el lock, el nuevo claim cambia intento/token
+  y completa. Guard viejo/caducado no confirma.
+- Parada inmediatamente antes del commit revierte todos los chunks del savepoint.
+  Baja posterior al inicio impide finalizar; ack de despacho tras baja/ACL revocada
+  registra IDs sin conceder otra petición ni acceso.
+- Los locks compartidos reales bloquean los métodos exclusivos de
+  IdentityAdministration (global/membresía) con SQLSTATE55P03; el lock de saga
+  rechaza la migración concurrente y vuelve a estar disponible después.
+- Se repitieron las baterías T003 y journal/relay: datos/control/roles/head intactos
+  tras rollback. Imagen rag-f04-tools:t005-fence con dieciséis hashes correctos.
+  Composición QA con cuatro RO SQL/TLS, sin día/Bao/S3/IdP ni puertos.
+- Logs de ambas instancias con control positivo y ERROR observado; canary de texto
+  ausente. Salida privada capturada solo en servidor, sin copiar registros brutos.
+
+Límite explícito: son componentes SQL probados con transacciones tenant revertidas
+y control QA sintético retenido, no el worker completo. Pendientes: runtime limitado,
+logins reales/autoridad F04 en vivo, S3+parser, crash del proceso después de un commit
+tenant persistente y antes del ack, carreras HTTP, parada/reinicio completos,
+migración persistente y recuperación del catálogo. T002/T003/T005 siguen abiertas;
+no aceptar F04 ni anticipar F05 por estas pruebas.
