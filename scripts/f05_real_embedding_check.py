@@ -32,8 +32,10 @@ OUT = Path("/run/f05-qa")
 PHASE = "START"
 
 
-def selection(manifest, actors, scope):
+def selection(manifest, actors, scope, *, case="atomic"):
     """Only the exact retained scope and authenticated principals may select work."""
+    if case not in ("atomic", "positive"):
+        raise ValueError("Unknown explicit fixture case")
     expected = [(r["name"], r["tenant"]) for r in scope]
     if (
         manifest.get("actors") != {k: str(v) for k, v in actors.items()}
@@ -45,7 +47,7 @@ def selection(manifest, actors, scope):
         raise ValueError("Fixture scope mismatch")
     result = []
     for fixture in manifest["fixtures"]:
-        items = [r for r in fixture["documents"] if r["case"] == "atomic"]
+        items = [r for r in fixture["documents"] if r["case"] == case]
         if len(items) != 1 or items[0]["actor"] != "alice":
             raise ValueError("Explicit fixture missing")
         item = items[0]

@@ -384,3 +384,18 @@ traza forjada y conexiones cerradas. Suite967passed67.31s; después siete prueba
 nuevas de selección QA pasaron. El helper real está preparado, todavía NO ejecutado.
 Revisión detectó resolución de extends relativa al primer compose, corregida antes
 de arranque; composición validada sin iniciar dependencias.
+
+## Consulta Qwen real del servicio y preparación de recuperación
+Postmerge PR64 8fd440c: docs/lint/tests success. QA Qwen real + SQL exacto PASS
+same-a/same-b/two-a/two-b, procedencia esperada y repositorio ajeno rechazado antes
+del proveedor. No nuevos documentos/jobs ni texto/vector en output; cierre revocó
+entrega exclusiva. No acredita HTTP, ANN, calidad ni recuperación de proceso.
+
+Controlador de recuperación preparado: positive explícito, presupuestos de todos
+antes de intents, cola limitada a versión y dos límites de hard exit real. Demora
+QA35s sobre proveedor real, lease15/heartbeat5, comparación ledger/coste y cerca
+vieja al retomar. Todavía NO ejecutado. Primer test del hook omitió runtime en su
+objeto de prueba; corregido,14focalizados pasan. No cambio de producción.
+Suite979passed68.08s,14focalizados finales3.79s, ruff/formato/docs correctos.
+La espera QA no se atribuye a latencia del modelo; token de cerca viejo permanece
+solo en memoria del proceso de recuperación, nunca se guarda ni imprime.
