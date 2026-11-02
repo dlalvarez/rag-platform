@@ -55,3 +55,12 @@ trabajo, parada/reinicio y A→B→A. Comprobar rol/password separado de migrato
 TLS/logs/canary/temporales/capacidad y ausencia de día/admin en mounts. Regresiones
 F00..F03, CI/revisión delegada del mismo agente/postmerge. Conservar fixtures.
 No declarar estas pruebas por tests con dobles ni cerrar T005/F04 por instalar el contenedor.
+
+## Resultado técnico de T005
+
+PR42 acredita runtime real en ambas topologías: cuatro formatos, negativos, crash
+después del commit/reconciliación sin reparse, reintento estable, A→B→A, SIGTERM y
+baja/ACL/membresía durante parseo. Logs con control positivo/error y canario ausente;
+worker normal de cuatro RO, dos trabajos, temporales/FD/hijos limpios y parada exit0.
+Originales/historial conservados. Ver evidencia para alcance y hashes; esto no acepta
+T006/T007 ni habilita PUBLISHED. Worker normal queda detenido tras la batería.

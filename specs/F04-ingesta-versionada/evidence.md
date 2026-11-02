@@ -484,3 +484,43 @@ de operador restringen tenant, repo/run, owner y usuarios sintéticos antes de c
 ACL/membresía o tombstone; no son el worker y no reciben bootstrap/migrator/S3 admin.
 Regresión de preparación: 675 tests correctos y ruff/formato/docs/diff.
 F04/T005 siguen abiertas hasta completar esas puertas y T006/T007.
+
+## T002/T003/T005 — puertas reales completadas en PR #42
+
+Run 15bbc3e9-06dd-4cdb-ad15-1c9ab055d8d3 retenido. Desde d21571f pasaron
+ocho pausas en same-a/two-b: SIGTERM en PARSED -> RETRY/STOP_REQUESTED sin chunks,
+parada limpia y recuperación; tombstone/ACL/membresía durante PARSED -> resultado
+tardío bloqueado, sin chunks. Tombstones/originales conservados; ACL y membresía
+restauradas en finally. El operador separado limita tenant/run/repo/owner/actores,
+sin trasladar sus credenciales al worker.
+
+Desde 9983b45358e05a61940de78fc8eb2cf46654d455, con cuatro checks y revisión
+delegada previa, se repitió A→B→A en el mismo proceso en ambas topologías con
+configuraciones nuevas 896/64, 1152/64, 1536/64 sobre originales existentes. El
+observador STARTED verificó el orden exacto; cada resultado verificó rol/BD/TLS,
+hash/config/offsets/chunks/original y cero préstamos pendientes. Historial retenido.
+La primera secuencia 384/64..768/64 se conserva; no se usa su salida perdida como
+evidencia de esta aceptación.
+
+Privacidad real en same-a/two-b: login app limitado con siete GUC privados verificados,
+canario presente en chunk real, LOG fijo positivo y error SQL23514 provocado por
+INSERT tardío dentro de savepoint revertido. En logs reales de ambas instancias
+aparecen LOG y ERROR; el texto F04_WORKER_PRIVATE_CANARY está ausente. También
+ausente en logs API/MinIO/Bao desde inicio del run. Registros brutos solo en memoria
+del servidor, sin publicarlos ni atribuir a esta prueba una garantía universal.
+
+Worker de entrada normal, sin controlador montado: dos trabajos nuevos sobre los
+mismos originales dependency con configuración 2048/128, uno en cada instancia.
+Inspección: usuario1000, rootfs RO, exactamente cuatro mounts RO, sin día/admin/
+migrator/OIDC passwords. Dos eventos ingestion_job con código NONE, canario ausente.
+Al quedar inactivo: /tmp sin archivos, sin FD de spool/borrados ni hijos pendientes.
+SIGTERM y exit0; verificación posterior desde consumidor nuevo confirmó ambos
+resultados íntegros/SUCCEEDED, hashes/offsets/procedencia/originales conservados.
+Servicio normal quedó detenido limpiamente; contenedor/fixtures/historial retenidos.
+
+Regresión final: 675 tests, ruff/formato/docs/diff correctos. Solo warning conocido
+Starlette/httpx. Sin nueva dependencia, migración, política Bao, password, root,
+reinicio de datos o activación F05. No backup/restore acreditado por estas pruebas.
+Aceptación técnica de T002/T003/T005; CI/revisión del head final y postmerge deben
+quedar registrados en la conversación de PR42 antes de empezar implementación T006.
+F04 sigue abierta: API T006 y regresiones/aceptación T007 pendientes.
