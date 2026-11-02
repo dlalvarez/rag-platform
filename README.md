@@ -68,8 +68,8 @@ La jerarquía de referencia es: `docs/01-constitution.md` > ADRs aprobados > arq
   562 tests offline, cuatro fixtures/ambas topologías y regresiones reales.
   [Aceptación/límites F03](specs/F03-repositorios-documentos/acceptance.md) y
   [manual HTTP/handoff](specs/F03-repositorios-documentos/api.md).
-- F04 en planificación: [plan y tareas](specs/F04-ingesta-versionada/plan.md), sin
-  implementación acreditada. F05..F11 conservan alcance/dependencias, no implementadas.
+- F04 en ejecución parcial (cola/extracción): [plan y tareas](specs/F04-ingesta-versionada/plan.md), con
+  aceptación E2E aún pendiente. F05..F11 conservan alcance/dependencias, no implementadas.
 
 Toda ejecución se realiza en ragdev01. PR a develop con revisión delegada según
 ADR-0007, checks obligatorios y postmerge; no promoción a main/tag por iniciativa

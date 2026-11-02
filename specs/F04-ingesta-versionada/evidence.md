@@ -65,3 +65,73 @@ No hay worker activo, grants de cola al runtime, migración pública persistida,
 extracción ni AC-F04 E2E completos. Parada segura y autorización de negocio se
 comprueban con el worker T005, no se atribuyen a esta batería de cola.
 CI/revisión/merge/postmerge del PR de este núcleo pendientes al redactar.
+
+## T004 — extracción/chunking y aislamiento real (2026-11-01)
+
+Dependencia técnica: núcleo T002 integrado en PR #36, head
+7b3e66307e67b61b1300614c79ab68991d6ed69e, merge
+590d4fe385ed3efa4c3743a1a129a3e5692b3beb. Cuatro checks de head/tres de merge correctos;
+revisión delegada, dos checkouts limpios/check_docs, 22 tests postmerge y hashes de imagen
+correctos. [Postmerge #36](https://github.com/dlalvarez/rag-platform/pull/36#issuecomment-6567725630).
+T002 sigue abierta para activación/grants/parada con T005.
+
+pypdf 6.21.4, python-docx 1.2.0 y lxml 6.1.3 fijados en uv.lock. Comparación del lock
+anterior: todas las versiones existentes conservadas. Metadatos de las distribuciones
+verificados: BSD-3-Clause/MIT/BSD-3-Clause respectivamente. Instalación solo en venv
+separado /home/diego/proyectos/rag-platform-f04-parser-venv, Python existente; entorno
+operativo sin modificar. Sin OCR, modelos ni proveedor externo.
+
+Corpus semántico nuevo y determinista: PDF con dos páginas de texto, DOCX con títulos/
+tabla, MD con SQL y TXT Unicode. Generador scripts/f04_corpus.py y manifiesto SHA-256
+ops/f04/corpus-manifest.json. Cuatro originales conservados fuera del checkout en
+/home/diego/proyectos/rag-platform-f04-corpus, directorio 0700/archivos 0600; si existe
+un archivo diferente, se conserva y falla el guard, no se sobrescribe. No son los
+PDF/DOCX estructurales de recepción F03, ni se reutilizan sus claves idempotentes.
+
+618 tests offline correctos, incluidos 34 nuevos. Advertencia Starlette/httpx anterior
+sin cambios. Lint/formato/docs/diff correctos. Casos nuevos:
+- Cuatro formatos, bytes del corpus estables, repetición y chunks iguales.
+- Offsets Unicode NFC/LF, páginas PDF reales, títulos/tablas DOCX en orden, MD/código/
+  puntuación SQL conservados; hash de cada chunk y cobertura/overlap exactos.
+- Escaneado y documento mixto con página de imagen → NEEDS_OCR, sin resultado parcial.
+  Página realmente vacía conserva blank_page y número; no se inventan chunks.
+- PDF inválido/cifrado/más de 200 páginas; DOCX ZIP expansivo, header no soportado y
+  DOCTYPE/entidad externa; UTF-8/controles inválidos, texto vacío y más de 2M caracteres.
+- Configuración válida/inválida y fingerprint, límite 10 000 chunks sin tupla parcial,
+  hash/tamaño privado de entrada, timeout con cierre y siguiente trabajo correcto.
+- Kernel real: open, sockets IPv4/Unix, fork y exec denegados; descriptor original RO
+  y legible; asignación sobre límite rechazada, CPU y salida excesivas detenidas.
+
+Los guardas ZIP F03 se extrajeron sin alterar sus reglas a funciones sobre reader
+para reutilizarlos dentro del hijo aislado; todos los tests F03 previos siguen correctos.
+No se valida un archivo hostil antes del aislamiento para eludir sus límites.
+Se corrigió un import de una prueba nueva y su literal de bytes inválidos durante el
+ensayo; la suite final completa pasó. No se atribuye ese fallo a las librerías.
+
+Imagen rag-f04-tools:t004 construida en ragdev01, diez hashes de módulos/scripts/
+manifiesto comparados con fuente final. Perfil efectivo extraction-check: cero montajes,
+secretos, puertos o red; rootfs RO, usuario sin privilegios, cap_drop ALL,
+no_new_privs y tmpfs 0700 de 64 MiB. Seccomp adicional en el hijo, Linux x86_64/kernel
+6.8 del servidor; no fallback sin política. Solo original RO/stdout privado/stderr
+descartado; entorno limpio y sin FD heredados. El padre limita lectura IPC a 16 MiB,
+mata y espera al hijo si excede tiempo/salida, y libera su única plaza de extracción.
+
+Batería dentro de ese contenedor: cuatro formatos/repetición/procedencia, NEEDS_OCR/
+blank_page, restricciones de kernel, memoria/CPU/salida correctos. Pico RSS observado
+por hijo: 83 820 KiB, con este corpus sintético; no es una promesa de capacidad para
+PDF complejos. Contenedor 0.5 CPU/768 MiB; hijos con máximo 512 MiB de address space,
+30 s CPU/45 s pared, 10 MiB de original, 2M caracteres, 200 páginas. Cero hijos sin
+recolectar y cero descriptores temporales propios abiertos al terminar.
+
+Límites: PDF layout/tablas complejos no garantizados; texto dentro de imágenes no se
+interpreta, y una capa residual de texto puede requerir revisión del original. La
+detección acreditada es de páginas sin texto extraíble, no un detector universal de
+escaneos. DOCX no inventa páginas; rasgos conocidos que ocultarían texto se rechazan
+con código cerrado. Offsets refieren representación normalizada, no bytes originales
+ni posiciones de render. Los LF sintéticos entre bloques no son chunks de contenido.
+
+R02/R03/R06, AC02/05 a nivel del componente. No se ejecutaron SQL/S3/HTTP de negocio
+en esta batería porque no activa worker/esquema tenant/API. Integración/reintentos/
+tombstone y regresión online completa pendientes de T003/T005/T006/T007. F04 sigue
+abierta; READY_FOR_EMBEDDING no es publicación con embeddings. CI/revisión/merge/
+postmerge del PR T004 pendientes al redactar.

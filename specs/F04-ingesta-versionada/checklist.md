@@ -4,7 +4,7 @@
 - [x] T001 integrada en PR #35 con cuatro checks de head/tres de merge y postmerge.
 - [ ] T002: núcleo/carreras reales correctos; faltan activación/grants y parada con T005.
 - [ ] T003 evolución aditiva con originales/datos anteriores conservados.
-- [ ] T004 corpus/aislamiento/límites y cuatro formatos acreditados.
+- [ ] T004 componente acreditado en 618 tests/contenedor; pendiente puerta del PR.
 - [ ] T005 idempotencia, crash, reconciliación y fencing reales.
 - [ ] T006 autorización/API/tombstone/operación verificadas.
 - [ ] T007 ambas topologías, regresiones y cierre postmerge.

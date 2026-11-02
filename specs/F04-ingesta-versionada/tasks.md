@@ -18,6 +18,8 @@ Cada tarea conserva evidencia y PR propio cuando el alcance lo requiera.
   sandbox de proceso, límites y errores saneados, NEEDS_OCR.
   R02/R03/R06; AC-02/03/05. Fixtures de páginas, tablas/títulos, Unicode/código,
   PDF escaneado/corrupto/cifrado, ZIP expansivo y timeout/memoria/salida.
+  Componente implementado: 618 tests y contenedor sin red/secretos correctos;
+  pendiente CI/revisión/merge/postmerge del PR T004.
 - [ ] T005 — Worker y reconciliación de intención/cola, autorización vigente,
   recuperación tras crash/fencing y commit tenant antes del ack de control.
   R01..06; AC-01..05. Repetición no duplica; fallos parciales no publican; A→B→A.

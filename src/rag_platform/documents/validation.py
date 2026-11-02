@@ -68,6 +68,112 @@ class ValidatedFile:
         ).hexdigest()
 
 
+def check_zip_directory(file, byte_size):
+    # Bound metadata allocation before ZipFile builds its ZipInfo list. Do not
+    # trust only EOCD's declared entry count: count central records as well.
+    file.seek(max(0, byte_size - 65557))
+    tail = file.read(65557)
+    offset = tail.rfind(b"PK\x05\x06")
+    if offset < 0 or len(tail) - offset < 22:
+        raise DocumentError("INPUT_INVALID")
+    fields = struct.unpack("<4s4H2LH", tail[offset : offset + 22])
+    _, disk, central_disk, disk_count, count, central_size, central_start, comment = fields
+    end_position = byte_size - len(tail) + offset
+    if (
+        offset + 22 + comment != len(tail)
+        or disk
+        or central_disk
+        or disk_count != count
+        or not 1 <= count <= 2048
+        or central_size > 2 * 1024 * 1024
+        or central_start + central_size != end_position
+    ):
+        raise DocumentError("INPUT_INVALID")
+    position, actual = central_start, 0
+    while position < end_position:
+        file.seek(position)
+        header = file.read(46)
+        if len(header) != 46 or header[:4] != b"PK\x01\x02":
+            raise DocumentError("INPUT_INVALID")
+        name_size, extra_size, comment_size = struct.unpack_from("<HHH", header, 28)
+        actual += 1
+        if not 1 <= name_size <= 1024 or actual > 2048:
+            raise DocumentError("INPUT_INVALID")
+        position += 46 + name_size + extra_size + comment_size
+    if position != end_position or actual != count:
+        raise DocumentError("INPUT_INVALID")
+
+
+def check_docx(file, byte_size):
+    try:
+        check_zip_directory(file, byte_size)
+        with zipfile.ZipFile(file) as archive:
+            entries = archive.infolist()
+            if not 1 <= len(entries) <= 2048:
+                raise DocumentError("INPUT_INVALID")
+            names, declared = set(), 0
+            for entry in entries:
+                name = entry.filename
+                parts = name.rstrip("/").split("/")
+                if (
+                    not name
+                    or name in names
+                    or name.startswith("/")
+                    or "\\" in name
+                    or ":" in name
+                    or any(part in ("", ".", "..") for part in parts)
+                    or any(unicodedata.category(char).startswith("C") for char in name)
+                    or stat.S_ISLNK(entry.external_attr >> 16)
+                    or entry.flag_bits & 1
+                    or entry.compress_type not in (zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED)
+                    or entry.file_size > 16 * 1024 * 1024
+                    or entry.file_size > 100 * max(1, entry.compress_size)
+                    or name.lower() == "word/vbaproject.bin"
+                ):
+                    raise DocumentError("INPUT_INVALID")
+                names.add(name)
+                declared += entry.file_size
+            if declared > 100 * 1024 * 1024 or not {
+                "[Content_Types].xml",
+                "_rels/.rels",
+                "word/document.xml",
+            }.issubset(names):
+                raise DocumentError("INPUT_INVALID")
+            if archive.getinfo("[Content_Types].xml").file_size > 1024 * 1024:
+                raise DocumentError("INPUT_INVALID")
+            total, found_type = 0, False
+            for entry in entries:
+                if entry.is_dir():
+                    continue
+                actual, window = 0, b""
+                with archive.open(entry) as content:
+                    while piece := content.read(CHUNK):
+                        actual += len(piece)
+                        total += len(piece)
+                        if actual > 16 * 1024 * 1024 or total > 100 * 1024 * 1024:
+                            raise DocumentError("TOO_LARGE")
+                        if entry.filename == "[Content_Types].xml":
+                            window = (window[-len(WORD_TYPE) :] + piece).lower()
+                            found_type = found_type or WORD_TYPE in window
+                            if b"macroenabled" in window:
+                                raise DocumentError("INPUT_INVALID")
+                    if actual != entry.file_size:
+                        raise DocumentError("INPUT_INVALID")
+            if not found_type:
+                raise DocumentError("INPUT_INVALID")
+    except DocumentError:
+        raise
+    except (
+        zipfile.BadZipFile,
+        EOFError,
+        RuntimeError,
+        NotImplementedError,
+        ValueError,
+        struct.error,
+    ):
+        raise DocumentError("INPUT_INVALID") from None
+
+
 class UploadSpool:
     """Unlinked private file. No caller filename is used as a path; caller must close."""
 
@@ -137,108 +243,10 @@ class UploadSpool:
         self.size += len(data)
 
     def _zip_directory(self):
-        # Bound metadata allocation before ZipFile builds its ZipInfo list. Do not
-        # trust only EOCD's declared entry count: count central records as well.
-        self.file.seek(max(0, self.size - 65557))
-        tail = self.file.read(65557)
-        offset = tail.rfind(b"PK\x05\x06")
-        if offset < 0 or len(tail) - offset < 22:
-            raise DocumentError("INPUT_INVALID")
-        fields = struct.unpack("<4s4H2LH", tail[offset : offset + 22])
-        _, disk, central_disk, disk_count, count, central_size, central_start, comment = fields
-        end_position = self.size - len(tail) + offset
-        if (
-            offset + 22 + comment != len(tail)
-            or disk
-            or central_disk
-            or disk_count != count
-            or not 1 <= count <= 2048
-            or central_size > 2 * 1024 * 1024
-            or central_start + central_size != end_position
-        ):
-            raise DocumentError("INPUT_INVALID")
-        position, actual = central_start, 0
-        while position < end_position:
-            self.file.seek(position)
-            header = self.file.read(46)
-            if len(header) != 46 or header[:4] != b"PK\x01\x02":
-                raise DocumentError("INPUT_INVALID")
-            name_size, extra_size, comment_size = struct.unpack_from("<HHH", header, 28)
-            actual += 1
-            if not 1 <= name_size <= 1024 or actual > 2048:
-                raise DocumentError("INPUT_INVALID")
-            position += 46 + name_size + extra_size + comment_size
-        if position != end_position or actual != count:
-            raise DocumentError("INPUT_INVALID")
+        return check_zip_directory(self.file, self.size)
 
     def _docx(self):
-        try:
-            self._zip_directory()
-            with zipfile.ZipFile(self.file) as archive:
-                entries = archive.infolist()
-                if not 1 <= len(entries) <= 2048:
-                    raise DocumentError("INPUT_INVALID")
-                names, declared = set(), 0
-                for entry in entries:
-                    name = entry.filename
-                    parts = name.rstrip("/").split("/")
-                    if (
-                        not name
-                        or name in names
-                        or name.startswith("/")
-                        or "\\" in name
-                        or ":" in name
-                        or any(part in ("", ".", "..") for part in parts)
-                        or any(unicodedata.category(char).startswith("C") for char in name)
-                        or stat.S_ISLNK(entry.external_attr >> 16)
-                        or entry.flag_bits & 1
-                        or entry.compress_type not in (zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED)
-                        or entry.file_size > 16 * 1024 * 1024
-                        or entry.file_size > 100 * max(1, entry.compress_size)
-                        or name.lower() == "word/vbaproject.bin"
-                    ):
-                        raise DocumentError("INPUT_INVALID")
-                    names.add(name)
-                    declared += entry.file_size
-                if declared > 100 * 1024 * 1024 or not {
-                    "[Content_Types].xml",
-                    "_rels/.rels",
-                    "word/document.xml",
-                }.issubset(names):
-                    raise DocumentError("INPUT_INVALID")
-                if archive.getinfo("[Content_Types].xml").file_size > 1024 * 1024:
-                    raise DocumentError("INPUT_INVALID")
-                total, found_type = 0, False
-                for entry in entries:
-                    if entry.is_dir():
-                        continue
-                    actual, window = 0, b""
-                    with archive.open(entry) as content:
-                        while piece := content.read(CHUNK):
-                            actual += len(piece)
-                            total += len(piece)
-                            if actual > 16 * 1024 * 1024 or total > 100 * 1024 * 1024:
-                                raise DocumentError("TOO_LARGE")
-                            if entry.filename == "[Content_Types].xml":
-                                window = (window[-len(WORD_TYPE) :] + piece).lower()
-                                found_type = found_type or WORD_TYPE in window
-                                if b"macroenabled" in window:
-                                    raise DocumentError("INPUT_INVALID")
-                        if actual != entry.file_size:
-                            raise DocumentError("INPUT_INVALID")
-                if not found_type:
-                    raise DocumentError("INPUT_INVALID")
-        except DocumentError:
-            raise
-        except (
-            zipfile.BadZipFile,
-            EOFError,
-            RuntimeError,
-            NotImplementedError,
-            ValueError,
-            struct.error,
-        ):
-            raise DocumentError("INPUT_INVALID") from None
+        return check_docx(self.file, self.size)
 
     def finish(self):
         if self._failed or self.file.closed:

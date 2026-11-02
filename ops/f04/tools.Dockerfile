@@ -15,3 +15,4 @@ ENV PATH="/app/.venv/bin:$PATH"
 COPY scripts/f03_*.py ./scripts/
 COPY ops/f03 ./ops/f03/
 COPY scripts/f04_*.py ./scripts/
+COPY ops/f04/corpus-manifest.json ./ops/f04/

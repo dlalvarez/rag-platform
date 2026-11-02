@@ -1,7 +1,8 @@
 # F04 — Pipeline asíncrono de ingesta y versionado
 
 **Estado:** alcance original autorizado por Diego mediante ADR-0010; F03 aceptada
-en PR #34. Planificación T001 activa, sin implementación acreditada.
+en PR #34. T001 integrada; núcleo de cola y componente de extracción/chunking
+probados, fase en ejecución sin aceptación E2E.
 **Dependencia:** F03.
 **Meta:** Documentos convertidos a chunks versionados y auditables.
 
