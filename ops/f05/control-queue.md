@@ -13,3 +13,14 @@ Control debe comenzar y terminar en f04_control_0006. No habilita runtime EMBED.
 APP_GRANTS consulta privilegios del rol app en catálogo; no usa SET ROLE ni acredita
 operaciones con conexión app. Un esquema no confirmado no es visible a otra conexión.
 No conceder membresía para hacer pasar el ensayo. Sin downgrade destructivo.
+
+
+## Consumidor EMBED
+EmbeddingQueue exige UUID de espacio y fingerprint hexadecimal64; nunca interpreta
+el envelope como permiso de acceso tenant. El fence incluye tenant/actor/documento/
+versión/espacio/perfil/intento/token. Reintentos acotados con backoff para dependencias;
+perfil/dimensión/vector inválidos, exceso de tokens, baja o revocación son terminales.
+El guard conserva lock solo durante confirmación corta; no durante inferencia.
+El futuro worker debe renovar lease durante inferencias largas y reautorizar después.
+El ensayo incluye replay/reclaim/backoff pero usa una transacción exterior: no acredita
+concurrencia entre consumidores con commits independientes. Ningún worker activado.

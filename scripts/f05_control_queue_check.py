@@ -4,6 +4,7 @@ import json
 import logging
 import re
 from contextlib import contextmanager
+from dataclasses import replace
 from pathlib import Path
 from uuid import UUID, uuid4
 
@@ -14,8 +15,10 @@ from f04_schema_check import denied, fingerprint
 from rag_platform.control.identity_models import IdentityBase, User
 from rag_platform.control.models import Base
 from rag_platform.embeddings.control_migrations import upgrade_embedding_queue
+from rag_platform.embeddings.queue import EmbeddingQueue
 from rag_platform.embeddings.queue_schema_f05_0007 import VERSION, jobs
-from rag_platform.ingestion.queue import DurableQueue
+from rag_platform.ingestion.claims import locked_claim
+from rag_platform.ingestion.queue import DurableQueue, QueueError
 from rag_platform.ingestion.queue_schema_f04_0006 import jobs as historical
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -113,6 +116,54 @@ def prove(c):
         sa.select(jobs.c.id, jobs.c.status).where(jobs.c.id.in_([value["id"], second["id"]]))
     ).all()
     assert len(result) == 2 and all(row.status == "PENDING" for row in result)
+    PHASE = "EMBED_LEASE_FENCE"
+
+    class ScopedEmbeddingQueue(EmbeddingQueue):
+        def _scope(self):
+            return sa.and_(super()._scope(), jobs.c.id.in_(ids))
+
+    embedding = ScopedEmbeddingQueue(TransactionEngine(c), tenant_scope=(tenant,))
+    embedded = embedding.claim()
+    assert embedded is not None and embedded.id in ids
+    assert embedding.heartbeat(embedded)
+    assert not embedding.complete(replace(embedded, space_id=uuid4()))
+    assert not embedding.complete(replace(embedded, profile_fingerprint="c" * 64))
+    with locked_claim(embedding, embedded) as guard:
+        guard.check()
+        guard.complete()
+    assert not embedding.complete(embedded)
+    another = embedding.claim()
+    assert another is not None and another.id != embedded.id
+    assert embedding.fail(another, "DIMENSION_MISMATCH", retryable=True)
+    assert embedding.claim() is None
+    PHASE = "EMBED_REPLAY_RECLAIM"
+    key, space = uuid4(), uuid4()
+    envelope = embedding.enqueue(tenant, actor, document, version, key, space, "d" * 64)
+    ids.append(envelope)
+    assert embedding.enqueue(tenant, actor, document, version, key, space, "d" * 64) == envelope
+    try:
+        embedding.enqueue(tenant, actor, document, version, key, space, "e" * 64)
+    except QueueError as error:
+        assert error.code == "IDEMPOTENCY_CONFLICT"
+    else:
+        raise AssertionError("EXPECTED_IDEMPOTENCY_CONFLICT")
+    old = embedding.claim()
+    c.execute(
+        jobs.update()
+        .where(jobs.c.id == envelope)
+        .values(lease_until=sa.func.clock_timestamp() - sa.text("interval '1 second'"))
+    )
+    fresh = embedding.claim()
+    assert fresh.id == old.id and fresh.token != old.token and fresh.attempt == 2
+    assert not embedding.heartbeat(old) and not embedding.complete(old)
+    assert embedding.fail(fresh, "DEPENDENCY_UNAVAILABLE", retryable=True)
+    assert embedding.claim() is None
+    c.execute(
+        jobs.update()
+        .where(jobs.c.id == envelope)
+        .values(available_at=sa.func.clock_timestamp() - sa.text("interval '1 second'"))
+    )
+    assert embedding.complete(embedding.claim())
     PHASE = "APP_GRANTS"
     for action in ("SELECT", "INSERT", "UPDATE", "DELETE", "TRUNCATE", "REFERENCES", "TRIGGER"):
         granted = c.scalar(
@@ -152,9 +203,7 @@ def run():
                 )
                 == snapshot
             )
-        print(
-            "PASS F05 CONTROL: DDL failure/repeat; profile/space uniqueness and INGEST kind fence."
-        )
+        print("PASS F05 CONTROL: DDL/repeat, uniqueness; INGEST/EMBED fences, leases and replay.")
         print(
             "PASS F05 CONTROL: catalog verifies app grants limited; "
             "rollback preserves all history/identity/catalog."

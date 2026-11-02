@@ -6,7 +6,6 @@ from dataclasses import dataclass, field
 import sqlalchemy as sa
 
 from rag_platform.ingestion.queue import Claim, DurableQueue, QueueError, _now
-from rag_platform.ingestion.queue_schema import jobs
 
 
 class ClaimExpired(RuntimeError):
@@ -31,7 +30,7 @@ class CommitGuard:
             raise ClaimExpired()
         now = _now(self.connection)
         deadline = self.connection.scalar(
-            sa.select(jobs.c.lease_until).where(self.queue._fence(self.claim, now))
+            sa.select(self.queue._jobs.c.lease_until).where(self.queue._fence(self.claim, now))
         )
         if deadline is None:
             raise ClaimExpired()
@@ -41,7 +40,7 @@ class CommitGuard:
         self.check()
         now = _now(self.connection)
         changed = self.connection.execute(
-            sa.update(jobs)
+            sa.update(self.queue._jobs)
             .where(self.queue._fence(self.claim, now))
             .values(
                 status="SUCCEEDED",
@@ -67,10 +66,14 @@ def locked_claim(queue, claim):
             c.exec_driver_sql("SET LOCAL statement_timeout='15s'")
         if not queue._locked(c, claim):
             raise ClaimExpired()
-        intent_id = c.scalar(sa.select(jobs.c.idempotency_id).where(queue._fence(claim, _now(c))))
+        intent_id = c.scalar(
+            sa.select(queue._jobs.c.idempotency_id).where(queue._fence(claim, _now(c)))
+        )
         if intent_id is None:
             raise ClaimExpired()
-        max_attempts = c.scalar(sa.select(jobs.c.max_attempts).where(queue._fence(claim, _now(c))))
+        max_attempts = c.scalar(
+            sa.select(queue._jobs.c.max_attempts).where(queue._fence(claim, _now(c)))
+        )
         if max_attempts is None:
             raise ClaimExpired()
         guard = CommitGuard(queue, claim, c, intent_id, max_attempts)

@@ -142,3 +142,19 @@ asumir f02_identity_app; corregido usando has_table_privilege por privilegio y
 has_schema_privilege, sin membresías ni grants nuevos. Es comprobación de catálogo,
 no ejecución autenticada como app. Todo revertido: control siguef04_control_0006;
 snapshots de jobs/identidad/catálogo iguales. Sin adopción persistente ni cierreT003.
+
+
+## T004 parcial — consumidor durable EMBED
+2026-11-02 ragdev01: claim inmutable con espacio/fingerprint, enqueue idempotente,
+leases/heartbeat/reclaim/backoff/agotamiento y fence de todas las identidades.
+Comparte algoritmo con INGEST conservando tabla/errores/kind F04 por defecto.
+El guard usa la tabla del consumidor para evitar mezcla de metadatos SQL.
+29 pruebas nuevas; 836 passed en42.22s, advertencia Starlette/httpx preexistente.
+70 pruebas focalizadas INGEST/fence/envelopes/EMBED correctas.
+
+PostgreSQL real con rollback: consumer EMBED, heartbeat, espacio/perfil falsificados
+rechazados, guard/ack, error de dimensión terminal, replay/conflicto de perfil,
+lease expirado/reclaim/token viejo y retry/backoff. Snapshots/control0006 conservados.
+Ruff/formato/docs/diff correctos. No prueba de consumidores concurrentes con commits
+independientes ni inferencia/publicación/usage: T004 sigue abierta.
+PR52 integrado7a42556, cuatro checks antes y tres postmerge correctos.

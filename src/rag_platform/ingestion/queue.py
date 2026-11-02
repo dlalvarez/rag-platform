@@ -46,6 +46,10 @@ def _now(connection):
 
 
 class DurableQueue:
+    _jobs = jobs
+    _errors = ERRORS
+    _kind = "INGEST"
+
     def __init__(self, engine, *, lease_seconds=60, max_attempts=5, tenant_scope=None):
         if type(lease_seconds) is not int or not 1 <= lease_seconds <= 300:
             raise QueueError("INPUT_INVALID")
@@ -61,8 +65,8 @@ class DurableQueue:
 
     def _scope(self):
         return sa.and_(
-            jobs.c.kind == "INGEST",
-            jobs.c.tenant_id.in_(self.scope) if self.scope is not None else sa.true(),
+            self._jobs.c.kind == self._kind,
+            self._jobs.c.tenant_id.in_(self.scope) if self.scope is not None else sa.true(),
         )
 
     def enqueue(self, tenant, actor, document, version, idempotency):
@@ -73,7 +77,7 @@ class DurableQueue:
             now = _now(c)
             insert = pg_insert if c.dialect.name == "postgresql" else sqlite_insert
             c.execute(
-                insert(jobs)
+                insert(self._jobs)
                 .values(
                     id=uuid4(),
                     tenant_id=tenant,
@@ -81,7 +85,7 @@ class DurableQueue:
                     document_id=document,
                     version_id=version,
                     idempotency_id=idempotency,
-                    kind="INGEST",
+                    kind=self._kind,
                     max_attempts=self.max_attempts,
                     available_at=now,
                     created_at=now,
@@ -91,10 +95,10 @@ class DurableQueue:
             )
             row = (
                 c.execute(
-                    sa.select(jobs).where(
-                        jobs.c.tenant_id == tenant,
-                        jobs.c.version_id == version,
-                        jobs.c.kind == "INGEST",
+                    sa.select(self._jobs).where(
+                        self._jobs.c.tenant_id == tenant,
+                        self._jobs.c.version_id == version,
+                        self._jobs.c.kind == self._kind,
                     )
                 )
                 .mappings()
@@ -116,15 +120,17 @@ class DurableQueue:
         with self.engine.begin() as c:
             now = _now(c)
             ready = sa.or_(
-                sa.and_(jobs.c.status.in_(("PENDING", "RETRY")), jobs.c.available_at <= now),
-                sa.and_(jobs.c.status == "RUNNING", jobs.c.lease_until <= now),
+                sa.and_(
+                    self._jobs.c.status.in_(("PENDING", "RETRY")), self._jobs.c.available_at <= now
+                ),
+                sa.and_(self._jobs.c.status == "RUNNING", self._jobs.c.lease_until <= now),
             )
             for _ in range(100):
                 row = (
                     c.execute(
-                        sa.select(jobs)
+                        sa.select(self._jobs)
                         .where(self._scope(), ready)
-                        .order_by(jobs.c.available_at, jobs.c.id)
+                        .order_by(self._jobs.c.available_at, self._jobs.c.id)
                         .with_for_update(skip_locked=True)
                         .limit(1)
                     )
@@ -136,8 +142,8 @@ class DurableQueue:
                 now = _now(c)
                 if row["attempts"] >= row["max_attempts"]:
                     c.execute(
-                        sa.update(jobs)
-                        .where(jobs.c.id == row["id"])
+                        sa.update(self._jobs)
+                        .where(self._jobs.c.id == row["id"])
                         .values(
                             status="FAILED",
                             error_code="LEASE_EXHAUSTED",
@@ -150,8 +156,8 @@ class DurableQueue:
                     continue
                 token, attempt = uuid4(), row["attempts"] + 1
                 c.execute(
-                    sa.update(jobs)
-                    .where(jobs.c.id == row["id"])
+                    sa.update(self._jobs)
+                    .where(self._jobs.c.id == row["id"])
                     .values(
                         status="RUNNING",
                         attempts=attempt,
@@ -161,16 +167,19 @@ class DurableQueue:
                         error_code="NONE",
                     )
                 )
-                return Claim(
-                    row["id"],
-                    row["tenant_id"],
-                    row["actor_id"],
-                    row["document_id"],
-                    row["version_id"],
-                    attempt,
-                    token,
-                )
+                return self._claim(row, attempt, token)
             return None
+
+    def _claim(self, row, attempt, token):
+        return Claim(
+            row["id"],
+            row["tenant_id"],
+            row["actor_id"],
+            row["document_id"],
+            row["version_id"],
+            attempt,
+            token,
+        )
 
     def _fence(self, claim, now):
         if not isinstance(claim, Claim):
@@ -187,15 +196,15 @@ class DurableQueue:
             raise QueueError("INPUT_INVALID")
         return sa.and_(
             self._scope(),
-            jobs.c.id == claim.id,
-            jobs.c.tenant_id == claim.tenant_id,
-            jobs.c.actor_id == claim.actor_id,
-            jobs.c.document_id == claim.document_id,
-            jobs.c.version_id == claim.version_id,
-            jobs.c.status == "RUNNING",
-            jobs.c.attempts == claim.attempt,
-            jobs.c.lease_token == claim.token,
-            jobs.c.lease_until > now,
+            self._jobs.c.id == claim.id,
+            self._jobs.c.tenant_id == claim.tenant_id,
+            self._jobs.c.actor_id == claim.actor_id,
+            self._jobs.c.document_id == claim.document_id,
+            self._jobs.c.version_id == claim.version_id,
+            self._jobs.c.status == "RUNNING",
+            self._jobs.c.attempts == claim.attempt,
+            self._jobs.c.lease_token == claim.token,
+            self._jobs.c.lease_until > now,
         )
 
     def _locked(self, c, claim):
@@ -203,7 +212,7 @@ class DurableQueue:
         # taking the lock, never authorize completion using a pre-wait timestamp.
         now = _now(c)
         row = c.execute(
-            sa.select(jobs.c.id).where(self._fence(claim, now)).with_for_update()
+            sa.select(self._jobs.c.id).where(self._fence(claim, now)).with_for_update()
         ).first()
         return row is not None
 
@@ -214,7 +223,7 @@ class DurableQueue:
             now = _now(c)
             return (
                 c.execute(
-                    sa.update(jobs)
+                    sa.update(self._jobs)
                     .where(self._fence(claim, now))
                     .values(lease_until=now + timedelta(seconds=self.lease_seconds), updated_at=now)
                 ).rowcount
@@ -228,7 +237,7 @@ class DurableQueue:
             now = _now(c)
             return (
                 c.execute(
-                    sa.update(jobs)
+                    sa.update(self._jobs)
                     .where(self._fence(claim, now))
                     .values(
                         status="SUCCEEDED",
@@ -243,12 +252,12 @@ class DurableQueue:
             )
 
     def fail(self, claim, code, *, retryable=False):
-        if code not in ERRORS or code == "NONE" or type(retryable) is not bool:
+        if code not in self._errors or code == "NONE" or type(retryable) is not bool:
             raise QueueError("INPUT_INVALID")
         with self.engine.begin() as c:
             now = _now(c)
             row = (
-                c.execute(sa.select(jobs).where(self._fence(claim, now)).with_for_update())
+                c.execute(sa.select(self._jobs).where(self._fence(claim, now)).with_for_update())
                 .mappings()
                 .first()
             )
@@ -259,7 +268,7 @@ class DurableQueue:
             retry = retryable and row["attempts"] < row["max_attempts"]
             return (
                 c.execute(
-                    sa.update(jobs)
+                    sa.update(self._jobs)
                     .where(self._fence(claim, now))
                     .values(
                         status="RETRY" if retry else "FAILED",

@@ -86,3 +86,12 @@ Batería offline/SQL/real opt-in, cuatro fixtures autorizadas y corpus nuevo exp
 conservar previas. CI, revisión delegada honesta, PR hacia develop y postmerge antes
 de aceptar fase. Sin main/tag/prod/visibilidad/purge, nuevas políticas Bao/root por
 iniciativa ni claims de backup/restore no ensayados.
+
+
+## T004 incremental — cola de ejecución antes de inferencia
+Primera entrega: consumidor EMBED separado, envelope inmutable con espacio/perfil,
+idempotencia, lease/heartbeat, retry acotado y fence completo. Reusar algoritmo de
+cola INGEST mediante hooks internos manteniendo sus defaults y pruebas históricas.
+Pruebas offline y PostgreSQL con rollback de cruces kind/space/tenant, token viejo,
+backoff/agotamiento y códigos privados rechazados. No arranca worker ni adopta0007.
+Luego conectar procesamiento/usage/publicación con contratos tenant explícitos.
