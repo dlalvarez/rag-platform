@@ -62,6 +62,85 @@ def denied(c, statement, expected="23514"):
         raise RuntimeError("UNEXPECTED_SQL_SUCCESS")
 
 
+def worker_tenant_proof(c, names):
+    global PHASE
+    from datetime import UTC, datetime, timedelta
+
+    from rag_platform.embeddings import processing as worker_processing
+    from rag_platform.embeddings.fixture import DeterministicFixture, fixture_profile
+    from rag_platform.embeddings.queue import EmbeddingClaim
+
+    PHASE = "WORKER_TENANT_COMPONENT"
+    with c.begin_nested() as synthetic:
+        profile = fixture_profile(max_tokens=64, max_batch=2)
+        space = uuid4()
+        role(c, names, "owner")
+        register_publication_space(c, names, space, profile)
+        role(c, names, "app")
+        f = fixture(c)
+        version, _config, data, rows = stage(c, f)
+        c.execute(complete(version, data, rows))
+        c.execute(
+            sa.insert(audit).values(
+                id=uuid4(),
+                principal_id=f["actor"],
+                repository_id=f["repo"],
+                target_id=version,
+                request_id=uuid4(),
+                action="INGESTION_READY",
+                outcome="OK",
+            )
+        )
+        c.exec_driver_sql("SET CONSTRAINTS ALL IMMEDIATE")
+        c.exec_driver_sql("SET CONSTRAINTS ALL DEFERRED")
+        plan = worker_processing.request(c, f["actor"], f["repo"], f["doc"], version, profile)
+        assert (
+            worker_processing.request(c, f["actor"], f["repo"], f["doc"], version, profile) == plan
+        )
+        assert plan in worker_processing.pending(c, profile=profile)
+        assert plan not in worker_processing.pending(c, profile=qwen_profile())
+        claim = EmbeddingClaim(
+            uuid4(),
+            names.tenant,
+            f["actor"],
+            f["doc"],
+            version,
+            1,
+            uuid4(),
+            space,
+            profile.fingerprint(),
+        )
+        # Component probe only: actual control fencing is covered separately.
+        guard = SimpleNamespace(
+            claim=claim,
+            intent_id=plan.id,
+            check=lambda: datetime.now(UTC) + timedelta(seconds=180),
+        )
+        worker_processing.start(c, guard, profile)
+        provider = DeterministicFixture(profile)
+        requests = 0
+        while True:
+            task = worker_processing.next_batch(c, guard, profile)
+            if task is None:
+                break
+            response = provider.embed(task.texts, "passage")
+            worker_processing.save_batch(c, guard, profile, task, response, 1)
+            requests += 1
+        worker_processing.complete(c, guard, profile)
+        assert worker_processing.published(c, guard)
+        assert worker_processing.dispatched(c, plan, claim.id)
+        assert not worker_processing.dispatched(c, plan, claim.id)
+        assert (
+            c.scalar(
+                sa.select(sa.func.count())
+                .select_from(worker_processing.batches)
+                .where(worker_processing.batches.c.intent_id == plan.id)
+            )
+            == requests
+        )
+        synthetic.rollback()
+
+
 def prove(target, names, bootstrap):
     global PHASE
     e = sa.create_engine(
@@ -490,6 +569,7 @@ def prove(target, names, bootstrap):
                         "23505",
                     )
                     synthetic.rollback()
+                worker_tenant_proof(c, names)
                 assert fingerprint(c, tables) == before
             finally:
                 transaction.rollback()

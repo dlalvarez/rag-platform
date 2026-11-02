@@ -193,6 +193,18 @@ class Worker:
                 _checked,
             ):
                 processing.complete(c, guard, result)
+                if self.runtime.authority.profile == "embedding_publication":
+                    from rag_platform.embeddings import processing as embedding_processing
+                    from rag_platform.embeddings.qwen import qwen_profile
+
+                    embedding_processing.request(
+                        c,
+                        claim.actor_id,
+                        task.plan.repository_id,
+                        claim.document_id,
+                        claim.version_id,
+                        qwen_profile(),
+                    )
             self._emit(claim, "NONE")
         except ClaimExpired:
             self._emit(claim, "LEASE_EXHAUSTED")

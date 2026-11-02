@@ -223,3 +223,35 @@ implícito; fijado select_from(documents), repetido correcto.
 correctos. Sin imagen nueva, activación de bandera ni adopción/HTTP postpublicación.
 Pruebas SQL son consultas metadata/ingesta sintéticas, no descarga S3 persistente.
 PR55 integrado2c65818 con cuatro checks previos/tres postmerge correctos.
+
+
+## T004 parcial — worker EMBED y recuperación
+2026-11-02, ragdev01: código worker SQL-only con scope fijo/perfil exacto, relay de
+intents explícitos, lotes+vectores+usage atómicos, contexto nuevo tras inferir, heartbeat
+sin transacción tenant y commit tenant anterior a ack reconciliable. Nuevas ingestas
+bajo perfil0006 crean intentQwen en el mismo commit de READY; historia READY anterior
+requiere request explícito. Cola filtrada por fingerprint deja otro modelo pendiente.
+Fuente/texto de batch ligado a SHA de chunks inmutables; provider/perfil no pueden
+derivar durante trabajo. Quota inicial64chunks/32768tokens de contenido persistido;
+máximo3intentos. Lote sin commit puede repetirse; no uso/coste exactly-once.
+
+Entrega temporal: no renovación; margen180s o DENIED/INVALID impide nuevos claims y
+detiene antes de persistir. Parciales guardados se retoman con consumidor/entrega nueva,
+sin consumir intentos repetidos por credenciales vencidas. Lock liberado por cierre.
+Sin credenciales admin/día ni S3gateway en nuevo runtime; modelo opcional fuera de API.
+
+47 casos nuevos,904passed58.62s;77focalizados correctos. Ruff/formato/docs/diff correctos.
+Offline usa autoridad real y SQLite transaccional, sin guards PostgreSQL: crash tras
+batch/tenant-commit, ack perdido incluso con actor revocado después, ACL/membership/
+tombstone durante inferencia, contexto30s vencido, lease perdido, rollback vector+usage,
+output inválido, límite tokens/quota, parada/acceso vencido, hash distinto y filtro modelo.
+SQL real4fixtures/2instancias con rollback valida request/start/next/save/complete/
+dispatch/reconciliación tenant usando provider determinista/guard sintético explícitos.
+Control SQL rollback valida filtro FP, heartbeats/fences/reclaim sin SETROLE app.
+No son E2E de proceso con control+tenant commits independientes ni inferencia Qwen real.
+
+Primera prueba de deriva de provider dejó RUNNING antes de start; ahora deriva detectada
+antes de claim. Se verificó pasar fingerprint desde CLI a cola. No activar todavía:
+pendientes imagen/lock opcional, adopción control0007/tenant0006, handoffs nuevos,
+worker real/crash/proveedor/Qwen y HTTP/S3 originales/regresión. Sin servicios cambiados.
+PR56 integradod37b2f6 con cuatro checks previos/tres postmerge correctos.

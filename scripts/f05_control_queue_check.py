@@ -122,9 +122,13 @@ def prove(c):
         def _scope(self):
             return sa.and_(super()._scope(), jobs.c.id.in_(ids))
 
-    embedding = ScopedEmbeddingQueue(TransactionEngine(c), tenant_scope=(tenant,))
+    embedding = ScopedEmbeddingQueue(
+        TransactionEngine(c),
+        tenant_scope=(tenant,),
+        profile_fingerprint=value["profile_fingerprint"],
+    )
     embedded = embedding.claim()
-    assert embedded is not None and embedded.id in ids
+    assert embedded is not None and embedded.id == value["id"]
     assert embedding.heartbeat(embedded)
     assert not embedding.complete(replace(embedded, space_id=uuid4()))
     assert not embedding.complete(replace(embedded, profile_fingerprint="c" * 64))
@@ -132,6 +136,9 @@ def prove(c):
         guard.check()
         guard.complete()
     assert not embedding.complete(embedded)
+    assert embedding.claim() is None
+    assert c.scalar(sa.select(jobs.c.status).where(jobs.c.id == second["id"])) == "PENDING"
+    embedding = ScopedEmbeddingQueue(TransactionEngine(c), tenant_scope=(tenant,))
     another = embedding.claim()
     assert another is not None and another.id != embedded.id
     assert embedding.fail(another, "DIMENSION_MISMATCH", retryable=True)
