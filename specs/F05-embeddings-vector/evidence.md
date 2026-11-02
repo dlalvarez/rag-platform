@@ -158,3 +158,6 @@ lease expirado/reclaim/token viejo y retry/backoff. Snapshots/control0006 conser
 Ruff/formato/docs/diff correctos. No prueba de consumidores concurrentes con commits
 independientes ni inferencia/publicación/usage: T004 sigue abierta.
 PR52 integrado7a42556, cuatro checks antes y tres postmerge correctos.
+
+Revisión final: worker INGEST rechaza cola EMBED antes de I/O. Caso adicional;
+837 passed en54.35s,30 nuevas T004; ruff/formato correctos. Sin cambio SQL.

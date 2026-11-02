@@ -161,3 +161,16 @@ def test_invalid_inputs_cannot_enqueue(queue, change):
         enqueue(queue, **change)
     with queue.engine.connect() as c:
         assert c.scalar(sa.select(sa.func.count()).select_from(jobs)) == 0
+
+
+def test_ingest_worker_rejects_embedding_consumer_before_io(queue):
+    from types import SimpleNamespace
+
+    from rag_platform.ingestion.worker import Worker
+
+    runtime = SimpleNamespace(
+        authority=SimpleNamespace(profile="embeddings", engine=queue.engine),
+        scope=queue.scope,
+    )
+    with pytest.raises(ValueError, match="Explicit ingestion runtime"):
+        Worker(runtime, queue)
