@@ -204,7 +204,9 @@ def dispatched(c, plan, job):
     if not isinstance(plan, Intent):
         raise IngestionError("INPUT_INVALID")
     identifiers(job, plan.id, plan.version_id, plan.document_id, plan.repository_id, plan.actor_id)
-    require(c, plan.actor_id, plan.repository_id, plan.document_id)
+    # Metadata acknowledgement only, after an exact control enqueue. A concurrent
+    # tombstone/revocation must not strand the relay. This does not authorize
+    # content access or processing; the worker checks both before I/O/commit.
     row = (
         c.execute(sa.select(intents).where(intents.c.id == plan.id).with_for_update())
         .mappings()

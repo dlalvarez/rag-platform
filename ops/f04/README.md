@@ -63,3 +63,14 @@ Mismos cuatro RO SQL/TLS que schema-check; no usar como worker. Transacciones te
 revertidas; envelopes QA con UUIDs conservados en f04_intent_probe_0001. Prueba una
 confirmación perdida y reenvío, no el crash de un worker real ni migración persistente.
 [Contrato T005](../../specs/F04-ingesta-versionada/worker.md).
+
+## Fencing y resultado transaccional SQL
+
+    docker compose --env-file /home/diego/proyectos/rag-platform/.env.f02 -f ops/f02/compose.yaml -f ops/f04/processing.compose.yaml build processing-check
+    docker compose --env-file /home/diego/proyectos/rag-platform/.env.f02 -f ops/f02/compose.yaml -f ops/f04/processing.compose.yaml run --rm -T --no-deps processing-check
+
+Mismos cuatro RO SQL/TLS; QA privilegiada, nunca runtime. Repite journal/esquema
+y prueba resultado/rollback, lease, dos procesos y locks administrativos.
+No realiza extracción S3 ni commit tenant persistente: conserva datos, roles y head.
+Envelopes sintéticos de QA retenidos en f04_intent_probe_0001.
+No confundir estas pruebas con un worker de aplicación aceptado.

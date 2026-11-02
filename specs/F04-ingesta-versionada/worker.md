@@ -20,6 +20,9 @@ el actor inicial; otro actor no adopta el trabajo. No duplicar ni actualizar ori
 Despachar desde intención a control mediante IDs solamente. El UUID de intención
 es la clave idempotente de cola. Confirmar el despacho local después del enqueue;
 una caída entre ambos pasos reenvía la misma identidad y recupera el mismo job.
+La confirmación local de despacho es bookkeeping de servicio sobre IDs exactos;
+puede completarse si hubo baja/revocación después del enqueue, para no dejar una
+intención pendiente perpetua. No autoriza I/O ni resultado y no se expone al cliente.
 La cola no concede acceso. Reconciliar solo tenants autorizados del catálogo;
 ningún barrido transversal SQL, cada conexión resuelta por tenant.
 
@@ -36,8 +39,11 @@ parseo, pues la prueba de autorización expira a los 30 segundos. No guardar tok
 de usuario en la cola. Runtime sin día/admin/migrator/root.
 
 La finalización corta toma el lock del claim en control, vuelve a comprobar el reloj
-de base, serializa las filas de autorización relevantes y toma repositorio/documento
-en tenant. Revalida ACL y tombstone bajo esos locks. Insertar todos los bloques/chunks,
+de base, toma locks compartidos de los protocolos administrativos existentes y toma repositorio/documento
+en tenant. Revalida ACL y tombstone bajo esos locks. Los locks compartidos cooperan con
+IdentityAdministration (global y membresía) y el lock de saga de migraciones,
+sin otorgar UPDATE sobre catálogo al runtime. SQL administrativo directo fuera de
+esos protocolos no constituye una interfaz soportada de revocación concurrente. Insertar todos los bloques/chunks,
 metadata, READY_FOR_EMBEDDING y auditoría en una transacción tenant. Comprobar fencing
 y parada inmediatamente antes del commit. Ningún texto en control, logs o excepciones.
 

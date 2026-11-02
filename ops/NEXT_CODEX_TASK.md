@@ -12,27 +12,29 @@ revisión delegada y postmerge correctos; 22 tests postmerge/hash de imagen corr
 Cola probada en esquema QA retenido, no migración pública ni worker activos.
 T002 sigue abierta hasta activación/grants/parada con T005.
 
-Worktree /home/diego/proyectos/rag-platform-f03-schema, feat/F04-T005-intent-reconciliation.
+Worktree /home/diego/proyectos/rag-platform-f03-schema, feat/F04-T005-worker-fencing.
 Checkout operativo /home/diego/proyectos/rag-platform, limpio, en develop.
-T004 aceptada PR #37. T003 núcleo integrado PR #38,
-develop@e69a3af31433291e42158854fca8123675368e47: 631 tests, cuatro fixtures SQL,
-CI/revisión/postmerge correctos; 13 tests postmerge y diez hashes exactos.
+T004 PR #37 y núcleos T003 PR #38 / intención T005 PR #39 integrados.
+Develop@78c4653c40b2645bbc6b31854394a8e7f7910f92; CI/revisión/postmerge correctos.
 Todavía sin esquema/perfil/worker F04 persistidos.
 
-T005 contrato en worker.md. Primer componente journal/relay implementado:
-14 tests nuevos, PostgreSQL cuatro fixtures/ambas instancias; versión/intención/
-auditoría atómicas, config estable, actor conservado, ack perdido recupera un job.
-QA tenant revertido, envelopes sintéticos de control retenidos; doce hashes y logs
-con controles positivos/errores sin texto. No acredita worker/runtime.
-Cerrar regresión y PR específico de componente, CI/revisión/merge/postmerge.
-Continuar inmediatamente worker/fencing/parada y activación coordinada con API F04.
-T002/T003/T005 abiertas; no fingir ACID entre bases ni PUBLISHED sin embeddings.
+T005 contrato en worker.md. Componentes de fencing/resultado implementados:
+656 tests, lint/formato/docs/diff; SQL real cuatro fixtures/ambas instancias.
+Lock de envelope, intento/token local, resultado y auditoría atómicos, fallo/stop
+revierten chunks, retry recupera y repetición no duplica. Dos procesos, lease
+caducado sin ack ni takeover bajo lock; protocolos de revocación/migración bloqueados.
+Ack de servicio tras baja/ACL revocada solo registra IDs y no autoriza contenido.
+Dieciséis hashes, logs con controles positivos/errores sin texto, rollback/datos
+anteriores conservados. QA no acredita worker S3 ni autorización global en vivo.
+Publicar PR acotado del componente, CI/revisión/merge/postmerge.
+Continuar inmediatamente implementación/runtime del worker, API compatible y
+activación coordinada. T002/T003/T005 abiertas; no fingir ACID ni PUBLISHED.
 
 Conservar originales/recepciones/versiones F03 y factorías históricas.
 Leer schema.md/worker.md, docs/04-data-model.md, docs/05-ingestion.md,
 docs/07-api-contracts.md y migraciones/perfiles actuales antes de integrar.
 No consumir indiscriminadamente documentos previos; usar manifiesto/corpus propio.
-T004 y journal no acreditan aún AC E2E ni integración del worker.
+Versiones/jobs usan las rutas rectoras de docs/07, no inventar una alternativa.
 
 ## Fuentes y pruebas
 

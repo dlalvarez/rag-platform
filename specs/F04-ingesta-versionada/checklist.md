@@ -5,7 +5,7 @@
 - [ ] T002: núcleo/carreras reales correctos; faltan activación/grants y parada con T005.
 - [ ] T003 núcleo integrado PR #38 con CI/postmerge; falta activación/integración.
 - [x] T004 acreditada en 618 tests/contenedor y PR #37 con CI/revisión/postmerge.
-- [ ] T005 intención/relay probados; worker, crash y fencing de commit pendientes.
+- [ ] T005 journal/relay/fencing SQL probados; worker/S3/crash persistente pendientes.
 - [ ] T006 autorización/API/tombstone/operación verificadas.
 - [ ] T007 ambas topologías, regresiones y cierre postmerge.
 

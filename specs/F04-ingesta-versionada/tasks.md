@@ -29,7 +29,9 @@ Cada tarea conserva evidencia y PR propio cuando el alcance lo requiera.
   recuperación tras crash/fencing y commit tenant antes del ack de control.
   R01..06; AC-01..05. Componente de intención/relay probado: 14 tests nuevos y
   cuatro fixtures SQL; ack perdido recupera un job. Worker, autorización global,
-  fencing de commit y crash/parada pendientes. Ver worker.md; T005 sigue abierta.
+  fencing SQL probado en ambas instancias/dos procesos, 656 tests y rollback íntegro.
+  Runtime/S3/crash tras commit persistente y parada completa pendientes.
+  Ver worker.md; T005 sigue abierta.
 - [ ] T006 — API F04 de versiones/jobs y tombstone, operación limitada, manual y
   errores/cursores sin contenido sensible en control/logs.
   R01/R04/R05/R06; AC-01/03/04. Negativas HTTP/ACL, revocación y parada/reinicio.
