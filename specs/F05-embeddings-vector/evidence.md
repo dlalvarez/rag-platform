@@ -127,3 +127,18 @@ posterior correcta. Dimensión/norma/finitos validados por proveedor real. Sin r
 cambios de vCPU, datos tenant, modelo externo ni procesos persistentes.
 T001 inicial completada con fixture semántico previo y capacidad; AC completos
 F05/calidad de dominio/carga multi-proceso siguen pendientes. Modelo/space intactos.
+
+## T003 parcial — envelopes control0007 y ensayo con rollback
+
+2026-11-02, ragdev01: evolución aditiva INGEST/EMBED con UUID de espacio y
+fingerprint, unicidad por versión+espacio, errores cerrados y sin contenido privado.
+Definiciones históricas intactas. Ocho pruebas nuevas; 807 passed en42.82s,
+una advertencia Starlette/httpx preexistente. Ruff/docs/diff correctos.
+
+Ensayo PostgreSQL real: fallo DDL22012 y rollback, upgrade/repetición, rechazo
+perfil/hash/UUID nulo, duplicado23505 y convivencia de espacios. Consumer INGEST
+no toma EMBED. APP_GRANTS falló inicialmente42501 porque el migrador no puede
+asumir f02_identity_app; corregido usando has_table_privilege por privilegio y
+has_schema_privilege, sin membresías ni grants nuevos. Es comprobación de catálogo,
+no ejecución autenticada como app. Todo revertido: control siguef04_control_0006;
+snapshots de jobs/identidad/catálogo iguales. Sin adopción persistente ni cierreT003.

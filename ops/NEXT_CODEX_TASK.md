@@ -1,4 +1,4 @@
-# Continuidad F05 — seguir controlEMBED/T004, no repetir adopción
+# Continuidad F05 — control0007 ensayado, seguir runtime EMBED/T004
 
 PR45..50 integrados; develop2012ed1, CI/postmerge y23 pruebas checkpoints/perfil.
 T001 capacidad adicional en feat/F05-T001-capacity-boundary: cuatro pasajes512,
@@ -27,3 +27,14 @@ Modelo y venv opcional en rutas documentadas qwen-local.md, sin red en inferenci
 Sesión diaria activa hasta2026-11-03T07:14:15-05:00; no exportar/renovar/revocar/root.
 API entrega vigente; QAworker anterior consumida/revocada: replace antes de otra QA.
 Todo ragdev01, preservar recursos; sin main/prod/visibilidad/purge. AGENTS/ADR0010.
+
+
+## Continuidad local recuperada — 2026-11-02
+SSH comprobado y seis archivos preservados sobre develop d9e7652.
+Control0007 ensayado con rollback: DDL fallido/replay, hash/UUID/unique,
+INGEST kind fence y privilegios por catálogo. APP_GRANTS corregido sin SET ROLE
+ni membresías. 807 tests completos passed42.82s; ruff/docs/diff correctos.
+Control persistente sigue f04_control_0006. No hay adopción de control0007.
+Cerrar CI/revisión/merge/postmerge de esta entrega y continuar T004; preparar
+compatibilidad runtime con head exacto antes de cualquier adopción persistente.
+No acreditar conexión app por consulta de privilegios ni cerrar T003/F05.
