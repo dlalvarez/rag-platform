@@ -33,3 +33,7 @@ def upgrade_control(connection: Connection, repository: Path) -> None:
 
 def upgrade_identity(connection: Connection, repository: Path) -> None:
     _upgrade(connection, repository, F02_CONTROL)
+
+
+def upgrade_ingestion(connection: Connection, repository: Path) -> None:
+    _upgrade(connection, repository, "f04_control_0006")

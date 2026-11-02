@@ -11,11 +11,20 @@ Conservar fixtures, cuatro colisiones T005, repos DELETED y todos los originales
 
 ## Continuar
 
-Worktree /home/diego/proyectos/rag-platform-f03-schema, feat/F04-planning.
+Worktree /home/diego/proyectos/rag-platform-f03-schema, feat/F04-T002-queue.
 Checkout operativo /home/diego/proyectos/rag-platform en develop, limpio al comenzar.
-T001: plan/tareas/checklist/evidencia F04 preparados; validar docs/diff y CI, revisar,
-integrar y verificar postmerge. Continuar T002 cola durable y T004 extractores/corpus
-según dependencias; no declarar implementación por planificación.
+T001 integrada en PR #35, merge 1a63634f54df2c7d7c8459a1427c1dcfa7616de7,
+cuatro checks del head/tres del merge y postmerge correctos.
+T002 núcleo durable preparado: 584 tests offline; batería PostgreSQL real (dos procesos,
+SKIP LOCKED, caída/lease, fencing, backoff y ack/heartbeat tras esperar lock) correcta.
+Esquema QA aislado retenido; migración pública solo probada con rollback. No worker ni
+ingesta activa. Faltan grants/activación/parada del runtime junto con T005; no marcar
+T002 completa ni AC E2E por esta batería.
+
+Publicar PR del núcleo, revisar head exacto, CI/merge/postmerge; continuar T004
+extractores/chunker/corpus, independiente de la migración tenant T003.
+Leer ops/f04/README.md. Imagen QA propia rag-f04-tools:t002; comparar fuente por hashes.
+No usar imagen ni credenciales de QA como runtime.
 
 D-05 resuelta como elección técnica del adaptador ya previsto: pypdf/python-docx locales,
 sin OCR/modelos ni cambio de arquitectura; no atribuir aprobación personal nueva.
