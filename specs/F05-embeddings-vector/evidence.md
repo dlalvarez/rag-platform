@@ -371,3 +371,16 @@ ausente y modelo distinto de igual dimensión. Rollback exterior y hashes intact
 Durante desarrollo inicial se detectó section JSONB mediante42883 left(jsonb,integer);
 se conserva su ruta en vez de aplicarle una función de texto. Diagnóstico público
 limitado finalmente a SQLSTATE, sin mensajes SQL/valores. No error pendiente.
+
+## T006 parcial — servicio de consulta autorizado
+SearchService agnóstico al despliegue: ACL de todos los repositorios antes de
+tokenizar/inferir, conexión liberada durante proveedor, contexto nuevo al terminar,
+repetición ACL/perfil y validación antes de devolver hits. Sin ruta HTTP ni Torch
+en API, sin nuevas migraciones/dependencias/servicios.
+18 pruebas del servicio con autoridad/ACL/transacciones SQLite reales y backend
+exacto sustituido (pgvector ya tiene su prueba nativa): revocación ACL/membresía/
+tenant/perfil durante inferencia, contexto expirado, entrada/cota/proveedor inválidos,
+traza forjada y conexiones cerradas. Suite967passed67.31s; después siete pruebas
+nuevas de selección QA pasaron. El helper real está preparado, todavía NO ejecutado.
+Revisión detectó resolución de extends relativa al primer compose, corregida antes
+de arranque; composición validada sin iniciar dependencias.

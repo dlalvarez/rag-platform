@@ -1,0 +1,28 @@
+services:
+  f05-search-check:
+    extends:
+      file: ../f05/embedding.compose.yaml
+      service: embedding-worker
+    profiles: [test]
+    entrypoint: [python, /app/scripts/f05_search_check.py]
+    volumes:
+      - type: bind
+        source: ../../src
+        target: /app/src
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ../../scripts/f05_search_check.py
+        target: /app/scripts/f05_search_check.py
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F04_QA_ROOT:?Retained F04 proof}
+        target: /run/f04-qa
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F05_EMBED_QA_ROOT:?Verified Qwen proof}
+        target: /run/f05-proof
+        read_only: true
+        bind: {create_host_path: false}

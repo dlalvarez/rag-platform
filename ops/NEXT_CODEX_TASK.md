@@ -1,6 +1,6 @@
 # Continuidad F05 — publicación real verificada; búsqueda en curso
 
-Develop 351f655 (PR62). PR60, 61 y 62 tienen CI del HEAD y postmerge correctos.
+Develop 65f47c8 (PR63). PR60..63 tienen CI del HEAD y postmerge correctos.
 Diego aprobó búsqueda HTTP de fragmentos: repository_ids/space_id/query/top_k,
 hits con procedencia, similitud y uso; sin asistentes ni generación. No volver a
 pedir esa decisión. La ruta todavía no está habilitada.
@@ -35,12 +35,13 @@ Trabajador rag-f02-dev-embedding-worker-1 detenido limpiamente y conservado.
 Imagen rag-f05-embedding:t004, modelo revision97b0c614... RO.
 No confundir esta prueba con calidad de recuperación ni crash/TTL real.
 
-Rama feat/F05-T006-exact-retrieval en worktree f03-schema, basada en develop351f655.
-Backend SQL exacto parametrizado, filtro MATERIALIZED de ACL/pointer/publicación,
-sin inferencia/DDL/red/contexto. Prueba SQL sintética cuatro fixtures/rollback pasó,
-15 unitarias; revisar y ejecutar suite completa antes de PR.
-Section histórico es JSONB ruta, no string; documento vigente state RECEIVED.
-No habilitar HTTP ni declarar ANN probado con este componente exacto.
+Rama feat/F05-T006-query-service en worktree f03-schema, basada en develop65f47c8.
+Referencia exacta integrada PR63, 949tests y SQL4fixtures/rollback sobre0006 correctos.
+Servicio nuevo: ACL antes de proveedor, inferencia sin conexiones abiertas, contexto
+nuevo y ACL/perfil repetidos. 18tests reales SQLite,967suite y7selecciónQA, sin HTTP.
+QA Qwen/SQL preparada en search-check.compose.yaml y f05_search_check.py, no ejecutada.
+Revisar/CI/merge/postmerge antes de usar entrega F05 y modelo RO con cuatro atomic
+publicados. No crea corpus ni jobs; cierra su token. Ver search-service.md.
 
 Siguiente: revisión/CI/merge/postmerge del componente exacto; después servicio,
 ANN/HTTP y pruebas reales de recuperación entre commits, inferencia larga/TTL30s,
