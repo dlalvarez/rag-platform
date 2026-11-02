@@ -385,3 +385,34 @@ toda la batería de esquema/journal/fencing pasó otra vez en las cuatro fixture
 incluidos dos procesos/locks administrativos, rollback de chunks, parada y baja.
 Logs con controles positivos/ERROR y canary ausente en ambas instancias. Sin activar
 esquemas/perfiles/worker F04; esta prueba no sustituye la integración S3 pendiente.
+
+## T005 runtime integrado — PR #41
+
+Head 56fc143d54ad3498ac0716be0227e485bb3575f9, merge
+e0b73e7f36fa1d73474df36f3e09deed64b9196c. Cuatro checks de head/tres de merge,
+revisión delegada del mismo agente; checkouts limpios y documentación válida.
+43 tests postmerge de runtime/guard/perfil; tres imágenes con 66 módulos src e
+instalados exactos. [Postmerge](https://github.com/dlalvarez/rag-platform/pull/41#issuecomment-6570349821).
+No se aceptó T005/F04 ni se activaron servicios por integrar estos componentes.
+
+## Entrega operativa T005 — preparación
+
+[Procedimiento](../../ops/f04/adoption.md): alcance exclusivo de cuatro fixtures,
+adopción aditiva con fallo DDL intencional/FAILED honesto/recovery, roles/logs/TLS y
+datos anteriores conservados. Control app recibe solo SELECT/INSERT/UPDATE de cola;
+la herramienta administrativa se mantiene fuera del worker.
+
+Seed separado con usuario OIDC/identidad de aplicación limitados, sin día/admin SQL/
+migrator/S3 admin. Repos nuevos y originales HTTPS; journal privado de UUIDs/hashes
+sintéticos con cada recurso conservado. No sobrescribir runs anteriores.
+El PDF de fallo parcial se comprobó en ragdev01: primera página legible y segundo
+stream inválido -> extractor real devuelve PARSER_INVALID, sin resultado parcial.
+
+Aún no se han ejecutado adopción persistente, promoción API/worker ni seeding.
+Primero publicar/revisar el head del PR operativo y sus checks, luego ejecutar la
+validación manual de desarrollo prevista. No atribuir evidencia real a esta preparación.
+
+Composición operativa validada en ragdev01: adopción con seis montajes y solo día RW;
+seed con siete montajes, solo resultados RW, sin día/admin/migrator. Imagen construida
+y tres hashes exactos de adopt/seed/emisor. Ruff/formato/docs/diff correctos.
+No se han ejecutado todavía migraciones ni seeding por estos checks de preparación.

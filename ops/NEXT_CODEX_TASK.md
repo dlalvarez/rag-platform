@@ -12,38 +12,37 @@ revisión delegada y postmerge correctos; 22 tests postmerge/hash de imagen corr
 Cola probada en esquema QA retenido, no migración pública ni worker activos.
 T002 sigue abierta hasta activación/grants/parada con T005.
 
-Worktree /home/diego/proyectos/rag-platform-f03-schema, feat/F04-T005-worker-runtime.
-Checkout operativo /home/diego/proyectos/rag-platform en develop.
-T004 PR37 y núcleos T003 PR38 / intención PR39 / fencing PR40 integrados.
-Develop@3ec113a6a60ee3c20bdb178c6ba8f93e949f96c7; CI/revisión/postmerge correctos.
-656 tests previos, 25 postmerge; dieciséis hashes exactos. Todavía sin esquema/perfil/
-worker F04 persistidos. API normal conserva F03.
+Worktree /home/diego/proyectos/rag-platform-f03-schema, feat/F04-T005-runtime-acceptance.
+Operativo /home/diego/proyectos/rag-platform en develop@e0b73e7f36fa1d73474df36f3e09deed64b9196c.
+T004 PR37, núcleos T003 PR38 / intención PR39 / fencing PR40 / runtime PR41 integrados.
+CI/revisión/postmerge correctos; 675 tests, 43 postmerge, tres imágenes de 66 módulos
+src e instalados exactos. Ninguna migración/worker F04 activa; API actual F03.
 
-En curso: worker.py/runtime.py/worker_main.py, entrega propia rag-f04-worker con
-AppRole F03 limitado de doce refs, Dockerfile sin scripts admin, Compose de cuatro
-montajes RO sin día. Emisor separado usa sesión diaria válida, nunca contraseña.
-Pool worker de un socket/engine (máximo cuatro), contrato runtime.md antes del código.
-API compatible opt-in mediante RAG_F04_ENABLED=1 más F03_ENABLED=1; misma superficie
-F03 hasta T006, sin aceptar heads futuros. Defaults F02/F03 conservados; 656 tests
-pasaron después de los cambios del perfil. 675 tests/lint/formato/docs/diff correctos; 19 tests nuevos y 30 focalizados.
-Tres imágenes con 66 hashes de src y paquete instalado correctos; sin despliegue.
+En curso: PR operativo acotado, cinco fuentes restauradas/preparadas:
+scripts/f04_adopt.py, f04_seed.py, ops/f04/activate.compose.yaml, seed.compose.yaml,
+adoption.md. Originales públicos de preparación preservados en /tmp/f04-runtime-operations-pending.
+PDF malformado comprobado: página uno válida, segunda inválida -> PARSER_INVALID sin parcial.
 
-Primera actividad: cerrar QA SQL de los guards con la imagen runtime exacta y
-publicar el PR acotado del runtime. CI/revisión/merge/postmerge.
-Seguir inmediatamente PR operativo: restaurar los tres archivos públicos guardados
-con sus hashes en /tmp/f04-runtime-operations-pending/manifest.json (adopt, seed,
-activate.compose), sin borrarlos ni perder su contenido. Ninguna credencial allí.
-Completar QA S3/parser/crash tras commit/baja/revocación/parada de las cuatro fixtures.
-Adopción explícita con FAILED honesto/recuperación y logs/roles mínimos; preparar PR/CI/
-revisión antes de ejecutar migración y promoción coordinada. Reemplazar entrega API
-DESPUÉS de reiniciar/recrear su consumidor, para no usar el token revocado al cerrar.
-No promover API/worker por solo pasar mocks. T002/T003/T005 siguen abiertas.
+Primera actividad: validar config/build/hashes de herramientas operativas, publicar
+PR borrador y comprobar CI/head/revisión. Ejecutar adopción manual solo desde ese
+head revisado, conservando datos/roles/identidades/tenants previos y fallo/recovery real.
+Después API compatible: recrear solo API con los envfiles operativos F02/F03 y override
+F04. Reemplazar su entrega limitada DESPUÉS del cierre/reinicio del consumidor previo.
+El cierre anterior puede revocar el token; health solo no prueba acceso documental.
 
-Conservar originales/recepciones/versiones F03 y factorías históricas. Leer schema.md,
-worker.md/runtime.md, docs04/05/07 y migraciones/perfiles antes de integrar.
-No consumir indiscriminadamente documentos previos: usar manifiesto/corpus propio.
-Versiones/jobs HTTP usarán rutas rectoras de docs07 en T006, después del worker.
-No fingir ACID entre bases, PUBLISHED, aceptación F04 ni anticipar F05.
+Preparar entrega propia del worker (f04_runtime_host.py), crear run QA privado nuevo
+0700 fuera del repo, emitir identidad limitada desde día vigente. Seed HTTPS explícito,
+sin ingesta indiscriminada de originales anteriores. Su cierre revoca el token de
+aplicación: replace antes de la siguiente batería. Nunca renovar/revocar el día.
+Completar controlador QA del worker, S3/parser, crash tras commit antes de ack,
+dependencia/reintento, baja/ACL/membresía durante PARSED, parada/reinicio, A→B→A,
+logs/temporales/roles/TLS y no regresión. Evidencia/CI/revisión/merge/postmerge antes
+de aceptar T002/T003/T005 y continuar T006. T005/F04 siguen abiertas.
+
+Conservar originales/recepciones/versiones F03 y factorías históricas. Leer
+schema.md/worker.md/runtime.md, ops/f04/adoption.md, docs04/05/07 y perfiles actuales.
+Versiones/jobs HTTP usarán rutas rectoras docs07 en T006. No fingir ACID, PUBLISHED,
+aceptación F04 ni anticipar F05. Continuar sin pausa salvo decisión real/bloqueo.
 
 ## Fuentes y pruebas
 
