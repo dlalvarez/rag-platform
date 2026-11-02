@@ -9,6 +9,7 @@ from uuid import UUID, uuid4, uuid5
 import sqlalchemy as sa
 
 from rag_platform.documents.errors import DocumentError
+from rag_platform.documents.original_anchor import pointer
 from rag_platform.documents.schema import (
     document_receipts,
     document_versions,
@@ -66,7 +67,7 @@ def as_plan(row):
     )
 
 
-def document_view(c, plan):
+def document_view(c, plan, *, profile="documents"):
     row = c.execute(
         sa.select(
             documents.c.id,
@@ -79,10 +80,11 @@ def document_view(c, plan):
             document_versions.c.content_hash,
             document_versions.c.created_at,
         )
+        .select_from(documents)
         .join(
             document_versions,
             sa.and_(
-                document_versions.c.id == documents.c.current_version_id,
+                document_versions.c.id == pointer(profile),
                 document_versions.c.document_id == documents.c.id,
                 document_versions.c.repository_id == documents.c.repository_id,
             ),
@@ -313,14 +315,18 @@ class ReceiptService:
                 c, checked, trace, plan.repository_id, plan.document_id, "DOCUMENT_RECEIVED"
             )
             self._accepted(c, checked, trace, plan)
-            return Received(document_view(c, plan), True)
+            return Received(
+                document_view(c, plan, profile=self.repositories.authority.profile), True
+            )
 
         return self.repositories._run(context, trace, "upload", operation)
 
     def _duplicate(self, context, trace, plan):
         def operation(c, checked):
             self.repositories._row(c, checked, plan.repository_id, "upload")
-            return Received(document_view(c, plan), False)
+            return Received(
+                document_view(c, plan, profile=self.repositories.authority.profile), False
+            )
 
         return self.repositories._run(context, trace, "upload", operation)
 

@@ -4,11 +4,13 @@ IDENTITY_VERSION = "f01_tenant_0001"
 DOCUMENTS_VERSION = "f03_tenant_0002"
 INGESTION_VERSION = "f04_tenant_0003"
 EMBEDDINGS_VERSION = "f05_tenant_0004"
+PUBLICATION_VERSION = "f05_tenant_0006"
 PROFILES = {
     "identity": IDENTITY_VERSION,
     "documents": DOCUMENTS_VERSION,
     "ingestion": INGESTION_VERSION,
     "embeddings": EMBEDDINGS_VERSION,
+    "embedding_publication": PUBLICATION_VERSION,
 }
 
 
@@ -20,6 +22,8 @@ def version_for(profile):
 
 def migration_sources(profile):
     expected = version_for(profile)
+    if profile == "embedding_publication":
+        return frozenset((EMBEDDINGS_VERSION, "f05_tenant_0005", PUBLICATION_VERSION))
     if profile == "embeddings":
         return frozenset((INGESTION_VERSION, EMBEDDINGS_VERSION))
     if profile == "ingestion":

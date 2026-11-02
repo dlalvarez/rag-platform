@@ -6,13 +6,14 @@ import sqlalchemy as sa
 
 from rag_platform.control.identity import AccessError
 from rag_platform.documents.errors import DocumentError
+from rag_platform.documents.original_anchor import pointer
 from rag_platform.documents.repositories import logical_id
 from rag_platform.documents.schema import document_versions, documents, sources
 from rag_platform.documents.storage import Original
 from rag_platform.documents.validation import UploadSpool
 
 
-def selection():
+def selection(profile="documents"):
     return (
         sa.select(
             documents.c.id,
@@ -30,7 +31,7 @@ def selection():
         .join(
             document_versions,
             sa.and_(
-                document_versions.c.id == documents.c.current_version_id,
+                document_versions.c.id == pointer(profile),
                 document_versions.c.document_id == documents.c.id,
                 document_versions.c.repository_id == documents.c.repository_id,
             ),
@@ -84,7 +85,9 @@ class Download:
 
 
 class DocumentService:
-    def __init__(self, repositories, gateway):
+    def __init__(self, repositories, gateway, *, profile="documents"):
+        pointer(profile)
+        self.profile = profile
         self.repositories, self.gateway = repositories, gateway
 
     def list(self, context, trace, repo, *, limit=50, cursor=None):
@@ -95,7 +98,7 @@ class DocumentService:
         def operation(c, checked):
             self.repositories._row(c, checked, repo, "read")
             query = (
-                selection()
+                selection(self.profile)
                 .where(documents.c.repository_id == repo)
                 .order_by(documents.c.id)
                 .limit(limit + 1)
@@ -119,7 +122,9 @@ class DocumentService:
         def operation(c, checked):
             self.repositories._row(c, checked, repo, "read")
             row = c.execute(
-                selection().where(documents.c.id == document, documents.c.repository_id == repo)
+                selection(self.profile).where(
+                    documents.c.id == document, documents.c.repository_id == repo
+                )
             ).one_or_none()
             if row is None:
                 raise DocumentError("NOT_FOUND")

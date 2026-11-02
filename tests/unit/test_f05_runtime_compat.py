@@ -213,8 +213,7 @@ def test_f05_flags_cannot_bypass_parent_profiles(monkeypatch, f03, f04, f05):
     assert disposed == [True]
 
 
-@pytest.mark.parametrize("enabled,expected", [("0", "ingestion"), ("1", "embeddings")])
-def test_configured_profile_is_explicit_and_keeps_previous_default(monkeypatch, enabled, expected):
+def _assert_configured_profile(monkeypatch, enabled, expected):
     from rag_platform import identity_api
     from rag_platform.documents import api as documents_api
 
@@ -300,3 +299,187 @@ def test_invalid_worker_profile_stops_before_secret_access(monkeypatch):
     monkeypatch.setattr(worker_main, "private_file", lambda *args: pytest.fail("secret read"))
     with pytest.raises(ValueError, match="Invalid worker profile"):
         worker_main.main()
+
+
+def test_publication_profile_requires_its_exact_head_and_rejects_older_profiles(control):
+    engine, tenant = control
+    with pytest.raises(TenantAccessError, match="SCHEMA_INCOMPATIBLE"):
+        CatalogResolver(engine, profile="embedding_publication").resolve(
+            AdministrativeTenant(tenant)
+        )
+    with Session(engine) as session, session.begin():
+        row = session.get(Tenant, tenant)
+        row.desired_version = row.observed_version = "f05_tenant_0006"
+    assert (
+        CatalogResolver(engine, profile="embedding_publication")
+        .resolve(AdministrativeTenant(tenant))
+        .tenant_id
+        == tenant
+    )
+    for profile in ("identity", "documents", "ingestion", "embeddings"):
+        with pytest.raises(TenantAccessError, match="SCHEMA_INCOMPATIBLE"):
+            CatalogResolver(engine, profile=profile).resolve(AdministrativeTenant(tenant))
+
+
+@pytest.mark.parametrize(
+    "observed", [None, "f05_tenant_0004", "f05_tenant_0005", "f05_tenant_9999"]
+)
+def test_publication_profile_has_no_stale_or_future_head_fallback(control, observed):
+    engine, tenant = control
+    with Session(engine) as session, session.begin():
+        row = session.get(Tenant, tenant)
+        row.desired_version, row.observed_version = "f05_tenant_0006", observed
+    with pytest.raises(TenantAccessError, match="SCHEMA_INCOMPATIBLE"):
+        CatalogResolver(engine, profile="embedding_publication").resolve(
+            AdministrativeTenant(tenant)
+        )
+
+
+@pytest.mark.parametrize("old_profile", ["documents", "ingestion", "embeddings"])
+def test_publication_context_rejects_previous_profile_proofs_before_io(old_profile):
+    old = TenantAuthorizer(None, b"k" * 32, profile=old_profile)
+    current = TenantAuthorizer(None, b"k" * 32, profile="embedding_publication")
+    trace = uuid4()
+    context = AuthorizedTenantContext(
+        uuid4(),
+        uuid4(),
+        ("editor",),
+        SecretRef(uuid4(), 1),
+        SecretRef(uuid4(), 1),
+        trace,
+        int(time.time()) + 30,
+        "",
+    )
+    with pytest.raises(AccessError, match="INPUT_INVALID"):
+        current.validate(replace(context, _proof=old._sign(context)), trace)
+
+
+def test_publication_migration_sources_are_explicit():
+    assert version_for("embedding_publication") == "f05_tenant_0006"
+    assert migration_sources("embedding_publication") == {
+        "f05_tenant_0004",
+        "f05_tenant_0005",
+        "f05_tenant_0006",
+    }
+    assert version_for("embeddings") == "f05_tenant_0004"
+
+
+@pytest.mark.parametrize("f05,publication", [("0", "1"), ("1", "yes")])
+def test_publication_worker_flags_fail_before_secret_access(monkeypatch, f05, publication):
+    from rag_platform.ingestion import worker_main
+
+    monkeypatch.setenv("RAG_F05_ENABLED", f05)
+    monkeypatch.setenv("RAG_F05_PUBLICATION_ENABLED", publication)
+    monkeypatch.setattr(worker_main.resource, "setrlimit", lambda *args: None)
+    monkeypatch.setattr(worker_main, "private_file", lambda *args: pytest.fail("secret read"))
+    with pytest.raises(ValueError, match="Invalid worker profile"):
+        worker_main.main()
+
+
+@pytest.mark.parametrize("f05,publication", [("0", "1"), ("1", "yes")])
+def test_publication_api_flag_requires_valid_foundation(monkeypatch, f05, publication):
+    from rag_platform import identity_api
+
+    disposed = []
+    monkeypatch.setattr(identity_api, "OIDCSettings", lambda **kwargs: object())
+    monkeypatch.setattr(identity_api, "Target", lambda *args: object())
+    monkeypatch.setattr(identity_api, "private_file", lambda *args: b"k" * 32)
+    monkeypatch.setattr(
+        identity_api,
+        "control_engine",
+        lambda *args: SimpleNamespace(dispose=lambda: disposed.append(True)),
+    )
+    for name, value in {
+        "RAG_OIDC_ISSUER": "https://issuer.invalid",
+        "RAG_OIDC_AUDIENCE": "api",
+        "RAG_OIDC_JWKS": "https://issuer.invalid/keys",
+        "RAG_F03_ENABLED": "1",
+        "RAG_F04_ENABLED": "1",
+        "RAG_F05_ENABLED": f05,
+        "RAG_F05_PUBLICATION_ENABLED": publication,
+    }.items():
+        monkeypatch.setenv(name, value)
+    with pytest.raises(ValueError, match="Invalid private API configuration"):
+        identity_api.create_configured_app()
+    assert disposed == [True]
+
+
+@pytest.mark.parametrize(
+    "enabled,publication,expected",
+    [
+        ("0", "0", "ingestion"),
+        ("1", "0", "embeddings"),
+        ("1", "1", "embedding_publication"),
+    ],
+)
+def test_configured_profile_is_explicit_and_keeps_previous_default(
+    monkeypatch, enabled, publication, expected
+):
+    monkeypatch.setenv("RAG_F05_PUBLICATION_ENABLED", publication)
+    _assert_configured_profile(monkeypatch, enabled, expected)
+
+
+@pytest.mark.parametrize("observed", ["f05_tenant_0006", "f05_tenant_0004"])
+def test_controlled_publication_target_never_marks_wrong_runner_ready(control, observed):
+    from rag_platform.providers.secrets import Credential
+
+    engine, tenant = control
+    with Session(engine) as session, session.begin():
+        row = session.get(Tenant, tenant)
+        row.desired_version = row.observed_version = "f05_tenant_0004"
+    store = SimpleNamespace(read=lambda ref: Credential("synthetic", "not-an-account"))
+
+    def runner(*args):
+        with Session(engine) as session:
+            row = session.get(Tenant, tenant)
+            assert row.desired_version == "f05_tenant_0006"
+            assert row.observed_version is None and row.migration_state == "MIGRATING"
+        return observed
+
+    if observed == "f05_tenant_0006":
+        assert (
+            migration_control.migrate_controlled(
+                engine,
+                tenant,
+                uuid4(),
+                store,
+                Path("/ca"),
+                Path("/repo"),
+                profile="embedding_publication",
+                runner=runner,
+            )
+            == observed
+        )
+    else:
+        with pytest.raises(MigrationError):
+            migration_control.migrate_controlled(
+                engine,
+                tenant,
+                uuid4(),
+                store,
+                Path("/ca"),
+                Path("/repo"),
+                profile="embedding_publication",
+                runner=runner,
+            )
+        with Session(engine) as session:
+            row = session.get(Tenant, tenant)
+            assert row.state == "FAILED" and row.observed_version is None
+
+
+@pytest.mark.parametrize("source", ["f04_tenant_0003", "f05_tenant_9999", "f01_tenant_0001"])
+def test_publication_wrong_migration_source_denied_before_secret(control, source):
+    engine, tenant = control
+    with Session(engine) as session, session.begin():
+        session.get(Tenant, tenant).desired_version = source
+    with pytest.raises(MigrationError, match="IDENTITY_CONFLICT"):
+        migration_control.migrate_controlled(
+            engine,
+            tenant,
+            uuid4(),
+            Store(),
+            Path("/ca"),
+            Path("/repo"),
+            profile="embedding_publication",
+            runner=lambda *_: pytest.fail("wrong runner"),
+        )

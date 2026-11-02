@@ -148,3 +148,25 @@ def register_publication_space(connection, names, space_id, profile):
     """Same immutable DDL/profile rules, only on the exact publication head."""
     with connection.begin_nested():
         return _register_space(connection, names, space_id, profile, expected_version=VERSION)
+
+
+def migrate_publication(target, names, credential, repository):
+    from rag_platform.provisioning.migrations import migration_session
+
+    with migration_session(target, names, credential) as connection:
+        return apply_publication(connection, names, repository)
+
+
+def migrate_publication_controlled(engine, tenant_id, actor, store, ca, repository):
+    from rag_platform.provisioning.migration_control import migrate_controlled
+
+    return migrate_controlled(
+        engine,
+        tenant_id,
+        actor,
+        store,
+        ca,
+        repository,
+        runner=migrate_publication,
+        profile="embedding_publication",
+    )

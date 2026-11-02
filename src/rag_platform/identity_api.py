@@ -202,17 +202,26 @@ def create_configured_app():
     enabled = os.environ.get("RAG_F03_ENABLED", "0")
     ingestion = os.environ.get("RAG_F04_ENABLED", "0")
     embeddings = os.environ.get("RAG_F05_ENABLED", "0")
+    publication = os.environ.get("RAG_F05_PUBLICATION_ENABLED", "0")
     if (
         enabled not in ("0", "1")
         or ingestion not in ("0", "1")
         or embeddings not in ("0", "1")
+        or publication not in ("0", "1")
+        or (publication == "1" and embeddings != "1")
         or (embeddings == "1" and ingestion != "1")
         or (ingestion == "1" and enabled != "1")
     ):
         engine.dispose()
         raise ValueError("Invalid private API configuration")
     profile = (
-        "embeddings" if embeddings == "1" else ("ingestion" if ingestion == "1" else "documents")
+        "embedding_publication"
+        if publication == "1"
+        else (
+            "embeddings"
+            if embeddings == "1"
+            else ("ingestion" if ingestion == "1" else "documents")
+        )
     )
     verifier = OIDCVerifier(settings)
     try:

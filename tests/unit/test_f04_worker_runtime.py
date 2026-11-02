@@ -199,3 +199,18 @@ def test_parser_failure_always_closes_spool_without_partial_commit(
     )
     assert worker.step()
     assert calls == ["closed"] and failures == [(expected, retry)]
+
+
+def test_publication_profile_reconciles_ingest_ack_without_reading_content(fixture, monkeypatch):
+    from contextlib import nullcontext
+
+    q, runtime, calls = fixture
+    runtime.authority.profile = "embedding_publication"
+    runtime.registry = SimpleNamespace(connection=lambda *_: nullcontext(None))
+    monkeypatch.setattr(
+        processing, "inspect", lambda *_: SimpleNamespace(state="PUBLISHED", error_code="NONE")
+    )
+    claim = q.claim()
+    assert Worker(runtime, q)._reconcile(claim)
+    assert state(q)["status"] == "SUCCEEDED"
+    assert calls == []

@@ -13,7 +13,7 @@ from rag_platform.ingestion.extraction import chunks as make_chunks
 from rag_platform.ingestion.schema import audit, blocks, chunks, intents, versions
 from rag_platform.ingestion.schema_f04_0003 import ERRORS
 
-FINAL = {"READY_FOR_EMBEDDING", "FAILED_TERMINAL", "NEEDS_OCR", "TOMBSTONED"}
+FINAL = {"PUBLISHED", "READY_FOR_EMBEDDING", "FAILED_TERMINAL", "NEEDS_OCR", "TOMBSTONED"}
 
 
 @dataclass(frozen=True, slots=True, repr=False)

@@ -204,3 +204,22 @@ Tenants siguen0004/control0006, sin adopción, runtime compatible ni publicació
 persistente. Pendientes worker real/reautorización/heartbeat/crash/usage real, HTTP
 original postpublicación, concurrencia con commits independientes y aceptación F05.
 PR54 integrado02f6d83 con cuatro checks previos/tres postmerge correctos.
+
+
+## T005 parcial — compatibilidad runtime opt-in0006
+Perfil embedding_publication exige f05_tenant_0006, prefijoHMAC separado y bandera
+RAG_F05_PUBLICATION_ENABLED=1 subordinada a F03/F04/F05. Sin bandera conserva0004.
+Resolver/authority/servicios/workerINGEST admiten solo perfil exacto; fuentes migración
+0004/0005/0006 cerradas. Runner controlado no marca READY un resultado incorrecto.
+
+Original/list/show/replay/solicitud INGEST usan ancla explícita bajo nuevo perfil;
+no fallback por inspección del head. INGEST reconciliado tras PUBLISHED confirma ack
+sin descargar/parsing de nuevo. SQL real4fixtures/2instancias rollback: original y
+replay devuelven el original después de publicar; nueva solicitud ingesta/replay
+ancla la procedencia correcta. Primer replay falló InvalidRequestError por FROM
+implícito; fijado select_from(documents), repetido correcto.
+
+20 casos nuevos,857passed40.68s;59 focalizados correctos. Ruff/formato/docs/diff
+correctos. Sin imagen nueva, activación de bandera ni adopción/HTTP postpublicación.
+Pruebas SQL son consultas metadata/ingesta sintéticas, no descarga S3 persistente.
+PR55 integrado2c65818 con cuatro checks previos/tres postmerge correctos.

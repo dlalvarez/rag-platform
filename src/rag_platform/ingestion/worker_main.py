@@ -19,9 +19,18 @@ from rag_platform.tenancy.resolver import control_engine
 def main():
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
     enabled = os.environ.get("RAG_F05_ENABLED", "0")
-    if enabled not in ("0", "1"):
+    publication = os.environ.get("RAG_F05_PUBLICATION_ENABLED", "0")
+    if (
+        enabled not in ("0", "1")
+        or publication not in ("0", "1")
+        or (publication == "1" and enabled != "1")
+    ):
         raise ValueError("Invalid worker profile")
-    profile = "embeddings" if enabled == "1" else "ingestion"
+    profile = (
+        "embedding_publication"
+        if publication == "1"
+        else ("embeddings" if enabled == "1" else "ingestion")
+    )
     stop = Event()
     for value in (signal.SIGTERM, signal.SIGINT):
         signal.signal(value, lambda _number, _frame: stop.set())

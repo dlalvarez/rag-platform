@@ -5,6 +5,7 @@ from uuid import UUID, uuid4, uuid5
 
 import sqlalchemy as sa
 
+from rag_platform.documents.original_anchor import identity as original_identity
 from rag_platform.documents.policy import repository_allows
 from rag_platform.ingestion.extraction import CHUNKER, NORMALIZER, PARSERS, ChunkConfig
 from rag_platform.ingestion.schema import audit, documents, intents, metadata, versions
@@ -93,16 +94,17 @@ def _same(row, plan):
     )
 
 
-def request(c, actor, repository, document, trace, config=None):
+def request(c, actor, repository, document, trace, config=None, *, profile="ingestion"):
     """Create candidate and intent atomically, without network or control writes."""
     identifiers(actor, repository, document, trace)
     config = ChunkConfig() if config is None else config
     if not isinstance(config, ChunkConfig):
         raise IngestionError("INPUT_INVALID")
     doc = require(c, actor, repository, document)
+    raw_id = original_identity(c, doc, profile)
     raw = c.execute(
         sa.select(versions).where(
-            versions.c.id == doc.current_version_id,
+            versions.c.id == raw_id,
             versions.c.document_id == document,
             versions.c.repository_id == repository,
             versions.c.kind == "ORIGINAL",
