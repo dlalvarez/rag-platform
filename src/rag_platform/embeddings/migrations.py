@@ -89,7 +89,7 @@ def _apply_spaces(connection, names, repository):
     return VERSION
 
 
-def _register_space(connection, names, space_id, profile):
+def _register_space(connection, names, space_id, profile, *, expected_version=VERSION):
     _identity(connection, names)
     if (
         not isinstance(space_id, UUID)
@@ -97,9 +97,9 @@ def _register_space(connection, names, space_id, profile):
         or not isinstance(profile, EmbeddingProfile)
     ):
         raise MigrationError("IDENTITY_CONFLICT")
-    if (
+    if expected_version not in (VERSION, "f05_tenant_0006") or (
         connection.scalar(sa.text("SELECT version_num FROM public.alembic_version_tenant"))
-        != VERSION
+        != expected_version
     ):
         raise MigrationError("VERSION_MISMATCH")
     # Administrative per-tenant transaction lock serializes DDL/quota/idempotency.

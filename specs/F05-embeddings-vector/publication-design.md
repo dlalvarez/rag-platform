@@ -50,3 +50,12 @@ constraint F04 que exige current_version_kind ORIGINAL; no permite aún publicar
 No cambia perfil runtime ni adopta el head. Preparar compatibilidad antes de adopción.
 Ensayar rollback/repetición, INSERT compatible sin campo nuevo, FK cruzada, ancla
 nula o modificada y snapshots históricos en las cuatro fixtures.
+
+
+## Segundo incremento físico
+tenant0006 implementa ledger de intents/lotes y binding completo. Ensayo SQL sintético
+valida publicación y dos spaces con rollback; no adopción. La migración instala función
+F05 de versión conservando funciones históricas F04 y validando sus guards de chunks/
+bloques/auditoría. COMPLETE permite solo completar dispatch pendiente; resultado
+inmutable y dispatch ya fijado inmutable. Uso representa lotes exitosos guardados,
+no pretende contabilizar inferencias perdidas antes del commit ni uso facturable.
