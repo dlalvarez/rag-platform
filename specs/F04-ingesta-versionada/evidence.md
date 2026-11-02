@@ -596,3 +596,14 @@ A→B→A HTTP pasó en misma instancia y dos instancias, metadata propia.
 la revisión inicial, solo dos asserts QA y evidencia. Aceptación técnica T006 en PR43;
 registrar CI/revisión del head final e integración/postmerge antes de T007/cierre F04.
 F04 sigue abierta por regresiones y aceptación T007. Sin backup/restore acreditado.
+
+## T007 — preparación de aceptación
+
+PR43 integrado develop6398c62100327b4fbf21716f07d5fdcc12793308, tres checks/67 tests
+postmerge y69 módulos exactos en tres imágenes, checkouts limpios.
+[Registro](https://github.com/dlalvarez/rag-platform/pull/43#issuecomment-6575138375).
+Contrato/matriz en acceptance.md. Comprobadores actuales de SQL/S3/OIDC/historial
+F03 y privacidad, y F00 aislado con fixture UUID nueva retenida, preparados sin nueva
+migración/dependencia/runtime/permisos. Todavía sin atribuir resultados online T007.
+La fixture f00_probe antigua está ausente; su limpieza original consta en evidencia F00.
+No se recreó ni se interpreta como pérdida de datos. Nuevos ensayos conservarán recursos.
