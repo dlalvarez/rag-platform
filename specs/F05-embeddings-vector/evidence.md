@@ -92,3 +92,28 @@ Journal privado: /home/diego/proyectos/rag-platform-f05-adoption-runs/
 Preparados falloDDL=>FAILED/observedNULL/recovery/repetición y registroQwen
 vacío, más regresión F01..F04 con profile F05. Adopción/HTTP F05 aún no ejecutados
 al preparar este head; realizar solo tras CI/revisión y registrar resultado real.
+
+## Adopción real revisada y regresión F05 (2026-11-02)
+
+Head controlador f9ab217a3433ecf9e9ae52f44ce34fe23dc310c9/PR50 pasó 4 checks y
+revisión previa delegada; comentario6577568741. Fuentes QA comprobadas por SHA
+antes de ejecutar. Ventana detuvo/recreó SOLO API; entrega reemplazada tras cierre.
+Las 4 fixtures pasaronDDL 22012=>FAILED/observedNULL, rollback físico, recuperación
+y repetición a tenant0004, registro/repetición de espacio Qwen por tenant y
+snapshots de TODAS las tablas F04 intactos antes/después de migrar. Espacios vacíos.
+Identidades/jobs/otros tenants de control conservados. Journal 8f9a197defd04a3baacde6bac5a56886.
+
+API rag-f05-api:t003 activa, HTTPS/health phase F05 verificado. Solo API cambió ID;
+PostgreSQL/segunda instancia/MinIO/Bao/IdP/F00 y worker anterior conservaron IDs.
+API user1000/rootfs+bindsRO/cap_dropALL/no-new-privileges; worker anterior detenido (exit 0).
+No vCPU/contraseñas/AppRole/políticas modificados. Entrega QAworker separada, limitada.
+
+Regresión real f05-regression-check exit0: OIDC/JWT/consultas inválidas;4 fixtures
+SQL/TLS/vector/roles sin privilegios/crossCONNECT+SETROLE;S3 propio/cruzado;
+originales históricos F03 con SHA/ACL/versiones intactos y sin ingesta retroactiva.
+Controlador reutiliza T007 de F04 bajo perfil F05; no acredita T007/AC completos F05.
+Logs desde 12:54 UTC: postgres/postgres2 con positivos LOG/ERROR, sin canaries
+documentales; API/MinIO/Bao también sin canaries. Logs raw no se exportaron.
+
+T003 parcial: fundación+compatibilidad adoptadas, colaEMBED y T004..T008 pendientes.
+No vectores documentales generados, PUBLISHED, búsqueda F05 ni cierre de fase.
