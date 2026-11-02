@@ -57,3 +57,15 @@ No afirmar calidad representativa, capacidad concurrente, aislamiento o cierre F
 
 Validación entrega Qwen:758 tests completos passed en38.88s (9 nuevos límites/privacidad),
 ruff/docs/diff correctos. uv sync --locked separado comprobó25 paquetes sin cambios.
+
+## T003 parcial — fundación aditiva y ensayo transaccional
+
+Preparados catálogo inmutable/tabla vectorial por space/HNSW, FK de procedencia,
+perfil/dimensión/norma, cuota/lock y helpers con savepoint. Migración tenant0004
+no cambia documentos/chunks/guards F04. Perfiles runtime/control EMBED aún pendientes.
+Primera ejecución se detuvo por objeto SQL del controlador (no PASS); corregido.
+Un intento posterior no arrancó por resolución de mount; no hubo SQL.
+Ensayo final conserva snapshot/control y revierte DDL/datos en cuatro fixtures,
+ambas instancias. No hay adopción persistente ni nuevos tenants/objetos S3.
+18 negativos/DDL offline;776 tests completos passed en39.55s, ruff/docs/diff correctos.
+Manual space-foundation.md detalla límites; no cierre T003 ni AC02/03 completos.
