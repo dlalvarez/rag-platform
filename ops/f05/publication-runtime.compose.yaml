@@ -1,0 +1,13 @@
+services:
+  api:
+    image: rag-f05-api:t006
+    environment:
+      RAG_F03_ENABLED: '1'
+      RAG_F04_ENABLED: '1'
+      RAG_F05_ENABLED: '1'
+      RAG_F05_PUBLICATION_ENABLED: '1'
+  worker:
+    image: rag-f05-ingestion:t006
+    environment:
+      RAG_F05_ENABLED: '1'
+      RAG_F05_PUBLICATION_ENABLED: '1'
