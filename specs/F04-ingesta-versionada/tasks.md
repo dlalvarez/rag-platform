@@ -3,11 +3,14 @@
 Alcance original autorizado por ADR-0010; dependencia F03 aceptada en PR #34.
 Cada tarea conserva evidencia y PR propio cuando el alcance lo requiera.
 
-- [ ] T001 — Plan/trazabilidad, resolución técnica D-05, corpus/límites y contratos.
-  R01..06; AC-01..05. Docs y coherencia con fuentes rectoras; CI/revisión/postmerge.
+- [x] T001 — Plan/trazabilidad, resolución técnica D-05, corpus/límites y contratos.
+  R01..06; AC-01..05. PR #35: cuatro checks de head, tres de merge, revisión delegada
+  y docs/checkouts postmerge correctos.
 - [ ] T002 — Cola durable control sin payload: lease/SKIP LOCKED, fencing, backoff,
   agotamiento, stop seguro; migración explícita aditiva y grants mínimos.
-  R01/R04/R06; AC-01/03. Tests reales dos procesos, expiración y ack tardío.
+  R01/R04/R06; AC-01/03. Núcleo probado offline/PostgreSQL: dos procesos,
+  SKIP LOCKED, caída, caducidad, backoff y ack/heartbeat tardíos. Activación, grants
+  del runtime y parada del worker se completan con T005; T002 sigue abierta.
 - [ ] T003 — Versiones de procesamiento/chunks/intención tenant, estados y tombstone;
   procedencia original inmutable, transacción/fencing y migraciones repetibles.
   R04/R05/R06; AC-01/03/04/05. Migración con datos F03, fallo DDL revertido.

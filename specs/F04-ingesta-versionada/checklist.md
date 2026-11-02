@@ -1,8 +1,8 @@
 # Checklist F04
 
 - [x] F03 aceptada en PR #34, continuidad autorizada ADR-0010.
-- [ ] T001 integrada con CI/revisión/postmerge.
-- [ ] T002 cola durable, grants mínimos y carreras reales correctos.
+- [x] T001 integrada en PR #35 con cuatro checks de head/tres de merge y postmerge.
+- [ ] T002: núcleo/carreras reales correctos; faltan activación/grants y parada con T005.
 - [ ] T003 evolución aditiva con originales/datos anteriores conservados.
 - [ ] T004 corpus/aislamiento/límites y cuatro formatos acreditados.
 - [ ] T005 idempotencia, crash, reconciliación y fencing reales.
