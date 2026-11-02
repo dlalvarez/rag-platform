@@ -55,7 +55,11 @@ class TenantAuthorizer:
         self.profile, self.version = profile, version_for(profile)
 
     def _sign(self, context):
-        purpose = b"F02/context/v1:" if self.profile == "identity" else b"F03/context/v1:"
+        purpose = {
+            "identity": b"F02/context/v1:",
+            "documents": b"F03/context/v1:",
+            "ingestion": b"F04/f04_tenant_0003/context/v1:",
+        }[self.profile]
         return hmac.new(self._key, purpose + payload(context), hashlib.sha256).hexdigest()
 
     def _current(self, principal, tenant, trace):

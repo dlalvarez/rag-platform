@@ -12,11 +12,11 @@ from rag_platform.control.models import (
     ProvisioningOperation,
     Tenant,
 )
-from rag_platform.provisioning.migrations import VERSION, MigrationError, migrate_initial
+from rag_platform.provisioning.migrations import MigrationError, migrate_initial
 from rag_platform.provisioning.postgres import Names, Target
 from rag_platform.provisioning.saga import postgres_lock
 from rag_platform.tenancy.contracts import SecretRef
-from rag_platform.tenancy.profiles import version_for
+from rag_platform.tenancy.profiles import migration_sources, version_for
 
 
 def migrate_controlled(
@@ -31,7 +31,7 @@ def migrate_controlled(
     profile="identity",
 ):
     expected = version_for(profile)
-    allowed = {VERSION, expected}
+    allowed = migration_sources(profile)
     if not isinstance(tenant_id, UUID) or not isinstance(actor, UUID):
         raise MigrationError("IDENTITY_CONFLICT")
     with postgres_lock(engine, "f01-saga-tenant:", tenant_id):

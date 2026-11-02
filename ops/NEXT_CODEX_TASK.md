@@ -12,18 +12,21 @@ revisión delegada y postmerge correctos; 22 tests postmerge/hash de imagen corr
 Cola probada en esquema QA retenido, no migración pública ni worker activos.
 T002 sigue abierta hasta activación/grants/parada con T005.
 
-Worktree /home/diego/proyectos/rag-platform-f03-schema, feat/F04-T004-extraction.
+Worktree /home/diego/proyectos/rag-platform-f03-schema, feat/F04-T003-versioned-schema.
 Checkout operativo /home/diego/proyectos/rag-platform en develop, limpio.
-T004 implementada y validada: 618 tests, lint/formato/docs/diff correctos; imagen propia
-rag-f04-tools:t004, diez hashes de fuente/manifiesto y batería de extracción en contenedor
-sin red/montajes/secretos/puertos correctos. Fuentes actuales aún pendientes de PR T004.
-Publicar, revisar diff/head exacto, CI/merge/postmerge y continuar T003, sin esperar procede.
+T004 integrada en PR #37, develop@f1a7a3ddc077302b4c1bdebaeef3ba60b3489716.
+Cuatro checks del head/tres del merge, revisión delegada y postmerge correctos.
+618 tests previos y 34 postmerge; imagen con diez hashes correctos.
+T003 núcleo implementado y probado: 631 tests, lint/formato/docs/diff; cuatro fixtures
+SQL/ambas instancias, diez hashes de imagen, migración repetida, FKs/procedencia/roles,
+completitud/auditoría/tombstone/ACL y rollback correctos. Logs con errores/control
+positivo y canary de cuerpo ausente. Todavía sin esquema/perfil/worker F04 persistidos.
+Publicar PR del núcleo, revisar head, CI/merge/postmerge; continuar T005 sin pausa.
 
 T003: esquema tenant aditivo para versiones de procesamiento/chunks, intención durable
 y tombstone; conservar originales/recepciones/versiones F03 y factoría histórica.
 Leer plan/spec, docs/04-data-model.md, docs/05-ingestion.md, docs/07-api-contracts.md y
-migraciones/perfiles actuales antes de fijar detalle. Preparar contrato físico y pruebas
-antes del código. No fingir atomicidad entre bases ni PUBLISHED sin embeddings.
+migraciones/perfiles actuales antes de fijar detalle. schema.md fija el contrato ya implementado; revisar antes de integrar worker. No fingir atomicidad entre bases ni PUBLISHED sin embeddings.
 No consumir indiscriminadamente documentos previos; usar manifiesto/corpus propio.
 T004 no acredita aún AC E2E ni integración del worker.
 

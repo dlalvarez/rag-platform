@@ -1,0 +1,39 @@
+services:
+  schema-check:
+    profiles: [test]
+    image: rag-f04-tools:t003
+    build:
+      context: ../..
+      dockerfile: ops/f04/tools.Dockerfile
+    user: "${RAG_F02_UID:?Prepare F02}:${RAG_F02_GID:?Prepare F02}"
+    entrypoint: [python, scripts/f04_schema_check.py]
+    volumes:
+      - type: bind
+        source: /srv/rag-data/rag-platform/f01/secrets/postgres_password
+        target: /run/secrets/postgres_password
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /srv/rag-data/rag-platform/f01/secrets/postgres2_password
+        target: /run/secrets/postgres2_password
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /srv/rag-data/rag-platform/f01/secrets/control_migrator_password
+        target: /run/secrets/control_migrator_password
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /srv/rag-data/rag-platform/f01/tls/ca.crt
+        target: /run/f01-ca.crt
+        read_only: true
+        bind: {create_host_path: false}
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=8m"]
+    networks: [control]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    cpus: 0.5
+    mem_limit: 768m
+    memswap_limit: 768m
+    ulimits: {core: {soft: 0, hard: 0}}
