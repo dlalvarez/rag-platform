@@ -186,6 +186,11 @@ def prove(target, names, bootstrap):
                 )
                 assert space is not None
                 physical = "knowledge." + table_name(space)
+                PHASE = "READONLY_NO_OPERATIONAL_LEDGER"
+                role(c, names, "readonly")
+                denied(c, sa.select(intents).limit(0), "42501")
+                denied(c, sa.select(batches).limit(0), "42501")
+                c.execute(sa.select(publications).limit(0))
                 role(c, names, "app")
                 PHASE = "SYNTHETIC_READY_VERSION"
                 with c.begin_nested() as synthetic:

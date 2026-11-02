@@ -1,0 +1,88 @@
+services:
+  embedding-issue:
+    profiles: [admin]
+    image: rag-f05-tools:t003
+    user: "${RAG_F02_UID:?Prepare F02}:${RAG_F02_GID:?Prepare F02}"
+    entrypoint: [python, scripts/f05_application_issue.py]
+    volumes:
+      - type: bind
+        source: ../../scripts/f05_application_issue.py
+        target: /app/scripts/f05_application_issue.py
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /run/user/${RAG_F02_UID:?Prepare F02}/rag-f01-access
+        target: /run/f01-access
+        bind: {create_host_path: false}
+      - type: bind
+        source: /run/user/${RAG_F02_UID:?Prepare F02}/rag-f05-worker
+        target: /run/f05-worker
+        bind: {create_host_path: false}
+      - type: bind
+        source: /srv/rag-data/rag-platform/f01/tls/ca.crt
+        target: /run/f01-ca.crt
+        read_only: true
+        bind: {create_host_path: false}
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=8m"]
+    networks: [control]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    cpus: 0.5
+    mem_limit: 768m
+    memswap_limit: 768m
+    ulimits: {core: {soft: 0, hard: 0}}
+  embedding-worker:
+    profiles: [embedding]
+    image: rag-f05-embedding:t004
+    build:
+      context: ../..
+      dockerfile: ops/f05/embedding.Dockerfile
+    environment:
+      RAG_F05_ENABLED: "1"
+      RAG_F05_PUBLICATION_ENABLED: "1"
+      OMP_NUM_THREADS: "2"
+      MKL_NUM_THREADS: "2"
+      OPENBLAS_NUM_THREADS: "2"
+    user: "${RAG_F02_UID:?Prepare F02}:${RAG_F02_GID:?Prepare F02}"
+    volumes:
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/secrets/identity_app_password
+        target: /run/secrets/identity_app_password
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F02_ROOT:?Prepare F02}/secrets/api_authority_key
+        target: /run/secrets/api_authority_key
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /srv/rag-data/rag-platform/f01/tls/ca.crt
+        target: /run/f01-ca.crt
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /run/user/${RAG_F02_UID:?Prepare F02}/rag-f05-worker
+        target: /run/f05-worker
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /srv/rag-data/rag-platform/models/qwen3-embedding-0.6b/97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3
+        target: /models/qwen3-embedding-0.6b/97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3
+        read_only: true
+        bind: {create_host_path: false}
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m,mode=700,uid=${RAG_F02_UID:?Prepare F02},gid=${RAG_F02_GID:?Prepare F02}
+    networks: [control]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    cpus: 1.5
+    mem_limit: 6g
+    memswap_limit: 6g
+    pids_limit: 128
+    stop_grace_period: 120s
+    ulimits: {core: {soft: 0, hard: 0}}
+    logging:
+      driver: json-file
+      options: {max-size: 5m, max-file: '2'}

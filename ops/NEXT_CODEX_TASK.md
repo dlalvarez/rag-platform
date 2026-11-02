@@ -1,14 +1,15 @@
 # Continuidad F05 — ledger/publicación ensayados, seguir runtime/worker
 
-Developd37b2f6 (PR56), cuatro checks previos y tres postmerge correctos.
+Develop 9bf87f0 (PR57), cuatro checks previos y tres postmerge correctos.
 PR52controlEMBED y PR53consumidor integrado;837 tests baseline. ModeloQwen aprobado
 ADR0011/512/batch4, medición capacidad completada: no repetir sin cambio/riesgo.
 
-Trabajo actual feat/F05-T004-embedding-worker en worktree f03-schema.
+Trabajo actual feat/F05-T007-worker-operations en worktree f03-schema.
 tenant0006 ledger/lotes/usage/bindings, guards y wrapperspace explícito preparados;
 ledger/compat integrados; worker código904passed58.62s,77focalizadas y SQL
-componentes tenant/control correctos con rollback. Cerrar CI/revisión
-propia delegada/merge/postmerge. No atribuir revisión independiente.
+componentes tenant/control correctos con rollback. PR57 integrado y postmerge correcto.
+Entorno opcional/imagen/handoff preparados; 910 tests correctos. Cerrar revisión
+propia/CI/merge/postmerge de la entrega operativa. No atribuir revisión independiente.
 
 Persistente: control f04_control_0006; cuatro tenants f05_tenant_0004 y espaciosQwen
 vacíos.0007control y0005/0006tenant NO adoptados. APIF05t003 activa; workerF04 detenido.
@@ -41,3 +42,12 @@ Quota64chunks/32768tokens de contenido persistido,3intentos; batch sincommit pue
 repetirse. Stop180s antes de TTL o DENIED/INVALID; no auto-renew y nuevo handoff solo
 tras consumidor cerrado. Fuente actual RuntimeSQL-only, sin S3 ni admin/día.
 No declarar E2E por SQLite o guard sintético SQL. Leer ops/f05/embedding-worker.md.
+
+Entorno preparado: ops/f05/embedding-operations.md. Imagen rag-f05-embedding:t004,
+lock separado con pins compartidos sin deriva. Smoke sin red/credenciales/modelo,
+90 módulos SHA iguales. Compose corregido/validado, ningún servicio iniciado.
+Tools privadas prueban exclusión consumidor antes de día. Readonly sin SELECT
+ledgers ops (SQL rollback). No entrega real emitida ni directorio real preparado.
+Siguiente: controlador de adopción publicación/control0007 con journal nuevo,
+conservando el journal previo, fuentes cerradas y snapshots; ensayarlo/revisarlo
+antes de usar una ventana de cambio. No ejecutar f03_application_host configure.
