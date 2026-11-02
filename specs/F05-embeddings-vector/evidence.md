@@ -181,3 +181,26 @@ PR53 integrado5c9b947, cuatro checks antes y tres postmerge correctos.
 
 Revisión final ancla: INSERT explícito debe coincidir con current original inicial.
 Negativo añadido y SQL4fixtures repetido correcto; sin nueva adopción.
+
+
+## T004/T005 parcial — ledger y publicación física0006
+2026-11-02, ragdev01: tenant0006 añade intents, lotes/uso exitoso y bindings completos
+por versión+space; estadoPUBLISHED conserva provenance F04. Guards diferidos exigen
+puntero/binding/vectores/cobertura/usage/auditoría; app sin UPDATE/DELETE de lotes/vectores/
+publicaciones. Identidad inmutable; dispatch tardío puede completarse tras resultado,
+pero job ya fijado y resultado no pueden cambiar. Registro de space acepta head0006
+solo mediante wrapper explícito; defaults administrativos0004 conservados.
+
+837 passed38.57s, ruff/formato/docs/diff correctos. SQL real4fixtures/2instancias,
+todo rollback: DDL fallo22012/replay, binding ausente, chunks inválidos/duplicados/
+ordinal/tokens, estados/error/lease incompatibles, intento expirado, usage o vectores
+ausentes, auditoría ausente, ACL revocada y tombstone rechazados; publicación completa,
+ancla original conservada, relay tardío y reindex a segundo perfil de igual dimensión
+sin tocar vectores/publicación anteriores; duplicado23505. Primer negativo falló42702
+por alias SQL ambiguo; calificado y repetido correctamente. SQL usa vectores sintéticos
+unitarios y uso ficticio; no es inferencia ni medición real del proveedor.
+
+Tenants siguen0004/control0006, sin adopción, runtime compatible ni publicación
+persistente. Pendientes worker real/reautorización/heartbeat/crash/usage real, HTTP
+original postpublicación, concurrencia con commits independientes y aceptación F05.
+PR54 integrado02f6d83 con cuatro checks previos/tres postmerge correctos.

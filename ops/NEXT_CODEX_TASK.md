@@ -1,55 +1,34 @@
-# Continuidad F05 — control0007 ensayado, seguir runtime EMBED/T004
+# Continuidad F05 — ledger/publicación ensayados, seguir runtime/worker
 
-PR45..50 integrados; develop2012ed1, CI/postmerge y23 pruebas checkpoints/perfil.
-T001 capacidad adicional en feat/F05-T001-capacity-boundary: cuatro pasajes512,
-63.601s/CPU85.608s/134.6%, RSS3774.2MiB; concurrencia rechazada y recuperada.
-Cerrar CI/revisión/merge/postmerge de esta medición y SEGUIR control0007/EMBED.
-No más repeticiones del benchmark sin cambio o fallo. T001/T002 completas en su
-alcance; T003..T008 abiertas. No calidad de dominio/ANN/ACL por fixture semántico.
+Develop02f6d83 (PR54), cuatro checks previos y tres postmerge correctos.
+PR52controlEMBED y PR53consumidor integrado;837 tests baseline. ModeloQwen aprobado
+ADR0011/512/batch4, medición capacidad completada: no repetir sin cambio/riesgo.
 
-ACTUAL: cuatro tenants f05_tenant_0004 READY, un espacioQwen vacío por tenant.
-API rag-f05-api:t003 activa HTTPS/healthF05,75 módulos SHA correctos, user1000/RO.
-Worker anterior F04t006 detenido0; imagen rag-f05-ingestion:t003 preparada.
-No resembrar ni repetir ventana: journal8f9a197defd04a3baacde6bac5a56886 conservado.
-Regresión F01..F04 HTTP/SQL/S3 en4fixtures y logs con positivos sincanaries pasada.
-Infraestructura/IdP/F00 IDs conservados; sin vCPU/contraseñas/políticas cambiadas.
+Trabajo actual feat/F05-T004-processing-publication en worktree f03-schema.
+tenant0006 ledger/lotes/usage/bindings, guards y wrapperspace explícito preparados;
+837passed38.57s y SQL4fixtures/2instancias rollback completos. Cerrar CI/revisión
+propia delegada/merge/postmerge. No atribuir revisión independiente.
 
-T003 control0007: space_id/fingerprint paraEMBED, unicidades parciales INGEST y
-EMBED/version+space, códigos cerrados, sin texto/vectores/control ni FK entre BD.
-INGEST claim/fence y vistas/jobs ya filtran kind (PR49). Probar DDL rollback/replay
-y convivencia sin mezcla, conservar históricos. Luego T004worker/usage/retry/fencing,
-T005 publicación/ancla, T006 exact/ANN, T007ops, T008aceptación.
-LoteQwen puede tardar63s: no validar contexto30s vencido; reautorizar tras inferir
-y renovar lease/heartbeat entre lotes. No introducir servicio externo por iniciativa.
+Persistente: control f04_control_0006; cuatro tenants f05_tenant_0004 y espaciosQwen
+vacíos.0007control y0005/0006tenant NO adoptados. APIF05t003 activa; workerF04 detenido.
+No modificar servicios hasta compatibilidad y ventana revisada. Conservar journal
+8f9a197defd04a3baacde6bac5a56886 y recursos/modelo/venvs/pesos/fixtures originales.
 
-Qwen aprobado1024/coseno/L2, límite512/batch4, rev/hashes ADR0011.
-Modelo y venv opcional en rutas documentadas qwen-local.md, sin red en inferencia.
-Sesión diaria activa hasta2026-11-03T07:14:15-05:00; no exportar/renovar/revocar/root.
-API entrega vigente; QAworker anterior consumida/revocada: replace antes de otra QA.
-Todo ragdev01, preservar recursos; sin main/prod/visibilidad/purge. AGENTS/ADR0010.
+Siguiente: perfil runtime opt-in exacto0006 y compatibilidad original/read/replay/
+INGEST usando ancla. Después workerEMBED real: relay/intents, lotes acotados/uso real,
+heartbeat durante inferencia63s+, reautorizar contexto tras inferir (TTL30s), locks/fence
+antes de tenant commit y ack posterior reconciliable. Pruebas crash/ACL/tombstone/
+mismatch/cuotas y ambos topologías; luego búsqueda exacta/ANN, ops y aceptación.
+No marcar T003/T004/T005 ni F05 completas con solo esquema o SQL sintético.
 
+HTTP search: pendiente decisión Diego sobre concreción de docs07 sin assistant ni
+generación F07. Propuesta /home/diego/proyectos/rag-platform-f05-search-contract-proposal.md.
+Continuar trabajo independiente; no alterar contrato rector antes de respuesta.
 
-## Continuidad local recuperada — 2026-11-02
-SSH comprobado y seis archivos preservados sobre develop d9e7652.
-Control0007 ensayado con rollback: DDL fallido/replay, hash/UUID/unique,
-INGEST kind fence y privilegios por catálogo. APP_GRANTS corregido sin SET ROLE
-ni membresías. 807 tests completos passed42.82s; ruff/docs/diff correctos.
-Control persistente sigue f04_control_0006. No hay adopción de control0007.
-Cerrar CI/revisión/merge/postmerge de esta entrega y continuar T004; preparar
-compatibilidad runtime con head exacto antes de cualquier adopción persistente.
-No acreditar conexión app por consulta de privilegios ni cerrar T003/F05.
-
-
-T004 parcial siguiente: EmbeddingQueue/EmbeddingClaim y guard compartido ensayados;
-29 nuevas,836 completas/70 focalizadas pasadas, SQL rollback replay/reclaim/fences.
-Cerrar CI/revisión/postmerge de entrega cola. Luego contrato tenant de procesamiento/
-usage/publicación/ancla original, compatibilidad control0007 y worker real. Sin
-adopción0007 ni servicios activados. No confundir cola con T004 terminada.
-
-
-T005 expansión ancla0005 preparada/ensayada:837 pruebas completas y4fixtures SQL
-rollback correctas. Cerrar CI/revisión/postmerge antes de continuar. No adoptada.
-Diseño incremental en specs/F05-embeddings-vector/publication-design.md.
-Después: evolución publicación/bindings/usage, compatibilidad perfil antes de adopción,
-original/read/replay/INGEST con ancla. HTTP búsqueda pendiente decisión de Diego sobre
-concreción sin assistant/generación; propuesta fuera del repo en servidor. Seguir resto.
+Todo desarrollo/pruebas en ragdev01. SSHdesdeMacBatchMode/StrictHostKeyChecking.
+GitHTTPS servidor sin auth: publicar con conector GitHub y verificar mismo SHAárbol
+con git fetch, conservando ramas locales de prueba. No extraer tokens ni secretos.
+Sesión diaria registrada hasta2026-11-03T07:14:15-05:00; comprobar estado/hora antes de
+usar; no renovar/revocar/root por iniciativa. AppRoleworkerTTL1h requiere entrega
+propia válida y sin consumidor con lock. Sin main/tags/producción/visibilidad/purge.
+Seguir AGENTS/ADR0007/0010 autónomamente, sin pausas de trámite.
