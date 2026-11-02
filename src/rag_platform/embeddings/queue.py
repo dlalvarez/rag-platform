@@ -2,6 +2,7 @@
 
 import re
 from dataclasses import dataclass
+from datetime import timedelta
 from uuid import UUID, uuid4
 
 import sqlalchemy as sa
@@ -28,9 +29,29 @@ class EmbeddingQueue(DurableQueue):
     _errors = ERRORS
     _kind = "EMBED"
 
+    def __init__(self, engine, *, profile_fingerprint=None, **kwargs):
+        if profile_fingerprint is not None:
+            _profile(profile_fingerprint)
+        super().__init__(engine, **kwargs)
+        self._profile_fingerprint = profile_fingerprint
+
+    @property
+    def profile_fingerprint(self):
+        return self._profile_fingerprint
+
+    def _scope(self):
+        return sa.and_(
+            super()._scope(),
+            jobs.c.profile_fingerprint == self.profile_fingerprint
+            if self.profile_fingerprint is not None
+            else sa.true(),
+        )
+
     def enqueue(self, tenant, actor, document, version, idempotency, space, profile):
         _ids(tenant, actor, document, version, idempotency, space)
         _profile(profile)
+        if self.profile_fingerprint is not None and profile != self.profile_fingerprint:
+            raise QueueError("INPUT_INVALID")
         if self.scope is not None and tenant not in self.scope:
             raise QueueError("INPUT_INVALID")
         with self.engine.begin() as c:
@@ -116,3 +137,23 @@ class EmbeddingQueue(DurableQueue):
         }:
             retryable = False
         return super().fail(claim, code, retryable=retryable)
+
+    def heartbeat(self, claim):
+        with self.engine.begin() as c:
+            if c.dialect.name == "postgresql":
+                c.exec_driver_sql("SET LOCAL lock_timeout='5s'")
+                c.exec_driver_sql("SET LOCAL statement_timeout='10s'")
+            if not self._locked(c, claim):
+                return False
+            now = _now(c)
+            return (
+                c.execute(
+                    jobs.update()
+                    .where(self._fence(claim, now))
+                    .values(
+                        lease_until=now + timedelta(seconds=self.lease_seconds),
+                        updated_at=now,
+                    )
+                ).rowcount
+                == 1
+            )

@@ -1,13 +1,13 @@
 # Continuidad F05 — ledger/publicación ensayados, seguir runtime/worker
 
-Develop2c65818 (PR55), cuatro checks previos y tres postmerge correctos.
+Developd37b2f6 (PR56), cuatro checks previos y tres postmerge correctos.
 PR52controlEMBED y PR53consumidor integrado;837 tests baseline. ModeloQwen aprobado
 ADR0011/512/batch4, medición capacidad completada: no repetir sin cambio/riesgo.
 
-Trabajo actual feat/F05-T005-publication-compat en worktree f03-schema.
+Trabajo actual feat/F05-T004-embedding-worker en worktree f03-schema.
 tenant0006 ledger/lotes/usage/bindings, guards y wrapperspace explícito preparados;
-ledger integrado PR55; compat0006/ancla ahora857passed40.68s,59focalizadas y SQL
-original/replay/INGEST traspub4fixtures correctos. Cerrar CI/revisión
+ledger/compat integrados; worker código904passed58.62s,77focalizadas y SQL
+componentes tenant/control correctos con rollback. Cerrar CI/revisión
 propia delegada/merge/postmerge. No atribuir revisión independiente.
 
 Persistente: control f04_control_0006; cuatro tenants f05_tenant_0004 y espaciosQwen
@@ -16,7 +16,7 @@ No modificar servicios hasta compatibilidad y ventana revisada. Conservar journa
 8f9a197defd04a3baacde6bac5a56886 y recursos/modelo/venvs/pesos/fixtures originales.
 
 Perfil opt-in RAG_F05_PUBLICATION_ENABLED preparado, sin activar ni adoptar.
-Siguiente workerEMBED real: relay/intents, lotes acotados/uso real,
+Siguiente imagen/lock opcional y adopción revisada con workerEMBED real: relay/intents, lotes acotados/uso real,
 heartbeat durante inferencia63s+, reautorizar contexto tras inferir (TTL30s), locks/fence
 antes de tenant commit y ack posterior reconciliable. Pruebas crash/ACL/tombstone/
 mismatch/cuotas y ambos topologías; luego búsqueda exacta/ANN, ops y aceptación.
@@ -33,3 +33,11 @@ Sesión diaria registrada hasta2026-11-03T07:14:15-05:00; comprobar estado/hora 
 usar; no renovar/revocar/root por iniciativa. AppRoleworkerTTL1h requiere entrega
 propia válida y sin consumidor con lock. Sin main/tags/producción/visibilidad/purge.
 Seguir AGENTS/ADR0007/0010 autónomamente, sin pausas de trámite.
+
+
+Worker nuevo: requests explícitos; solo ingestas completadas bajo0006 crean intent
+Qwen automáticamente. No barrer READY histórico. Cola con fingerprint del provider.
+Quota64chunks/32768tokens de contenido persistido,3intentos; batch sincommit puede
+repetirse. Stop180s antes de TTL o DENIED/INVALID; no auto-renew y nuevo handoff solo
+tras consumidor cerrado. Fuente actual RuntimeSQL-only, sin S3 ni admin/día.
+No declarar E2E por SQLite o guard sintético SQL. Leer ops/f05/embedding-worker.md.
