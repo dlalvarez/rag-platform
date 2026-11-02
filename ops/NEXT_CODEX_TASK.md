@@ -38,3 +38,10 @@ Control persistente sigue f04_control_0006. No hay adopción de control0007.
 Cerrar CI/revisión/merge/postmerge de esta entrega y continuar T004; preparar
 compatibilidad runtime con head exacto antes de cualquier adopción persistente.
 No acreditar conexión app por consulta de privilegios ni cerrar T003/F05.
+
+
+T004 parcial siguiente: EmbeddingQueue/EmbeddingClaim y guard compartido ensayados;
+29 nuevas,836 completas/70 focalizadas pasadas, SQL rollback replay/reclaim/fences.
+Cerrar CI/revisión/postmerge de entrega cola. Luego contrato tenant de procesamiento/
+usage/publicación/ancla original, compatibilidad control0007 y worker real. Sin
+adopción0007 ni servicios activados. No confundir cola con T004 terminada.
