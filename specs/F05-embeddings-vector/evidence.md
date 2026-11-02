@@ -332,3 +332,42 @@ fixtures/documentos; 934 passed en 58.18s, ruff/formato/composición correctos.
 Detectado durante revisión: manifest almacena alias alice, no UUID en el campo actor;
 se contrasta el alias y el mapa de actores completo contra identidades reales.
 No se ejecutaron request, modelo ni verify. No hay intent/embedding persistente nuevo.
+
+## Adopción autorizada y primera publicación Qwen real
+2026-11-02, ragdev01. Diego autorizó «Sí, actualizar las bases de prueba».
+Control0007 y cuatro tenants0006 adoptados con journal nuevo e inmutable49c88c83.
+La restauración temporal de API había añadido tres autenticaciones OK; se verificó
+por hash que eran la única diferencia respecto del journal anterior y se conservó
+ese journal. Fallo22012/FAILED/rollback/recuperación/repetición por fixture correctos,
+roles reales y hashes de originales/F04/identidades/jobs preservados.
+
+API compatible t006 activa en contenedor separado; API t003 detenida y conservada.
+Regresión completa OIDC/SQL/TLS/roles/ACL/S3/original HTTP-SHA PASS cuatro fixtures.
+Primera ejecución tuvo ProtocolError de transporte S3 no reproducido: diagnóstico
+y repetición completa pasaron sin cambios ni relajación de controles. Sin causa
+demostrada. No día renovado, políticas nuevas, root ni servicios de datos recreados.
+
+Request explícito de atomic en los cuatro fixtures, seguido de trabajador Qwen real
+con modelo RO y cuatro jobs SUCCEEDED. Verify PASS: intent, vectors, publication,
+usage, ack de control, repetición idempotente y original HTTP/SHA. Journal
+1c70faf0282548499cd601f6ebe9859e: cada fixture1chunk/1batch/1request/13inputtokens,
+original_retained=true. Sin texto/vector en logs ni control. Trabajador cerrado
+limpiamente, contenedor/imagen conservados. No prueba aún crash/TTL largo ni búsqueda.
+PR60/61/62 con checks previos y postmerge correctos.
+
+## T006 parcial — componente SQL exacto
+Consulta parametrizada por tenant ya conectado, repositorios UUID y space/perfil
+completo. Intersección materializada de ACL, repositorio activo, documento vigente
+sin tombstone, ancla original y publicación completa antes de ordenar por coseno.
+Desempate por chunk UUID, top_k1..50, excerpt512; section conserva ruta JSONB.
+Sin inferencia, contexto nuevo, escritura ni endpoint. El servicio llamante deberá
+validar todos los repositorios antes de inferir y reautorizar después.
+15 tests nuevos: UUID/inyección, forma/límites, NaN/Inf/norma/dimensión, parámetros
+y representación privada. Suite949passed60.33s; ruff/formato/docs/negativos correctos.
+Advertencia heredada httpx/TestClient. No prueba ANN ni calidad semántica.
+Prueba nativa repetida después de adopción0006: PASS cuatro fixtures/dos instancias,
+app/readonly, orden contra coseno Python, unpublished/ACL retirada/tombstone/binding
+ausente y modelo distinto de igual dimensión. Rollback exterior y hashes intactos.
+Durante desarrollo inicial se detectó section JSONB mediante42883 left(jsonb,integer);
+se conserva su ruta en vez de aplicarle una función de texto. Diagnóstico público
+limitado finalmente a SQLSTATE, sin mensajes SQL/valores. No error pendiente.

@@ -21,8 +21,11 @@ Antes de reemplazar cada entrega, detener su consumidor, comprobar cierre y lock
 Usar herramientas existentes sin imprimir archivos privados ni crear políticas,
 renovar día, ejecutar configure o recuperar root.
 
-Tras CI/revisión y adopción verificada, iniciar únicamente API con up --no-deps
---no-build api. Conservar worker F04 detenido y todas las imágenes anteriores.
+Tras CI/revisión y adopción verificada, conservar el contenedor API anterior
+detenido e iniciar la API compatible como contenedor separado:
+compose run -d --no-deps --pull never --service-ports --use-aliases
+--name rag-f05-api-publication-t006 api, combinando F02, handoff F03 y este overlay.
+No usar --rm; conservar worker F04 detenido y todas las imágenes anteriores.
 El cambio de perfil es explícito: el binario anterior no debe seguir contra0006.
 
 ## Regresión
