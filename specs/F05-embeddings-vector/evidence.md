@@ -32,3 +32,16 @@ ADR0011 pasa a Qwen3-Embedding-0.6B/1024/coseno/L2, cota inicial 512/batch4, CPU
 Metadatos públicos verificados desde ragdev01: revisión97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3,
 Apache-2.0, hidden_size1024/max_positions32768, SHA256 de safetensors en ADR.
 No hay benchmark ni AC acreditados por la selección; sin cambio de vCPU/servicios/datos.
+
+## T002 — contrato independiente y corpus congelado
+
+Perfil/resultado inmutables y validador completo antes de persistencia. Fixture
+SHA256 identificada, offline, sin suplantar Qwen. Pruebas de mismatch incluso con
+misma dimensión, NaN/Inf/bool/float32/cero/norma, límites, tokens y error privado.
+Instrucción multilínea fija soportada; otros controles rechazados. No schema/runtime.
+Corpus ficticio16 documentos/16 preguntas ES/EN con gold previo a medición; SHA256
+ca4d53dd72713febe740eebd958b384aae6dd9f2793c8433314c224b3284340e.
+No mide calidad de dominio ni aceptación F06; sin AC SQL/indexación acreditados.
+
+Validación ragdev01: 47 casos específicos (incluidos en 749 tests completos),
+749 passed en38.91s; ruff/docs/diff correctos. Advertencia Starlette/httpx ya existente.

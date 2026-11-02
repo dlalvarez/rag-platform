@@ -1,18 +1,18 @@
-# Continuidad F05 — D-06 APROBADO, registrar e implementar
+# Continuidad F05 — Qwen aprobado y T002
 
-Diego respondió expresamente «ok, adoptemos qwen» el 2026-11-02.
-No volver a preguntar modelo. ADR0011 actualizado para Qwen3-Embedding-0.6B local 1024/coseno, cota operativa inicial512 y
-gates ES/EN/capacidad; no hay benchmark realizado. Completar CI/revisión/integración
-PR45 y postmerge. T002 independiente en feat/F05-T002-provider-contract conserva
-archivos nuevos de contracts/fixture/tests sin commit aún:45 tests / 747 completos.
-Publicar/revisar/integrar T002; seguir descarga segura/pins y benchmark del modelo
-aprobado en ragdev01, sin más confirmaciones rutinarias. Corpus independiente debe
-terminarse (generación inicial JSON/Python falló antes de escribir archivos).
-No anticipar publicación/DDL sin pruebas/migraciones conocidas ni resultados falsos.
+D-06: Diego eligió «ok, adoptemos qwen». PR45 integrado develop58e4a40 con CI y
+postmerge correctos. Qwen0.6B/1024/coseno/L2, revisión fijada ADR0011; no volver
+a preguntar modelo ni confundir selección con benchmark. 2vCPU siguen intactas.
 
-Día vence11:38:16UTC de2026-11-02; no renovarlo/exportar bearer/root/unseal. Modelo/
-offline no necesitan Bao; continuar trabajo independiente si caduca antes de pruebas
-reales y pedir acción solo cuando realmente se necesite. Toda ejecución en ragdev01.
-F04 aceptada develop45726ec/PR44/postmerge, datos y fixtures conservados.
-API t006/worker t006 detenido, cuatro tenantsF04, sin nuevo tenant ni cambio de datos.
-Sin main/prod/visibilidad/purge. Mantener AGENTS/ADR0010 y continuar sin pausas.
+T002 contrato/fake/corpus congelado en feat/F05-T002-provider-contract. Completar
+CI/revisión/merge/postmerge y continuar T001 adaptador local/benchmark, luego T003
+esquemas preservando F04. Pesos10 archivos públicos verificados en
+/srv/rag-data/rag-platform/models/qwen3-embedding-0.6b/97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3.
+Inferencia separada /home/diego/proyectos/rag-platform-f05-inference-venv, torchCPU
+2.7.1/transformers4.51.3/safetensors0.5.3; freeze completo /tmp/f05-inference-installed.txt.
+No tocar lock/runtime existentes ni descargar en inferencia. Corpus ficticio no F06.
+
+Sesión diaria anterior venció11:38:16UTC; no renovarla/exportar bearer/root/unseal.
+Seguir modelo/offline sin Bao; pedir acción solo al necesitar live y sin trabajo
+independiente. F04 aceptada PR44, API t006/worker t006 detenido, fixtures conservadas.
+Sin main/prod/visibilidad/purge/nuevos tenants. AGENTS/ADR0010: continuar entre PR/fases.

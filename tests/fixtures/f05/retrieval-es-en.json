@@ -1,0 +1,233 @@
+{
+  "version": 1,
+  "synthetic": true,
+  "purpose": "Fictional integration corpus; not production facts, domain quality or F06 acceptance. Gold frozen before model measurement.",
+  "documents": [
+    {
+      "id": "atlas-es",
+      "language": "es",
+      "text": "El proyecto ficticio Atlas publica una versión después de vaciar la cola y verificar la suma de comprobación del paquete."
+    },
+    {
+      "id": "atlas-en",
+      "language": "en",
+      "text": "Fictional project Atlas releases a version after draining the queue and verifying the package checksum."
+    },
+    {
+      "id": "brisa-es",
+      "language": "es",
+      "text": "El equipo ficticio Brisa conserva copias durante catorce días y ensaya la restauración el primer lunes del mes."
+    },
+    {
+      "id": "brisa-en",
+      "language": "en",
+      "text": "Fictional team Brisa keeps backups for fourteen days and tests restoration on the first Monday of the month."
+    },
+    {
+      "id": "cobre-es",
+      "language": "es",
+      "text": "El sistema ficticio Cobre bloquea archivos cifrados, solicita una copia sin cifrado y conserva el intento fallido."
+    },
+    {
+      "id": "cobre-en",
+      "language": "en",
+      "text": "Fictional system Cobre blocks encrypted files, requests an unencrypted copy and retains the failed attempt."
+    },
+    {
+      "id": "delta-es",
+      "language": "es",
+      "text": "El catálogo ficticio Delta usa un identificador opaco e inmutable por cliente. El nombre comercial no selecciona una base de datos."
+    },
+    {
+      "id": "delta-en",
+      "language": "en",
+      "text": "Fictional catalog Delta uses an opaque immutable customer identifier. A business name does not select a database."
+    },
+    {
+      "id": "estela-es",
+      "language": "es",
+      "text": "El informe ficticio Estela comprueba cada cita contra el original. Una fuente ausente bloquea la entrega del informe."
+    },
+    {
+      "id": "estela-en",
+      "language": "en",
+      "text": "Fictional report Estela verifies every citation against its original. A missing source blocks report delivery."
+    },
+    {
+      "id": "faro-es",
+      "language": "es",
+      "text": "El procedimiento ficticio Faro verifica la identidad del operador antes de cambiar una contraseña y revoca las sesiones antiguas."
+    },
+    {
+      "id": "faro-en",
+      "language": "en",
+      "text": "Fictional procedure Faro verifies the operator identity before changing a password and revokes old sessions."
+    },
+    {
+      "id": "gavia-es",
+      "language": "es",
+      "text": "La cola ficticia Gavia asigna un identificador de intento y un arrendamiento. Rechaza el resultado si el arrendamiento ya venció."
+    },
+    {
+      "id": "gavia-en",
+      "language": "en",
+      "text": "Fictional queue Gavia assigns an attempt identifier and a lease. It rejects the result if the lease has expired."
+    },
+    {
+      "id": "hiedra-es",
+      "language": "es",
+      "text": "El archivo ficticio Hiedra oculta los documentos con borrado lógico y conserva tanto el original como las versiones anteriores."
+    },
+    {
+      "id": "hiedra-en",
+      "language": "en",
+      "text": "Fictional archive Hiedra hides logically deleted documents and retains the original and earlier versions."
+    }
+  ],
+  "queries": [
+    {
+      "id": "atlas-query-es",
+      "language": "es",
+      "text": "¿Qué comprueba Atlas antes de publicar una versión?",
+      "relevant": [
+        "atlas-es",
+        "atlas-en"
+      ]
+    },
+    {
+      "id": "atlas-query-en",
+      "language": "en",
+      "text": "What must Atlas verify before releasing a version?",
+      "relevant": [
+        "atlas-es",
+        "atlas-en"
+      ]
+    },
+    {
+      "id": "brisa-query-es",
+      "language": "es",
+      "text": "¿Cuándo prueba Brisa que puede recuperar sus copias?",
+      "relevant": [
+        "brisa-es",
+        "brisa-en"
+      ]
+    },
+    {
+      "id": "brisa-query-en",
+      "language": "en",
+      "text": "When does Brisa test that its backups can be recovered?",
+      "relevant": [
+        "brisa-es",
+        "brisa-en"
+      ]
+    },
+    {
+      "id": "cobre-query-es",
+      "language": "es",
+      "text": "¿Qué hace Cobre si recibe un archivo protegido?",
+      "relevant": [
+        "cobre-es",
+        "cobre-en"
+      ]
+    },
+    {
+      "id": "cobre-query-en",
+      "language": "en",
+      "text": "What does Cobre do when it receives an encrypted file?",
+      "relevant": [
+        "cobre-es",
+        "cobre-en"
+      ]
+    },
+    {
+      "id": "delta-query-es",
+      "language": "es",
+      "text": "¿Cómo identifica Delta al cliente para elegir su base de datos?",
+      "relevant": [
+        "delta-es",
+        "delta-en"
+      ]
+    },
+    {
+      "id": "delta-query-en",
+      "language": "en",
+      "text": "How does Delta identify a customer when selecting its database?",
+      "relevant": [
+        "delta-es",
+        "delta-en"
+      ]
+    },
+    {
+      "id": "estela-query-es",
+      "language": "es",
+      "text": "¿Puede entregarse Estela cuando falta el documento citado?",
+      "relevant": [
+        "estela-es",
+        "estela-en"
+      ]
+    },
+    {
+      "id": "estela-query-en",
+      "language": "en",
+      "text": "Can Estela be delivered when a cited source document is missing?",
+      "relevant": [
+        "estela-es",
+        "estela-en"
+      ]
+    },
+    {
+      "id": "faro-query-es",
+      "language": "es",
+      "text": "¿Qué ocurre con las sesiones anteriores después del cambio en Faro?",
+      "relevant": [
+        "faro-es",
+        "faro-en"
+      ]
+    },
+    {
+      "id": "faro-query-en",
+      "language": "en",
+      "text": "What happens to earlier sessions after a password change in Faro?",
+      "relevant": [
+        "faro-es",
+        "faro-en"
+      ]
+    },
+    {
+      "id": "gavia-query-es",
+      "language": "es",
+      "text": "¿Acepta Gavia un resultado que llega después de vencer su permiso temporal?",
+      "relevant": [
+        "gavia-es",
+        "gavia-en"
+      ]
+    },
+    {
+      "id": "gavia-query-en",
+      "language": "en",
+      "text": "Does Gavia accept a result that arrives after its lease expires?",
+      "relevant": [
+        "gavia-es",
+        "gavia-en"
+      ]
+    },
+    {
+      "id": "hiedra-query-es",
+      "language": "es",
+      "text": "¿El borrado lógico de Hiedra elimina permanentemente las versiones?",
+      "relevant": [
+        "hiedra-es",
+        "hiedra-en"
+      ]
+    },
+    {
+      "id": "hiedra-query-en",
+      "language": "en",
+      "text": "Does logical deletion in Hiedra permanently erase earlier versions?",
+      "relevant": [
+        "hiedra-es",
+        "hiedra-en"
+      ]
+    }
+  ]
+}
