@@ -3,11 +3,13 @@
 import hashlib
 import json
 import logging
+import re
 from pathlib import Path
 from uuid import UUID, uuid4
 
 import psycopg
 import sqlalchemy as sa
+from f01_sql_check import expected_startup_rejection
 from f02_testing import Humans
 from f03_http_check import API
 from f03_testing import real_actors
@@ -34,6 +36,24 @@ def denied(function, allowed):
     if hasattr(result, "close"):
         result.close()
     raise AssertionError("DENIAL_REQUIRED")
+
+
+def denied_connect(target, database, credential, *, same_instance):
+    try:
+        with target.connect(database, credential):
+            pass
+    except psycopg.OperationalError as error:
+        if same_instance:
+            assert expected_startup_rejection(error, database, credential.username, "42501")
+        else:
+            signature = (
+                r'FATAL:\s+password authentication failed for user "'
+                + re.escape(credential.username)
+                + r'"'
+            )
+            assert error.sqlstate in (None, "28P01", "28000") and re.search(signature, str(error))
+        return
+    raise AssertionError("CROSS_CONNECT_ALLOWED")
 
 
 def sql_checks(runtime, fixture, fixtures):
@@ -81,11 +101,16 @@ def sql_checks(runtime, fixture, fixtures):
                             ),
                             {"42501"},
                         )
-                denied(
-                    lambda target=target, credential=credential: Target(
-                        target.host, target.port, CA
-                    ).connect(target.database, credential),
-                    {"42501", "28P01", "28000"},
+                if own.host == target.host:
+                    assert c.execute(
+                        "SELECT has_database_privilege(current_user,%s,'CONNECT')",
+                        (target.database,),
+                    ).fetchone() == (False,)
+                denied_connect(
+                    Target(target.host, target.port, CA),
+                    target.database,
+                    credential,
+                    same_instance=own.host == target.host,
                 )
         del credential
 
