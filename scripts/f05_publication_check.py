@@ -591,8 +591,10 @@ def prove(target, names, bootstrap):
         e.dispose()
 
 
-def run():
+def run(*, probe=prove, sources=("f05_tenant_0004",)):
     global PHASE
+    if not sources or not set(sources) <= {"f05_tenant_0004", "f05_tenant_0006"}:
+        raise ValueError("Unknown probe source")
     control = engine("migrator")
     try:
         ctables = list(Base.metadata.tables.values()) + list(IdentityBase.metadata.tables.values())
@@ -625,11 +627,11 @@ def run():
                     .where(Tenant.id == tenant, ProvisioningOperation.state == "SUCCEEDED")
                 ).one()
             assert row.state == row.migration_state == "READY"
-            assert row.desired_version == row.observed_version == "f05_tenant_0004"
+            assert row.desired_version == row.observed_version and row.desired_version in sources
             assert row.host in ("postgres", "postgres2") and row.port == 5432
             names = Names(tenant, row.id)
             assert row.db_name == names.database
-            prove(
+            probe(
                 Target(row.host, row.port, CA),
                 names,
                 primary if row.host == "postgres" else secondary,

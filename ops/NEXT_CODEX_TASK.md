@@ -1,61 +1,51 @@
-# Continuidad F05 — controlador de publicación en revisión
+# Continuidad F05 — publicación real verificada; búsqueda en curso
 
-Develop 8f74595 (PR61). PR58 8f8f113: cuatro checks previos y tres postmerge success.
-PR59 registra la aprobación expresa de Diego de búsqueda HTTP de fragmentos en F05;
-cuatro checks previos y tres postmerge success. No requiere otra decisión
-sobre assistant_id/generación: request repository_ids/space_id/query/top_k y hits con
-procedencia, similitud y uso embeddings, conforme a docs07. La ruta sigue sin habilitar.
+Develop 351f655 (PR62). PR60, 61 y 62 tienen CI del HEAD y postmerge correctos.
+Diego aprobó búsqueda HTTP de fragmentos: repository_ids/space_id/query/top_k,
+hits con procedencia, similitud y uso; sin asistentes ni generación. No volver a
+pedir esa decisión. La ruta todavía no está habilitada.
 
-Rama actual feat/F05-T004-real-worker-proof en worktree f03-schema.
-Controlador/composición/manual preparados. 925 tests (63.44s), 18 focalizados,
-ruff/formato y dos preflights reales en cuatro fixtures/dos instancias correctos.
-Journal nuevo privado fuera del repo:
- /home/diego/proyectos/rag-platform-f05-publication-adoption-runs/8d87357ea8c24100a1f25b6a14959751
-Conservar también journal anterior 8f9a197defd04a3baacde6bac5a56886.
-Preflight no ejecuta DDL; adopt completo aún no ejecutado. Cerrar revisión propia,
-CI del HEAD exacto, merge y postmerge antes de usar la ventana de cambio. PR60 integrado, comprobar postmerge.
+Diego autorizó expresamente «Sí, actualizar las bases de prueba».
+Adopción COMPLETA: control f05_control_0007 y cuatro tenants f05_tenant_0006.
+Journal privado 49c88c8301444f33b1e5d6dcbc62a5e3 bajo
+/home/diego/proyectos/rag-platform-f05-publication-adoption-runs/.
+Fallo22012/FAILED/rollback/recuperar/repetir y conexiones de roles comprobados.
+Originales/F04/identidades/jobs/día conservados. Conservar journals anteriores.
+No repetir controlador de adopción: los espacios Qwen ya contienen publicaciones.
 
-Persistente: control f04_control_0006; cuatro tenants f05_tenant_0004 con único espacio
-Qwen vacío. API F05t003 activa; worker F04 detenido y conservado. Ningún servicio
-recreado ni entrega nueva emitida. Sesión diaria ACTIVE verificada el 2026-11-02,
-vence 2026-11-03T07:14:15-05:00; comprobar estado/hora antes de usar, no renovar.
-No root, configure, reinicios Bao, nuevas políticas, purgas, main/tags/producción.
+API compatible rag-f05-api-publication-t006 activa mediante compose run -d
+--no-deps --pull never --service-ports --use-aliases, sin borrar API t003 detenida.
+Nunca iniciar t003 contra0006. API usa entrega F03, expira aproximadamente
+2026-11-02T22:25UTC: comprobar hora/estado y detener consumidor antes de reemplazar.
+Día existente vence 2026-11-03T07:14:15-05:00; comprobar, no renovar por iniciativa.
+Sin root/configure/reinicios Bao/políticas nuevas/purgas/main/tags/producción.
 
-Imágenes API/INGEST/tools t006 construidas; smoke sin red/credenciales90módulos
-iguales al código probado, sin Torch; dos scripts QA/controlador hash correctos.
-Overlay publicación y wrapper de regresión exacta preparados/config validados.
-Próximo: revisión/CI/merge/postmerge de esta configuración, luego ventana controlada.
-Ver publication-runtime.md. Todavía no se ha ejecutado regresión HTTP/SQL/S3.
-EMBED rag-f05-embedding:t004 ya preparado, lock opcional separado y smoke90 módulos,
-sin inferencia del modelo. Ver embedding-operations.md y publication-adoption.md.
-Con CI/revisión y preflight, ventana limitada: cierre de consumidores/conexiones/locks,
-adopt control0007/tenant0006, fallo22012/FAILED/rollback/recuperar/repetir, snapshots,
-handoffs independientes válidos sin consumidor activo e inicio solo de servicios
-revisados. No autoarranque de dependencias ni remove-orphans.
+Regresión completa F02/F03/F04/publicación PASS cuatro fixtures/dos instancias:
+OIDC, SQL/TLS/roles/cruces, ACL, S3 propio/cruzado y originales HTTP/SHA.
+Una primera corrida tuvo ProtocolError S3; diagnóstico y repetición completa
+pasaron sin cambios ni relajar negativos. Causa no demostrada.
 
-Después probar worker Qwen real/usage, inferencia larga y reautorización TTL30s,
-heartbeat/fences, crash entre commits control/tenant independientes, retomar parciales,
-originales HTTP/S3 postpublicación; luego búsqueda exacta/ANN/HTTP/ACL y aceptación.
-Solo nuevas ingestas0006 crean intent Qwen; historia READY requiere request explícito.
-No barrer corpus histórico ni repetir benchmark de capacidad sin cambio/riesgo.
-Cuota64chunks/32768tokens persistidos/3intentos; lote perdido sin commit puede repetirse.
-Stop180s antes de token expirado/DENIED/INVALID, sin auto-renew. Conservar recursos.
+Qwen REAL request/verify PASS cuatro atomic explícitos, sin barrido histórico.
+Journal privado /home/diego/proyectos/rag-platform-f05-embedding-runs/
+1c70faf0282548499cd601f6ebe9859e; verified.json agrega por fixture:
+1chunk/1batch/1request/13inputtokens/original_retained=true.
+Producción EMBED confirmó cuatro jobs SUCCEEDED, publicación y consumo persistidos;
+solicitud repetida idempotente y original HTTP/SHA verificados.
+Trabajador rag-f02-dev-embedding-worker-1 detenido limpiamente y conservado.
+Imagen rag-f05-embedding:t004, modelo revision97b0c614... RO.
+No confundir esta prueba con calidad de recuperación ni crash/TTL real.
 
-T003..T008 y F05 abiertas; SQL sintético/SQLite/smoke/preflight no acreditan E2E.
-Todo ejecución/dependencias en ragdev01, Mac solo SSH/documentos. Seguir AGENTS y
-ADR0007/0010 autónomamente, sin detener por PR ni pedir confirmaciones rutinarias.
-Git push servidor sin auth: conector GitHub, transferencias pequeñas y SHA árbol igual
-al probado ANTES crear commit. Conservar ramas locales de prueba; no reset destructivo.
+Rama feat/F05-T006-exact-retrieval en worktree f03-schema, basada en develop351f655.
+Backend SQL exacto parametrizado, filtro MATERIALIZED de ACL/pointer/publicación,
+sin inferencia/DDL/red/contexto. Prueba SQL sintética cuatro fixtures/rollback pasó,
+15 unitarias; revisar y ejecutar suite completa antes de PR.
+Section histórico es JSONB ruta, no string; documento vigente state RECEIVED.
+No habilitar HTTP ni declarar ANN probado con este componente exacto.
 
-BLOQUEO de adopción: auto-review rechazó la ejecución persistente por falta de
-permiso explícito del usuario. Se pidió por pregunta asíncrona; esperar su respuesta,
-no reintentar ni ejecutar por otra vía mientras siga pendiente. Adopt NO se ejecutó.
-API t003 restablecida en el mismo contenedor/imagen y entrega limitada nueva bajo
-lock; OIDC/me y original HTTP/SHA correctos. Ningún cambio de esquema. PR61 integrado
-con cuatro checks previos/tres postmerge success comentados.
-
-Trabajo independiente: QA real preparada en scripts/f05_real_embedding_check.py,
-ops/f05/real-embedding.compose.yaml y manual. Solo atomic de cuatro fixtures,
-request/verify con contexto fresco, manifest RO/journal nuevo; 9tests,934 completos.
-No ejecutada ni solicitudes EMBED nuevas. Revisar/CI antes de uso. Mientras se espera
-permiso puede avanzar búsqueda interna y pruebas offline/SQL rollback autorizadas.
+Siguiente: revisión/CI/merge/postmerge del componente exacto; después servicio,
+ANN/HTTP y pruebas reales de recuperación entre commits, inferencia larga/TTL30s,
+heartbeat/fences y reautorización. Conservar corpus y recursos. T003..T008/F05 abiertas.
+No repetir benchmark de capacidad sin cambio/riesgo. Todo ejecución/dependencias en
+ragdev01, Mac solo SSH/documentos. Seguir AGENTS y ADR0007/0010 autónomamente.
+GitHub es fuente de verdad; conector para push, árbol idéntico al probado antes del
+commit, transferencias pequeñas verificadas. No cerrar turno por tarea/PR/fase.
