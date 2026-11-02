@@ -178,3 +178,6 @@ el probe sin otorgar permisos. Constraint FK se referencia con esquema explícit
 Todos los ensayos revertidos; tenants siguen0004 y control0006. No publicación,
 usage, procesamiento ni descarga HTTP postpublicación acreditados. T005 abierta.
 PR53 integrado5c9b947, cuatro checks antes y tres postmerge correctos.
+
+Revisión final ancla: INSERT explícito debe coincidir con current original inicial.
+Negativo añadido y SQL4fixtures repetido correcto; sin nueva adopción.

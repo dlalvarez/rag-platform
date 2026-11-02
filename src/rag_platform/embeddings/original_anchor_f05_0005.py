@@ -16,7 +16,8 @@ BEGIN
     END IF;
     IF NEW.original_version_id IS NULL OR
        (TG_OP='UPDATE' AND NEW.original_version_id IS DISTINCT FROM OLD.original_version_id)
-       OR NEW.original_version_kind<>'ORIGINAL' THEN
+       OR (TG_OP='INSERT' AND NEW.original_version_id IS DISTINCT FROM NEW.current_version_id)
+       OR NEW.original_version_kind IS DISTINCT FROM 'ORIGINAL' THEN
         RAISE EXCEPTION 'immutable original anchor' USING ERRCODE='23514';
     END IF;
     RETURN NEW;

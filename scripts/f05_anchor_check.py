@@ -162,6 +162,27 @@ def prove(target, names, bootstrap):
 
                     PHASE = "ANCHOR_CROSS_DOCUMENT"
 
+                    PHASE = "INSERT_ANCHOR_MISMATCH"
+                    denied(
+                        c,
+                        lambda: c.execute(
+                            sa.text(
+                                "INSERT INTO knowledge.documents(id,repository_id,source_id,"
+                                "current_version_id,original_version_id,created_by) "
+                                "SELECT :new,d.repository_id,d.source_id,"
+                                ":current,:anchor,d.created_by "
+                                "FROM knowledge.documents d WHERE d.id=:doc"
+                            ),
+                            {
+                                "new": uuid4(),
+                                "current": uuid4(),
+                                "anchor": uuid4(),
+                                "doc": f["doc"],
+                            },
+                        ),
+                    )
+                    PHASE = "ANCHOR_CROSS_DOCUMENT"
+
                     # A new document cannot anchor an original belonging to another document.
                     def cross_document():
                         c.execute(
