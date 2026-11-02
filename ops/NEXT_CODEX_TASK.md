@@ -23,9 +23,9 @@ antes de tenant commit y ack posterior reconciliable. Pruebas crash/ACL/tombston
 mismatch/cuotas y ambos topologías; luego búsqueda exacta/ANN, ops y aceptación.
 No marcar T003/T004/T005 ni F05 completas con solo esquema o SQL sintético.
 
-HTTP search: pendiente decisión Diego sobre concreción de docs07 sin assistant ni
-generación F07. Propuesta /home/diego/proyectos/rag-platform-f05-search-contract-proposal.md.
-Continuar trabajo independiente; no alterar contrato rector antes de respuesta.
+HTTP search: Diego aprobó expresamente el 2026-11-02 la búsqueda HTTP de fragmentos
+en F05, sin assistant ni generación F07. Propuesta /home/diego/proyectos/rag-platform-f05-search-contract-proposal.md.
+Registrar la aprobación en docs07/spec y concretar el contrato aprobado antes de implementarlo.
 
 Todo desarrollo/pruebas en ragdev01. SSHdesdeMacBatchMode/StrictHostKeyChecking.
 GitHTTPS servidor sin auth: publicar con conector GitHub y verificar mismo SHAárbol

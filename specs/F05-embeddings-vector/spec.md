@@ -17,6 +17,11 @@ Esta fase transforma el estado previo en: Motor vectorial autorizable con perfil
 - **F05-R03** Worker genera embeddings por lotes con retries/cuotas, valida dimensiones y guarda usage.
 - **F05-R04** Búsqueda vectorial parametrizada sobre repositorios autorizados y versiones publicadas.
 - **F05-R05** Tests con provider embedding determinista offline y ejemplo online opt-in.
+- **F05-R06** Exponer la búsqueda HTTP de fragmentos aprobada por Diego el 2026-11-02:
+  POST search con repository_ids, space_id, query y top_k; hits con procedencia,
+  similitud coseno y uso de embeddings, conforme a docs/07-api-contracts.md.
+  Sin asistentes ni generación. Validar ACL antes y después de inferir; no truncar
+  consultas que excedan el límite del perfil.
 
 ## Criterios de aceptación observables
 
