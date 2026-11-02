@@ -63,9 +63,10 @@ def run():
     assert stat.S_ISDIR(info.st_mode) and info.st_uid == os.getuid()
     assert stat.S_IMODE(info.st_mode) == 0o700 and OUT.resolve() == OUT
     save("started.json", {"version": 1, "run_id": str(args.run), "state": "STARTED"})
-    humans, api, runtime, control = Humans(), None, None, None
+    humans, api, runtime, control = None, None, None, None
     try:
         PHASE = "IDENTITY"
+        humans = Humans()
         humans.ready()
         api = API(humans)
         credential = Credential(
@@ -212,7 +213,8 @@ def run():
             control.dispose()
         if api is not None:
             api.close()
-        humans.close()
+        if humans is not None:
+            humans.close()
 
 
 if __name__ == "__main__":

@@ -1,79 +1,62 @@
-# Tarea activa Codex — F04, continuar sin pausas de trámite
+# Tarea activa Codex — F04, continuidad autónoma
 
-Leer AGENTS y ADR-0010. Diego autorizó continuidad del roadmap original: no terminar
-por cerrar tarea/PR/fase. Solo consultar decisiones reales, desvíos/inconsistencias o
-bloqueo externo que requiera intervención. Toda ejecución manual en ragdev01.
+Leer AGENTS/ADR-0010. No cerrar turno por tarea/PR/fase; seguir roadmap autorizado.
+Consultar solo decisiones reales, desvíos/inconsistencias o bloqueo externo que requiera
+intervención. Toda ejecución manual permanece en ragdev01, nunca en el Mac.
 
-## Estado y primera actividad pendiente
+## Estado real y primera actividad
 
-F00..F03 aceptadas. F04 T001 PR #35 integrado; núcleo T002 PR #36 integrado en
-develop@590d4fe385ed3efa4c3743a1a129a3e5692b3beb. Cuatro checks del head/tres del merge,
-revisión delegada y postmerge correctos; 22 tests postmerge/hash de imagen correctos.
-Cola probada en esquema QA retenido, no migración pública ni worker activos.
-T002 sigue abierta hasta activación/grants/parada con T005.
+Worktree /home/diego/proyectos/rag-platform-f03-schema, feat/F04-T005-runtime-acceptance,
+PR #42 borrador. Base develop e0b73e7f36fa1d73474df36f3e09deed64b9196c (PR41).
+F00..F03 aceptadas. F04 componentes PR35..41 integrados con CI/revisión/postmerge;
+675 tests, 43 postmerge y tres imágenes con 66 módulos src/instalados exactos.
 
-Worktree /home/diego/proyectos/rag-platform-f03-schema, feat/F04-T005-runtime-acceptance.
-Operativo /home/diego/proyectos/rag-platform en develop@e0b73e7f36fa1d73474df36f3e09deed64b9196c.
-T004 PR37, núcleos T003 PR38 / intención PR39 / fencing PR40 / runtime PR41 integrados.
-CI/revisión/postmerge correctos; 675 tests, 43 postmerge, tres imágenes de 66 módulos
-src e instalados exactos. Ninguna migración/worker F04 activa; API actual F03.
+ADOPCIÓN YA EJECUTADA desde PR42 head4df769eb41cb94cec1f101981b2da2267e3b4ccb,
+con cuatro checks y revisión previa: las cuatro fixtures están F04 READY; fallo
+DDL22012/rollback/FAILED honesto/recovery/repetición/TLS/roles/logs/snapshots correctos.
+Cola pública instalada; control app solo SELECT/INSERT/UPDATE. Datos/identidades/
+tenants previos y día conservados. NO repetir adopción ni promoción al recuperar contexto.
 
-En curso: PR operativo acotado, cinco fuentes restauradas/preparadas:
-scripts/f04_adopt.py, f04_seed.py, ops/f04/activate.compose.yaml, seed.compose.yaml,
-adoption.md. Originales públicos de preparación preservados en /tmp/f04-runtime-operations-pending.
-PDF malformado comprobado: página uno válida, segunda inválida -> PARSER_INVALID sin parcial.
+API actual rag-f04-api:t005, perfil F04 compatible con rutas F03; solo API recreada,
+siete RO y HTTPS health F04 correcto. Entrega limitada reemplazada DESPUÉS del cierre
+anterior. Datos/IdP/Bao no reiniciados. Todavía no worker normal ni endpoints T006.
 
-Primera actividad: validar config/build/hashes de herramientas operativas, publicar
-PR borrador y comprobar CI/head/revisión. Ejecutar adopción manual solo desde ese
-head revisado, conservando datos/roles/identidades/tenants previos y fallo/recovery real.
-Después API compatible: recrear solo API con los envfiles operativos F02/F03 y override
-F04. Reemplazar su entrega limitada DESPUÉS del cierre/reinicio del consumidor previo.
-El cierre anterior puede revocar el token; health solo no prueba acceso documental.
+Seed primer run cfe3a53d-09e7-4626-993c-641df19f8ca7 falló antes de recursos por
+tmpfs /run/f02-auth ausente. Directorio conservado con solo started.json en
+/home/diego/proyectos/rag-platform-f04-worker-runs/cfe3a53d09e74626993c641df19f8ca7.
+No reutilizarlo ni borrarlo: seed crea started.json exclusivo. Corrección tmpfs 1MiB
+0700 + cleanup ya implementada; smoke del helper OIDC real pasó en imagen reconstruida.
 
-Preparar entrega propia del worker (f04_runtime_host.py), crear run QA privado nuevo
-0700 fuera del repo, emitir identidad limitada desde día vigente. Seed HTTPS explícito,
-sin ingesta indiscriminada de originales anteriores. Su cierre revoca el token de
-aplicación: replace antes de la siguiente batería. Nunca renovar/revocar el día.
-Completar controlador QA del worker, S3/parser, crash tras commit antes de ack,
-dependencia/reintento, baja/ACL/membresía durante PARSED, parada/reinicio, A→B→A,
-logs/temporales/roles/TLS y no regresión. Evidencia/CI/revisión/merge/postmerge antes
-de aceptar T002/T003/T005 y continuar T006. T005/F04 siguen abiertas.
+PR42 siguiente commit incluye ese arreglo, controlador scripts/f04_worker_check.py y
+ops/f04/worker-check.compose.yaml. Cerrar CI/revisión/head/hashes y crear run QA nuevo
+0700 fuera del repo con envfile solo RAG_F04_QA_ROOT. Reutilizar/emitir entrega del
+worker con f04_runtime_host.py ensure desde día vigente; no pedir contraseñas.
+Ejecutar seed-f04: nuevos originales HTTPS/replay/intenciones positivas explícitas.
+Al terminar Runtime.close revoca esa identidad: replace ANTES del siguiente consumidor.
 
-Conservar originales/recepciones/versiones F03 y factorías históricas. Leer
-schema.md/worker.md/runtime.md, ops/f04/adoption.md, docs04/05/07 y perfiles actuales.
-Versiones/jobs HTTP usarán rutas rectoras docs07 en T006. No fingir ACID, PUBLISHED,
-aceptación F04 ni anticipar F05. Continuar sin pausa salvo decisión real/bloqueo.
+Después QA overlay: misma imagen rag-f04-worker:t005 y cuatro montajes limitados,
+más script/manifiesto RO; sin día/admin/migrator/OIDC passwords. Modos positive,
+request/process, crash/resume, dependency, pause-stop/tombstone/acl/membership.
+Completar acciones externas controladas para las pausas; conservar todos los recursos.
+Probar S3/parser/offsets/páginas/hash, replay, NEEDS_OCR/cifrado/fallo en segunda página,
+crash tras commit antes de ack, retry/parada/revocación/baja, A→B→A y logs/temporales.
+Evidencia real y CI/revisión final/merge/postmerge antes de aceptar T002/T003/T005.
+No aceptar F04 ni avanzar F05 antes de T006/T007. No terminar por PR/hito.
 
-## Fuentes y pruebas
+## Límites, fuentes y acceso
 
-D-05: pypdf 6.21.4/python-docx 1.2.0/lxml 6.1.3; todas las versiones previas del lock
-conservadas. Venv separado /home/diego/proyectos/rag-platform-f04-parser-venv.
-Con PYTHONPATH=src, ejecutar ese venv/bin/pytest -q y ruff check/format.
-No sincronizar innecesariamente el venv operativo ni instalar nada en el Mac.
+Contratos schema.md/worker.md/runtime.md y ops/f04/adoption.md; docs04/05/07.
+Versiones/jobs HTTP usarán rutas rectoras docs07 en T006. Sin PUBLISHED/embeddings
+ni cambios a current_version_id, purge, downgrade, main/tag, producción o visibilidad.
+No consumir indiscriminadamente documentos anteriores; solo manifiesto/run propio.
 
-Corpus nuevo: scripts/f04_corpus.py, ops/f04/corpus-manifest.json; cuatro originales
-sintéticos estables retenidos en /home/diego/proyectos/rag-platform-f04-corpus (0700/0600).
-No sobrescribirlos si cambian ni reutilizar claves F03. PDF página escaneada → NEEDS_OCR;
-blank_page preserva páginas vacías; DOCX sin paginación inventada. No OCR/modelos/embeddings.
-Ver extraction.md/parsers.md y evidencia para limitaciones de layout/imagen/capas residuales.
+Sesión diaria hasta 2026-11-02T06:38:16-05:00. No exportar bearer, renovar/revocar día
+ni repetir root/unseal automáticamente. AppRole existente de doce refs/cuatro fixtures,
+entregas separadas de API/worker. Reemplazar aplicación después de revocación/cierre;
+no compartir consumer.lock. No ejecutar en paralelo baterías que toman el día.
 
-Pruebas de contenedor: ops/f04/README.md, extract.compose.yaml; no datos ni credenciales.
-Cola: check.compose.yaml, queue-check SQL QA con cuatro RO. Nunca usar perfil QA como
-worker. Definición histórica queue_schema_f04_0006.py inmutable.
-
-## Acceso y operación conservados
-
-Sesión diaria emitida hasta 2026-11-02T06:38:16-05:00; comprobar estado cuando se use.
-No exportar bearer, pedir password por prueba, renovar/revocar día ni repetir root/configure
-automáticamente. Linger conserva tmpfs tras logout; reboot lo elimina. Unseal con Diego.
-
-API normal sigue F03, no worker F04 desplegado. AppRole limitado de una hora/12 refs;
-sin día/migrator/IAM admin en API. Si caducó, issuer ensure emite solo identidad limitada
-usando sesión diaria válida; replace tras revocación/reinicio. Sin reinicios de infraestructura.
-Composición API ops/f02/compose.yaml + ops/f03/handoff.compose.yaml; .env.f02 operativo.
-En worktree indicar --f02-env /home/diego/proyectos/rag-platform/.env.f02 al helper F03.
-No ejecutar en paralelo baterías que toman el lock diario.
-
-Conservar todos los recursos/fixtures originales F00..F03, cuatro colisiones T005 y repos
-DELETED. No main/tag, producción, cambio de visibilidad, purge ni downgrade destructivo.
-Capturar logs/errores privados en servidor y devolver códigos/PASS, nunca salida bruta.
+Venv /home/diego/proyectos/rag-platform-f04-parser-venv, PYTHONPATH=src; pytest/ruff.
+No sincronizar venv operativo innecesariamente ni instalar nada local.
+Datos originales F00..F03, colisiones T005 y repos DELETED conservados.
+Corpus original F04 retenido en /home/diego/proyectos/rag-platform-f04-corpus.
+Capturar registros privados solo en servidor, devolver PASS/códigos cerrados.

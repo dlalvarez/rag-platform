@@ -49,6 +49,7 @@ services:
     read_only: true
     tmpfs:
       - /tmp:rw,noexec,nosuid,size=64m,mode=700,uid=${RAG_F02_UID:?Prepare F02},gid=${RAG_F02_GID:?Prepare F02}
+      - /run/f02-auth:rw,noexec,nosuid,size=1m,mode=700,uid=${RAG_F02_UID:?Prepare F02},gid=${RAG_F02_GID:?Prepare F02}
     networks: [f02, control]
     cap_drop: [ALL]
     security_opt: ["no-new-privileges:true"]

@@ -49,7 +49,8 @@ No renovar el día ni reiniciar infraestructura.
 ## Fixtures y pruebas reales
 
 seed.compose.yaml es QA de usuario, distinta del worker: añade TLS/OIDC fixture de
-usuarios y directorio privado de resultados. No recibe día, bootstrap/migrator ni
+usuarios y directorio privado de resultados. El helper usa /run/f02-auth
+en tmpfs privado de 1 MiB 0700, sin autenticación del host. No recibe día, bootstrap/migrator ni
 admin SQL/S3. RAG_F04_QA_ROOT identifica un directorio nuevo 0700 propio de diego,
 fuera del repositorio; registros 0600 solo con UUIDs/hashes sintéticos. No sobrescribir
 runs anteriores ni sus originales.

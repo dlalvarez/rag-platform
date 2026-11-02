@@ -416,3 +416,31 @@ Composición operativa validada en ragdev01: adopción con seis montajes y solo 
 seed con siete montajes, solo resultados RW, sin día/admin/migrator. Imagen construida
 y tres hashes exactos de adopt/seed/emisor. Ruff/formato/docs/diff correctos.
 No se han ejecutado todavía migraciones ni seeding por estos checks de preparación.
+
+## Adopción persistente y API compatible ejecutadas
+
+Desde PR42 head4df769eb41cb94cec1f101981b2da2267e3b4ccb, cuatro checks correctos,
+revisión delegada previa y scripts de imagen exactos. En SAME_A/SAME_B/TWO_A/TWO_B
+pasaron fallo DDL22012 con rollback físico, FAILED honesto sin observed_version falsa,
+recuperación/repetición F04, datos anteriores conservados y logins app/readonly reales
+con TLS/defaults de logs/grants mínimos. Cola pública instalada aditiva/repetida,
+control app solo SELECT/INSERT/UPDATE. Snapshots de identidades/tenants ajenos/jobs
+conservados y día intacto. Sin downgrade ni reinicios de datos.
+[Registro](https://github.com/dlalvarez/rag-platform/pull/42#issuecomment-6570881602).
+
+Solo API se recreó con rag-f04-api:t005, imagen exacta y siete RO; datos/IdP/Bao no
+se reiniciaron. Identidad limitada reemplazada DESPUÉS del cierre anterior, sin
+password/renovación del día. HTTPS health F04 correcto. La superficie sigue F03;
+endpoints T006 aún pendientes. Health no acredita acceso documental.
+
+Primer seed del run cfe3a53d-09e7-4626-993c-641df19f8ca7 detenido en START:
+el helper Humans requiere /run/f02-auth, ausente en ese perfil. El run conserva solo
+started.json; no creó repos/documentos/objetos. Se añade tmpfs privado de 1 MiB
+0700 propio, sin montar autenticación del host ni añadir día/admin. Inicialización
+y limpieza del helper real en el contenedor corregido pasaron sin crear recursos.
+Run anterior conservado; el reintento usará un directorio nuevo, sin sobrescribirlo.
+
+Controlador f04_worker_check.py y overlay RO preparados para pruebas reales con la
+imagen worker, sin día/admin/migrator/OIDC passwords. Modos positivos/replay,
+solicitud explícita, parser cerrado, dependencia, crash/ack y pausa para cambios de
+autorización/parada. Todavía no se atribuyen estos resultados como ejecutados.
