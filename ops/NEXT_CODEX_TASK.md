@@ -1,80 +1,60 @@
-# Tarea activa Codex — F04, continuar sin pausas de trámite
+# Tarea activa Codex — F04 T006, continuidad autónoma
 
-Leer AGENTS y ADR-0010. Diego autorizó continuidad del roadmap original: no terminar
-por cerrar tarea/PR/fase. Solo consultar decisiones reales, desvíos/inconsistencias o
-bloqueo externo que requiera intervención. Toda ejecución manual en ragdev01.
+Leer AGENTS/ADR-0010 y documentos rectores. No cerrar turno por tarea/PR/fase;
+seguir el roadmap original. Solo consultar decisiones reales, desvíos o bloqueo externo
+que requiera intervención. Todo código/tests/build/servicios en ragdev01, nunca Mac.
 
-## Estado y primera actividad pendiente
+## Primera actividad y estado
 
-F00..F03 aceptadas. F04 T001 PR #35 integrado; núcleo T002 PR #36 integrado en
-develop@590d4fe385ed3efa4c3743a1a129a3e5692b3beb. Cuatro checks del head/tres del merge,
-revisión delegada y postmerge correctos; 22 tests postmerge/hash de imagen correctos.
-Cola probada en esquema QA retenido, no migración pública ni worker activos.
-T002 sigue abierta hasta activación/grants/parada con T005.
+PR #42 acredita T002/T003/T005 en ragdev01: adopción persistente, cola, cuatro
+fixtures READY F04, worker real/S3/cuatro formatos, negativos, crash después del commit
+antes del ack, reintento, A→B→A, bajas/revocaciones, SIGTERM y privacidad/temporales.
+675 tests. Completar CI/revisión/integración develop y comprobación postmerge del PR42;
+registrar hashes/checks/evidencia en su conversación. Después continuar T006 sin pedir
+aprobación rutinaria. F04 sigue abierta hasta T006/T007.
 
-Worktree /home/diego/proyectos/rag-platform-f03-schema, feat/F04-T005-worker-runtime.
-Checkout operativo /home/diego/proyectos/rag-platform en develop.
-T004 PR37 y núcleos T003 PR38 / intención PR39 / fencing PR40 integrados.
-Develop@3ec113a6a60ee3c20bdb178c6ba8f93e949f96c7; CI/revisión/postmerge correctos.
-656 tests previos, 25 postmerge; dieciséis hashes exactos. Todavía sin esquema/perfil/
-worker F04 persistidos. API normal conserva F03.
+Checkout /home/diego/proyectos/rag-platform-f03-schema. No repetir adopción ni seed.
+API rag-f04-api:t005 usa perfil F04 con superficie HTTP F03 todavía; solo API fue
+recreada, datos/IdP/Bao intactos. Worker operativo probó dos jobs y quedó detenido
+limpiamente (exit0); no confundir con servicio continuamente activo.
 
-En curso: worker.py/runtime.py/worker_main.py, entrega propia rag-f04-worker con
-AppRole F03 limitado de doce refs, Dockerfile sin scripts admin, Compose de cuatro
-montajes RO sin día. Emisor separado usa sesión diaria válida, nunca contraseña.
-Pool worker de un socket/engine (máximo cuatro), contrato runtime.md antes del código.
-API compatible opt-in mediante RAG_F04_ENABLED=1 más F03_ENABLED=1; misma superficie
-F03 hasta T006, sin aceptar heads futuros. Defaults F02/F03 conservados; 656 tests
-pasaron después de los cambios del perfil. 675 tests/lint/formato/docs/diff correctos; 19 tests nuevos y 30 focalizados.
-Tres imágenes con 66 hashes de src y paquete instalado correctos; sin despliegue.
+Run correcto retenido: 15bbc3e9-06dd-4cdb-ad15-1c9ab055d8d3,
+directorio /home/diego/proyectos/rag-platform-f04-worker-runs/15bbc3e906dd4cdbad151c9ab055d8d3,
+envfile /tmp/f04-worker-qa-15bbc3e906dd4cdbad151c9ab055d8d3.env.
+52 originales HTTPS/cuatro repos; manifiesto privado. Negativos/pausas ya terminales,
+no repetirlos esperando nuevas etapas. ACL/membresía restauradas; tombstones retenidos.
+Primer run cfe3a53d-09e7-4626-993c-641df19f8ca7 conserva solo started.json, sin recursos.
+No sobrescribir ni purgar. Originales F00..F03 y corpus F04 conservados.
 
-Primera actividad: cerrar QA SQL de los guards con la imagen runtime exacta y
-publicar el PR acotado del runtime. CI/revisión/merge/postmerge.
-Seguir inmediatamente PR operativo: restaurar los tres archivos públicos guardados
-con sus hashes en /tmp/f04-runtime-operations-pending/manifest.json (adopt, seed,
-activate.compose), sin borrarlos ni perder su contenido. Ninguna credencial allí.
-Completar QA S3/parser/crash tras commit/baja/revocación/parada de las cuatro fixtures.
-Adopción explícita con FAILED honesto/recuperación y logs/roles mínimos; preparar PR/CI/
-revisión antes de ejecutar migración y promoción coordinada. Reemplazar entrega API
-DESPUÉS de reiniciar/recrear su consumidor, para no usar el token revocado al cerrar.
-No promover API/worker por solo pasar mocks. T002/T003/T005 siguen abiertas.
+## T006 y controles
 
-Conservar originales/recepciones/versiones F03 y factorías históricas. Leer schema.md,
-worker.md/runtime.md, docs04/05/07 y migraciones/perfiles antes de integrar.
-No consumir indiscriminadamente documentos previos: usar manifiesto/corpus propio.
-Versiones/jobs HTTP usarán rutas rectoras de docs07 en T006, después del worker.
-No fingir ACID entre bases, PUBLISHED, aceptación F04 ni anticipar F05.
+Crear rama específica desde develop postmerge. Formalizar contrato detallado antes del
+código: GET documentos/{doc_id}/versions y jobs/{job_id} de docs07; DELETE documental
+con tombstone del plan F04. Borrador preparado en /tmp/f04-api-contract-draft.md:
+validarlo contra fuentes antes de incorporarlo. Recepción nueva F04 debe crear
+ORIGINAL/recibo/candidato/intención en la misma TX tenant; relay posterior sin falsa
+atomicidad entre bases. Replay COMMITTED no crea nuevos candidatos, no ingesta retroactiva.
+Mantener respuestas/límites/ACL/upload/original F03, perfil opt-in conocido.
+Lista versiones acotada/cursor firmado; jobs filtra tenant+vínculo documental/ACL;
+sin texto/chunks/blob/secretos/tokens en control o respuestas de progreso.
+Reader conserva SQL readonly sin permisos ops: vincular jobs mediante metadata pública
+de control y conocimiento autorizado, no ampliar grants para consultar el journal.
+DocumentStateService ya probado preserva objetos/versiones y bloquea commit tardío.
+Pruebas HTTP/SQL reales de ambas topologías, permisos/revocaciones, errores y regresión.
+Luego T007 aceptación F04 completa y postmerge; solo después F05, cuya decisión D06
+modelo/dimensión debe tratarse bajo su gobernanza, sin anticiparla.
 
-## Fuentes y pruebas
+## Acceso y operación
 
-D-05: pypdf 6.21.4/python-docx 1.2.0/lxml 6.1.3; todas las versiones previas del lock
-conservadas. Venv separado /home/diego/proyectos/rag-platform-f04-parser-venv.
-Con PYTHONPATH=src, ejecutar ese venv/bin/pytest -q y ruff check/format.
-No sincronizar innecesariamente el venv operativo ni instalar nada en el Mac.
+Sesión diaria hasta 2026-11-02T06:38:16-05:00. Reutilizar sin password/exportar bearer,
+renovar día/root/unseal por iniciativa. Entregas limitadas API/worker separadas.
+Cada consumidor normal cierra y revoca su app token: replace ANTES del siguiente;
+tras crash, ensure reutiliza token aún activo y recuperación lo revoca al cerrar.
+API puede necesitar ensure después de una hora, sin reinicio ni password.
+No ejecutar en paralelo herramientas que toman el día; no compartir consumer.lock.
 
-Corpus nuevo: scripts/f04_corpus.py, ops/f04/corpus-manifest.json; cuatro originales
-sintéticos estables retenidos en /home/diego/proyectos/rag-platform-f04-corpus (0700/0600).
-No sobrescribirlos si cambian ni reutilizar claves F03. PDF página escaneada → NEEDS_OCR;
-blank_page preserva páginas vacías; DOCX sin paginación inventada. No OCR/modelos/embeddings.
-Ver extraction.md/parsers.md y evidencia para limitaciones de layout/imagen/capas residuales.
-
-Pruebas de contenedor: ops/f04/README.md, extract.compose.yaml; no datos ni credenciales.
-Cola: check.compose.yaml, queue-check SQL QA con cuatro RO. Nunca usar perfil QA como
-worker. Definición histórica queue_schema_f04_0006.py inmutable.
-
-## Acceso y operación conservados
-
-Sesión diaria emitida hasta 2026-11-02T06:38:16-05:00; comprobar estado cuando se use.
-No exportar bearer, pedir password por prueba, renovar/revocar día ni repetir root/configure
-automáticamente. Linger conserva tmpfs tras logout; reboot lo elimina. Unseal con Diego.
-
-API normal sigue F03, no worker F04 desplegado. AppRole limitado de una hora/12 refs;
-sin día/migrator/IAM admin en API. Si caducó, issuer ensure emite solo identidad limitada
-usando sesión diaria válida; replace tras revocación/reinicio. Sin reinicios de infraestructura.
-Composición API ops/f02/compose.yaml + ops/f03/handoff.compose.yaml; .env.f02 operativo.
-En worktree indicar --f02-env /home/diego/proyectos/rag-platform/.env.f02 al helper F03.
-No ejecutar en paralelo baterías que toman el lock diario.
-
-Conservar todos los recursos/fixtures originales F00..F03, cuatro colisiones T005 y repos
-DELETED. No main/tag, producción, cambio de visibilidad, purge ni downgrade destructivo.
-Capturar logs/errores privados en servidor y devolver códigos/PASS, nunca salida bruta.
+Scripts f04_runtime_host.py y f03_runtime_host.py aceptan --f02-env del checkout operativo.
+Venv /home/diego/proyectos/rag-platform-f04-parser-venv, PYTHONPATH=src, pytest/ruff.
+No editar el comprobador mientras un contenedor use su bind. Logs privados solo en VM;
+salidas PASS/códigos cerrados. Sin F05/PUBLISHED/main/tag/producción/cambio de visibilidad,
+purge/downgrade/passwords/políticas nuevas. Conservar historial/current_version_id original.

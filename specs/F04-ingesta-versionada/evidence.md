@@ -385,3 +385,142 @@ toda la batería de esquema/journal/fencing pasó otra vez en las cuatro fixture
 incluidos dos procesos/locks administrativos, rollback de chunks, parada y baja.
 Logs con controles positivos/ERROR y canary ausente en ambas instancias. Sin activar
 esquemas/perfiles/worker F04; esta prueba no sustituye la integración S3 pendiente.
+
+## T005 runtime integrado — PR #41
+
+Head 56fc143d54ad3498ac0716be0227e485bb3575f9, merge
+e0b73e7f36fa1d73474df36f3e09deed64b9196c. Cuatro checks de head/tres de merge,
+revisión delegada del mismo agente; checkouts limpios y documentación válida.
+43 tests postmerge de runtime/guard/perfil; tres imágenes con 66 módulos src e
+instalados exactos. [Postmerge](https://github.com/dlalvarez/rag-platform/pull/41#issuecomment-6570349821).
+No se aceptó T005/F04 ni se activaron servicios por integrar estos componentes.
+
+## Entrega operativa T005 — preparación
+
+[Procedimiento](../../ops/f04/adoption.md): alcance exclusivo de cuatro fixtures,
+adopción aditiva con fallo DDL intencional/FAILED honesto/recovery, roles/logs/TLS y
+datos anteriores conservados. Control app recibe solo SELECT/INSERT/UPDATE de cola;
+la herramienta administrativa se mantiene fuera del worker.
+
+Seed separado con usuario OIDC/identidad de aplicación limitados, sin día/admin SQL/
+migrator/S3 admin. Repos nuevos y originales HTTPS; journal privado de UUIDs/hashes
+sintéticos con cada recurso conservado. No sobrescribir runs anteriores.
+El PDF de fallo parcial se comprobó en ragdev01: primera página legible y segundo
+stream inválido -> extractor real devuelve PARSER_INVALID, sin resultado parcial.
+
+Aún no se han ejecutado adopción persistente, promoción API/worker ni seeding.
+Primero publicar/revisar el head del PR operativo y sus checks, luego ejecutar la
+validación manual de desarrollo prevista. No atribuir evidencia real a esta preparación.
+
+Composición operativa validada en ragdev01: adopción con seis montajes y solo día RW;
+seed con siete montajes, solo resultados RW, sin día/admin/migrator. Imagen construida
+y tres hashes exactos de adopt/seed/emisor. Ruff/formato/docs/diff correctos.
+No se han ejecutado todavía migraciones ni seeding por estos checks de preparación.
+
+## Adopción persistente y API compatible ejecutadas
+
+Desde PR42 head4df769eb41cb94cec1f101981b2da2267e3b4ccb, cuatro checks correctos,
+revisión delegada previa y scripts de imagen exactos. En SAME_A/SAME_B/TWO_A/TWO_B
+pasaron fallo DDL22012 con rollback físico, FAILED honesto sin observed_version falsa,
+recuperación/repetición F04, datos anteriores conservados y logins app/readonly reales
+con TLS/defaults de logs/grants mínimos. Cola pública instalada aditiva/repetida,
+control app solo SELECT/INSERT/UPDATE. Snapshots de identidades/tenants ajenos/jobs
+conservados y día intacto. Sin downgrade ni reinicios de datos.
+[Registro](https://github.com/dlalvarez/rag-platform/pull/42#issuecomment-6570881602).
+
+Solo API se recreó con rag-f04-api:t005, imagen exacta y siete RO; datos/IdP/Bao no
+se reiniciaron. Identidad limitada reemplazada DESPUÉS del cierre anterior, sin
+password/renovación del día. HTTPS health F04 correcto. La superficie sigue F03;
+endpoints T006 aún pendientes. Health no acredita acceso documental.
+
+Primer seed del run cfe3a53d-09e7-4626-993c-641df19f8ca7 detenido en START:
+el helper Humans requiere /run/f02-auth, ausente en ese perfil. El run conserva solo
+started.json; no creó repos/documentos/objetos. Se añade tmpfs privado de 1 MiB
+0700 propio, sin montar autenticación del host ni añadir día/admin. Inicialización
+y limpieza del helper real en el contenedor corregido pasaron sin crear recursos.
+Run anterior conservado; el reintento usará un directorio nuevo, sin sobrescribirlo.
+
+Controlador f04_worker_check.py y overlay RO preparados para pruebas reales con la
+imagen worker, sin día/admin/migrator/OIDC passwords. Modos positivos/replay,
+solicitud explícita, parser cerrado, dependencia, crash/ack y pausa para cambios de
+autorización/parada. Todavía no se atribuyen estos resultados como ejecutados.
+
+## Worker real — positivos y fallos, run 15bbc3e9-06dd-4cdb-ad15-1c9ab055d8d3
+
+Seed corregido desde df2df77a83ce57deb19917892dad7a2f17fbe9df con CI/revisión:
+52 originales HTTPS nuevos en cuatro repos propios, replay sin duplicados y 16
+intenciones positivas explícitas. Manifest/journal retenidos; primer run fallido
+cfe3... conservado sin recursos. Identidad del seed revocada al cerrar y reemplazada
+antes del consumidor siguiente. Sin contraseñas ni renovación del día.
+
+Worker real rag-f04-worker:t005, paquete de 66 módulos exactos. Inspección real de
+contenedor: non-root/rootfs RO, seis montajes RO (cuatro runtime + script/manifest),
+sin día/admin/migrator/OIDC passwords. En SAME_A/SAME_B/TWO_A/TWO_B pasaron S3 y
+PDF/DOCX/MD/TXT: hash/tamaño del original retenidos, normalized_hash/config,
+bloques/chunks/offsets/páginas/secciones, rol/destino/TLS propios y replay sin nueva
+versión/envelope/chunks. Hasta cuatro engines y cero préstamos pendientes.
+Dieciséis resultados READY_FOR_EMBEDDING, no PUBLISHED.
+[Registro](https://github.com/dlalvarez/rag-platform/pull/42#issuecomment-6571654156).
+
+Negativos reales en same-a (instancia compartida) y two-b (segunda instancia):
+scan -> NEEDS_OCR; PDF con fallo después de página válida -> FAILED_TERMINAL/
+PARSER_INVALID; cifrado -> FAILED_TERMINAL/PARSER_ENCRYPTED. Todos sin chunks;
+originales retenidos. No se simula OCR ni se inventa texto.
+
+Crash real en ambas topologías: os._exit(85) en RESULT_COMMITTED, después del commit
+tenant y antes del ack control. Nuevo proceso observa resultado íntegro persistente,
+espera caducidad real y recupera el mismo envelope con intento 2; extractor configurado
+para fallar si se invocara de nuevo, no se llamó. Chunks/conteos/versiones sin duplicar.
+Tras el crash se reutilizó la identidad de aplicación aún válida (ensure); su cierre
+normal posterior la revocó, evitando dejar una copia activa perdida.
+
+Dependencia de etapa inyectada tras descargar original, en ambas topologías:
+FAILED_RETRYABLE + RETRY, cero chunks; backoff real y segundo intento con extractor
+real recuperan la misma versión/job/original, sin rotación ni duplicados.
+
+Aún pendientes: secuencia A→B→A explícita, SIGTERM/parada y bajas/revocaciones durante
+PARSED, logs/canary/temporales finales y revisión/CI/postmerge. Controladores adicionales
+de operador restringen tenant, repo/run, owner y usuarios sintéticos antes de cambiar
+ACL/membresía o tombstone; no son el worker y no reciben bootstrap/migrator/S3 admin.
+Regresión de preparación: 675 tests correctos y ruff/formato/docs/diff.
+F04/T005 siguen abiertas hasta completar esas puertas y T006/T007.
+
+## T002/T003/T005 — puertas reales completadas en PR #42
+
+Run 15bbc3e9-06dd-4cdb-ad15-1c9ab055d8d3 retenido. Desde d21571f pasaron
+ocho pausas en same-a/two-b: SIGTERM en PARSED -> RETRY/STOP_REQUESTED sin chunks,
+parada limpia y recuperación; tombstone/ACL/membresía durante PARSED -> resultado
+tardío bloqueado, sin chunks. Tombstones/originales conservados; ACL y membresía
+restauradas en finally. El operador separado limita tenant/run/repo/owner/actores,
+sin trasladar sus credenciales al worker.
+
+Desde 9983b45358e05a61940de78fc8eb2cf46654d455, con cuatro checks y revisión
+delegada previa, se repitió A→B→A en el mismo proceso en ambas topologías con
+configuraciones nuevas 896/64, 1152/64, 1536/64 sobre originales existentes. El
+observador STARTED verificó el orden exacto; cada resultado verificó rol/BD/TLS,
+hash/config/offsets/chunks/original y cero préstamos pendientes. Historial retenido.
+La primera secuencia 384/64..768/64 se conserva; no se usa su salida perdida como
+evidencia de esta aceptación.
+
+Privacidad real en same-a/two-b: login app limitado con siete GUC privados verificados,
+canario presente en chunk real, LOG fijo positivo y error SQL23514 provocado por
+INSERT tardío dentro de savepoint revertido. En logs reales de ambas instancias
+aparecen LOG y ERROR; el texto F04_WORKER_PRIVATE_CANARY está ausente. También
+ausente en logs API/MinIO/Bao desde inicio del run. Registros brutos solo en memoria
+del servidor, sin publicarlos ni atribuir a esta prueba una garantía universal.
+
+Worker de entrada normal, sin controlador montado: dos trabajos nuevos sobre los
+mismos originales dependency con configuración 2048/128, uno en cada instancia.
+Inspección: usuario1000, rootfs RO, exactamente cuatro mounts RO, sin día/admin/
+migrator/OIDC passwords. Dos eventos ingestion_job con código NONE, canario ausente.
+Al quedar inactivo: /tmp sin archivos, sin FD de spool/borrados ni hijos pendientes.
+SIGTERM y exit0; verificación posterior desde consumidor nuevo confirmó ambos
+resultados íntegros/SUCCEEDED, hashes/offsets/procedencia/originales conservados.
+Servicio normal quedó detenido limpiamente; contenedor/fixtures/historial retenidos.
+
+Regresión final: 675 tests, ruff/formato/docs/diff correctos. Solo warning conocido
+Starlette/httpx. Sin nueva dependencia, migración, política Bao, password, root,
+reinicio de datos o activación F05. No backup/restore acreditado por estas pruebas.
+Aceptación técnica de T002/T003/T005; CI/revisión del head final y postmerge deben
+quedar registrados en la conversación de PR42 antes de empezar implementación T006.
+F04 sigue abierta: API T006 y regresiones/aceptación T007 pendientes.

@@ -1,7 +1,7 @@
 # F04 — herramientas de desarrollo
 
 Solo ragdev01. No ejecutar en equipo local ni contra producción.
-F04 aún no aceptada: núcleo de cola probado sin worker ni ingesta activada.
+F04 aún no aceptada: T002/T003/T005 acreditadas con runtime real; faltan T006/T007.
 [Plan/tareas](../../specs/F04-ingesta-versionada/plan.md) y
 [evidencia](../../specs/F04-ingesta-versionada/evidence.md).
 
@@ -75,9 +75,9 @@ No realiza extracción S3 ni commit tenant persistente: conserva datos, roles y 
 Envelopes sintéticos de QA retenidos en f04_intent_probe_0001.
 No confundir estas pruebas con un worker de aplicación aceptado.
 
-## Runtime de worker, pendiente de adopción
+## Runtime de worker, adopción y batería reales
 
-[Contrato de runtime y puertas pendientes](../../specs/F04-ingesta-versionada/runtime.md).
+[Contrato de runtime y validación](../../specs/F04-ingesta-versionada/runtime.md).
 worker.compose.yaml separa worker (cuatro RO, sin día/admin) y worker-issue (emisor).
 No lanzar worker contra head F03; preflight rechaza versiones incompatibles.
 
@@ -96,3 +96,29 @@ y prueban en la entrega operativa; no promover por pasar tests con dobles.
 Worker: un job, lease 180 s, pool de un socket por engine/cuatro engines, rootfs RO,
 tmpfs 64 MiB privado, 768 MiB RAM y 0.5 CPU. Stop deja de tomar jobs y confirma solo
 resultados íntegros con fencing; no borra recursos. No activar F05/embeddings.
+
+
+## QA real limitada del worker
+
+PR42 activó F04 solo en las cuatro fixtures autorizadas. No repetir adopción/seed
+existentes ni lanzar ingesta retroactiva. Seed crea un run exclusivo y conserva recursos;
+manifest privado contiene UUID/hash de corpus sintético, nunca credenciales ni texto.
+worker-check.compose.yaml añade solo script/manifest RO a la imagen worker de cuatro RO.
+actions.compose.yaml es operador separado para pausas, nunca identidad del worker.
+
+Usar --env-file del run propio además del F02; worker-qa recibe mode y --fixture/--case.
+Modos positive, sequence, request/process, crash/resume, dependency, pause-*, verify
+y privacy. Crash espera exit85 después del commit tenant; resume prohíbe reparse.
+Las pausas muestran F04_STAGE PARSED: SIGTERM prueba stop; las demás aplican cambio
+del operador y SIGUSR1 para continuar. Restaurar ACL/membresía siempre, conservar tombstone.
+No repetir casos terminales esperando STARTED/PARSED. sequence permite tres tamaños
+nuevos con --sequence-sizes; --chunk-size crea otra configuración sobre el mismo original.
+privacy exige canario real, siete GUC privados, LOG positivo y SQL23514 con savepoint.
+Inspeccionar logs solo en VM y publicar PASS, nunca salida bruta.
+
+Cada consumidor normal revoca su app token: replace antes del siguiente. Tras crash,
+ensure conserva token vigente y el consumidor de recuperación lo revoca al cerrar.
+No editar script mientras esté montado en contenedor; no ejecutar emisores del día
+en paralelo. El worker normal probado quedó detenido limpiamente; para operación
+iniciar solo worker con su composición, nunca herramientas QA/admin como runtime.
+Conservar perfil explícito, límite de scope, lease180, stop70 y entrega separada.

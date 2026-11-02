@@ -1,0 +1,18 @@
+services:
+  worker-qa:
+    extends:
+      file: ../f04/worker.compose.yaml
+      service: worker
+    profiles: [test]
+    entrypoint: [python, /checks/f04_worker_check.py]
+    volumes:
+      - type: bind
+        source: ../../scripts/f04_worker_check.py
+        target: /checks/f04_worker_check.py
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F04_QA_ROOT:?Prepare F04 QA run}/manifest.json
+        target: /checks/manifest.json
+        read_only: true
+        bind: {create_host_path: false}

@@ -46,7 +46,7 @@ def real_actors(control, humans):
 
 
 class Services:
-    def __init__(self, *, store=None, bearer=None, lease_seconds=60):
+    def __init__(self, *, store=None, bearer=None, lease_seconds=60, profile="documents"):
         if (store is None) == (bearer is None):
             raise ValueError("Exactly one application identity required")
         self.control, self.registry = None, None
@@ -58,12 +58,14 @@ class Services:
                 self.store.attach_application(bearer)
             self.control = engine()
             key = private_file("/run/secrets/api_authority_key", 32)
-            self.authority = TenantAuthorizer(self.control, key, profile="documents")
+            self.authority = TenantAuthorizer(self.control, key, profile=profile)
             self.registry = ConnectionRegistry(
-                CatalogResolver(self.control, profile="documents"), self.store, CA
+                CatalogResolver(self.control, profile=profile), self.store, CA
             )
             self.connections = AuthorizedConnections(self.authority, self.registry)
-            self.repositories = RepositoryService(self.connections, self.control, key)
+            self.repositories = RepositoryService(
+                self.connections, self.control, key, profile=profile
+            )
             self.gateway = ObjectGateway(self.repositories, self.store, Path(CA))
             self.receipts = ReceiptService(
                 self.repositories, self.gateway, lease_seconds=lease_seconds
