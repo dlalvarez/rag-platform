@@ -1,0 +1,27 @@
+services:
+  f05-recovery-check:
+    extends:
+      file: ../f05/embedding.compose.yaml
+      service: embedding-worker
+    profiles: [test]
+    entrypoint: [python, /app/scripts/f05_recovery_check.py]
+    volumes:
+      - type: bind
+        source: ../../src
+        target: /app/src
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ../../scripts
+        target: /app/scripts
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F04_QA_ROOT:?Retained F04 manifest}
+        target: /run/f04-qa
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${RAG_F05_RECOVERY_QA_ROOT:?New private recovery journal}
+        target: /run/f05-qa
+        bind: {create_host_path: false}

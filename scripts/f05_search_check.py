@@ -7,7 +7,10 @@ import re
 from pathlib import Path
 from uuid import UUID, uuid4
 
+import sqlalchemy as sa
+
 from rag_platform.documents.errors import DocumentError
+from rag_platform.embeddings import processing
 from rag_platform.embeddings.qwen import REVISION, LocalQwen, qwen_profile
 from rag_platform.embeddings.runtime import Runtime
 from rag_platform.embeddings.search import SearchService
@@ -98,14 +101,36 @@ def run():
             assert provider.calls == before
 
             context = runtime.authority.authorize(actor, UUID(record["tenant"]), trace)
+            runtime.repositories.require(context, trace, repository, "read")
+            with runtime.repositories.connections.connection(context, trace) as c:
+                published = set(
+                    c.execute(
+                        sa.select(
+                            processing.chunks.c.document_id,
+                            processing.chunks.c.version_id,
+                            processing.chunks.c.id,
+                        )
+                        .join(
+                            processing.publications,
+                            processing.publications.c.version_id == processing.chunks.c.version_id,
+                        )
+                        .where(
+                            processing.publications.c.space_id == space,
+                            processing.publications.c.repository_id == repository,
+                        )
+                    ).all()
+                )
+            assert any(
+                doc == UUID(record["document"]) and version == UUID(record["version"])
+                for doc, version, _chunk in published
+            )
             result = service.search(context, trace, (repository,), space, "documento de prueba", 3)
             assert provider.calls == before + 1
             assert result.embedding_requests == 1 and result.embedding_input_tokens > 0
-            assert len(result.hits) == 1
+            assert 1 <= len(result.hits) <= 3
             assert all(
                 hit.repository_id == repository
-                and hit.document_id == UUID(record["document"])
-                and hit.version_id == UUID(record["version"])
+                and (hit.document_id, hit.version_id, hit.chunk_id) in published
                 and math.isfinite(hit.score)
                 and -1 <= hit.score <= 1
                 for hit in result.hits

@@ -1,6 +1,6 @@
 # Continuidad F05 — publicación real verificada; búsqueda en curso
 
-Develop 65f47c8 (PR63). PR60..63 tienen CI del HEAD y postmerge correctos.
+Develop 8fd440c (PR64). PR60..64 tienen CI del HEAD y postmerge correctos.
 Diego aprobó búsqueda HTTP de fragmentos: repository_ids/space_id/query/top_k,
 hits con procedencia, similitud y uso; sin asistentes ni generación. No volver a
 pedir esa decisión. La ruta todavía no está habilitada.
@@ -35,13 +35,16 @@ Trabajador rag-f02-dev-embedding-worker-1 detenido limpiamente y conservado.
 Imagen rag-f05-embedding:t004, modelo revision97b0c614... RO.
 No confundir esta prueba con calidad de recuperación ni crash/TTL real.
 
-Rama feat/F05-T006-query-service en worktree f03-schema, basada en develop65f47c8.
-Referencia exacta integrada PR63, 949tests y SQL4fixtures/rollback sobre0006 correctos.
-Servicio nuevo: ACL antes de proveedor, inferencia sin conexiones abiertas, contexto
-nuevo y ACL/perfil repetidos. 18tests reales SQLite,967suite y7selecciónQA, sin HTTP.
-QA Qwen/SQL preparada en search-check.compose.yaml y f05_search_check.py, no ejecutada.
-Revisar/CI/merge/postmerge antes de usar entrega F05 y modelo RO con cuatro atomic
-publicados. No crea corpus ni jobs; cierra su token. Ver search-service.md.
+Rama test/F05-T004-recovery-proof en worktree f03-schema, basada en develop8fd440c.
+Servicio integrado PR64. Consulta real Qwen/SQL PASS cuatro fixtures: procedencia
+y repo de otro tenant rechazado antes del proveedor; entrega F05 cerrada/revocada.
+No HTTP/ANN/calidad. Controlador de recuperación preparado, no ejecutado:
+recovery-check.compose.yaml y f05_recovery_check.py. Ver recovery-proof.md.
+Revisión/CI/merge/postmerge antes de prepare/crash/resume; conservar journals.
+Pregunta de arquitectura pendiente a Diego: conexión privada API->worker Qwen
+existente para HTTP, una copia del modelo/sin puerto público/CPU compartida.
+No implementar ese transporte hasta respuesta; el contrato HTTP ya fue aprobado.
+Mientras tanto continuar recuperación y ANN independientes.
 
 Siguiente: revisión/CI/merge/postmerge del componente exacto; después servicio,
 ANN/HTTP y pruebas reales de recuperación entre commits, inferencia larga/TTL30s,
