@@ -276,3 +276,9 @@ No se ha ejecutado prepare real, emitido handoff, cargado Qwen ni iniciado servi
 Control 0006 y tenants 0004 permanecen. Falta controlador de adopción de publicación,
 ventana revisada, proceso real, fallos entre commits independientes y regresión.
 PR57 integrado 9bf87f0 con cuatro checks previos y tres postmerge success.
+
+## Concreción de contrato HTTP aprobada
+2026-11-02: Diego respondió «Aprobar búsqueda HTTP de fragmentos en F05» a la
+propuesta registrada. docs07 y F05-R06 concretan request, hits, procedencia, score y
+uso de embeddings. Se retira del ejemplo de búsqueda la generación que corresponde
+a F07. Esta aprobación no habilita la ruta ni acredita sus pruebas pendientes.

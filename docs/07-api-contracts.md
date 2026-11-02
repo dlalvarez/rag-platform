@@ -13,31 +13,63 @@
 | GET/POST | `/api/v1/tenants/{tenant_id}/repositories/{repo_id}/documents` | Listar/cargar documentos | F03 |
 | GET | `/api/v1/tenants/{tenant_id}/documents/{doc_id}/versions` | Revisar versiones | F04 |
 | GET | `/api/v1/tenants/{tenant_id}/jobs/{job_id}` | Progreso y resultado | F04 |
-| POST | `/api/v1/tenants/{tenant_id}/search` | Recuperación fundamentada | F05–F06 |
+| POST | `/api/v1/tenants/{tenant_id}/search` | Fragmentos autorizados por similitud vectorial | F05 |
 | GET/POST | `/api/v1/tenants/{tenant_id}/assistants` | Administración asistentes | F07 |
 | POST | `/api/v1/tenants/{tenant_id}/assistants/{assistant_id}/chat` | Mensaje / respuesta | F07 |
 | GET | `/api/v1/tenants/{tenant_id}/conversations/{thread_id}` | Historial propio/autorizado | F07 |
 
 ## Formatos de ejemplo (no habilitados hasta su fase)
 
-Solicitud de búsqueda:
+Contrato de búsqueda F05 aprobado expresamente por Diego el 2026-11-02:
+HTTP de fragmentos, sin asistentes ni generación de respuestas. La aprobación
+concreta el alcance; la ruta se habilita después de sus pruebas de aceptación.
+
+Solicitud:
 
 ```json
-{"assistant_id":"<uuid>","query":"¿Cómo funciona Data Guard Broker?","top_k":8}
+{
+  "repository_ids":["<uuid>"],
+  "space_id":"<uuid>",
+  "query":"¿Cómo funciona Data Guard Broker?",
+  "top_k":8
+}
 ```
 
-Respuesta:
+repository_ids contiene de 1 a 16 UUID distintos; space_id identifica un espacio
+del catálogo del tenant autorizado, nunca una tabla, perfil o endpoint libre.
+query tiene entre 1 y 8192 caracteres y debe caber en el límite real de tokens
+del perfil, sin truncamiento. top_k es un entero de 1 a 50.
+
+Antes de inferir, todos los repositorios deben pasar ACL. Si alguno falla, se
+rechaza toda la petición sin indicar cuál existe. La recuperación devuelve solo
+versiones publicadas para ese espacio, vigentes y autorizadas; se revalida la
+autorización después de inferir antes de consultar y devolver contenido.
+
+Respuesta (valores ilustrativos):
 
 ```json
 {
   "request_id":"<uuid>",
-  "status":"grounded",
-  "answer":"Respuesta basada en documentos autorizados.",
-  "citations":[{"document_id":"<uuid>","version_id":"<uuid>","chunk_id":"<uuid>","page":12,"excerpt":"Fragmento efectivamente recuperado"}],
-  "usage":{"input_tokens":100,"output_tokens":40},
-  "limitations":[]
+  "space_id":"<uuid>",
+  "hits":[{
+    "repository_id":"<uuid>",
+    "document_id":"<uuid>",
+    "version_id":"<uuid>",
+    "chunk_id":"<uuid>",
+    "score":0.82,
+    "excerpt":"Fragmento efectivamente recuperado",
+    "page":12,
+    "section":null
+  }],
+  "usage":{"embedding_input_tokens":18,"embedding_requests":1}
 }
 ```
+
+score es similitud coseno; los empates se ordenan por chunk_id. excerpt procede
+del chunk autorizado. page y section pueden ser null si la extracción no ofrece
+esa ubicación. hits vacío es una búsqueda sin resultados. Las respuestas usan
+Cache-Control: no-store. No se devuelven vectores, answer, grounded, assistant_id
+ni tokens de generación. La generación con citas corresponde al chat de F07.
 
 ## Códigos y comportamiento
 
