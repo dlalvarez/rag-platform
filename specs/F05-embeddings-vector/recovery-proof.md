@@ -4,10 +4,14 @@ F05-R03/R05, AC-F05-01/03 parciales; no aceptación todavía.
 Solo desarrollo, trabajador EMBED normal detenido y conservado. Código revisado,
 CI del HEAD y postmerge antes de cualquier request o interrupción real.
 
-Selecciona positive explícito de cada fixture retenido; atomic queda intacto.
+Selecciona positive-txt explícito del manifest worker F04 conservado; atomic queda intacto.
 Preflight de los cuatro documentos con tokenizador Qwen real: hasta64chunks,
 cada entrada hasta512tokens y32768tokens totales. Si una cota falla, no se crea
 ningún intent. No truncar, barrer historia ni sustituirlo por fake.
+Antes de leer chunks, exige documento activo y permiso de ingesta. Usar
+RAG_F04_QA_ROOT=/home/diego/proyectos/rag-platform-f04-worker-runs/15bbc3e906dd4cdbad151c9ab055d8d3.
+El manifest API a75adb4c contiene positive dados de baja durante la aceptación F04;
+no reutilizarlos ni restaurarlos. Conservar el journal fallido212416ed y crear otro.
 Tras el gate, request idempotente por versión/space en cada base independiente.
 
 La cola QA deriva de EmbeddingQueue y restringe adicionalmente tenant/doc/version.
@@ -49,3 +53,10 @@ hit contra las identidades publicadas del espacio y exige que atomic siga public
 sin asumir que sea el único documento del repositorio. No amplía permisos.
 Las fuentes/modos quedan cerrados. El journal conserva evidencia agregada; no se
 elimina corpus, imagen, contenedor histórico ni versiones al terminar.
+
+El intento inicial sobre positive API pasó presupuestos1chunk/16tokens por fixture,
+pero el control de ingesta rechazó las solicitudes. Diagnóstico con savepoints
+revertidos confirmó ausencia de los cuatro intents; no se provocaron crashes.
+Se corrigió la selección y se agregó rechazo de tombstone antes de leer/tokenizar.
+El código de producción no se relajó. Diagnóstico CLI limitado a vocabulario cerrado
+o SQLSTATE, sin cuerpos privados.
