@@ -135,3 +135,73 @@ en esta batería porque no activa worker/esquema tenant/API. Integración/reinte
 tombstone y regresión online completa pendientes de T003/T005/T006/T007. F04 sigue
 abierta; READY_FOR_EMBEDDING no es publicación con embeddings. CI/revisión/merge/
 postmerge del PR T004 pendientes al redactar.
+
+## Cierre componente T004 postmerge
+
+PR #37 merge f1a7a3ddc077302b4c1bdebaeef3ba60b3489716, cuatro checks de head/tres
+del merge correctos; checkouts limpios, check_docs y 34 tests desde develop correctos,
+imagen conserva diez hashes. Revisión delegada del mismo agente; F04 sigue abierta.
+[Postmerge #37](https://github.com/dlalvarez/rag-platform/pull/37#issuecomment-6568391206).
+Continúa T003 según schema.md; no aprobación rutinaria pendiente.
+
+## T003 — núcleo de esquema y publicación, sin activación persistente
+
+Contrato previo en schema.md, R04/R05/R06; AC01/03/04/05 a nivel de datos. Evolución
+f03_tenant_0002 → f04_tenant_0003 conserva factoría F03 y valores originales. Amplía
+document_versions con ORIGINAL inmutable/PROCESSED enlazado al original, sin copiar
+objetos. FK directa chunks→document_versions, FK de bloques/identidad, hash SQL,
+offsets NFC y configuración única por documento/original. Intención durable local,
+tokens/lease de intento y baja lógica sin purge. READY_FOR_EMBEDDING no PUBLISHED.
+
+Checks y triggers invoker con search_path fijo verifican estado, cobertura/contenido/
+hash/orden/páginas/contadores y ACL/documento/repositorio vigentes. Auditoría READY
+obligatoria mediante constraint trigger diferible dentro del commit. No añadir bloques/
+chunks a un resultado final, cambiar procedencia ni actualizar originales. Roles app
+sin DDL/DELETE de contenido ni UPDATE de atributos originales/configuración;
+readonly sin escritura ni ops. Helper comprueba identidad/owner, head físico,
+funciones, constraints, índices y triggers antes de reflejar éxito.
+
+Perfil ingestion exacto, admisión de origen F03/F04; F01/futuro rechazados antes de
+leer secretos o ejecutar runner. Un test detectó que el nuevo perfil heredaba el
+dominio HMAC F03: se añadió dominio F04 explícito conservando bytes F02/F03.
+Prueba de contexto cruzado correcta. Se corrigió también el máximo usado por el
+lector privado de QA (argumento max_size), que rechazó el arranque antes de tocar
+tenant; no se cambió ninguna contraseña ni se solicitó al operador.
+
+631 tests offline correctos (13 nuevos de admisión/firma/versionado y no mutación
+de DDL histórico); lint/formato/docs/diff correctos, advertencia Starlette/httpx previa.
+36 pruebas enfocadas F01/F03/F04 correctas antes de la suite completa.
+
+Batería PostgreSQL real en las cuatro fixtures F03/ambas instancias, con imagen
+rag-f04-tools:t003 y diez hashes de fuente comparados. QA dedicado con cuatro RO
+(dos bootstrap SQL, control migrator y CA), red control, rootfs RO, sin día/Bao bearer,
+S3/IdP o despliegue de API/worker. La sesión administrativa asume roles propios para
+probar sus permisos; esto no sustituye pruebas de login del runtime tras activación.
+
+Cada transacción tenant prueba migración/repetición, huellas de todas las columnas
+F03 intactas, constraints/FKs/grants y:
+- Original no actualizable; procedencia/configuración y actor de intención protegidos.
+- Chunk incorrecto por texto/hash/página/sección/repositorio rechazado.
+- Resultado parcial o hash/contadores incorrectos no alcanzan READY_FOR_EMBEDDING.
+- Resultado completo pasa con su auditoría; falta de auditoría falla al forzar
+  constraints diferibles, como ocurriría antes de commit.
+- Resultado final inmutable; readonly no escribe ni accede a ops/identidad técnica.
+- Tombstone o ACL retirada impiden finalizar; sin afirmar todavía carrera de procesos.
+
+Las fixtures SQL nuevas son temporales y no representan una extracción S3: no se
+guardó ningún original ficticio ni versión procesada. Se revierten datos, DDL/head y
+defaults de roles en todas las pruebas; fingerprints de tablas F03, catálogo público
+y configuraciones de roles iguales antes/después. No se movió el catálogo a F04 ni
+se dejó esquema F04 persistido. Las pruebas de catálogo FAILED/recuperación, runtime
+real y carreras entre procesos quedan para activación T005/T006/T007.
+
+Privacidad SQL probada sin suprimir errores operativos: defaults por rol evitan
+statements, parámetros y detalles con filas privadas; no se altera logging global ni
+se elimina la clase ERROR. En ambas instancias se observaron marcador positivo y
+errores provocados, con canary de cuerpo ausente; inspección local sin logs brutos
+en chat. Defaults solo probados con rollback; instalar/abrir conexiones de runtime
+con este perfil antes de persistir chunks en la activación.
+
+T003 sigue abierta hasta migración/operación persistente y gates de integración.
+CI/revisión/merge/postmerge del PR de núcleo pendientes al redactar. Continuar T005
+tras esa puerta; no esperar aprobación de trámite ni declarar cierre F04.

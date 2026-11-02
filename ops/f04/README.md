@@ -41,3 +41,15 @@ No utiliza la sesión diaria ni inicia ingesta de documentos existentes.
 [Contrato y límites](../../specs/F04-ingesta-versionada/extraction.md).
 Corpus original nuevo retenido en /home/diego/proyectos/rag-platform-f04-corpus;
 manifest SHA-256 en este directorio, sin sobreescribir originales ante colisión.
+
+## Esquema SQL con rollback
+
+    docker compose --env-file /home/diego/proyectos/rag-platform/.env.f02 -f ops/f02/compose.yaml -f ops/f04/schema.compose.yaml build schema-check
+    docker compose --env-file /home/diego/proyectos/rag-platform/.env.f02 -f ops/f02/compose.yaml -f ops/f04/schema.compose.yaml run --rm -T --no-deps schema-check
+
+QA con dos bootstrap SQL, control migrator y CA, todos RO; sin Bao/día/S3/IdP.
+No usar este servicio como runtime. Pruebas SQL temporales, no extracción S3: se
+revierte cada transacción y se verifica que datos, roles y head anteriores se conservan.
+No instala persistentemente F04 ni cambia el catálogo. Validar logs solo en servidor
+con controles positivos y canary, sin copiar salida bruta.
+[Contrato físico y límites](../../specs/F04-ingesta-versionada/schema.md).
