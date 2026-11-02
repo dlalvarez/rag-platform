@@ -122,3 +122,21 @@ No editar script mientras esté montado en contenedor; no ejecutar emisores del 
 en paralelo. El worker normal probado quedó detenido limpiamente; para operación
 iniciar solo worker con su composición, nunca herramientas QA/admin como runtime.
 Conservar perfil explícito, límite de scope, lease180, stop70 y entrega separada.
+
+## API T006 y batería limitada
+
+[Contrato HTTP](../../specs/F04-ingesta-versionada/api.md). api.compose.yaml selecciona
+imagen t006 con F04 opt-in; mantiene F03. worker-api.compose.yaml selecciona worker:t006.
+Combinar API con F02/compose y F03/handoff, preservando siete RO y entorno existente.
+Recrear solo API después de CI/revisión; reemplazar identidad limitada DESPUÉS del
+cierre del consumidor anterior. No reiniciar datos/IdP/Bao ni repetir adopción.
+
+api-check.compose.yaml conserva el perfil limitado del seed con imagen tools:t006, tmpfs propios
+y run privado nuevo (RAG_F04_QA_ROOT), sin día/admin/migrator. seed --run UUID exige
+worker detenido, crea corpus explícito e intenciones automáticas; prueba SQL real de
+rollback de receipt/candidato/intención y recuperación tras lease, sin borrar objeto.
+verify --run UUID se ejecuta tras worker normal y su parada, con entrega reemplazada:
+HTTP/ACL/readonly/cursor/cruces/jobs y bajas repetidas, recursos/chunks conservados.
+Checkpoints privados predelete/verified permiten reanudar verificación; no omitir pruebas
+por editar sus archivos. No ejecutar seed dos veces en el mismo run ni borrar fixtures.
+No declarar aceptación por construir imágenes; registrar resultados reales/CI/postmerge.

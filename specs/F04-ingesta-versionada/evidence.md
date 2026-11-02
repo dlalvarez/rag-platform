@@ -524,3 +524,24 @@ reinicio de datos o activación F05. No backup/restore acreditado por estas prue
 Aceptación técnica de T002/T003/T005; CI/revisión del head final y postmerge deben
 quedar registrados en la conversación de PR42 antes de empezar implementación T006.
 F04 sigue abierta: API T006 y regresiones/aceptación T007 pendientes.
+
+## T006 en preparación — posterior a aceptación de PR42
+
+PR42 integrado en develop@4405f848546ebccd2203f902e9032ab88a770ea9:
+cuatro checks de head/tres de merge, ambos checkouts limpios, docs correctos y
+19 tests de runtime postmerge.
+[Registro](https://github.com/dlalvarez/rag-platform/pull/42#issuecomment-6572748022).
+
+Contrato api.md formalizado antes del código. Perfil ingestion añade recepción con
+intención/candidato dentro del mismo commit tenant, sin control I/O en la recepción,
+y rutas de versiones/jobs/tombstone. Perfil documents y superficies F03 conservados.
+Versiones/progreso exponen solo metadata explícita, con vínculo de tenant/doc/actor/
+intención y ACL; reader mantiene readonly sin grants ops. Nueva ruta DELETE conserva
+originales/chunks/historial e idempotencia del servicio ya probado.
+
+702 tests correctos en ragdev01, incluidos 27 nuevos de HTTP, vínculos de envelope,
+minimización y cursor; 67 junto a recepción/API F03. Ruff/formato/docs/diff correctos,
+solo warning conocido Starlette/httpx. Sin nueva dependencia/migración/política Bao.
+Imágenes T006 y batería real HTTP/rollback preparadas; no atribuir aún despliegue ni
+aceptación real T006. La batería conserva un run exclusivo y checkpoints antes/después
+de baja de resultados para poder recuperar un ensayo interrumpido sin repetir cambios.

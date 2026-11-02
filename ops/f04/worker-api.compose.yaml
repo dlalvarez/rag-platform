@@ -1,0 +1,3 @@
+services:
+  worker:
+    image: rag-f04-worker:t006
