@@ -1,7 +1,7 @@
 # F05 — Embedding spaces, índices y búsqueda vectorial
 
 **Estado:** alcance original autorizado mediante ADR-0010; F04 aceptada en PR #44.
-Planificación activa, D-06/ADR0011 propuesto pendiente de decisión; sin implementación.
+Planificación activa; D-06/ADR0011 aprobado por Diego para desarrollo, benchmark y AC pendientes.
 **Dependencia:** F04.
 **Meta:** Motor vectorial autorizable con perfiles versionados.
 

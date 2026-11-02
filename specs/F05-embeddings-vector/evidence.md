@@ -16,3 +16,11 @@ Fichas oficiales E5/BGE y pgvector0.8.7 verificadas; no son benchmark de nuestro
 No se descargaron pesos, instaló inferencia, llamó API embedding, creó schema/índice
 ni publicó documento. Ningún AC F05 acreditado aún; no implementación ni aceptación.
 F03/F04 API/worker/datos/secretos/políticas intactos por este PR documental.
+
+## Decisión expresa D-06
+
+Diego respondió el 2026-11-02: «Aprobar E5-small local (recomendado)» a la propuesta
+PR45/ADR0011 de desarrollo, 384/coseno/512 y gates ES/EN/capacidad. Se registra la
+aprobación sin inferir resultados, producción o calidad ya medida. Ningún peso,
+modelo, dependencia de inferencia, índice o migración ejecutados por esta actualización.
+T002 independiente tiene 45 tests / 747 completos en el checkout, aún sin integrar.

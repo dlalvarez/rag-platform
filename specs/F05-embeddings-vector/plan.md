@@ -3,7 +3,7 @@
 Alcance original autorizado mediante ADR0010, sin cambiar roadmap/requisitos.
 Dependencia F04 aceptada en PR44, develop45726ec6477370a3fb466a12dd77488b3b1228e9
 y [postmerge](https://github.com/dlalvarez/rag-platform/pull/44#issuecomment-6575586701).
-Toda ejecución manual en ragdev01. D-06 se propone en ADR0011, aún sin decidir.
+Toda ejecución manual en ragdev01. D-06 aprobado por Diego en ADR0011 para desarrollo; gates aún pendientes.
 
 ## Entregas y dependencias
 
@@ -15,8 +15,8 @@ T006 servicio vectorial autorizado exacto/ANN. T007 operación/manual y ejemplo 
 opt-in. T008 aceptación dos topologías/CI/revisión/postmerge. Ver tareas y checklist.
 
 La etiqueta BORRADOR de la spec original no requiere otra orden para planificar:
-ADR0010 autoriza continuidad. El ADR obligatorio de F05-R01 sí conserva decisión humana;
-no ejecutar una dimensión/proveedor por silencio. Trabajos agnósticos y preparación
+ADR0010 autoriza continuidad. El ADR obligatorio de F05-R01 conserva decisión humana, ya registrada para este
+perfil de desarrollo; no interpretar esa aprobación como benchmark exitoso. Trabajos agnósticos y preparación
 de pruebas pueden avanzar sin tocar datos ni resolver D-06 unilateralmente.
 
 ## Perfil e inferencia

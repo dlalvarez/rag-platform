@@ -1,6 +1,7 @@
-# ADR 0011 — Perfil inicial de embeddings de desarrollo (propuesta D-06)
+# ADR 0011 — Perfil inicial de embeddings de desarrollo (D-06 aprobada)
 
-**Estado:** PROPUESTO; requiere decisión expresa de Diego. No es un ADR aprobado.
+**Estado:** APROBADO por Diego en conversación el 2026-11-02: «Aprobar E5-small local (recomendado)».
+Aprobación del perfil de desarrollo y sus gates; no acredita resultados aún no medidos.
 **Ámbito:** F05 original, desarrollo en ragdev01; no selecciona proveedor de producción.
 F05-R01 exige selección por ADR; P10/ADR0007 reservan arquitectura a Diego.
 La continuidad ADR0010 autoriza planificar la fase, no fingir esta decisión.
@@ -71,8 +72,9 @@ y toda evidencia/datos. Migraciones históricas F01..F04 no se reescriben.
 - [pgvector0.8.7](https://github.com/pgvector/pgvector/blob/v0.8.7/README.md):
   búsqueda exacta, vector tipado y HNSW/cosine; no actualizar la extensión de F00.
 
-## Decisión pendiente
+## Decisión registrada
 
-Diego confirma si este perfil local de desarrollo y sus gates son el camino elegido,
-o si se prepara otra alternativa. Registrar su respuesta antes de cambiar este estado
-a aprobado o crear el esquema/índice del modelo. No atribuir aprobación por silencio.
+Diego eligió expresamente E5-small local de desarrollo con 384 dimensiones/coseno y
+los gates propuestos. Mantener benchmark ES/EN/capacidad y revisión de migraciones
+antes de aceptar el MVP; si fallan, registrar evidencia y proponer alternativa.
+No es aprobación de producción ni de resultados por ejecutar.
