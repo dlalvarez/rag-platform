@@ -1,5 +1,5 @@
 # Worker EMBED F05, código preparado
-T004 parcial. No ejecutar sobre la instalación actual0004/control0006. Falta imagen y
+T004 parcial. No ejecutar sobre la instalación actual0004/control0006. Imagen opcional preparada (ver embedding-operations.md); falta
 ventana de adopción revisada; no hay evidencia de proceso Qwen E2E todavía.
 
 Entrada: python -m rag_platform.embeddings.worker_main, con RAG_F05_ENABLED=1 y

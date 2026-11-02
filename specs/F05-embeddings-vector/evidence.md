@@ -255,3 +255,24 @@ antes de claim. Se verificó pasar fingerprint desde CLI a cola. No activar toda
 pendientes imagen/lock opcional, adopción control0007/tenant0006, handoffs nuevos,
 worker real/crash/proveedor/Qwen y HTTP/S3 originales/regresión. Sin servicios cambiados.
 PR56 integradod37b2f6 con cuatro checks previos/tres postmerge correctos.
+
+## T007 parcial — imagen y entrega privada EMBED
+2026-11-02, ragdev01. Imagen rag-f05-embedding:t004 con lock CPU separado.
+Versiones compartidas iguales al lock de aplicación; Torch fuera del entorno API.
+Smoke sin red/credenciales/pesos: Torch 2.7.1+cpu, transformers 4.51.3, cuda=None,
+entrypoint importable y hashes de 90 módulos iguales al árbol probado.
+Composición validada sin iniciar servicios. La revisión propia corrigió tag y
+banderas explícitas antes de ejecución; no atribuir revisión independiente.
+
+Herramientas prepare/status y ensure/replace con consumer.lock antes de abrir día.
+Seis pruebas nuevas: locks privados e inodos conservados, status sin bearer,
+consumidor activo impide abrir sesión, emisión conserva y libera lock incluso al fallar.
+910 passed en 59.01s; ruff/formato/docs correctos. Warning heredado httpx/TestClient.
+
+Se retira SELECT readonly de ops.embedding_intents/batches; SELECT publications
+conservado. SQL real sobre cuatro fixtures/dos instancias, rollback completo:
+readonly recibe 42501 en ambos ledgers y consulta publicaciones. Sin grants persistentes.
+No se ha ejecutado prepare real, emitido handoff, cargado Qwen ni iniciado servicio.
+Control 0006 y tenants 0004 permanecen. Falta controlador de adopción de publicación,
+ventana revisada, proceso real, fallos entre commits independientes y regresión.
+PR57 integrado 9bf87f0 con cuatro checks previos y tres postmerge success.

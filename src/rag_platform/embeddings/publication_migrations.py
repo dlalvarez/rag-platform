@@ -131,7 +131,8 @@ def apply_publication(connection, names, repository: Path):
                 "REVOKE ALL ON " + table + " FROM PUBLIC," + app + "," + readonly
             )
             connection.exec_driver_sql("GRANT SELECT,INSERT ON " + table + " TO " + app)
-            connection.exec_driver_sql("GRANT SELECT ON " + table + " TO " + readonly)
+            if table.startswith("knowledge."):
+                connection.exec_driver_sql("GRANT SELECT ON " + table + " TO " + readonly)
         connection.exec_driver_sql(
             "GRANT UPDATE(dispatch_state,job_id,dispatched_at,status,attempt,attempt_token,"
             "lease_until,error_code,updated_at) ON ops.embedding_intents TO " + app
