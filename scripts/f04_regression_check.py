@@ -210,7 +210,7 @@ def legacy(api):
     )
 
 
-def main():
+def main(*, profile="ingestion"):
     global PHASE
     humans, api, control, runtime = None, None, None, None
     try:
@@ -232,6 +232,7 @@ def main():
             "https://openbao:8200",
             CA,
             ROOT / "ops/f03/application-scope.json",
+            profile=profile,
         )
         runtime.preflight()
         manifest = json.loads(private_file(OUT / "manifest.json", 512 * 1024))

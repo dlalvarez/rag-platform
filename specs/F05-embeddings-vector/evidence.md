@@ -81,3 +81,14 @@ Imágenes rag-f05-api:t003/rag-f05-ingestion:t003 construidas en ragdev01,
 75 módulos instalados coinciden por SHA256 con fuentes, comprobado sin red.
 No servicios recreados/adopción persistente todavía; no atribuir pruebas HTTP F05
 ni cierre deT003. Próxima entrega: adopción controlada y cola EMBED separada.
+
+## T003 parcial — controlador/preflight de adopción
+
+799 tests completos passed en39.23s;3 pruebas nuevas impiden sobrescritura de
+checkpoints/symlinks, ruff/docs/diff correctos. QA t003 construida con controladores.
+Preflight real4 fixtures pasó scope/TLS/roles/snapshots, sin DDL persistente.
+Journal privado: /home/diego/proyectos/rag-platform-f05-adoption-runs/
+8f9a197defd04a3baacde6bac5a56886; checkpoints0600 y directorio0700.
+Preparados falloDDL=>FAILED/observedNULL/recovery/repetición y registroQwen
+vacío, más regresión F01..F04 con profile F05. Adopción/HTTP F05 aún no ejecutados
+al preparar este head; realizar solo tras CI/revisión y registrar resultado real.
