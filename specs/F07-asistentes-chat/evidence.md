@@ -26,3 +26,12 @@ Separación estructural del prompt no prueba obediencia de un LLM ante inyecció
 79pruebas offline PASS0.22s; sin sockets, modelo, SQL, credenciales o API.
 Ruff/formato290/docs/diff correctos. No cambio del runtime previo; suite local
 core1295PASS permanece como base y CI ejecutará1374. D07 sigue pendiente.
+
+## T003 parcial — configuración privada y metadata
+
+76pruebas offline PASS0.70s: límites, Unicode, perfil, conjuntos canónicos,
+propiedad/roles por defecto, revisión CAS acotada y metadata aditiva. Comparación
+DDL confirma todas las tablas F05 anteriores idénticas; FK solo locales y
+auditoría sin payload privado. Ruff/formato correctos. No modelo, sockets, SQL
+real, migración aplicada o nueva ruta. T003 sigue pendiente de CRUD/migración/
+roles/compatibilidad y pruebas PostgreSQL. Ver assistant-design.md.
