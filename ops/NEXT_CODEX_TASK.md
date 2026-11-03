@@ -1,6 +1,6 @@
 # Continuidad F05 — calidad SQL preparada
 
-Developfcfc622 (PR71), cuatro checks HEAD/tres postmerge success.
+Develop46eb8f1 (PR72), cuatro checks HEAD/tres postmerge success.
 Qwen/HTTPfragmentos/adopciónBD/conexiónprivada aprobados; no volver a pedir.
 Control0007/cuatro tenants0006, espacios Qwen publicados. No repetir adopción.
 No main/tag/producción/visibilidad/purgas/root/políticas/reinicio Bao.
@@ -42,3 +42,17 @@ Recuperaciónb6e1cd... cuatrocasos1lote/0reinferencias/originalesSHA ya verifica
 no confundir con recuperación con lotes aún pendientes.
 Todoejecuciónragdev01; MacsoloSSH/documentos. GitHubfuenteverdad, árboligualalprobado,
 ADR0007 revisiónpropia explícita/CIexacto/postmerge. Seguir al cerrar PR.
+
+Actualización11:30UTC: calidad REAL e5a2ff71648d4a4a99a572b1f84a0bff exit0,
+4fixtures exact/ANN Recall3ESEN=1.0/overlap1.0/rollbackPASS,20modelcalls961tokens.
+Modelo QA terminado, no otro Qwen activo. No repetir benchmark o calidad sin cambio.
+Rama feat/F05-T008-multibatch-recovery: plan/helper/overlay/tests preparados sinPR.
+Corpus público pin11250bytes/14chunks SHA1d9098227dfd23dbc3ca57b624fcb8831c5a6241249458543e96715fe16037ec.
+6files previstos, no uploads todavía. API:t009 restart con F03replace bajo lock/
+día vigente y F04 entrega limitada independiente para corpus prepare. BaseAPIa75
+RO, nuevojournal0700; source review/CI/merge/post antes de upload. INGEST solo4jobs,
+catorcechunks significa4batches/primerbatch4/pending10 yresume3requests enbatchcases.
+ReuseF05recoveryhelper/newmanifest/newjournal (casepositive-txt), modeloúnico, no
+consumidor normal/RPC; ensureafterhardexit vsreplaceafterclean. Modeverify corpus
+descarga4originalSHA/PUBLISHED sin nuevoF04runtime. Conservar todo.
+Día12:14UTC no renovar: comprobar antes de emitir y avanzar independiente si vence.
