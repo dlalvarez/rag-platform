@@ -2,7 +2,7 @@
 
 - [x] T001 — Plan, trazabilidad y aclaración AC-F06-03 aprobada; RRF con k=60 registrada.
   R01..05; AC01..04. Dependencia F05/PR74/postmerge aceptada.
-- [ ] T002 — Contratos tipados, filtros acotados y fusión determinista RRF.
+- [x] T002 — Contratos tipados, filtros acotados y fusión determinista RRF.
   R01/R02; AC-F06-03/04. Duplicados, límites, desempate, entradas inválidas.
 - [ ] T003 — FTS PostgreSQL y vector exacto sobre el mismo conjunto autorizado.
   R01/R02; AC-F06-03/04. Parámetros, filtros antes de rank/limit, negativos SQL reales.
