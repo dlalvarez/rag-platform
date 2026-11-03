@@ -34,3 +34,15 @@ Entrada validada: `AuthorizedTenantContext`, `assistant_id`, `question`, histori
 ## Conectores/proveedores
 
 Abstracciones `EmbeddingProvider`, `ChatModelProvider`, `Reranker`, `Retriever`, `DocumentExtractor`; fixtures deterministas para pruebas offline. Fallo de proveedor no debe desencadenar publicación parcial ni contaminación de estado entre tenants.
+
+
+## Estado implementado de F06
+
+Servicios internos con filtros comunes, FTS simple y vector exacto, RRF k=60
+y resolución de citas con permisos actuales. API de fragmentos F05 sin cambios.
+El [baseline sintético versionado](../specs/F06-recuperacion-evaluacion/baseline-v1.json)
+usa16documentos/40consultas ES/EN: recall@10=1.0 en ambos modos,1600citas válidas
+en cuatro fixtures y32comprobaciones FTS. No prueba calidad sobre documentos
+privados, superioridad de ranking, abstención semántica o latencia HTTP.
+Ver [expediente y límites](../specs/F06-recuperacion-evaluacion/acceptance.md).
+Generación, historial y políticas conversacionales siguen perteneciendo a F07.

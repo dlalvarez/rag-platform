@@ -89,5 +89,15 @@ Reutiliza una copia del modelo y la entrega limitada, con CPU compartida y esper
 acotada. La API conserva autenticación y recuperación SQL; el trabajador verifica
 el contexto firmado y ACL antes/después de inferir. Sin puerto público ni Torch
 en API. Ver [ADR0012](adr/0012-private-query-provider.md); implementación opt-in
-y evidencia completadas en F05; aceptación de fase sujeta a sus puertas de cierre,
+y evidencia aceptadas en F05 (PR74),
 sin ampliar producción ni el contrato de generación F07.
+
+
+## Recuperación interna F06 en desarrollo
+
+FTS PostgreSQL simple y búsqueda vectorial exacta comparten el conjunto autorizado
+y publicado antes de ordenar/limitar. RRF con k=60 combina hasta50candidatos por
+modalidad; citas identifican tenant/space/repositorio/documento/versión/chunk y
+se resuelven con permiso actual. Los offsets pertenecen al texto normalizado.
+La API F05 conserva búsqueda exacta; servicios híbridos/citas son internos.
+No generación ni nuevos endpoints públicos. F06 mantiene sus puertas de aceptación.
