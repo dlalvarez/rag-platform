@@ -2,7 +2,7 @@
 
 - [ ] T001 — Plan y decisión D-07 perfil LLM/retención. R01/R03/R05; AC01..05.
   F06 aceptada; propuesta lista, decisión humana pendiente.
-- [ ] T002 — Contratos/modelo mock/políticas de evidencia y salida cerrada.
+- [x] T002 — Contratos/modelo mock/políticas de evidencia y salida cerrada.
   R03/R04; AC01/02/05. Offline sin sockets, límites, IDs falsos y prompt injection.
 - [ ] T003 — Esquema tenant/CRUD asistentes y enlaces con permisos explícitos.
   R01/R02; AC03/04. Migración/roles/TLS/rollback/compatibilidad.
