@@ -542,3 +542,19 @@ persistente790076754ea047abb47b29a4a0655e06 en curso; cerrar antes de PR.
 Suite final fix1103passed88.47s, warning heredado; journal790076... exit0.
 Ruff/formato267/docs/diff/negativos F00 correctos. Revisión propia de filtro
 correlacionado y recorrido real, sin revisión independiente atribuida.
+
+## Calidad Qwen/SQL preparada
+PR71 fcfc622 con cuatro checks HEAD y tres postmerge success. Misma fuente del
+ajuste pasó QA nativa cuatro fixtures, no se repite sin motivo.
+Nuevo helper de calidad usa corpus ES/EN congelado ca4d53dd...,16docs/16queries.
+Precomputa vectores públicos antes de abrir SQL, solo memoria y veinte llamadas
+reales contabilizadas una vez; reutiliza resultados en cuatro fixtures SQL.
+Guard/ledgers temporales son sintéticos: no representan64indexaciones reales
+ni coste/fencing del worker. Uso del proveedor global se informa por separado.
+Crea documentos SQL ficticios/chunks/publicaciones sobre espacio Qwen existente;
+roles app/readonly, goldRecall3>=0.8 por idioma/modo, comparación ANN/exacto y
+negativos; rollback de todo y huellas/vector/publication counts conservados.
+No escribe S3, corpus persistente o esquema. Un modelo opcional CPU1.5/6GiB,
+trabajador anterior detenido, sin renovar día/handoff ni cambios Bao.
+10pruebas offline2.43s PASS;ruff/formato269/docs/diff y composeconfig correctos.
+No se ha ejecutado aún el modelo/SQL de este helper ni aceptado calidad/F05.
