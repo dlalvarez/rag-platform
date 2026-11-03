@@ -85,3 +85,21 @@ Ruff/formato281/docs/diff correctos. Fuente fija durante la corrida.
 Revisión propia: mismo preflight/inferencia F05, autoridad nueva tras modelo,
 resolver con filtros compartidos y referencia exacta; no revisión independiente.
 Ejecución SQL ampliada de citas y consulta real autorizada con Qwen pendientes.
+
+## T005 — corpus y métricas congelados antes de inferencia
+
+Corpus técnico nuevo:16documentos ficticios/40consultas,20ES/20EN;
+16directas/8semánticas/8comandos/4ambiguas/4negativas. SHA256
+35976933e799d23ca87e4718dceedab0f8989b3204c881dc4972294d4b8b4bb7.
+Golds definidos antes del modelo, un chunk512/64 por documento completo.
+Revisión propia de cobertura/target/idioma/comandos, bajo ADR0007;
+no se atribuye aprobación personal nueva ni calidad medida todavía.
+
+Evaluador offline:document_recall_at_10 sobre36preguntas con gold no vacío,
+negativas aparte sin falsa abstención, desglose idioma/tipo y percentiles
+nearest-rank con denominador explícito. Rechaza resultados fuera del corpus,
+gold inválido y muestras no finitas.27pruebas PASS0.26s.
+Módulo independiente sin cambios SQL/servicio/DDL/API; suite completa anterior
+1235PASS permanece como base, CI ejecutará1262. No se repite localmente sin
+cambio de runtime previo. Medición Qwen/SQL/baseline real aún pendiente;
+T005/F06 no aceptadas por crear fixtures o métricas.

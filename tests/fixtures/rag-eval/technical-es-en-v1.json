@@ -1,0 +1,444 @@
+{
+  "version": "f06-technical-es-en-v1",
+  "synthetic": true,
+  "documents": [
+    {
+      "id": "es-snapshot-short",
+      "language": "es",
+      "text": "F06_SYNTHETIC_TECH_FIXTURE. Manual ficticio de prueba: Arcadia corto. arcctl snapshot --retain-days 7. El perfil corto conserva instantáneas durante siete días; se usa para recuperación reciente."
+    },
+    {
+      "id": "es-snapshot-archive",
+      "language": "es",
+      "text": "F06_SYNTHETIC_TECH_FIXTURE. Manual ficticio de prueba: Arcadia archivo. arcctl snapshot --retain-days 30. El perfil archivo conserva instantáneas durante treinta días para revisión mensual."
+    },
+    {
+      "id": "es-tls-rotate",
+      "language": "es",
+      "text": "F06_SYNTHETIC_TECH_FIXTURE. Manual ficticio de prueba: Faro certificados. faroctl tls rotate --grace-hours 6. La rotación mantiene el certificado anterior seis horas para completar conexiones existentes."
+    },
+    {
+      "id": "es-queue-lease",
+      "language": "es",
+      "text": "F06_SYNTHETIC_TECH_FIXTURE. Manual ficticio de prueba: Nexo colas. nexoctl queue --lease-seconds 45. Un trabajador renueva su arrendamiento cada diez segundos; sin renovación otro intento puede reclamar el trabajo después de cuarenta y cinco segundos."
+    },
+    {
+      "id": "es-chunk-offsets",
+      "language": "es",
+      "text": "F06_SYNTHETIC_TECH_FIXTURE. Manual ficticio de prueba: Brisa fragmentos. brisactl split --size 256 --overlap 32. Cada fragmento tiene hasta doscientos cincuenta y seis caracteres y comparte treinta y dos con el siguiente; los offsets cuentan caracteres del texto normalizado."
+    },
+    {
+      "id": "es-storage-isolation",
+      "language": "es",
+      "text": "F06_SYNTHETIC_TECH_FIXTURE. Manual ficticio de prueba: Isla objetos. islactl bucket --deny-public true. Cada organización tiene un bucket privado y su propia credencial; una petición a otro bucket recibe acceso denegado."
+    },
+    {
+      "id": "es-restore-verify",
+      "language": "es",
+      "text": "F06_SYNTHETIC_TECH_FIXTURE. Manual ficticio de prueba: Lumen restauración. lumenctl restore --verify-sha256 true. Antes de habilitar una restauración se comprueban los hashes SHA256 de todos los originales; una diferencia mantiene la restauración bloqueada."
+    },
+    {
+      "id": "es-fts-config",
+      "language": "es",
+      "text": "F06_SYNTHETIC_TECH_FIXTURE. Manual ficticio de prueba: Cedro términos. cedroctl search --text-config simple. La configuración simple conserva palabras técnicas sin stemming; el buscador combina el rango textual con el vectorial mediante fusión de rangos."
+    },
+    {
+      "id": "en-cache-fast",
+      "language": "en",
+      "text": "F06_SYNTHETIC_TECH_FIXTURE. Fictional test manual: Orbit interactive. orbitctl cache --ttl-seconds 30. The interactive profile expires cached entries after thirty seconds to limit staleness for interactive reads."
+    },
+    {
+      "id": "en-cache-batch",
+      "language": "en",
+      "text": "F06_SYNTHETIC_TECH_FIXTURE. Fictional test manual: Orbit batch. orbitctl cache --ttl-seconds 300. The batch profile expires cached entries after three hundred seconds to reuse results during batch reports."
+    },
+    {
+      "id": "en-publish-atomic",
+      "language": "en",
+      "text": "F06_SYNTHETIC_TECH_FIXTURE. Fictional test manual: Harbor publication. harborctl publish --require-complete true. A new document version becomes visible only after every chunk and vector is saved; the old published version stays visible until the atomic switch."
+    },
+    {
+      "id": "en-model-profile",
+      "language": "en",
+      "text": "F06_SYNTHETIC_TECH_FIXTURE. Fictional test manual: Mosaic embeddings. mosaicctl embed --space frozen-v2. Model revision, tokenizer, dimension and normalization define an immutable embedding profile; equal dimensions alone do not permit mixing models."
+    },
+    {
+      "id": "en-retry-budget",
+      "language": "en",
+      "text": "F06_SYNTHETIC_TECH_FIXTURE. Fictional test manual: Relay retries. relayctl retry --max-attempts 4. Transient provider failures use capped backoff with at most four attempts; invalid dimensions are terminal and never retried."
+    },
+    {
+      "id": "en-citation-offsets",
+      "language": "en",
+      "text": "F06_SYNTHETIC_TECH_FIXTURE. Fictional test manual: Beacon citations. beaconctl cite --offset-unit normalized-char. Citation offsets count Unicode characters in normalized text; they are not byte positions inside the original PDF."
+    },
+    {
+      "id": "en-query-bound",
+      "language": "en",
+      "text": "F06_SYNTHETIC_TECH_FIXTURE. Fictional test manual: Quill query limit. quillctl query --max-tokens 512. A query above five hundred twelve tokenizer tokens is rejected before inference; the tool never silently truncates the question."
+    },
+    {
+      "id": "en-audit-privacy",
+      "language": "en",
+      "text": "F06_SYNTHETIC_TECH_FIXTURE. Fictional test manual: Sable audit. sablectl audit --content false. Audit records contain request identifiers, operation codes and aggregate usage; document excerpts, vectors and access tokens are excluded."
+    }
+  ],
+  "queries": [
+    {
+      "id": "q01",
+      "language": "es",
+      "text": "¿Cuántos días conserva instantáneas el perfil corto de Arcadia?",
+      "relevant": [
+        "es-snapshot-short"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "q02",
+      "language": "es",
+      "text": "¿Cuánto dura la retención mensual del perfil archivo de Arcadia?",
+      "relevant": [
+        "es-snapshot-archive"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "q03",
+      "language": "es",
+      "text": "¿Cuánto tiempo acepta Faro el certificado anterior durante una rotación?",
+      "relevant": [
+        "es-tls-rotate"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "q04",
+      "language": "es",
+      "text": "¿Cuándo puede otro trabajador reclamar un trabajo Nexo sin renovaciones?",
+      "relevant": [
+        "es-queue-lease"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "q05",
+      "language": "es",
+      "text": "¿En qué unidad se expresan los offsets de Brisa y cuánto solapan los fragmentos?",
+      "relevant": [
+        "es-chunk-offsets"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "q06",
+      "language": "es",
+      "text": "¿Cómo impide Isla que la credencial de una organización lea objetos de otra?",
+      "relevant": [
+        "es-storage-isolation"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "q07",
+      "language": "es",
+      "text": "¿Qué comprobación bloquea una restauración Lumen si un original ha cambiado?",
+      "relevant": [
+        "es-restore-verify"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "q08",
+      "language": "es",
+      "text": "¿Qué configuración de Cedro evita reducir las palabras técnicas a una raíz?",
+      "relevant": [
+        "es-fts-config"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "q09",
+      "language": "en",
+      "text": "How long does the Orbit interactive profile keep cache entries?",
+      "relevant": [
+        "en-cache-fast"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "q10",
+      "language": "en",
+      "text": "What cache lifetime does the Orbit batch reporting profile use?",
+      "relevant": [
+        "en-cache-batch"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "q11",
+      "language": "en",
+      "text": "When does Harbor make a new document version visible to retrieval?",
+      "relevant": [
+        "en-publish-atomic"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "q12",
+      "language": "en",
+      "text": "Can Mosaic combine two embedding models just because their vector dimensions match?",
+      "relevant": [
+        "en-model-profile"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "q13",
+      "language": "en",
+      "text": "Which Relay embedding failure is terminal rather than retried?",
+      "relevant": [
+        "en-retry-budget"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "q14",
+      "language": "en",
+      "text": "Do Beacon citation offsets refer to PDF bytes or normalized text characters?",
+      "relevant": [
+        "en-citation-offsets"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "q15",
+      "language": "en",
+      "text": "What does Quill do when a question exceeds the tokenizer token limit?",
+      "relevant": [
+        "en-query-bound"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "q16",
+      "language": "en",
+      "text": "Which content must stay out of Sable audit records?",
+      "relevant": [
+        "en-audit-privacy"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "q17",
+      "language": "es",
+      "text": "Si necesito recuperar una copia reciente de Arcadia, ¿cuál es su periodo de conservación?",
+      "relevant": [
+        "es-snapshot-short"
+      ],
+      "kind": "semantic"
+    },
+    {
+      "id": "q18",
+      "language": "es",
+      "text": "¿Qué sistema mantiene certificados antiguos unas horas para que no se corten las conexiones?",
+      "relevant": [
+        "es-tls-rotate"
+      ],
+      "kind": "semantic"
+    },
+    {
+      "id": "q19",
+      "language": "es",
+      "text": "¿Qué control detecta corrupción de archivos antes de permitir una restauración?",
+      "relevant": [
+        "es-restore-verify"
+      ],
+      "kind": "semantic"
+    },
+    {
+      "id": "q20",
+      "language": "es",
+      "text": "¿Qué buscador respeta vocabulario técnico sin aplicar stemming?",
+      "relevant": [
+        "es-fts-config"
+      ],
+      "kind": "semantic"
+    },
+    {
+      "id": "q21",
+      "language": "en",
+      "text": "Which system preserves the old searchable version while preparing a replacement?",
+      "relevant": [
+        "en-publish-atomic"
+      ],
+      "kind": "semantic"
+    },
+    {
+      "id": "q22",
+      "language": "en",
+      "text": "Which embedding tool keeps incompatible model revisions in separate spaces?",
+      "relevant": [
+        "en-model-profile"
+      ],
+      "kind": "semantic"
+    },
+    {
+      "id": "q23",
+      "language": "en",
+      "text": "Which citation tool measures positions by Unicode characters rather than file bytes?",
+      "relevant": [
+        "en-citation-offsets"
+      ],
+      "kind": "semantic"
+    },
+    {
+      "id": "q24",
+      "language": "en",
+      "text": "Which tool refuses oversized questions instead of cutting them down?",
+      "relevant": [
+        "en-query-bound"
+      ],
+      "kind": "semantic"
+    },
+    {
+      "id": "q25",
+      "language": "es",
+      "text": "faroctl tls rotate --grace-hours 6",
+      "relevant": [
+        "es-tls-rotate"
+      ],
+      "kind": "technical"
+    },
+    {
+      "id": "q26",
+      "language": "es",
+      "text": "nexoctl queue --lease-seconds 45",
+      "relevant": [
+        "es-queue-lease"
+      ],
+      "kind": "technical"
+    },
+    {
+      "id": "q27",
+      "language": "es",
+      "text": "brisactl split --size 256 --overlap 32",
+      "relevant": [
+        "es-chunk-offsets"
+      ],
+      "kind": "technical"
+    },
+    {
+      "id": "q28",
+      "language": "es",
+      "text": "islactl bucket --deny-public true",
+      "relevant": [
+        "es-storage-isolation"
+      ],
+      "kind": "technical"
+    },
+    {
+      "id": "q29",
+      "language": "en",
+      "text": "harborctl publish --require-complete true",
+      "relevant": [
+        "en-publish-atomic"
+      ],
+      "kind": "technical"
+    },
+    {
+      "id": "q30",
+      "language": "en",
+      "text": "mosaicctl embed --space frozen-v2",
+      "relevant": [
+        "en-model-profile"
+      ],
+      "kind": "technical"
+    },
+    {
+      "id": "q31",
+      "language": "en",
+      "text": "relayctl retry --max-attempts 4",
+      "relevant": [
+        "en-retry-budget"
+      ],
+      "kind": "technical"
+    },
+    {
+      "id": "q32",
+      "language": "en",
+      "text": "beaconctl cite --offset-unit normalized-char",
+      "relevant": [
+        "en-citation-offsets"
+      ],
+      "kind": "technical"
+    },
+    {
+      "id": "q33",
+      "language": "es",
+      "text": "¿Qué retención de instantáneas usa Arcadia?",
+      "relevant": [
+        "es-snapshot-short",
+        "es-snapshot-archive"
+      ],
+      "kind": "ambiguous"
+    },
+    {
+      "id": "q34",
+      "language": "es",
+      "text": "¿Arcadia guarda las copias siete o treinta días?",
+      "relevant": [
+        "es-snapshot-short",
+        "es-snapshot-archive"
+      ],
+      "kind": "ambiguous"
+    },
+    {
+      "id": "q35",
+      "language": "en",
+      "text": "What cache lifetime does Orbit use?",
+      "relevant": [
+        "en-cache-fast",
+        "en-cache-batch"
+      ],
+      "kind": "ambiguous"
+    },
+    {
+      "id": "q36",
+      "language": "en",
+      "text": "Does Orbit keep cached entries for thirty or three hundred seconds?",
+      "relevant": [
+        "en-cache-fast",
+        "en-cache-batch"
+      ],
+      "kind": "ambiguous"
+    },
+    {
+      "id": "q37",
+      "language": "es",
+      "text": "¿Qué precio comercial tiene la licencia Zafiro Enterprise?",
+      "relevant": [],
+      "kind": "negative"
+    },
+    {
+      "id": "q38",
+      "language": "es",
+      "text": "¿Cuál es la dirección postal de la oficina del proyecto?",
+      "relevant": [],
+      "kind": "negative"
+    },
+    {
+      "id": "q39",
+      "language": "en",
+      "text": "Which lunar sensor firmware is required by Moonbridge 9000?",
+      "relevant": [],
+      "kind": "negative"
+    },
+    {
+      "id": "q40",
+      "language": "en",
+      "text": "What is the private password of the production administrator?",
+      "relevant": [],
+      "kind": "negative"
+    }
+  ]
+}
