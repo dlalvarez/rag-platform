@@ -6,3 +6,23 @@ Plan/tareas preparados antes de código. No implementación, modelo nuevo,
 migración persistente o calidad F07 acreditados todavía.
 D-07 propuesto para ensayo local/historial, pendiente de decisión expresa.
 No interpretar aprobación anterior de Qwen embeddings como aprobación de generación.
+
+## T002 — contrato y proveedor determinista offline
+
+Nuevo perfil inmutable con artefacto/runtime/tokenizer/template, muestreo/seed/
+límites y hash de política del servidor. Request acota pregunta/historial/
+evidencia y evita mezclar tenant/space; la autorización sigue siendo del servicio,
+no de estos dataclasses. Renderer separa política fija y datos JSON, preserva
+Unicode válido y escapa delimitadores de chat sin cambiar la semántica JSON.
+
+Respuesta estructurada: estado/answer/etiquetas conocidas de evidencia/uso.
+Rechaza citas inventadas o duplicadas, falta de citas en respuesta, contradicción
+sin dos fuentes, perfil/tokens incompatibles y texto no serializable.
+Presupuesto reserva salida y no trunca pregunta; render UTF8<=128KiB.
+
+Mock determinista solo para CI, respuestas predefinidas y contador sin payload.
+Su tokenizer es sintético; abstención por defecto no acredita abstención semántica.
+Separación estructural del prompt no prueba obediencia de un LLM ante inyección.
+79pruebas offline PASS0.22s; sin sockets, modelo, SQL, credenciales o API.
+Ruff/formato290/docs/diff correctos. No cambio del runtime previo; suite local
+core1295PASS permanece como base y CI ejecutará1374. D07 sigue pendiente.
