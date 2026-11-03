@@ -558,3 +558,29 @@ No escribe S3, corpus persistente o esquema. Un modelo opcional CPU1.5/6GiB,
 trabajador anterior detenido, sin renovar día/handoff ni cambios Bao.
 10pruebas offline2.43s PASS;ruff/formato269/docs/diff y composeconfig correctos.
 No se ha ejecutado aún el modelo/SQL de este helper ni aceptado calidad/F05.
+
+## Calidad real Qwen/SQL completada
+PR72 46eb8f1 con cuatro checks HEAD/tres postmerge success.
+Journal e5a2ff71648d4a4a99a572b1f84a0bff exit0,verified.json cuatrofixtures:
+Recall@3 exact/ANN ES/EN=1.0 en cada una, solapamiento ANN/exacto=1.0 y rollback
+intacto.20llamadas reales/961tokens globales, corpus público congelado, vectores
+solo memoria antes de SQL; no uso/fencing de64indexaciones reales.
+Negativos actor/repo desconocido, repo ajeno existente y perfil misma dimensión
+correctos. Huellas/head/vector/pubcounts y control conservados, sin S3/DDLnuevo.
+Solo calidad de integración ficticia SQL, no dominio/F06 o latencia/capacidad.
+
+## Recuperación parcial multilote preparada
+Nuevo controlador application-only para cuatroTXT explícitos en repos existentes,
+body11250bytes/14chunks SHA1d909822...,keys/run/checkpoints idempotentes y manifest
+de scope exacto. Solo4INGEST mediante cola acotada y step; no relay general/EMBED.
+OriginalHTTP/SHA, replay y verificación posterior PUBLISHED. No uploads aún.
+Cuatro batches por documento: cortes batch deben retomar3pendientes; cortes
+publicación deben retomar0. Se reutiliza controlador real aprobado sin cambiarlo.
+Pruebas offline de corpus/parser/chunker, checkpoints/symlink/scope/targets y
+sustitución de manifest correctas. Runtime sin cambios; QA nueva necesita CI y
+revisión/merge/post antes de persistir nuevos documentos.
+
+Validación corpus multilote:14offlinepassed2.46s,ruff/formato271/docs/diff/
+negativosF00 ycomposeconfig correctos. Runtime sin cambios desde suite1113 deCI72.
+Revisión propia de payload congelado, scope/cola, relay explícito/checkpoints/
+replay y vida de entrega; sin revisión independiente atribuida.
