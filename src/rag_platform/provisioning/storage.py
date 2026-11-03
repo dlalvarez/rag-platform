@@ -12,6 +12,7 @@ from minio.credentials import StaticProvider
 from minio.error import MinioAdminException, S3Error
 from urllib3 import PoolManager, Timeout
 from urllib3.exceptions import HTTPError
+from urllib3.util import Retry
 
 from rag_platform.providers.secrets import Credential
 
@@ -113,6 +114,14 @@ def admin_error(error):
     return "STORAGE_UNAVAILABLE"
 
 
+class _StorageHTTP(PoolManager):
+    def urlopen(self, method, url, **kwargs):
+        # PoolManager handles redirects above the pool's Retry configuration.
+        # Keep every request on the catalog-approved endpoint; the S3 SDK handles region errors.
+        kwargs["redirect"] = False
+        return super().urlopen(method, url, **kwargs)
+
+
 class StorageTarget:
     def __init__(self, endpoint: str, ca: Path):
         url = urlsplit(endpoint)
@@ -128,11 +137,24 @@ class StorageTarget:
             raise ValueError("Trusted HTTPS storage endpoint required")
         self.endpoint = endpoint.rstrip("/")
         self.authority = url.netloc
-        self.http = PoolManager(
+        self.http = _StorageHTTP(
             cert_reqs="CERT_REQUIRED",
             ca_certs=str(ca),
             timeout=Timeout(connect=3, read=5),
-            retries=False,
+            # A reused connection can close before sending response headers.
+            # Retry reads once; never replay writes, denials, redirects or TLS/connect errors.
+            retries=Retry(
+                total=1,
+                read=1,
+                connect=0,
+                other=0,
+                redirect=0,
+                status=0,
+                allowed_methods=frozenset({"GET", "HEAD"}),
+                raise_on_redirect=False,
+                raise_on_status=False,
+                respect_retry_after_header=False,
+            ),
             maxsize=2,
         )
 

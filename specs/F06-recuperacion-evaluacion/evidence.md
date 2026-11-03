@@ -140,3 +140,41 @@ Ruff/composeconfig/docs/diff validados; ejecución real pendiente tras revisión
 CI/integración/postmerge y después del baseline, sin dos Qwen simultáneos.
 No se repite suite local por este comprobador opt-in sin cambio del servicio;
 CI sigue ejecutando toda la batería. No se declara resultado todavía.
+
+## Diagnóstico y corrección de transporte durante regresión final
+
+La regresión4e261ea651884a0fab74f691846a9e1a falló F02/NewConnectionError:
+terminó15:05:30UTC y la API empezó a escuchar15:05:38UTC. Se lanzó antes de
+disponibilidad; se confirmó luego /healthz HTTPS200. Una sonda auxiliar usó
+por error /health y recibió404; no es fallo del endpoint de salud real.
+
+Repeticióna8ecbd8516ee49cb80a9063991d7ba22 superó F02 y falló
+same-a/S3 ProtocolError. Diagnóstico de lectura68bc0f454e9648128f1c41f60c8f6a1a:
+HEAD/GET/LIST propios200 y denegaciones ajenas403 reales antes de un
+FOREIGN/list_objects sin respuesta, ProtocolError/RemoteDisconnected.
+No se observó acceso ajeno. Se registraron solo método/estado/longitud y clases
+de excepción, sin URLs, cuerpos ni claves. Diagnóstico inicial4d29f756...
+falló por ruta de imports del comprobador; corregida sin cambiar datos.
+
+StorageTarget prepara ahora un reintento de lectura GET/HEAD como máximo,
+sin reintentar conexión/TLS, otros errores, status ni escrituras. Un fallo
+persistente sigue cerrado. PUT/POST/DELETE/PATCH no se reenvían.
+PoolManager procesa redirecciones fuera del Retry del pool; se desactiva
+su seguimiento para conservar el endpoint aprobado por catálogo.
+Sin cambio de dependencias, credenciales, permisos, datos o contrato HTTP.
+
+18pruebas focalizadas PASS0.51s sobre el bucle urllib3 real con I/O simulado:
+GET/HEAD, segundo fallo, escrituras, denegaciones/status/redirects y TLS/connect.
+El primer intento de tests con sockets locales fue bloqueado por el guard
+offline; se sustituyó el I/O sin modificar ni desactivar ese guard.
+El test301 detectó el seguimiento de redirects del manager y motivó la
+corrección explícita; no se relajó la aserción. Suite completa/integración y
+regresión S3 real corregida todavía pendientes; F06 no se acepta con esta puerta abierta.
+
+Suite completa del arreglo:1292passed/1warning heredado en93.98s,
+runnerexit0/99.81s; journaleb825146c1dd44f1aa69c955d58e8f3a.
+Fuente fija durante la corrida. Ruff/formato287/docs/diff correctos.
+Overlays F06 preparados para que API/comprobador importen el código revisado
+en solo lectura sobre dependencias de imágenes conservadas; no confundir
+prueba de imagen antigua con prueba del arreglo. Hash/import/sinTorch y
+regresión S3 real deben pasar después de revisión/CI/integración/postmerge.

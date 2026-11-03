@@ -1,0 +1,19 @@
+services:
+  f06-regression-check:
+    extends:
+      file: ../f05/publication-regression.compose.yaml
+      service: f05-publication-regression-check
+    environment:
+      PYTHONPATH: /app/src
+      PYTHONDONTWRITEBYTECODE: '1'
+    volumes:
+      - type: bind
+        source: ../../src
+        target: /app/src
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ../../scripts
+        target: /app/scripts
+        read_only: true
+        bind: {create_host_path: false}
