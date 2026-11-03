@@ -490,3 +490,33 @@ Se corrige QA para autorizar/consultar ambos repositorios explícitos y descarga
 cada original desde el suyo; conserva scope tenant/espacio y procedencia triple.
 Pruebas de selección independientes: repos distintos válidos y scope/UUID inválido
 rechazados. No cambia API, modelo, permisos, datos o dependencias.
+
+## HTTP real verificado
+PR69 de803e5 con cuatro checks HEAD y tres postmerge success. Retry journal
+e178b6f57f514af9bbbdcb9a7327ab5b conserva verified.json: cuatro tenants/ambas
+instancias, búsqueda de ambos repositorios autorizados, denegaciones cerradas,
+procedencia/uso y ocho originales descargados/SHA correctos.
+Contraste de traza:4eventos de inferencia HTTP,4requests,0eventos en denegaciones;
+total8eventos del trabajador incluyendo4RPC anteriores.
+La sesión SSH de seguimiento no devolvió cierre, pero el journal final y ausencia
+del contenedor QA confirman finalización. No atribuir fallo de endpoint.
+Qwen t008 terminó limpio exit0/noOOM a10:44:43UTC al alcanzar margen de seguridad
+previo al vencimiento del handoff. API t009 permanece; no renovación automática.
+
+## Componente ANN preparado, no activado
+Filtros exactos compartidos sin cambio semántico, tabla tipada/parámetros y conjunto
+permitido materializado. Candidato HNSW filtrado con límite top_k+1, ajustes locales
+iterative strict/ef200/maxscan20000; fallback exacto si falta candidato adicional o
+hay empate de frontera. HTTP/servicio mantienen exacto.
+17pruebas ANN y50focalizadas con exacto/servicio PASS8.86s. Prueba de EXPLAIN conserva
+vector enlazado. Suite anterior perdió salida final de seguimiento y no se afirma
+su resultado; nueva corrida con journal persistente en curso sobre base PR69.
+QA nativa preparada: referencias, filtros selectivos con >40 vectores ajenos más
+cercanos, plan HNSW elegible y app/readonly/ACL/tombstone/profile/rollback en4fixtures.
+Sin Qwen, DDL/datos siempre revertidos; no acredita calidad ni activación ANN.
+
+Validación final ANN sobre basePR69:1103passed85.92s, warning heredado.
+Journal8de78fe606274b42b08d624fa8af03b4 result.json exit0/head21e57605.
+Ruff/formato267/docs/diff y negativos F00 correctos. Revisión propia: filtros
+compartidos, parámetro vector, ajustes locales, candidatos/borde/fallback, errores
+y límites del comprobador rollback; no revisión independiente atribuida.
