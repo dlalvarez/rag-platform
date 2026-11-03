@@ -26,12 +26,15 @@ def test_ann_has_shared_permissions_inside_ordered_scan_and_bound_vector():
         "embedding_publications",
         "original_version_id",
         "MATERIALIZED",
-        "IN (SELECT permitted.chunk_id",
+        "EXISTS (SELECT",
+        "OFFSET",
         "<=>",
     ):
         assert text in sql
     candidate = sql[sql.index("candidates AS MATERIALIZED") :]
-    assert candidate.index("IN (SELECT") < candidate.index("ORDER BY") < candidate.index("LIMIT")
+    assert (
+        candidate.index("EXISTS (SELECT") < candidate.index("ORDER BY") < candidate.rindex("LIMIT")
+    )
     assert list(compiled.params.values()).count(args[-1] + 1) == 2
 
 
