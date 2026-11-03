@@ -476,3 +476,17 @@ Validación final de HTTP/compatibilidad88passed15.97s, incluye flags nuevos.
 Negativos F00 correctos. Fuente runtime sin cambios desde suite1076; cuatro
 pruebas nuevas llevan total esperado1080 en CI. Revisión propia de contrato,
 framing, identidad/ACL, uso, tamaño de respuesta, slots y despliegue opt-in.
+
+## Corrección de selección de QA HTTP
+PR68 integrado0cb18d6, cuatro checks HEAD/tres postmerge success.
+API:t009 d30fb80850ee4b6e6d47b772e783214b2bace45dff31aaca85eb6ef89d2f702b,
+hash/import98módulos instalados PASS, Torch ausente. API t006 detenida conservada;
+entregaF03 reemplazada bajo lock/día vigente y nueva API t009 activa.
+Primer QA journal83d8c9da884f4697842d9d78fadf5e3e rechazó START antes de búsquedas:
+comprobador asumía mismo repositorio entre manifest API y worker. Diagnóstico de
+coincidencias: cuatro tenants/espacios iguales y cuatro repositorios distintos.
+No fallo demostrado del endpoint; ninguna escritura documental.
+Se corrige QA para autorizar/consultar ambos repositorios explícitos y descargar
+cada original desde el suyo; conserva scope tenant/espacio y procedencia triple.
+Pruebas de selección independientes: repos distintos válidos y scope/UUID inválido
+rechazados. No cambia API, modelo, permisos, datos o dependencias.
