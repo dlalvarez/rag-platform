@@ -89,3 +89,7 @@ La regresión corregida usa F02 + ops/f06/regression-check.compose.yaml,
 servicio f06-regression-check, manifest API retenido y nueva entrega F04 bajo
 lock libre. Mismos controles originales, sin aceptar error de red como
 AccessDenied. Cerrar API y comprobar consumidores libres después de las pruebas.
+
+Los errores de lectura HTTP se sanean antes del log de reintentos de urllib3:
+solo STORAGE_READ_FAILED, sin mensaje/cuerpo del proveedor. TLS y fallos de
+conexión conservan un intento y el error público cerrado del adaptador.

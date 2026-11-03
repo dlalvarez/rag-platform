@@ -178,3 +178,17 @@ Overlays F06 preparados para que API/comprobador importen el código revisado
 en solo lectura sobre dependencias de imágenes conservadas; no confundir
 prueba de imagen antigua con prueba del arreglo. Hash/import/sinTorch y
 regresión S3 real deben pasar después de revisión/CI/integración/postmerge.
+
+Revisión adicional del reintento: urllib3 registra repr de la excepción al
+repetir. El pool HTTPS ahora convierte errores de lectura/protocolo HTTP a
+STORAGE_READ_FAILED antes del bucle de retry, sin conservar payload en el
+mensaje. No convierte errores TLS/conexión en lecturas reintentables.
+Tres pruebas de privacidad añadidas: ProtocolError, RemoteDisconnected y
+ReadTimeoutError con canaries privados nunca aparecen en DEBUG/warnings ni
+en la excepción final.21pruebas focalizadas PASS0.79s. Se repite suite completa
+por este cambio de runtime; CI del HEAD anterior no acredita esta ampliación.
+
+Validación final de la sanitización:1295passed/1warning heredado en91.31s,
+runnerexit0/97.10s, journalafbd409c3f0b44fbaf93147a7aefcf69.
+Ruff/formato287/docs/diff correctos, sin cambios de código durante la batería.
+Esta fuente reemplaza al HEAD anterior para la revisión/CI del mismo PR.

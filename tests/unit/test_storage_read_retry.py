@@ -6,7 +6,14 @@ from pathlib import Path
 
 import pytest
 from urllib3 import HTTPResponse
-from urllib3.exceptions import ConnectTimeoutError, MaxRetryError, ProtocolError, SSLError
+from urllib3.connectionpool import HTTPSConnectionPool
+from urllib3.exceptions import (
+    ConnectTimeoutError,
+    MaxRetryError,
+    ProtocolError,
+    ReadTimeoutError,
+    SSLError,
+)
 
 from rag_platform.provisioning.storage import StorageTarget
 
@@ -18,7 +25,7 @@ def transport(monkeypatch, *, disconnects=1, status=403, error=None):
     url = "https://minio:9000/probe"
     pool = target.http.connection_from_url(url)
 
-    def wire(_connection, method, _url, **_options):
+    def wire(_pool, _connection, method, _url, **_options):
         seen.append(method)
         if error is not None:
             raise error
@@ -32,7 +39,8 @@ def transport(monkeypatch, *, disconnects=1, status=403, error=None):
         return HTTPResponse(body=b"", status=status, headers=headers, request_method=method)
 
     # Keep urllib3's real urlopen/retry loop; replace only wire I/O, never the network guard.
-    monkeypatch.setattr(pool, "_make_request", wire)
+    assert isinstance(pool, HTTPSConnectionPool)
+    monkeypatch.setattr(HTTPSConnectionPool, "_make_request", wire)
     try:
         yield target, url, seen
     finally:
@@ -104,3 +112,21 @@ def test_explicit_redirect_flag_cannot_leave_approved_storage_endpoint(monkeypat
         response = target.http.urlopen("GET", url, redirect=True)
         assert response.status == 301 and seen == ["GET"]
         response.close()
+
+
+@pytest.mark.parametrize(
+    "error",
+    [
+        ProtocolError("PRIVATE_PROVIDER_RESPONSE"),
+        RemoteDisconnected("PRIVATE_PROVIDER_RESPONSE"),
+        ReadTimeoutError(None, "PRIVATE_PROVIDER_URL", "PRIVATE_PROVIDER_RESPONSE"),
+    ],
+)
+def test_retry_logs_and_errors_never_echo_provider_payload(monkeypatch, caplog, error):
+    with transport(monkeypatch, error=error) as (target, url, seen):
+        with caplog.at_level("DEBUG", logger="urllib3"):
+            with pytest.raises(MaxRetryError) as failure:
+                target.http.urlopen("GET", url)
+        assert seen == ["GET", "GET"]
+        assert "PRIVATE_PROVIDER" not in caplog.text
+        assert "PRIVATE_PROVIDER" not in str(failure.value)

@@ -2,6 +2,7 @@
 
 import json
 from dataclasses import dataclass
+from http.client import HTTPException
 from pathlib import Path
 from urllib.parse import urlsplit
 from uuid import UUID
@@ -11,7 +12,8 @@ from minio.commonconfig import Tags
 from minio.credentials import StaticProvider
 from minio.error import MinioAdminException, S3Error
 from urllib3 import PoolManager, Timeout
-from urllib3.exceptions import HTTPError
+from urllib3.connectionpool import HTTPSConnectionPool
+from urllib3.exceptions import HTTPError, ProtocolError, ReadTimeoutError
 from urllib3.util import Retry
 
 from rag_platform.providers.secrets import Credential
@@ -114,7 +116,20 @@ def admin_error(error):
     return "STORAGE_UNAVAILABLE"
 
 
+class _StorageHTTPSPool(HTTPSConnectionPool):
+    def _make_request(self, *args, **kwargs):
+        try:
+            return super()._make_request(*args, **kwargs)
+        except (HTTPException, ProtocolError, ReadTimeoutError):
+            # urllib3 logs a retry's exception representation. Never retain provider bodies there.
+            raise ProtocolError("STORAGE_READ_FAILED") from None
+
+
 class _StorageHTTP(PoolManager):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.pool_classes_by_scheme = {**self.pool_classes_by_scheme, "https": _StorageHTTPSPool}
+
     def urlopen(self, method, url, **kwargs):
         # PoolManager handles redirects above the pool's Retry configuration.
         # Keep every request on the catalog-approved endpoint; the S3 SDK handles region errors.
