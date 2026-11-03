@@ -182,7 +182,7 @@ def test_profile_rejection_prevents_candidate_query(connection, monkeypatch):
         raise ProcessingError("PROFILE_MISMATCH")
 
     monkeypatch.setattr(sql, "_space", failed)
-    with pytest.raises(RetrievalError, match="^DEPENDENCY_UNAVAILABLE$"):
+    with pytest.raises(RetrievalError, match="^PROFILE_MISMATCH$"):
         retrieve(c)
     assert executed == []
 
