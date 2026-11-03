@@ -59,3 +59,37 @@ exacto F05. Ocho consultas reales al único Qwen cargado; repos ajenos y citas d
 otro tenant/inexistentes se deniegan sin inferencia adicional. Cierre revoca su
 entrega limitada; no renovar automáticamente. Solo contadores en verified.json.
 No nuevo endpoint HTTP, acceso bootstrap, S3 o generación.
+
+## Disponibilidad y lecturas S3
+
+Después de iniciar la API, esperar /healthz HTTPS200 con CA y hostname válidos
+antes de la regresión. El inicio del contenedor no demuestra listener listo.
+Si falla el transporte S3, conservar etapa y clases de excepción sin imprimir
+URLs/cuerpos/credenciales. Lecturas GET/HEAD tienen un único reintento ante fallo
+de lectura; escrituras y respuestas HTTP no se repiten. El acceso ajeno debe
+seguir demostrando AccessDenied real; no aceptar un error de red como denegación.
+Las redirecciones no pueden cambiar el endpoint de catálogo.
+
+## Validar el código corregido de transporte
+
+Las imágenes anteriores t006/t009 conservan dependencias fijadas y se preservan.
+Los overlays F06 montan src/scripts revisados en solo lectura; PYTHONPATH apunta
+al código montado. Comparar hashes y rutas importadas antes de ejecutar, sin red/
+credenciales; API debe seguir sin Torch. No modificar el checkout operativo con
+un consumidor activo. No reconstrucción implícita ni dependencias nuevas.
+
+Para API combinar F02, handoff F03, worker F04, publication-runtime F05,
+search-runtime F05 y api-runtime F06. Detener la API anterior, comprobar lock
+F03 libre, reemplazar su entrega limitada y crear contenedor separado
+rag-f06-api-source-t010 con run -d --no-deps --pull never --service-ports
+--use-aliases. Conservar el anterior detenido; no usar up ni eliminar recursos.
+No añadir puertos o límites nuevos. Esperar /healthz HTTPS200.
+
+La regresión corregida usa F02 + ops/f06/regression-check.compose.yaml,
+servicio f06-regression-check, manifest API retenido y nueva entrega F04 bajo
+lock libre. Mismos controles originales, sin aceptar error de red como
+AccessDenied. Cerrar API y comprobar consumidores libres después de las pruebas.
+
+Los errores de lectura HTTP se sanean antes del log de reintentos de urllib3:
+solo STORAGE_READ_FAILED, sin mensaje/cuerpo del proveedor. TLS y fallos de
+conexión conservan un intento y el error público cerrado del adaptador.

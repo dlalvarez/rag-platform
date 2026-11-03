@@ -1,0 +1,12 @@
+services:
+  api:
+    image: rag-f05-api:t009
+    environment:
+      PYTHONPATH: /app/src
+      PYTHONDONTWRITEBYTECODE: '1'
+    volumes:
+      - type: bind
+        source: ../../src
+        target: /app/src
+        read_only: true
+        bind: {create_host_path: false}
