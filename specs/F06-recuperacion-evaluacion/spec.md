@@ -1,7 +1,9 @@
 # F06 — Búsqueda híbrida, ranking y evaluación de recuperación
 
-**Estado:** BORRADOR RECTOR, pendiente de aprobación humana para ejecutar.  
-**Dependencia:** F05.  
+**Estado:** alcance original autorizado por ADR0010. F05 aceptada en PR74;
+planificación activa. Aclaración AC-F06-03 aprobada expresamente por Diego
+el 2026-11-03; conserva recepción del original y exige versión publicada completa.
+**Dependencia:** F05.
 **Meta:** Motor de búsqueda recupera fuentes verificables.
 
 ## Problema y resultado esperado
@@ -20,7 +22,11 @@ Esta fase transforma el estado previo en: Motor de búsqueda recupera fuentes ve
 
 - **AC-F06-01** — recall@10 >= 0.80 en dataset aprobado; si no, fase bloqueada y se registra análisis.
 - **AC-F06-02** — 100% citas de resultados resuelven a chunks existentes, publicados y autorizados.
-- **AC-F06-03** — Búsqueda no ve un documento en estado RECEIVED/FAILED/TOMBSTONED.
+- **AC-F06-03** — La búsqueda solo devuelve chunks de la versión procesada vigente, publicada
+  y completa en el espacio solicitado, de documento/repositorio activos y
+  autorizados. Excluye versiones solo recibidas, fallidas, incompletas, reemplazadas
+  o eliminadas y documentos con baja. El estado de recepción del original no
+  sustituye el estado de publicación de la versión.
 - **AC-F06-04** — Corpus técnico con palabras exactas (comandos, parámetros) demuestra FTS junto a semántica.
 
 ## No-objetivos y límites

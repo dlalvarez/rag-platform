@@ -15,8 +15,11 @@
   R04; AC02/04. Tenant/repo ajenos, same dimension/different model, exact-vs-ANN.
 - [x] T007 — Contrato de operación/HTTP previsto, manual y ejemplo real opt-in.
   R01..05; AC01..04. Sin anticipar asistentes/híbrida; fuente/pins/recursos reales.
-- [ ] T008 — Aceptación cuatro fixtures/ambas topologías y regresiones F00..F04.
+- [x] T008 — Aceptación cuatro fixtures/ambas topologías y regresiones F00..F04.
   R01..05; AC01..04. Logs/canary/temporales, CI/revisión/PR/merge/postmerge.
 
 No cerrar turno por tarea/PR/fase. Seguir trabajo independiente de una decisión
 pendiente; consultar solo criterios ADR0010. Conservar datos y evidencia.
+
+T008 cerrada en PR74, checks HEAD y postmerge correctos; aceptación registrada
+en https://github.com/dlalvarez/rag-platform/pull/74#issuecomment-6605895334.

@@ -25,16 +25,21 @@ No declarar aceptada ni implementar F06 antes de completar esas puertas.
 
 ## Siguiente acción
 
-Revisar diff documental y validar docs/diff; árbol idéntico VM/GitHub,
-PR a develop, CI HEAD exacto, revisión propia delegada ADR0007, merge y postmerge.
-Registrar aceptación efectiva y continuar plan/tareas F06 dentro de ADR0010.
-No terminar por cierre de PR/fase ni pedir autorización de trámite.
-HTTP sigue exacto; ANN interno validado, sin promesas de latencia o dominioF06.
-Qwen/HTTPfragmentos/adopciónBD/conexiónprivada ya aprobados; no volver a pedir.
-Control0007/cuatro tenants0006, espacios publicados. No repetir adopción.
+F05 aceptada en PR74, merge7f7f180d400d28203d2b20f1947d792661237251.
+Cuatro checks HEAD/tres postmerge SUCCESS, aceptación registrada en comentario
+6605895334. Operativo alineado; worktree docs/F06-plan.
+Plan/tareas/checklist/evidencia F06 preparados antes de implementación.
+Diego aprobó aclarar AC03: solo versiones procesadas vigentes publicadas/completas/
+autorizadas, estado recepción original conservado, sin migración.
 
-F06 tiene spec en specs/F06-recuperacion-evaluacion/spec.md. Revisar AC03:
-document.state RECEIVED indica recepción original y se conserva con versión
-procesada PUBLISHED; aclarar su relación con versiones no publicadas bajo
-contratos vigentes antes de implementar. No cambiar contrato rector unilateralmente.
-Toda ejecución en ragdev01; no main/tag/producción/visibilidad/purgas.
+Validar/revisar/integrar el plan; seguir T002 contratos/filtros/RRF y pruebas.
+No requiere otra aprobación de trámite. RRF60/50candidatos por modalidad y FTS
+simple, inicialmente sin DDL persistente. API F05 conserva contrato/exacto.
+Corpus >=30preguntas congelado antes de medir, golds/negativas/ambigüedad,
+citas100% autorizadas y recall@10>=.80; no reusar métricas F05 como calidad F06.
+
+Sesión diaria validada hasta2026-11-04T08:51:32-05:00; no renovación automática.
+Modelos/API de pruebas cerrados y consumidores libres, recursos conservados.
+Todo código/dependencias/servicios en ragdev01. CI exacto y revisión propia
+delegada ADR0007, postmerge; no main/tag/producción/visibilidad/purgas/Bao.
+Continuar al completar PR/fase según ADR0010. F07 requiere F06 aceptada.

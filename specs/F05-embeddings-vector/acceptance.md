@@ -1,7 +1,8 @@
 # Aceptación F05 — expediente de cierre
 
-Estado: pruebas técnicas completas. Aceptación propuesta, efectiva después de
-CI correcto, revisión e integración delegadas y comprobación postmerge.
+Estado: aceptada en PR74, merge7f7f180d400d28203d2b20f1947d792661237251,
+cuatro checks HEAD y tres postmerge correctos. Revisión propia delegada ADR0007.
+[Aceptación registrada](https://github.com/dlalvarez/rag-platform/pull/74#issuecomment-6605895334).
 Alcance original autorizado por ADR0010; revisión/integración delegadas ADR0007.
 Decisiones Qwen/HTTPfragmentos/adopciónBD/conexiónprivada registradas, sin nuevas
 aprobaciones personales atribuidas a Diego.
@@ -59,10 +60,12 @@ ni patrones Bearer comprobados. Cuatro controles positivos de log observados
 Esto comprueba los marcadores ensayados, no un detector universal de secretos.
 No cambios de esquema ni dependencias en este expediente.
 
-## Integración pendiente
+## Integración verificada
 
-CI sobre el HEAD exacto, revisión del diff, merge a develop y comprobación
-postmerge. La aceptación se registra en el PR al completar esos controles.
+PR74 integrado a develop; HEAD8958707d139a82d19d69505bf0914aa32afc615a y
+merge7f7f180d400d28203d2b20f1947d792661237251 con todos los checks correctos.
+El árbol ae2789fbed730a2d4842a170501e5fb4f5631906 coincide con el revisado en VM.
+T008 y F05 aceptadas; continúa F06 dentro del alcance original ADR0010.
 
 ## Límites conservados
 La API de desarrollo mantiene búsqueda exacta; ANN es componente interno validado
