@@ -5,10 +5,10 @@
 - [x] D-06 decidido expresamente por Diego: Qwen3-Embedding-0.6B local dev, ADR0011.
 - [x] Benchmark inicial ficticio ES/EN/capacidad CPU2 y fuentes/pins/pesos/licencia verificados; no calidad F06.
 - [x] T002 provider/fake offline y rechazo mismatch/NaN/Inf/longitud correctos.
-- [ ] T003 migraciones/espacios/roles/TLS/rollback/recovery en ambas topologías.
-- [ ] T004/T005 batch/retry/crash/publicación/reindexación/bajas reales.
-- [ ] T006 búsqueda exacta/ANN y aislamiento repo/tenant/version/space correctos.
-- [ ] T007 ejemplo real/operación/manual/errores saneados.
+- [x] T003 migraciones/espacios/roles/TLS/rollback/recovery en ambas topologías.
+- [x] T004/T005 batch/retry/crash/publicación/reindexación/bajas reales.
+- [x] T006 búsqueda exacta/ANN y aislamiento repo/tenant/version/space correctos.
+- [x] T007 ejemplo real/operación/manual/errores saneados.
 - [ ] T008 cuatro AC, regresiones F00..F04, CI/revisión/postmerge y aceptación.
 
 | Gate | Requisitos | AC | Evidencia |

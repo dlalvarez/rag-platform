@@ -89,4 +89,5 @@ Reutiliza una copia del modelo y la entrega limitada, con CPU compartida y esper
 acotada. La API conserva autenticación y recuperación SQL; el trabajador verifica
 el contexto firmado y ACL antes/después de inferir. Sin puerto público ni Torch
 en API. Ver [ADR0012](adr/0012-private-query-provider.md); implementación opt-in
-y evidencia pendientes, sin ampliar producción ni el contrato de generación F07.
+y evidencia completadas en F05; aceptación de fase sujeta a sus puertas de cierre,
+sin ampliar producción ni el contrato de generación F07.
