@@ -74,7 +74,9 @@ def query_vector(profile, vector):
     return values
 
 
-def _permitted(actor, repositories, space, profile, *, include_vector=True):
+def _permitted(
+    actor, repositories, space, profile, *, include_vector=True, include_provenance=False
+):
     metadata = build_metadata()
     vectors = vector_table(metadata, space, profile)
     chunks = metadata.tables["knowledge.chunks"]
@@ -132,6 +134,11 @@ def _permitted(actor, repositories, space, profile, *, include_vector=True):
             sa.func.left(chunks.c.text, 512).label("excerpt"),
             chunks.c.page,
             chunks.c.section,
+            *(
+                (chunks.c.text, chunks.c.start_offset, chunks.c.end_offset)
+                if include_provenance
+                else ()
+            ),
         )
         .select_from(joined)
         .where(
