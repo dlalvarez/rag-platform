@@ -1,0 +1,639 @@
+{
+  "corpus_sha256": "35976933e799d23ca87e4718dceedab0f8989b3204c881dc4972294d4b8b4bb7",
+  "fixtures": [
+    {
+      "metrics": {
+        "hybrid": {
+          "answerable_queries": 36,
+          "by_kind": {
+            "ambiguous": 1.0,
+            "answerable": 1.0,
+            "semantic": 1.0,
+            "technical": 1.0
+          },
+          "by_language": {
+            "en": 1.0,
+            "es": 1.0
+          },
+          "metric": "document_recall_at_10",
+          "negative_interpretation": "ranking only; no semantic abstention claimed",
+          "negative_queries": 4,
+          "negative_queries_with_hits": 4,
+          "negative_returned_hits": [
+            10,
+            10,
+            10,
+            10
+          ],
+          "per_query": {
+            "q01": 1.0,
+            "q02": 1.0,
+            "q03": 1.0,
+            "q04": 1.0,
+            "q05": 1.0,
+            "q06": 1.0,
+            "q07": 1.0,
+            "q08": 1.0,
+            "q09": 1.0,
+            "q10": 1.0,
+            "q11": 1.0,
+            "q12": 1.0,
+            "q13": 1.0,
+            "q14": 1.0,
+            "q15": 1.0,
+            "q16": 1.0,
+            "q17": 1.0,
+            "q18": 1.0,
+            "q19": 1.0,
+            "q20": 1.0,
+            "q21": 1.0,
+            "q22": 1.0,
+            "q23": 1.0,
+            "q24": 1.0,
+            "q25": 1.0,
+            "q26": 1.0,
+            "q27": 1.0,
+            "q28": 1.0,
+            "q29": 1.0,
+            "q30": 1.0,
+            "q31": 1.0,
+            "q32": 1.0,
+            "q33": 1.0,
+            "q34": 1.0,
+            "q35": 1.0,
+            "q36": 1.0
+          },
+          "recall_at_10": 1.0,
+          "recall_gate_passed": true
+        },
+        "vector": {
+          "answerable_queries": 36,
+          "by_kind": {
+            "ambiguous": 1.0,
+            "answerable": 1.0,
+            "semantic": 1.0,
+            "technical": 1.0
+          },
+          "by_language": {
+            "en": 1.0,
+            "es": 1.0
+          },
+          "metric": "document_recall_at_10",
+          "negative_interpretation": "ranking only; no semantic abstention claimed",
+          "negative_queries": 4,
+          "negative_queries_with_hits": 4,
+          "negative_returned_hits": [
+            10,
+            10,
+            10,
+            10
+          ],
+          "per_query": {
+            "q01": 1.0,
+            "q02": 1.0,
+            "q03": 1.0,
+            "q04": 1.0,
+            "q05": 1.0,
+            "q06": 1.0,
+            "q07": 1.0,
+            "q08": 1.0,
+            "q09": 1.0,
+            "q10": 1.0,
+            "q11": 1.0,
+            "q12": 1.0,
+            "q13": 1.0,
+            "q14": 1.0,
+            "q15": 1.0,
+            "q16": 1.0,
+            "q17": 1.0,
+            "q18": 1.0,
+            "q19": 1.0,
+            "q20": 1.0,
+            "q21": 1.0,
+            "q22": 1.0,
+            "q23": 1.0,
+            "q24": 1.0,
+            "q25": 1.0,
+            "q26": 1.0,
+            "q27": 1.0,
+            "q28": 1.0,
+            "q29": 1.0,
+            "q30": 1.0,
+            "q31": 1.0,
+            "q32": 1.0,
+            "q33": 1.0,
+            "q34": 1.0,
+            "q35": 1.0,
+            "q36": 1.0
+          },
+          "recall_at_10": 1.0,
+          "recall_gate_passed": true
+        }
+      },
+      "name": "same-a",
+      "query_failures": 0,
+      "rollback_intact": true,
+      "sql_latency_ms": {
+        "hybrid": {
+          "maximum_ms": 2355.309178994503,
+          "method": "nearest-rank",
+          "minimum_ms": 45.58733699377626,
+          "p50_ms": 61.16312398808077,
+          "p95_ms": 210.45638795476407,
+          "samples": 40
+        },
+        "vector": {
+          "maximum_ms": 206.31954399868846,
+          "method": "nearest-rank",
+          "minimum_ms": 36.250233999453485,
+          "p50_ms": 49.54955802531913,
+          "p95_ms": 106.7664329893887,
+          "samples": 40
+        }
+      },
+      "technical_fts_checks": 8,
+      "valid_citations": 400
+    },
+    {
+      "metrics": {
+        "hybrid": {
+          "answerable_queries": 36,
+          "by_kind": {
+            "ambiguous": 1.0,
+            "answerable": 1.0,
+            "semantic": 1.0,
+            "technical": 1.0
+          },
+          "by_language": {
+            "en": 1.0,
+            "es": 1.0
+          },
+          "metric": "document_recall_at_10",
+          "negative_interpretation": "ranking only; no semantic abstention claimed",
+          "negative_queries": 4,
+          "negative_queries_with_hits": 4,
+          "negative_returned_hits": [
+            10,
+            10,
+            10,
+            10
+          ],
+          "per_query": {
+            "q01": 1.0,
+            "q02": 1.0,
+            "q03": 1.0,
+            "q04": 1.0,
+            "q05": 1.0,
+            "q06": 1.0,
+            "q07": 1.0,
+            "q08": 1.0,
+            "q09": 1.0,
+            "q10": 1.0,
+            "q11": 1.0,
+            "q12": 1.0,
+            "q13": 1.0,
+            "q14": 1.0,
+            "q15": 1.0,
+            "q16": 1.0,
+            "q17": 1.0,
+            "q18": 1.0,
+            "q19": 1.0,
+            "q20": 1.0,
+            "q21": 1.0,
+            "q22": 1.0,
+            "q23": 1.0,
+            "q24": 1.0,
+            "q25": 1.0,
+            "q26": 1.0,
+            "q27": 1.0,
+            "q28": 1.0,
+            "q29": 1.0,
+            "q30": 1.0,
+            "q31": 1.0,
+            "q32": 1.0,
+            "q33": 1.0,
+            "q34": 1.0,
+            "q35": 1.0,
+            "q36": 1.0
+          },
+          "recall_at_10": 1.0,
+          "recall_gate_passed": true
+        },
+        "vector": {
+          "answerable_queries": 36,
+          "by_kind": {
+            "ambiguous": 1.0,
+            "answerable": 1.0,
+            "semantic": 1.0,
+            "technical": 1.0
+          },
+          "by_language": {
+            "en": 1.0,
+            "es": 1.0
+          },
+          "metric": "document_recall_at_10",
+          "negative_interpretation": "ranking only; no semantic abstention claimed",
+          "negative_queries": 4,
+          "negative_queries_with_hits": 4,
+          "negative_returned_hits": [
+            10,
+            10,
+            10,
+            10
+          ],
+          "per_query": {
+            "q01": 1.0,
+            "q02": 1.0,
+            "q03": 1.0,
+            "q04": 1.0,
+            "q05": 1.0,
+            "q06": 1.0,
+            "q07": 1.0,
+            "q08": 1.0,
+            "q09": 1.0,
+            "q10": 1.0,
+            "q11": 1.0,
+            "q12": 1.0,
+            "q13": 1.0,
+            "q14": 1.0,
+            "q15": 1.0,
+            "q16": 1.0,
+            "q17": 1.0,
+            "q18": 1.0,
+            "q19": 1.0,
+            "q20": 1.0,
+            "q21": 1.0,
+            "q22": 1.0,
+            "q23": 1.0,
+            "q24": 1.0,
+            "q25": 1.0,
+            "q26": 1.0,
+            "q27": 1.0,
+            "q28": 1.0,
+            "q29": 1.0,
+            "q30": 1.0,
+            "q31": 1.0,
+            "q32": 1.0,
+            "q33": 1.0,
+            "q34": 1.0,
+            "q35": 1.0,
+            "q36": 1.0
+          },
+          "recall_at_10": 1.0,
+          "recall_gate_passed": true
+        }
+      },
+      "name": "same-b",
+      "query_failures": 0,
+      "rollback_intact": true,
+      "sql_latency_ms": {
+        "hybrid": {
+          "maximum_ms": 193.11823998577893,
+          "method": "nearest-rank",
+          "minimum_ms": 43.41697198105976,
+          "p50_ms": 62.83258995972574,
+          "p95_ms": 160.71056498913094,
+          "samples": 40
+        },
+        "vector": {
+          "maximum_ms": 2779.9676610156894,
+          "method": "nearest-rank",
+          "minimum_ms": 34.84991303412244,
+          "p50_ms": 54.51641295803711,
+          "p95_ms": 180.65685097826645,
+          "samples": 40
+        }
+      },
+      "technical_fts_checks": 8,
+      "valid_citations": 400
+    },
+    {
+      "metrics": {
+        "hybrid": {
+          "answerable_queries": 36,
+          "by_kind": {
+            "ambiguous": 1.0,
+            "answerable": 1.0,
+            "semantic": 1.0,
+            "technical": 1.0
+          },
+          "by_language": {
+            "en": 1.0,
+            "es": 1.0
+          },
+          "metric": "document_recall_at_10",
+          "negative_interpretation": "ranking only; no semantic abstention claimed",
+          "negative_queries": 4,
+          "negative_queries_with_hits": 4,
+          "negative_returned_hits": [
+            10,
+            10,
+            10,
+            10
+          ],
+          "per_query": {
+            "q01": 1.0,
+            "q02": 1.0,
+            "q03": 1.0,
+            "q04": 1.0,
+            "q05": 1.0,
+            "q06": 1.0,
+            "q07": 1.0,
+            "q08": 1.0,
+            "q09": 1.0,
+            "q10": 1.0,
+            "q11": 1.0,
+            "q12": 1.0,
+            "q13": 1.0,
+            "q14": 1.0,
+            "q15": 1.0,
+            "q16": 1.0,
+            "q17": 1.0,
+            "q18": 1.0,
+            "q19": 1.0,
+            "q20": 1.0,
+            "q21": 1.0,
+            "q22": 1.0,
+            "q23": 1.0,
+            "q24": 1.0,
+            "q25": 1.0,
+            "q26": 1.0,
+            "q27": 1.0,
+            "q28": 1.0,
+            "q29": 1.0,
+            "q30": 1.0,
+            "q31": 1.0,
+            "q32": 1.0,
+            "q33": 1.0,
+            "q34": 1.0,
+            "q35": 1.0,
+            "q36": 1.0
+          },
+          "recall_at_10": 1.0,
+          "recall_gate_passed": true
+        },
+        "vector": {
+          "answerable_queries": 36,
+          "by_kind": {
+            "ambiguous": 1.0,
+            "answerable": 1.0,
+            "semantic": 1.0,
+            "technical": 1.0
+          },
+          "by_language": {
+            "en": 1.0,
+            "es": 1.0
+          },
+          "metric": "document_recall_at_10",
+          "negative_interpretation": "ranking only; no semantic abstention claimed",
+          "negative_queries": 4,
+          "negative_queries_with_hits": 4,
+          "negative_returned_hits": [
+            10,
+            10,
+            10,
+            10
+          ],
+          "per_query": {
+            "q01": 1.0,
+            "q02": 1.0,
+            "q03": 1.0,
+            "q04": 1.0,
+            "q05": 1.0,
+            "q06": 1.0,
+            "q07": 1.0,
+            "q08": 1.0,
+            "q09": 1.0,
+            "q10": 1.0,
+            "q11": 1.0,
+            "q12": 1.0,
+            "q13": 1.0,
+            "q14": 1.0,
+            "q15": 1.0,
+            "q16": 1.0,
+            "q17": 1.0,
+            "q18": 1.0,
+            "q19": 1.0,
+            "q20": 1.0,
+            "q21": 1.0,
+            "q22": 1.0,
+            "q23": 1.0,
+            "q24": 1.0,
+            "q25": 1.0,
+            "q26": 1.0,
+            "q27": 1.0,
+            "q28": 1.0,
+            "q29": 1.0,
+            "q30": 1.0,
+            "q31": 1.0,
+            "q32": 1.0,
+            "q33": 1.0,
+            "q34": 1.0,
+            "q35": 1.0,
+            "q36": 1.0
+          },
+          "recall_at_10": 1.0,
+          "recall_gate_passed": true
+        }
+      },
+      "name": "two-a",
+      "query_failures": 0,
+      "rollback_intact": true,
+      "sql_latency_ms": {
+        "hybrid": {
+          "maximum_ms": 152.59815799072385,
+          "method": "nearest-rank",
+          "minimum_ms": 43.18247799528763,
+          "p50_ms": 53.78806096268818,
+          "p95_ms": 111.9115180335939,
+          "samples": 40
+        },
+        "vector": {
+          "maximum_ms": 120.0562430312857,
+          "method": "nearest-rank",
+          "minimum_ms": 35.299588984344155,
+          "p50_ms": 51.02681904099882,
+          "p95_ms": 110.42726499726996,
+          "samples": 40
+        }
+      },
+      "technical_fts_checks": 8,
+      "valid_citations": 400
+    },
+    {
+      "metrics": {
+        "hybrid": {
+          "answerable_queries": 36,
+          "by_kind": {
+            "ambiguous": 1.0,
+            "answerable": 1.0,
+            "semantic": 1.0,
+            "technical": 1.0
+          },
+          "by_language": {
+            "en": 1.0,
+            "es": 1.0
+          },
+          "metric": "document_recall_at_10",
+          "negative_interpretation": "ranking only; no semantic abstention claimed",
+          "negative_queries": 4,
+          "negative_queries_with_hits": 4,
+          "negative_returned_hits": [
+            10,
+            10,
+            10,
+            10
+          ],
+          "per_query": {
+            "q01": 1.0,
+            "q02": 1.0,
+            "q03": 1.0,
+            "q04": 1.0,
+            "q05": 1.0,
+            "q06": 1.0,
+            "q07": 1.0,
+            "q08": 1.0,
+            "q09": 1.0,
+            "q10": 1.0,
+            "q11": 1.0,
+            "q12": 1.0,
+            "q13": 1.0,
+            "q14": 1.0,
+            "q15": 1.0,
+            "q16": 1.0,
+            "q17": 1.0,
+            "q18": 1.0,
+            "q19": 1.0,
+            "q20": 1.0,
+            "q21": 1.0,
+            "q22": 1.0,
+            "q23": 1.0,
+            "q24": 1.0,
+            "q25": 1.0,
+            "q26": 1.0,
+            "q27": 1.0,
+            "q28": 1.0,
+            "q29": 1.0,
+            "q30": 1.0,
+            "q31": 1.0,
+            "q32": 1.0,
+            "q33": 1.0,
+            "q34": 1.0,
+            "q35": 1.0,
+            "q36": 1.0
+          },
+          "recall_at_10": 1.0,
+          "recall_gate_passed": true
+        },
+        "vector": {
+          "answerable_queries": 36,
+          "by_kind": {
+            "ambiguous": 1.0,
+            "answerable": 1.0,
+            "semantic": 1.0,
+            "technical": 1.0
+          },
+          "by_language": {
+            "en": 1.0,
+            "es": 1.0
+          },
+          "metric": "document_recall_at_10",
+          "negative_interpretation": "ranking only; no semantic abstention claimed",
+          "negative_queries": 4,
+          "negative_queries_with_hits": 4,
+          "negative_returned_hits": [
+            10,
+            10,
+            10,
+            10
+          ],
+          "per_query": {
+            "q01": 1.0,
+            "q02": 1.0,
+            "q03": 1.0,
+            "q04": 1.0,
+            "q05": 1.0,
+            "q06": 1.0,
+            "q07": 1.0,
+            "q08": 1.0,
+            "q09": 1.0,
+            "q10": 1.0,
+            "q11": 1.0,
+            "q12": 1.0,
+            "q13": 1.0,
+            "q14": 1.0,
+            "q15": 1.0,
+            "q16": 1.0,
+            "q17": 1.0,
+            "q18": 1.0,
+            "q19": 1.0,
+            "q20": 1.0,
+            "q21": 1.0,
+            "q22": 1.0,
+            "q23": 1.0,
+            "q24": 1.0,
+            "q25": 1.0,
+            "q26": 1.0,
+            "q27": 1.0,
+            "q28": 1.0,
+            "q29": 1.0,
+            "q30": 1.0,
+            "q31": 1.0,
+            "q32": 1.0,
+            "q33": 1.0,
+            "q34": 1.0,
+            "q35": 1.0,
+            "q36": 1.0
+          },
+          "recall_at_10": 1.0,
+          "recall_gate_passed": true
+        }
+      },
+      "name": "two-b",
+      "query_failures": 0,
+      "rollback_intact": true,
+      "sql_latency_ms": {
+        "hybrid": {
+          "maximum_ms": 1992.362682998646,
+          "method": "nearest-rank",
+          "minimum_ms": 42.975076008588076,
+          "p50_ms": 62.39174195798114,
+          "p95_ms": 400.69215203402564,
+          "samples": 40
+        },
+        "vector": {
+          "maximum_ms": 8053.460000024643,
+          "method": "nearest-rank",
+          "minimum_ms": 35.51515098661184,
+          "p50_ms": 54.63774304371327,
+          "p95_ms": 272.07770000677556,
+          "samples": 40
+        }
+      },
+      "technical_fts_checks": 8,
+      "valid_citations": 400
+    }
+  ],
+  "latency_scope": "one pass; model queries measured once, SQL per fixture; not HTTP latency",
+  "ledger_scope": "synthetic SQL fixtures; not independent worker usage or billing",
+  "measured_on": "2026-11-03",
+  "profile_fingerprint": "877b3533c0ebeb369bfc3cd88603b0cbcf68ee1f128b1f4552fd60bffc86747c",
+  "query_inference_latency_ms": {
+    "maximum_ms": 3622.0952729927376,
+    "method": "nearest-rank",
+    "minimum_ms": 1532.4816259671934,
+    "p50_ms": 2358.870472991839,
+    "p95_ms": 3361.4610079675913,
+    "samples": 40
+  },
+  "real_provider_input_tokens": 2281,
+  "real_provider_requests": 44,
+  "resources": {
+    "cpu_limit": 1.5,
+    "memory_gib": 6,
+    "model_threads": 2
+  },
+  "source_commit": "a4d01bed310adc0ed3aaf7dd9afa33e271a39437",
+  "synthetic_only": true,
+  "version": "f06-baseline-v1"
+}

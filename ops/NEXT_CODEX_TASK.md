@@ -23,23 +23,33 @@ No declarar aceptada ni implementar F06 antes de completar esas puertas.
 - Nueva sesión diaria habilitada por Diego, validada ACTIVE; vence
   2026-11-04T08:51:32-05:00. Sin renovación automática ni cambios Bao/root/políticas.
 
-## Siguiente acción
+## Siguiente acción — cierre F06
 
-F05 aceptada en PR74, merge7f7f180d400d28203d2b20f1947d792661237251.
-Cuatro checks HEAD/tres postmerge SUCCESS, aceptación registrada en comentario
-6605895334. Operativo alineado; worktree docs/F06-plan.
-Plan/tareas/checklist/evidencia F06 preparados antes de implementación.
-Diego aprobó aclarar AC03: solo versiones procesadas vigentes publicadas/completas/
-autorizadas, estado recepción original conservado, sin migración.
+Pruebas técnicas F06 completas. Falta CI/revisión/merge/postmerge del expediente.
+Rama docs/F06-acceptance conserva métricas verificadas y diagnósticos.
+Operativo54b4c9684044fc179d7766158e11bd3ae507b31f (PR82), código core probado,
+cuatro checks HEAD/tres postmerge correctos. No cambiar checkout con consumidores.
 
-Validar/revisar/integrar el plan; seguir T002 contratos/filtros/RRF y pruebas.
-No requiere otra aprobación de trámite. RRF60/50candidatos por modalidad y FTS
-simple, inicialmente sin DDL persistente. API F05 conserva contrato/exacto.
-Corpus >=30preguntas congelado antes de medir, golds/negativas/ambigüedad,
-citas100% autorizadas y recall@10>=.80; no reusar métricas F05 como calidad F06.
+Calidad ac2b8e1743994b4c9bed1aa5a0573126:44ops/2281tokens,Recall10=1.0
+ES/EN vector+híbrido,1600citas/32FTS/rollbackPASS; baseline-v1.json allowlisted.
+Servicio real7e04eee3dac24d269d825a0fb37bde66:8ops184tokens,4hybridcites
+y12exactF05resultsciteresolved,0deniedinference, sin mutar corpus.
+Regresiónfinal4fb9bbd4bda24235bb401a7c753051a2 exit0/37.58s, cuatro
+tenants/dos instancias OIDC/SQL/TLS/roles/S3/privacidad/históricosPASS.
 
-Sesión diaria validada hasta2026-11-04T08:51:32-05:00; no renovación automática.
-Modelos/API de pruebas cerrados y consumidores libres, recursos conservados.
-Todo código/dependencias/servicios en ragdev01. CI exacto y revisión propia
-delegada ADR0007, postmerge; no main/tag/producción/visibilidad/purgas/Bao.
-Continuar al completar PR/fase según ADR0010. F07 requiere F06 aceptada.
+S3ProtocolError reproducido68bc0f45... RemoteDisconnected en conexión reutilizada.
+PR82: lectura GET/HEAD retry1, escrituras/status/TLS/conexión sin replay,
+sin redirects y logs saneados antes del retry. No denegaciones relajadas.
+Suite1295PASS91.31s/1warning; hashsmoke105módulos/sourceRO/sinTorch.
+Imagen anterior retenida; nuevoAPI rag-f06-api-source-t010 cerrado limpiamente,
+locks F03/F04/F05 libres. No Qwen activo.
+
+Integrar expediente y registrar aceptación efectiva antes de implementar F07.
+Continuar el roadmap ADR0010 sin otra autorización de trámite.
+F07 D-07 requiere propuesta concreta de perfil LLM/retención y decisión real;
+preparar plan/tareas e interfaz/mock dentro del alcance original antes de código.
+No usar proveedor externo/modelo nuevo o cambiar retención por iniciativa.
+
+Día válido hasta2026-11-04T08:51:32-05:00; sin renovación automática.
+Todo en ragdev01, revisión propia ADR0007, sin main/tag/producción/visibilidad/
+purgas/root/políticas Bao. Conservar imágenes/contenedores/documentos/journals.

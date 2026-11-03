@@ -1,7 +1,8 @@
 # RAG Platform — Arquitectura fundacional y especificaciones SDD
 
-**Estado:** F00–F05 aceptadas. F06 en planificación (2026-11-03).
-[Aceptación y límites F05](specs/F05-embeddings-vector/acceptance.md).
+**Estado:** F00–F05 aceptadas. F06 implementada y probada; expediente de cierre
+pendiente de CI, revisión, integración y postmerge (2026-11-03).
+[Resultados y límites F06](specs/F06-recuperacion-evaluacion/acceptance.md).
 **Nombre de trabajo:** rag-platform (marca comercial por definir).
 **Método:** Spec-Driven Development con fases, pruebas y PR.
 El repositorio contiene especificaciones, código y pruebas de aprovisionamiento, identidad y documentos privados.
@@ -74,7 +75,9 @@ La jerarquía de referencia es: `docs/01-constitution.md` > ADRs aprobados > arq
 - F05 aceptada en PR #74: espacios versionados, Qwen local, worker por lotes,
   publicación recuperable y búsqueda HTTP autorizada.
   [Expediente F05](specs/F05-embeddings-vector/acceptance.md).
-- F06 en planificación: [plan y tareas](specs/F06-recuperacion-evaluacion/plan.md).
+- F06 con pruebas técnicas completas: FTS/vector, RRF, citas autorizadas y corpus
+  técnico ES/EN. [Expediente F06](specs/F06-recuperacion-evaluacion/acceptance.md),
+  pendiente de integración de cierre.
 - F07–F11 conservan su alcance y dependencias; implementación pendiente.
 
 Toda ejecución se realiza en ragdev01. PR a develop con revisión delegada según
