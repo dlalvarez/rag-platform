@@ -29,7 +29,7 @@ from rag_platform.ingestion.schema_f04_0003 import build_metadata as historical
 PHASE = "START"
 
 
-def prove(target, names, bootstrap):
+def prove(target, names, bootstrap, *, retrieve=exact, after_publication=None):
     global PHASE
     engine = sa.create_engine(
         "postgresql+psycopg://",
@@ -108,10 +108,12 @@ def prove(target, names, bootstrap):
                     embedded.update(zip(task.chunk_ids, response.vectors, strict=True))
                 vector = next(iter(embedded.values()))
                 PHASE = "UNPUBLISHED_HIDDEN"
-                assert exact(c, f["actor"], (f["repo"],), space, profile, vector, 50) == ()
+                assert retrieve(c, f["actor"], (f["repo"],), space, profile, vector, 50) == ()
                 processing.complete(c, guard, profile)
+                if after_publication is not None:
+                    after_publication(c, names, space, profile, f, embedded)
                 PHASE = "EXACT_REFERENCE"
-                hits = exact(c, f["actor"], (f["repo"],), space, profile, vector, 50)
+                hits = retrieve(c, f["actor"], (f["repo"],), space, profile, vector, 50)
                 assert len(hits) == len(embedded)
                 expected = sorted(
                     embedded,
@@ -134,10 +136,10 @@ def prove(target, names, bootstrap):
                     and -1.0 <= h.score <= 1.0
                     for h in hits
                 )
-                assert exact(c, f["actor"], (f["repo"],), space, profile, vector, 1) == hits[:1]
+                assert retrieve(c, f["actor"], (f["repo"],), space, profile, vector, 1) == hits[:1]
                 PHASE = "ACL_FILTER"
-                assert exact(c, uuid4(), (f["repo"],), space, profile, vector, 50) == ()
-                assert exact(c, f["actor"], (uuid4(),), space, profile, vector, 50) == ()
+                assert retrieve(c, uuid4(), (f["repo"],), space, profile, vector, 50) == ()
+                assert retrieve(c, f["actor"], (uuid4(),), space, profile, vector, 50) == ()
                 reader = uuid4()
                 c.exec_driver_sql(
                     "INSERT INTO security.repository_acl(repository_id,principal_id,role) "
@@ -145,7 +147,7 @@ def prove(target, names, bootstrap):
                     (f["repo"], reader),
                 )
                 role(c, names, "readonly")
-                assert exact(c, reader, (f["repo"],), space, profile, vector, 50) == hits
+                assert retrieve(c, reader, (f["repo"],), space, profile, vector, 50) == hits
                 role(c, names, "app")
                 with c.begin_nested() as revoked:
                     c.execute(
@@ -155,7 +157,7 @@ def prove(target, names, bootstrap):
                         ),
                         {"repo": f["repo"], "actor": reader},
                     )
-                    assert exact(c, reader, (f["repo"],), space, profile, vector, 50) == ()
+                    assert retrieve(c, reader, (f["repo"],), space, profile, vector, 50) == ()
                     revoked.rollback()
                 PHASE = "TOMBSTONE"
                 with c.begin_nested() as tombstone:
@@ -169,7 +171,7 @@ def prove(target, names, bootstrap):
                         )
                     )
                     c.exec_driver_sql("SET CONSTRAINTS ALL IMMEDIATE")
-                    assert exact(c, f["actor"], (f["repo"],), space, profile, vector, 50) == ()
+                    assert retrieve(c, f["actor"], (f["repo"],), space, profile, vector, 50) == ()
                     tombstone.rollback()
                 c.exec_driver_sql("SET CONSTRAINTS ALL DEFERRED")
                 PHASE = "MISSING_BINDING"
@@ -180,12 +182,12 @@ def prove(target, names, bootstrap):
                             processing.publications.c.intent_id == plan.id
                         )
                     )
-                    assert exact(c, f["actor"], (f["repo"],), space, profile, vector, 50) == ()
+                    assert retrieve(c, f["actor"], (f["repo"],), space, profile, vector, 50) == ()
                     missing.rollback()
                 role(c, names, "app")
                 PHASE = "PROFILE_MISMATCH"
                 try:
-                    exact(
+                    retrieve(
                         c,
                         f["actor"],
                         (f["repo"],),
@@ -198,7 +200,7 @@ def prove(target, names, bootstrap):
                     assert error.code == "PROFILE_MISMATCH"
                 else:
                     raise RuntimeError("MISMATCH_ACCEPTED")
-                assert exact(c, f["actor"], (f["repo"],), space, profile, vector, 50) == hits
+                assert retrieve(c, f["actor"], (f["repo"],), space, profile, vector, 50) == hits
             finally:
                 transaction.rollback()
             PHASE = "FINAL_ROLLBACK"

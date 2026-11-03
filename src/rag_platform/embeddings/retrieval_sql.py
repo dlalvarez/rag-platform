@@ -74,14 +74,7 @@ def query_vector(profile, vector):
     return values
 
 
-def exact_statement(actor, repositories, space, profile, vector, top_k):
-    """Internal only: callers supply a validated context and trusted query embedding.
-
-    The ACL/pointer/publication intersection is materialized before ranking. This is
-    the exact reference, deliberately independent of any HNSW candidate limit.
-    """
-    identifiers(actor, repositories, space, top_k)
-    vector = query_vector(profile, vector)
+def _permitted(actor, repositories, space, profile, *, include_vector=True):
     metadata = build_metadata()
     vectors = vector_table(metadata, space, profile)
     chunks = metadata.tables["knowledge.chunks"]
@@ -129,13 +122,13 @@ def exact_statement(actor, repositories, space, profile, vector, top_k):
         .join(repos, repos.c.id == vectors.c.repository_id)
         .join(acl, acl.c.repository_id == vectors.c.repository_id)
     )
-    permitted = (
+    return (
         sa.select(
             vectors.c.repository_id,
             vectors.c.document_id,
             vectors.c.version_id,
             vectors.c.chunk_id,
-            vectors.c.embedding,
+            *((vectors.c.embedding,) if include_vector else ()),
             sa.func.left(chunks.c.text, 512).label("excerpt"),
             chunks.c.page,
             chunks.c.section,
@@ -159,6 +152,17 @@ def exact_statement(actor, repositories, space, profile, vector, top_k):
         .cte("permitted")
         .prefix_with("MATERIALIZED")
     )
+
+
+def exact_statement(actor, repositories, space, profile, vector, top_k):
+    """Internal only: callers supply a validated context and trusted query embedding.
+
+    The ACL/pointer/publication intersection is materialized before ranking. This is
+    the exact reference, deliberately independent of any HNSW candidate limit.
+    """
+    identifiers(actor, repositories, space, top_k)
+    vector = query_vector(profile, vector)
+    permitted = _permitted(actor, repositories, space, profile)
     distance = permitted.c.embedding.op("<=>", return_type=sa.Float())(
         sa.cast(
             sa.bindparam("query_vector", vector, type_=Vector(profile.dimension)),
