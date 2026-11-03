@@ -1,0 +1,11 @@
+services:
+  embedding-worker:
+    image: rag-f05-embedding:t008
+    environment:
+      RAG_F05_QUERY_ENABLED: "1"
+      RAG_F05_QUERY_SOCKET: /run/f05-query/qwen.sock
+    volumes:
+      - type: bind
+        source: /run/user/${RAG_F02_UID:?Prepare F02}/rag-f05-query
+        target: /run/f05-query
+        bind: {create_host_path: false}

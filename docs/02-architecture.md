@@ -81,3 +81,12 @@ Solicitud autorizada -> objeto temporal privado -> registro de fuente/documento 
 ## Fronteras de confianza
 
 Internet/cliente -> API; API -> control; API/worker -> BD tenant; API/worker -> objetos tenant; API/worker -> proveedores externos. Cada salto exige autenticación, autorización y registros apropiados. Los documentos son **datos no confiables**, no instrucciones del sistema.
+
+## Proveedor local de consultas en desarrollo
+
+ADR0012 aprobado permite API -> conexión Unix privada -> trabajador Qwen existente.
+Reutiliza una copia del modelo y la entrega limitada, con CPU compartida y espera
+acotada. La API conserva autenticación y recuperación SQL; el trabajador verifica
+el contexto firmado y ACL antes/después de inferir. Sin puerto público ni Torch
+en API. Ver [ADR0012](adr/0012-private-query-provider.md); implementación opt-in
+y evidencia pendientes, sin ampliar producción ni el contrato de generación F07.

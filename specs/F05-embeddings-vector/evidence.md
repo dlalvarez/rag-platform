@@ -424,3 +424,27 @@ una copia del modelo, sin puerto público/terceros, CPU compartida/espera acotad
 reautorización antes de fragmentos, solo desarrollo. Registrar ADR0012 y probar
 transporte antes de habilitar HTTP; la aprobación de este contrato ya existe.
 Suite981passed68.73s; ruff/formato/docs correctos. Warn httpx/TestClient heredado.
+
+## Recuperación Qwen real, cuatro fixtures
+PR66 becfaebb tiene checks previos y postmerge correctos.
+Journal b6e1cd49609c4f6e8b8de8f06ff2f268: same-a/two-a interrumpidos tras guardar
+lote y antes de publicación; same-b/two-b tras publicación y antes del ACK.
+Los cuatro retomaron en intento2, COMPLETE/publicación1/SUCCEEDED, cero llamadas
+al proveedor al retomar y original conservado. Una llamada inicial,18tokens y
+ocho heartbeats por caso. Demora artificial QA35s, lease15/pulso5: no benchmark.
+Cerca antigua rechazada y tercer claim ausente. Corpus positive-txt existente.
+Cada caso tiene un solo lote: queda pendiente recuperación parcial multilote.
+El SHA HTTP del original de este corpus aún no se ha vuelto a comprobar.
+
+## Transporte privado en preparación
+ADR0012 registra aprobación ya existente; socket Unix privado y un modelo compartido.
+Opt-in, framing/límites, firma/ACL/perfil antes y después, prioridad de indexación
+y cierre antes de revocar entrega. QA real preparada sin Torch en tools.
+Pruebas y despliegue reales de este transporte aún pendientes de cierre; HTTP,
+ANN y calidad siguen abiertos. Manual: private-query.md.
+
+Validación transporte 2026-11-03: 1031 passed en75.64s; un warning heredado
+Starlette/httpx. Ruff check, formato260archivos, check_docs y diff --check PASS.
+Revisión propia: permisos/peer UID, firma y ACL antes/después, límites, prioridad,
+cierre y flag0 compatible revisados. Sin revisión independiente atribuida.
+Prueba nativa RPC, imagen t008 y ruta HTTP todavía no ejecutadas.
