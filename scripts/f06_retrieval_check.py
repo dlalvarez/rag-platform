@@ -2,6 +2,7 @@
 
 import logging
 import re
+from dataclasses import replace
 from uuid import uuid4
 
 import f05_publication_check as battery
@@ -9,10 +10,10 @@ import f05_retrieval_check as reference
 import sqlalchemy as sa
 
 from rag_platform.ingestion.schema import chunks
-from rag_platform.retrieval.contracts import QueryFilters
-from rag_platform.retrieval.sql import candidate_statement, hybrid
+from rag_platform.retrieval.contracts import CitationRef, QueryFilters, RetrievalError
+from rag_platform.retrieval.sql import candidate_statement, hybrid, resolve
 
-COUNTS = dict(fixtures=0, comparisons=0, lexical_checks=0, metadata_checks=0)
+COUNTS = dict(fixtures=0, comparisons=0, lexical_checks=0, metadata_checks=0, citation_checks=0)
 
 
 def metadata_probe(c, names, space, profile, allowed, embedded):
@@ -101,6 +102,37 @@ def prove(target, names, bootstrap):
             assert {h.chunk_id for h in baseline} == {
                 h.evidence.reference.chunk_id for h in candidate
             }
+        for hit in candidate:
+            assert resolve(c, names.tenant, actor, hit.evidence.reference, profile) == hit.evidence
+            COUNTS["citation_checks"] += 1
+        if candidate:
+            reference_id = candidate[0].evidence.reference
+            for field in ("document_id", "version_id", "chunk_id"):
+                try:
+                    resolve(
+                        c, names.tenant, actor, replace(reference_id, **{field: uuid4()}), profile
+                    )
+                except RetrievalError as error:
+                    assert error.code == "NOT_FOUND"
+                else:
+                    raise AssertionError("FABRICATED_CITATION")
+                COUNTS["citation_checks"] += 1
+        if not candidate:
+            # IDs from this temporary fixture only; do not expose its text or bypass the resolver.
+            identities = c.execute(
+                sa.select(
+                    chunks.c.repository_id, chunks.c.document_id, chunks.c.version_id, chunks.c.id
+                ).where(chunks.c.repository_id.in_(repositories))
+            ).all()
+            for row in identities:
+                ref = CitationRef(names.tenant, space, *row)
+                try:
+                    resolve(c, names.tenant, actor, ref, profile)
+                except RetrievalError as error:
+                    assert error.code == "NOT_FOUND"
+                else:
+                    raise AssertionError("INELIGIBLE_CITATION")
+                COUNTS["citation_checks"] += 1
         COUNTS["comparisons"] += 1
         return baseline
 
@@ -112,8 +144,9 @@ if __name__ == "__main__":
     try:
         battery.run(probe=prove, sources=("f05_tenant_0006",))
         assert COUNTS["fixtures"] == COUNTS["lexical_checks"] == COUNTS["metadata_checks"] == 4
+        assert COUNTS["citation_checks"] >= 4
         print(
-            "PASS F06 SQL: four fixtures/FTS/metadata/ACL/publication/roles/tombstone; "
+            "PASS F06 SQL: four fixtures/FTS/metadata/citations/ACL/publication/roles/tombstone; "
             "history/control/DDL rollback intact."
         )
         print("F06 SQL COUNTS " + str(COUNTS))

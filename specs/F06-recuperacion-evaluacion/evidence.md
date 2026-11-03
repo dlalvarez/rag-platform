@@ -55,3 +55,33 @@ Ruff/formato278/docs/diff/composeconfig correctos. Código sin cambios durante
 la corrida. Revisión propia de filtros comunes/proyección F05 por defecto,
 parámetros FTS/JSON/vector y una sentencia/snapshot; prueba real aún pendiente.
 PR76/T002 integrado510ac6f5a5ac62257b116345ccfa127712de5307,4pre/3postSUCCESS.
+
+## T004 — servicio híbrido y citas preparados
+
+HybridService reutiliza preflight de repositorios/perfil y la misma validación
+de tokenización/embeddings extraída de SearchService F05. Libera conexiones
+durante inferencia y autoriza de nuevo antes de recuperar. La API F05 permanece
+exacta. Citation resolver exige tenant/repo/doc/versión/chunk/space coincidentes,
+permisos actuales y publicación vigente completa; offsets de texto normalizado.
+
+65pruebas focalizadas PASS11.72s: autoridad/ACL reales offline, revocación
+durante inferencia, contexto vencido, referencias ajenas/inexistentes/perfil,
+trazas falsas, procedencia contradictoria y errores cerrados, más regresión
+SearchService F05. Comprobador SQL ampliado para citas válidas y fabricadas,
+bajas/ausencia de publicación/ACL sin cambios persistentes; aún no ejecutado.
+Sin HTTP nuevo, modelo generativo, migración ni aceptación F06.
+
+## T003 — PostgreSQL real completado
+
+PR77 integrado c9f1d01fbb5929aba71cb56e417184588d718cf1,4pre/3postSUCCESS.
+Journal63eb55824f8242939eeaf0733f81ef05 exit0/46.34s. Cuatro tenants/dos
+instancias,40comparaciones y4pruebas FTS/4metadata correctas; app/readonly,
+ACL/publicación/baja/perfil, historia/control/DDL y rollback intactos.
+Sin Qwen ni cambios persistentes. No acredita calidad de recuperación F06.
+
+Validación completa T004:1235passed/1warning heredado en97.96s,
+runnerexit0/104.43s, journal0b40d97f4f3e4f5eb3f6bc3b29ecf72b.
+Ruff/formato281/docs/diff correctos. Fuente fija durante la corrida.
+Revisión propia: mismo preflight/inferencia F05, autoridad nueva tras modelo,
+resolver con filtros compartidos y referencia exacta; no revisión independiente.
+Ejecución SQL ampliada de citas y consulta real autorizada con Qwen pendientes.

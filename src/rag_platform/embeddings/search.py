@@ -82,6 +82,14 @@ class SearchService:
         repositories = tuple(repositories)
         self._read(checked, trace, repositories, space, top_k)
 
+        response = self._embed(query)
+
+        # The previous signed context may have expired during inference. Authorize afresh.
+        fresh = self.authority.authorize(checked.principal_id, checked.tenant_id, trace)
+        hits = self._read(fresh, trace, repositories, space, top_k, response.vectors[0])
+        return SearchResult(hits, response.total_tokens)
+
+    def _embed(self, query):
         # No tenant/control connection or transaction is held during tokenization/inference.
         try:
             if self.provider.profile != self.profile:
@@ -105,7 +113,4 @@ class SearchService:
         except Exception:
             raise DocumentError() from None
 
-        # The previous signed context may have expired during inference. Authorize afresh.
-        fresh = self.authority.authorize(checked.principal_id, checked.tenant_id, trace)
-        hits = self._read(fresh, trace, repositories, space, top_k, response.vectors[0])
-        return SearchResult(hits, response.total_tokens)
+        return response

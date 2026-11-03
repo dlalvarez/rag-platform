@@ -152,8 +152,56 @@ def hybrid(c, tenant, actor, repositories, space, profile, vector, query, top_k,
                 raise RetrievalError()
             candidates[modality].append(evidence_row(row, tenant, space))
         return fuse(candidates["vector"], candidates["lexical"], top_k)
-    except (ProcessingError, SearchError):
+    except (ProcessingError, SearchError) as error:
+        raise RetrievalError(
+            "PROFILE_MISMATCH" if error.code == "PROFILE_MISMATCH" else "DEPENDENCY_UNAVAILABLE"
+        ) from None
+    except RetrievalError:
+        raise
+    except Exception:
         raise RetrievalError() from None
+
+
+def citation_statement(actor, reference, profile):
+    if not isinstance(reference, CitationRef):
+        raise RetrievalError("INPUT_INVALID")
+    identifiers(actor, (reference.repository_id,), reference.space_id, 1)
+    allowed = eligible(
+        actor,
+        (reference.repository_id,),
+        reference.space_id,
+        profile,
+        QueryFilters(document_ids=(reference.document_id,), version_ids=(reference.version_id,)),
+        include_vector=False,
+    )
+    return (
+        sa.select(*(allowed.c[name] for name in COLUMNS))
+        .where(allowed.c.chunk_id == reference.chunk_id)
+        .limit(1)
+    )
+
+
+def resolve(c, tenant, actor, reference, profile):
+    """Resolve current published evidence; a reference never substitutes for authorization."""
+    uuid_value(tenant)
+    if not isinstance(reference, CitationRef) or reference.tenant_id != tenant:
+        raise RetrievalError("INPUT_INVALID")
+    statement = citation_statement(actor, reference, profile)
+    if c.dialect.name != "postgresql":
+        raise RetrievalError()
+    try:
+        _space(c, reference.space_id, profile)
+        row = c.execute(statement).mappings().first()
+        if row is None:
+            raise RetrievalError("NOT_FOUND")
+        evidence = evidence_row(row, tenant, reference.space_id)
+        if evidence.reference != reference:
+            raise RetrievalError("INCONSISTENT_EVIDENCE")
+        return evidence
+    except (ProcessingError, SearchError) as error:
+        raise RetrievalError(
+            "PROFILE_MISMATCH" if error.code == "PROFILE_MISMATCH" else "DEPENDENCY_UNAVAILABLE"
+        ) from None
     except RetrievalError:
         raise
     except Exception:

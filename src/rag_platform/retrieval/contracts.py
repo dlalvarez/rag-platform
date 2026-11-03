@@ -10,7 +10,13 @@ CANDIDATE_LIMIT = 50
 
 
 class RetrievalError(RuntimeError):
-    CODES = {"INPUT_INVALID", "INCONSISTENT_EVIDENCE", "DEPENDENCY_UNAVAILABLE"}
+    CODES = {
+        "INPUT_INVALID",
+        "INCONSISTENT_EVIDENCE",
+        "NOT_FOUND",
+        "PROFILE_MISMATCH",
+        "DEPENDENCY_UNAVAILABLE",
+    }
 
     def __init__(self, code="DEPENDENCY_UNAVAILABLE"):
         self.code = (
