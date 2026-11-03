@@ -1,32 +1,37 @@
-# Continuidad F05 — transporte privado en revisión
+# Continuidad F05 — HTTP en revisión
 
-Develop becfaebb (PR66), checks previos/postmerge correctos. Adopción control0007/
-cuatro tenants0006 completa; no repetir adopción con espacios ya publicados.
-Aprobaciones vigentes: Qwen, HTTP de fragmentos, actualización BD de prueba y
-conexión privada al trabajador Qwen. No volver a pedirlas.
+Develop80bf466 (PR67) con cuatro checks HEAD/tres postmerge correctos.
+Aprobaciones vigentes de Diego: Qwen, búsqueda HTTP de fragmentos, adopción BD
+de prueba y conexión privada al trabajador. No volver a pedirlas.
+Control0007/cuatro tenants0006 listos, Qwen publicado: no repetir adopción.
 
-Recuperación REAL journal b6e1cd49609c4f6e8b8de8f06ff2f268 completada en cuatro fixtures:
-dos cortes BATCH_COMMITTED y dos RESULT_COMMITTED, intento2 SUCCEEDED,
-cero inferencias repetidas y originales retenidos. Un lote por caso; no acredita
-multilote pendiente. Journal worker15bbc, corpus positivo-txt activo, no barrido.
+Recuperación real journal b6e1cd49609c4f6e8b8de8f06ff2f268 completada cuatro casos:
+BATCH_COMMITTED/RESULT_COMMITTED, intento2 SUCCEEDED, cero llamadas al retomar,
+originales retenidos. Un lote por caso; multilote parcial pendiente.
+Atomic Qwen proof1c70faf0282548499cd601f6ebe9859e y manifest APIa75adb4c445c46d698abc558a8308112.
 
-Worktree feat/F05-T007-query-transport sobre becfaebb, todavía sin PR/despliegue.
-ADR0012 y manual specs/F05-embeddings-vector/private-query.md. Transporte Unix,
-gate compartido, backend/client/server, flag opt-in y overlays/QA preparados.
-Revisar/tests completos/CI/merge/postmerge antes de construir imagen t008 y arrancar.
-Conservar t004 y contenedores antiguos; una sola copia Qwen por VM.
-API compatible t006 activa, su entrega limitada probablemente vencida:
-detener consumidor y tomar lock /run/user/1000/rag-f03-application/consumer.lock
-antes de reemplazar con día vigente. Nunca iniciar API t003 contra0006.
+Transporte PR67 integrado/apagado por defecto. Imagen t008
+76d97066ddfd87de84c8754df8d9308034d43262e48d6083660b43df0c46c131,
+97hash/importPASS. Único Qwen activo en rag-f05-embedding-query-t008; t004 detenido
+preservado. Entrega F05 vence ~2026-11-03T10:47UTC, comprobar antes de usar.
+QA RPC bec5dbc5efaf44d2b408a13c80e270f8 PASS cuatrofixtures/SQL/workerACL/toolsnoTorch.
+Contadores/trazas:4requests92tokens,0inferencias en denegaciones. F04 QA cerrada.
 
-Día comprobado ACTIVE el 2026-11-03 ~09:39UTC, vence 07:14:15-05:00 (12:14UTC).
-Comprobar antes de emitir; no renovar/root/configure/políticas/reinicios Bao.
-F05/QA anteriores cerrados; comprobar locks antes de nuevas entregas.
-Todo ejecución/dependencias/modelo en ragdev01; Mac solo SSH/documentos.
-GitHub fuente de verdad, ADR0007 revisión propia explícita, CI de HEAD y postmerge.
+Worktree feat/F05-T007-http-search sobre80bf466: adaptador/flag/overlays/manual
+http-search.md/QA OIDC preparados, todavía sin PR/build/despliegue.
+Suite1076passed86.79s,45HTTP16.30s; pruebas adicionales de flag en curso.
+Sin migración/dependencias. CI/revisión/merge/postmerge antes de imagenAPI:t009.
+API t006 está activa con entrega limitada vencida: detener antes de reemplazar
+F03 bajo /run/user/1000/rag-f03-application/consumer.lock, usando día vigente.
+Conservar contenedor/imagen anterior, nunca iniciar t003 contra0006.
+QA HTTP sin SQL/handoff/día/administrador, verifica ocho originales SHA y cuatro
+búsquedas/rechazos; no necesita nueva entregaF04. Nuevo journal0700.
 
-Siguiente: cerrar revisión/tests y PR transporte, luego build/hash/import smoke,
-preparar socket tmpfs y entrega F05, un único nuevo trabajador opt-in, QA RPC
-cuatro fixtures y trazas/uso/denegaciones sin texto/vector. Después HTTP autorizado,
-regresión/original HTTP-SHA, ANN/exacto/calidad SQL ES/EN y recuperación multilote.
-No marcar T003..T008/F05 aceptadas antes de evidencia. Continuar al cerrar cada PR.
+Día ACTIVE comprobado09:39UTC Nov3, vence07:14:15-05:00 (12:14UTC).
+No renovar/root/configure/políticas/reinicios Bao por iniciativa.
+Todo ejecución/dependencias en ragdev01; Mac solo SSH/documentos.
+GitHub fuente verdad; árboles iguales al probado, ADR0007 revisión propia explícita
+y CI HEAD/postmerge. Seguir hasta dependencia/decisión real, no terminar por PR.
+
+Después HTTP: originalSHA/regresión, ANN/exacto/filtros, calidad SQL ES/EN y
+recuperación parcial multilote. T003..T008/F05 siguen abiertas.

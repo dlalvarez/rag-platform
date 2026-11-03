@@ -1,5 +1,6 @@
 """Known F05 profile admission and future job-kind isolation; no service required."""
 
+import os
 import time
 from contextlib import nullcontext
 from dataclasses import replace
@@ -230,6 +231,7 @@ def _assert_configured_profile(monkeypatch, enabled, expected):
 
     def configure(*args, **kwargs):
         recorded["profile"] = kwargs["profile"]
+        recorded["search_socket"] = kwargs["search_socket"]
 
     monkeypatch.setattr(identity_api, "create_app", create)
     monkeypatch.setattr(documents_api, "configure", configure)
@@ -243,7 +245,15 @@ def _assert_configured_profile(monkeypatch, enabled, expected):
     }.items():
         monkeypatch.setenv(name, value)
     identity_api.create_configured_app()
-    assert recorded == {"profiles": ("identity", expected), "profile": expected}
+    assert recorded == {
+        "profiles": ("identity", expected),
+        "profile": expected,
+        "search_socket": (
+            Path("/run/f05-query/qwen.sock")
+            if os.environ.get("RAG_F05_SEARCH_ENABLED") == "1"
+            else None
+        ),
+    }
 
 
 @pytest.mark.parametrize("observed", [EMBEDDINGS_VERSION, "f04_tenant_0003"])
@@ -483,3 +493,16 @@ def test_publication_wrong_migration_source_denied_before_secret(control, source
             profile="embedding_publication",
             runner=lambda *_: pytest.fail("wrong runner"),
         )
+
+
+@pytest.mark.parametrize("search,publication", [("1", "0"), ("bad", "1")])
+def test_search_flag_requires_explicit_publication(monkeypatch, search, publication):
+    monkeypatch.setenv("RAG_F05_SEARCH_ENABLED", search)
+    test_publication_api_flag_requires_valid_foundation(monkeypatch, "1", publication)
+
+
+@pytest.mark.parametrize("search", ["0", "1"])
+def test_search_socket_is_only_configured_when_enabled(monkeypatch, search):
+    monkeypatch.setenv("RAG_F05_SEARCH_ENABLED", search)
+    monkeypatch.setenv("RAG_F05_PUBLICATION_ENABLED", "1")
+    _assert_configured_profile(monkeypatch, "1", "embedding_publication")
