@@ -1,7 +1,8 @@
 # RAG Platform — Arquitectura fundacional y especificaciones SDD
 
-**Estado:** F00–F03 implementadas y probadas en ragdev01 (2026-11-01).
-F03 aceptada con CI/revisión/merge/postmerge en PR #34. La API documental está en develop.
+**Estado:** F00–F04 aceptadas. F05 implementada y probada en ragdev01;
+expediente de cierre pendiente de CI, revisión, integración y postmerge (2026-11-03).
+[Resultados y límites F05](specs/F05-embeddings-vector/acceptance.md).
 **Nombre de trabajo:** rag-platform (marca comercial por definir).
 **Método:** Spec-Driven Development con fases, pruebas y PR.
 El repositorio contiene especificaciones, código y pruebas de aprovisionamiento, identidad y documentos privados.
@@ -46,8 +47,9 @@ Plataforma SaaS para crear repositorios de conocimiento y asistentes conversacio
 F00 estableció el repositorio y entorno; F01 probó aislamiento de bases/objetos y el
 provisionador; F02 añadió OIDC, membresías, roles, contexto autorizado y API de identidad.
 F03 añadió repositorios/ACL, recepción privada idempotente y proxy de originales.
-F04 inicia planificación dentro del [roadmap original](docs/10-roadmap.md),
-con planificación y decisiones técnicas pendientes según el registro original.
+F04 añadió ingesta versionada y publicación atómica. F05 incorpora embeddings Qwen
+y búsqueda vectorial autorizada. F06 seguirá con búsqueda híbrida, citas y evaluación
+cuando cierre la aceptación de F05, según el [roadmap original](docs/10-roadmap.md).
 
 ## Gobierno de cambios
 
@@ -68,8 +70,12 @@ La jerarquía de referencia es: `docs/01-constitution.md` > ADRs aprobados > arq
   562 tests offline, cuatro fixtures/ambas topologías y regresiones reales.
   [Aceptación/límites F03](specs/F03-repositorios-documentos/acceptance.md) y
   [manual HTTP/handoff](specs/F03-repositorios-documentos/api.md).
-- F04 en ejecución parcial (cola/extracción): [plan y tareas](specs/F04-ingesta-versionada/plan.md), con
-  aceptación E2E aún pendiente. F05..F11 conservan alcance/dependencias, no implementadas.
+- F04 aceptada en PR #44: cola durable, parsing, chunks, versionado y publicación
+  atómica. [Aceptación F04](specs/F04-ingesta-versionada/acceptance.md).
+- F05 con pruebas técnicas completas: espacios versionados, Qwen local, worker
+  por lotes, publicación recuperable y búsqueda HTTP autorizada. Cierre pendiente
+  de integración del [expediente F05](specs/F05-embeddings-vector/acceptance.md).
+- F06–F11 conservan su alcance y dependencias; implementación pendiente.
 
 Toda ejecución se realiza en ragdev01. PR a develop con revisión delegada según
 ADR-0007, checks obligatorios y postmerge; no promoción a main/tag por iniciativa

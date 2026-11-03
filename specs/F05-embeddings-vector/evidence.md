@@ -584,3 +584,41 @@ Validación corpus multilote:14offlinepassed2.46s,ruff/formato271/docs/diff/
 negativosF00 ycomposeconfig correctos. Runtime sin cambios desde suite1113 deCI72.
 Revisión propia de payload congelado, scope/cola, relay explícito/checkpoints/
 replay y vida de entrega; sin revisión independiente atribuida.
+
+## Cierre técnico: recuperación multilote y regresión final
+
+PR73 integrado31a1eebc935e57a5b51b6e9b46d6802001170a06, cuatro checks HEAD y
+tres postmerge correctos. Corpus real autorizado: journal
+cefed930e3444ddda29e581d61ceaec9, cuatroTXT públicos conservados,
+11250bytes/14chunks/4lotes por documento, SHA
+1d9098227dfd23dbc3ca57b624fcb8831c5a6241249458543e96715fe16037ec.
+Cuatro INGEST SUCCEEDED; replay idempotente y originales SHA verificados.
+
+Recuperación df669c4900ac4727be6e0612fef8fd13: same-a/two-a corte
+BATCH_COMMITTED tras4vectores, reanudación con3inferencias para los10chunks
+pendientes. same-b/two-b corte RESULT_COMMITTED tras14vectores/publicación,
+reanudación con0inferencias. Todos: intento2SUCCEEDED,14vectores,4ledgers,
+1publicación,original_retained true. Ledger conserva4requests/2815tokens por
+documento sin duplicar uso comprometido; fences/heartbeat/tercer claim probados.
+two-b crash173.49s(expected86),resume35.17s(exit0). Son pruebas de recuperación,
+con retraso artificial de35s para heartbeats; no benchmark de rendimiento.
+
+Verificación HTTP posterior exit0 en21.58s:4originales/SHA/4versiones publicadas.
+Regresión final f9b70369f2cb41d9aaa58d69407e6df3 exit0 en35.58s:
+OIDC/contexto,SQL/TLS/vector/roles,denegaciones CONNECT/SET ROLE,
+S3 stat/get/list propio/ajeno,privacidad e historial F03 conservados.
+El intento aa8183859536407388a7cf6c1db9018c falló two-a/S3 ProtocolError
+mientras otra prueba usaba Qwen; causa no demostrada. Repetición sin modelo
+activo pasó sin cambios ni negativos relajados. Ambos journals conservados.
+
+Logs corpus2archivos/recuperación9archivos/API:0marcadores de documento y
+0patrones Bearer ensayados. PostgreSQL:4controles positivos (3+1),0canary
+privado/0marcador multilote/0patrones Bearer. La primera aserción auxiliar supuso
+erróneamente2controles por instancia; se comprobó el total real4(3+1).
+No fue un fallo del control de privacidad ni una modificación de sus pruebas.
+Nueva sesión diaria activada por Diego tras retirar sesión vencida con rechazo
+confirmado en OpenBao. No renovación automática, root ni cambios de políticas.
+
+Ver [expediente de aceptación](acceptance.md). Revisión propia delegada ADR0007;
+no se atribuye revisión independiente ni nueva aprobación personal.
+CI/revisión/integración/postmerge del expediente siguen siendo puertas de salida.
