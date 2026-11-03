@@ -9,7 +9,7 @@
 - [x] T004/T005 batch/retry/crash/publicación/reindexación/bajas reales.
 - [x] T006 búsqueda exacta/ANN y aislamiento repo/tenant/version/space correctos.
 - [x] T007 ejemplo real/operación/manual/errores saneados.
-- [ ] T008 cuatro AC, regresiones F00..F04, CI/revisión/postmerge y aceptación.
+- [x] T008 cuatro AC, regresiones F00..F04, CI/revisión/postmerge y aceptación.
 
 | Gate | Requisitos | AC | Evidencia |
 |---|---|---|---|
@@ -19,3 +19,6 @@
 | operación | R01..05 | AC01..04 | límites/uso/logs/temporales/regresión/CI/postmerge |
 
 No equivaler fake a calidad semántica, ni índice parcial a PUBLISHED.
+
+T008 cerrada en PR74, checks HEAD y postmerge correctos; aceptación registrada
+en https://github.com/dlalvarez/rag-platform/pull/74#issuecomment-6605895334.

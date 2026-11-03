@@ -1,8 +1,7 @@
 # RAG Platform — Arquitectura fundacional y especificaciones SDD
 
-**Estado:** F00–F04 aceptadas. F05 implementada y probada en ragdev01;
-expediente de cierre pendiente de CI, revisión, integración y postmerge (2026-11-03).
-[Resultados y límites F05](specs/F05-embeddings-vector/acceptance.md).
+**Estado:** F00–F05 aceptadas. F06 en planificación (2026-11-03).
+[Aceptación y límites F05](specs/F05-embeddings-vector/acceptance.md).
 **Nombre de trabajo:** rag-platform (marca comercial por definir).
 **Método:** Spec-Driven Development con fases, pruebas y PR.
 El repositorio contiene especificaciones, código y pruebas de aprovisionamiento, identidad y documentos privados.
@@ -72,10 +71,11 @@ La jerarquía de referencia es: `docs/01-constitution.md` > ADRs aprobados > arq
   [manual HTTP/handoff](specs/F03-repositorios-documentos/api.md).
 - F04 aceptada en PR #44: cola durable, parsing, chunks, versionado y publicación
   atómica. [Aceptación F04](specs/F04-ingesta-versionada/acceptance.md).
-- F05 con pruebas técnicas completas: espacios versionados, Qwen local, worker
-  por lotes, publicación recuperable y búsqueda HTTP autorizada. Cierre pendiente
-  de integración del [expediente F05](specs/F05-embeddings-vector/acceptance.md).
-- F06–F11 conservan su alcance y dependencias; implementación pendiente.
+- F05 aceptada en PR #74: espacios versionados, Qwen local, worker por lotes,
+  publicación recuperable y búsqueda HTTP autorizada.
+  [Expediente F05](specs/F05-embeddings-vector/acceptance.md).
+- F06 en planificación: [plan y tareas](specs/F06-recuperacion-evaluacion/plan.md).
+- F07–F11 conservan su alcance y dependencias; implementación pendiente.
 
 Toda ejecución se realiza en ragdev01. PR a develop con revisión delegada según
 ADR-0007, checks obligatorios y postmerge; no promoción a main/tag por iniciativa
