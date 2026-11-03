@@ -1,0 +1,12 @@
+services:
+  api:
+    image: rag-f05-api:t009
+    environment:
+      RAG_F05_SEARCH_ENABLED: "1"
+      RAG_F05_QUERY_SOCKET: /run/f05-query/qwen.sock
+    volumes:
+      - type: bind
+        source: /run/user/${RAG_F02_UID:?Prepare F02}/rag-f05-query
+        target: /run/f05-query
+        read_only: true
+        bind: {create_host_path: false}

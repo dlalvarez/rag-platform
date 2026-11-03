@@ -326,7 +326,7 @@ def install(app, runtime):
         install_ingestion(app, runtime, authorized, reply)
 
 
-def configure(app, engine, key, *, profile="documents"):
+def configure(app, engine, key, *, profile="documents", search_socket=None):
     runtime = Runtime(
         engine,
         key,
@@ -337,6 +337,10 @@ def configure(app, engine, key, *, profile="documents"):
     )
     try:
         install(app, runtime)
+        if search_socket is not None:
+            from rag_platform.embeddings.api import install as install_search
+
+            install_search(app, runtime, search_socket)
         if profile in ("ingestion", "embeddings", "embedding_publication"):
             app.state.phase = "F05" if profile in ("embeddings", "embedding_publication") else "F04"
         app.state.resource_closers.append(runtime.close)

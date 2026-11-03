@@ -448,3 +448,31 @@ Starlette/httpx. Ruff check, formato260archivos, check_docs y diff --check PASS.
 Revisión propia: permisos/peer UID, firma y ACL antes/después, límites, prioridad,
 cierre y flag0 compatible revisados. Sin revisión independiente atribuida.
 Prueba nativa RPC, imagen t008 y ruta HTTP todavía no ejecutadas.
+
+## Transporte privado Qwen real
+PR67 integrado80bf466, cuatro checks HEAD y tres postmerge success.
+Imagen t008 hash/import97módulos idénticos a revisión integrada, sin red/secretos/
+pesos en smoke. Un trabajador Qwen con socket privado; anterior detenido conservado.
+QA journal bec5dbc5efaf44d2b408a13c80e270f8: cuatro fixtures/ambas instancias PASS,
+tools sin Torch, procedencia SQL y repo ajeno denegado por trabajador.
+Log contrastado por traza: cuatro eventos/4requests/92tokens, cero inferencias
+para trazas denegadas. No nuevo corpus, DDL o políticas. No es prueba de calidad.
+
+## HTTP preparado, todavía sin prueba nativa
+Adaptador opt-in con contrato de fragmentos, body64KiB/20s, dos slots, respuesta
+256KiB y cliente privado; perfil publicación obligatorio, por defecto apagado.
+45 pruebas HTTP focalizadas pasan16.30s. Autoridad/ACL SQLite reales y proveedor
+fixture explícito; prueba de admission HTTP usa stub para aislar sus slots.
+Errores iniciales de pruebas: estado INACTIVE no existe (corregido a REVOKED),
+supuesto falso de tokenización Unicode del fixture y aserción de pool global
+incompatible con concurrencia del propio fixture. Corregidos sin relajar producción.
+Ruff/formato263/docs/diff correctos. Regresión completa y QA HTTP siguen pendientes.
+Manual http-search.md; sin migraciones/dependencias nuevas.
+
+Regresión HTTP completa:1076passed86.79s, warning heredado Starlette/httpx.
+Pruebas de flag de activación agregadas después; validar focalizadas y CI final.
+
+Validación final de HTTP/compatibilidad88passed15.97s, incluye flags nuevos.
+Negativos F00 correctos. Fuente runtime sin cambios desde suite1076; cuatro
+pruebas nuevas llevan total esperado1080 en CI. Revisión propia de contrato,
+framing, identidad/ACL, uso, tamaño de respuesta, slots y despliegue opt-in.

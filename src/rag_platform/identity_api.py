@@ -203,11 +203,14 @@ def create_configured_app():
     ingestion = os.environ.get("RAG_F04_ENABLED", "0")
     embeddings = os.environ.get("RAG_F05_ENABLED", "0")
     publication = os.environ.get("RAG_F05_PUBLICATION_ENABLED", "0")
+    search = os.environ.get("RAG_F05_SEARCH_ENABLED", "0")
     if (
         enabled not in ("0", "1")
         or ingestion not in ("0", "1")
         or embeddings not in ("0", "1")
         or publication not in ("0", "1")
+        or search not in ("0", "1")
+        or (search == "1" and publication != "1")
         or (publication == "1" and embeddings != "1")
         or (embeddings == "1" and ingestion != "1")
         or (ingestion == "1" and enabled != "1")
@@ -235,7 +238,17 @@ def create_configured_app():
         if enabled == "1":
             from rag_platform.documents.api import configure
 
-            configure(app, engine, key, profile=profile)
+            configure(
+                app,
+                engine,
+                key,
+                profile=profile,
+                search_socket=(
+                    Path(os.environ.get("RAG_F05_QUERY_SOCKET", "/run/f05-query/qwen.sock"))
+                    if search == "1"
+                    else None
+                ),
+            )
         return app
     except BaseException:
         verifier.close()
