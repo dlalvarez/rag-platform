@@ -10,4 +10,7 @@
 - [x] Recall@10 >= 0.80, negativas/ambigüedad separadas y citas válidas 100%.
 - [x] Cuatro fixtures/dos instancias; aislamiento, estados, revocación, rollback y privacidad.
 - [x] Baseline de latencias/fallos/recursos y límites de representatividad.
-- [ ] Regresiones/CI/revisión/merge/postmerge y aceptación antes de F07.
+- [x] Regresiones/CI/revisión/merge/postmerge y aceptación antes de F07.
+
+F06 aceptada en PR83, checks HEAD/postmerge correctos y
+[registro de aceptación](https://github.com/dlalvarez/rag-platform/pull/83#issuecomment-6608799838).

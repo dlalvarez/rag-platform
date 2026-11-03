@@ -12,5 +12,8 @@
   R03/R05; AC01/04. ES/EN, golds fijados, negativos/ambigüedad y denominadores.
 - [x] T006 — Qwen/SQL real cuatro fixtures, métricas/citas/aislamiento/regresiones.
   R01..05; AC01..04. Rollback íntegro, latencias/fallos/uso separados.
-- [ ] T007 — Manual/límites/evidencia, CI/revisión/integración/postmerge y aceptación.
+- [x] T007 — Manual/límites/evidencia, CI/revisión/integración/postmerge y aceptación.
   R01..05; AC01..04. No avanzar F07 antes de aceptación.
+
+F06 aceptada en PR83, checks HEAD/postmerge correctos y
+[registro de aceptación](https://github.com/dlalvarez/rag-platform/pull/83#issuecomment-6608799838).

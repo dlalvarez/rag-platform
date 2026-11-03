@@ -1,7 +1,8 @@
 # Aceptación F06 — expediente de cierre
 
-Estado: pruebas técnicas completas. Aceptación propuesta, efectiva tras CI del
-HEAD exacto, revisión delegada, integración en develop y comprobación postmerge.
+Estado: aceptada en PR83, merge80b29f2adfae2f985a6414a236dc19807e8d8050,
+cuatro checks HEAD y tres postmerge correctos.
+[Aceptación registrada](https://github.com/dlalvarez/rag-platform/pull/83#issuecomment-6608799838).
 F05 aceptada en PR74; continuidad ADR0010 y revisión propia ADR0007.
 AC-F06-03 aclarado expresamente por Diego el 2026-11-03, sin migración.
 
