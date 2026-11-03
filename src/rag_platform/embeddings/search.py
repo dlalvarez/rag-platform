@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 
+from rag_platform.control.identity import AccessError
 from rag_platform.documents.errors import DocumentError
 from rag_platform.documents.repositories import RepositoryService
 from rag_platform.embeddings.contracts import EmbeddingError, EmbeddingProfile, inputs, validate
@@ -97,6 +98,8 @@ class SearchService:
                 raise EmbeddingError("INPUT_INVALID")
             if self.provider.profile != self.profile:
                 raise EmbeddingError("PROFILE_MISMATCH")
+        except (AccessError, DocumentError):
+            raise
         except EmbeddingError as error:
             raise failure(error.code) from None
         except Exception:
