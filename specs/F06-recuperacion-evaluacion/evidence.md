@@ -32,3 +32,26 @@ sin commit durante la corrida; no se modificó código durante la batería.
 Ruff completo/formato275archivos/docs/diff correctos. Revisión propia: referencias
 incluyen tenant/space, mismochunk exige procedencia/texto idénticos, un aporte
 por modalidad y score consistente con rangos. Sin revisión independiente.
+
+## T003 — componente SQL y comprobador preparado
+
+Mismo conjunto permitido materializado F05, ampliado por opción explícita para
+texto/offsets sin cambiar proyección por defecto. Filtros tipados se materializan
+antes de dos listas limitadas a50candidatos; vector exacto y FTS simple con
+plainto_tsquery/ts_rank_cd unidos en una sentencia/snapshot. Query/config/perfil/
+UUID parametrizados o constantes confiables; sin identificadores de cliente.
+RRF conserva ambos rangos y devuelve procedencia, rechazando filas inválidas.
+
+114pruebas focalizadas PASS3.27s incluyendo F05exact/ANN y contratos F06.
+Comprobador SQL preparado, aún no ejecutado: reutiliza publicación/retrieval F05
+con fixtures y DDL siempre revertidos, prueba FTS SELECT, filtros metadata,
+app/readonly, ACL/publicación/baja/perfil y huellas/control intactos.
+No modelo ni S3, no esquema persistente. Manual ops/f06/README.md.
+No acredita aún cita autorizante, recuperación semántica o aceptación T003/F06.
+
+Validación completa T003:1209passed/1warning heredado en88.75s;
+runnerexit0/95.05s, journal6320affea5854212b7d7a41dc18697a1.
+Ruff/formato278/docs/diff/composeconfig correctos. Código sin cambios durante
+la corrida. Revisión propia de filtros comunes/proyección F05 por defecto,
+parámetros FTS/JSON/vector y una sentencia/snapshot; prueba real aún pendiente.
+PR76/T002 integrado510ac6f5a5ac62257b116345ccfa127712de5307,4pre/3postSUCCESS.
