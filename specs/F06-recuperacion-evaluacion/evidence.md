@@ -103,3 +103,26 @@ Módulo independiente sin cambios SQL/servicio/DDL/API; suite completa anterior
 1235PASS permanece como base, CI ejecutará1262. No se repite localmente sin
 cambio de runtime previo. Medición Qwen/SQL/baseline real aún pendiente;
 T005/F06 no aceptadas por crear fixtures o métricas.
+
+## T004 — resolución SQL real completada
+
+PR78 integradoe068c5c7fe58dbf3f0e8bde6a9dbb8d32ce30eb8,4pre/3postSUCCESS.
+Journalb5dcd20e39f246c09ef3fbea14bd412c exit0/75.01s:
+4fixtures/40comparaciones/4FTS/4metadata/264comprobaciones de citas correctas.
+Referencias fabricadas, estado no publicado/baja/ACL y roles app/readonly
+probados; historia/control/DDL y rollback intactos. Consulta del HybridService
+con identidad real y Qwen aún pendiente; no se declara T004 completa.
+
+## T006 — baseline real preparado, sin ejecutar
+
+Script/overlay Qwen con corpus SHA35976933...,44operaciones reales antes de SQL
+y una copia del modelo. Por fixture:40consultas top10 vector/híbrido,400citas,
+8comandos FTS, negativos y rollback. Métricas/baseline reales se guardarán antes
+del gate; verificado solo si cuatro fixtures pasan recall/citas/FTS/rollback.
+Latencias de modelo y SQL separadas; no representan HTTP.
+
+39pruebas focalizadas PASS1.99s incluyendo27del evaluador y12de preparación/
+contabilidad/gates. Primera validación compose sin variable de journal fue
+rechazada como corresponde; interpolación config--quiet validada después
+con ruta de prueba, sin ejecutar contenedor. Sin cambios de runtime del servicio.
+Modelo/SQL y baseline aún no ejecutados; no usar métricas simuladas como calidad.
