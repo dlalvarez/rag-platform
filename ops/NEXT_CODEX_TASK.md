@@ -1,6 +1,6 @@
 # Continuidad F05 — HTTP verificado; ANN en revisión
 
-Developde803e5 (PR69), checks HEAD/postmerge correctos.
+Developdae8a0e (PR70), checks HEAD/postmerge correctos.
 Aprobaciones Qwen/HTTPfragmentos/adopciónBD/conexiónprivada vigentes; no repetir.
 Control0007/cuatro tenants0006/Qwen publicados. No repetir adopción.
 
@@ -37,3 +37,15 @@ No repetir benchmark capacidad. T003..T008/F05 siguen abiertos.
 Todo ejecución en ragdev01, Mac solo SSH/documentos. GitHub fuente verdad, árboles
 idénticos al probado, ADR0007 revisión propia explícita y CI exacto/postmerge.
 Seguir al cerrar PR; solo detenerse por decisión real o dependencia externa.
+
+Actualización ANN: prueba nativa inicial no demostró índice (INDEX_PLAN), filtros
+pasaban. Fix EXISTS correlacionado/OFFSET0 probado en journalb678c50d... exit0:
+cuatro planes/ejecuciones HNSW/comparación exacta/filtros/negativos/rollback PASS.
+Rama fix/F05-ann-index-filter todavía sin PR;50focalizadas9.27s y fullsuite
+790076754ea047abb47b29a4a0655e06 exit0:1103passed88.47s. CI/merge/post antes
+de usar esta corrección en siguiente QA integrada. HTTP sigue exacto.
+API t009 y trabajador Qwen están detenidos limpiamente, imágenes/contenedores
+conservados; no reemitir handoffs para SQL. Día no renovar.
+Plan sql-quality.md todavía sin implementación, excluir de PR de fix: corpus
+congelado/Qwen precomputado antes de SQL, vectores solo memoria, uso real global
+20llamadas separado de ledgers temporales sintéticos. No repetir capacidad.

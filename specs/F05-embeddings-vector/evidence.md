@@ -520,3 +520,25 @@ Journal8de78fe606274b42b08d624fa8af03b4 result.json exit0/head21e57605.
 Ruff/formato267/docs/diff y negativos F00 correctos. Revisión propia: filtros
 compartidos, parámetro vector, ajustes locales, candidatos/borde/fallback, errores
 y límites del comprobador rollback; no revisión independiente atribuida.
+
+## Ajuste del recorrido HNSW y prueba nativa
+PR70 dae8a0e con cuatro checks HEAD/tres postmerge success. Primera QA nativa
+7d4ba3bd64aa4548bf878081e237ff4d falló por aserción; diagnóstico238dde... también.
+La etiqueta UNPUBLISHED_HIDDEN estaba desactualizada durante callback; etiquetas
+cerradas precisas en41771c2a20fd4968a28ac44a0cb50155 localizaron INDEX_PLAN.
+Filtros/comparación/cobertura ya pasaban: no se demostró fuga de versión oculta.
+La selección IN se aplanaba a semi-join y no demostraba el recorrido HNSW.
+EXISTS correlacionado/OFFSET0 conserva filtro; mismo conjunto autorizado/límites.
+QA b678c50d10fc498eb7981cc97d09b756 exit0: cuatro fixtures/dos instancias,
+cuatro planes HNSW y ejecución contra exacto bajo ajuste QA LOCAL revertido,
+ventana global40 solo con IDs ajenos, filtros selectivos completan3permitidos;
+app/readonly/ACL/baja/publicación/perfil y huellas/control/rollback correctos.
+Contenedores/images/journals previos conservados. No ANN activado en HTTP.
+
+50focalizadasPASS9.27s. Primer test de forma SQL confundía LIMIT ALL interno con
+LIMIT externo; se corrigió la prueba, sin modificar límites. Suite completa
+persistente790076754ea047abb47b29a4a0655e06 en curso; cerrar antes de PR.
+
+Suite final fix1103passed88.47s, warning heredado; journal790076... exit0.
+Ruff/formato267/docs/diff/negativos F00 correctos. Revisión propia de filtro
+correlacionado y recorrido real, sin revisión independiente atribuida.

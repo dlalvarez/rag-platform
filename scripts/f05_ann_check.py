@@ -59,6 +59,7 @@ def index_names(value):
 
 
 def selective(c, names, space, profile, allowed, embedded):
+    reference.PHASE = "SELECTIVE_FIXTURES"
     # More than 40 closer vectors belong to foreign repositories without this actor's ACL.
     query, foreign = (1.0, 0.0, 0.0), 0
     for _ in range(16):
@@ -106,6 +107,7 @@ def selective(c, names, space, profile, allowed, embedded):
             processing.save_batch(c, guard, profile, task, response, 1)
             foreign += len(task.chunk_ids)
         processing.complete(c, guard, profile)
+    reference.PHASE = "GLOBAL_WINDOW_FILTER"
     assert foreign > 40
     vectors = vector_table(sa.MetaData(), space, profile)
     distance = vectors.c.embedding.op("<=>", return_type=sa.Float())(
@@ -117,14 +119,19 @@ def selective(c, names, space, profile, allowed, embedded):
     global_window = set(c.scalars(sa.select(vectors.c.chunk_id).order_by(distance).limit(40)))
     assert not global_window.intersection(embedded)
     args = (allowed["actor"], (allowed["repo"],), space, profile, query, 3)
+    reference.PHASE = "SELECTIVE_COMPARE"
     hits = compared(c, *args)
+    reference.PHASE = "SELECTIVE_COVERAGE"
     assert len(hits) == 3 and all(hit.repository_id == allowed["repo"] for hit in hits)
     COUNTS["selective_filters"] += 1
     # A forced test plan demonstrates index eligibility; production planner is not forced.
+    reference.PHASE = "INDEX_PLAN"
     with c.begin_nested() as temporary:
         c.exec_driver_sql("SET LOCAL enable_seqscan=off")
         plan = c.execute(Explain(ann_statement(*args))).scalar_one()
         assert "hnsw_" + space.hex in index_names(plan)
+        # Execute the eligible path too, rather than asserting EXPLAIN alone.
+        assert len(compared(c, *args)) == 3
         temporary.rollback()
     COUNTS["index_plans"] += 1
 
@@ -142,5 +149,13 @@ if __name__ == "__main__":
     except Exception as error:
         state = getattr(getattr(error, "orig", error), "sqlstate", None)
         code = state if isinstance(state, str) and re.fullmatch("[A-Z0-9]{5}", state) else "REFUSED"
-        print("F05 ANN " + reference.PHASE + " " + code + "; rollback/resources retained.")
+        print(
+            "F05 ANN "
+            + reference.PHASE
+            + " "
+            + code
+            + " "
+            + type(error).__name__
+            + "; rollback/resources retained."
+        )
         raise SystemExit(1) from None

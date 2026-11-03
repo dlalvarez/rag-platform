@@ -43,3 +43,15 @@ afirma que el planificador elija HNSW en toda consulta o que sea más rápido.
 Se reutiliza prove exacto con hooks opcionales, cuyos defaults permanecen iguales.
 Toda la batería sigue usando rollback exterior y huellas históricas/control.
 Pendiente ejecutar nativa tras PR/CI/merge/postmerge, calidad y activación de servicio.
+
+## Ajuste y prueba nativa
+La selección IN inicial pasó filtros/comparación pero el planificador la transformó
+en semi-join y no demostró recorrido HNSW. Se usa EXISTS correlacionado con OFFSET0
+para conservar la comprobación como filtro del índice; no cambia el conjunto
+permitido ni permite al cliente elegir SQL. No se fuerza planificador global.
+
+QA b678c50d10fc498eb7981cc97d09b756: cuatro fixtures/ambas instancias PASS,
+cuatro planes HNSW y ejecución de esos recorridos contra exacto, filtros selectivos
+con ventana global40 sin resultados permitidos y negativos/rollback correctos.
+enable_seqscan=off solo durante savepoint QA revertido; no promesa de elección
+del índice en toda consulta o mejora de latencia. Servicio HTTP conserva exacto.

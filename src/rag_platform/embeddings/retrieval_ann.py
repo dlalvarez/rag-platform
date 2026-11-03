@@ -28,10 +28,20 @@ def ann_statement(actor, repositories, space, profile, vector, top_k):
             Vector(profile.dimension),
         )
     )
+    # Keep permission membership as an index filter. OFFSET 0 prevents PostgreSQL
+    # from flattening this into a semi-join that can discard the ordered HNSW path.
+    membership = (
+        sa.select(sa.literal(1))
+        .select_from(permitted)
+        .where(permitted.c.chunk_id == vectors.c.chunk_id)
+        .offset(0)
+        .correlate(vectors)
+        .exists()
+    )
     # Membership is part of the ordered scan, not a filter on a fixed global window.
     candidates = (
         sa.select(vectors.c.chunk_id, distance.label("distance"))
-        .where(vectors.c.chunk_id.in_(sa.select(permitted.c.chunk_id)))
+        .where(membership)
         .order_by(distance)
         .limit(top_k + 1)
         .cte("candidates")
