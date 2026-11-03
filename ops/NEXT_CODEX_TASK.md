@@ -35,3 +35,15 @@ y CI HEAD/postmerge. Seguir hasta dependencia/decisión real, no terminar por PR
 
 Después HTTP: originalSHA/regresión, ANN/exacto/filtros, calidad SQL ES/EN y
 recuperación parcial multilote. T003..T008/F05 siguen abiertas.
+
+Actualización10:06UTC: PR68 integrado0cb18d6 y postmerge success.
+Operativo en ese develop. API t009 activa,98hash/importPASS/noTorch;
+t006 detenida preservada. F03 vence~11:02UTC, Qwen t008~10:47UTC.
+Primer HTTPQA83d8... START REFUSED antes de consultas: manifests API/worker tienen
+repositorios distintos en mismo tenant/space. Fix aislado en rama
+fix/F05-http-proof-repositories: consulta ambos repos autorizados, descarga cada
+original de su repositorio. CI/merge/postmerge antes de repetir con journal nuevo.
+ANN WIP local preservado f888933 en feat/F05-T006-ann-retrieval,30offlinePASS:
+componente separado todavía sin activar, prueba nativa/cobertura/indexplan pendiente.
+Al cerrar fix, alinear operativo y retomar ANN vía merge develop sin reset.
+No repetir benchmark ni adopción; conservar journals. HTTP aún no aceptado.

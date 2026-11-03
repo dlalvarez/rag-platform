@@ -17,14 +17,24 @@ from rag_platform.identity_api import private_file
 PHASE = "START"
 
 
+def validate_retained(records, recovery):
+    if len(records) != 4 or len(recovery) != 4:
+        raise ValueError("Explicit four-fixture scope required")
+    for original, retained in zip(records, recovery, strict=True):
+        if any(original[k] != retained[k] for k in ("name", "tenant", "space")):
+            raise ValueError("Retained scope mismatch")
+        # Repositories are independent fixtures; each logical ID must remain valid.
+        for key in ("tenant", "repository", "space", "document", "version", "original"):
+            if UUID(retained[key]).int == 0:
+                raise ValueError("Invalid retained identity")
+
+
 def run():
     global PHASE
     assert importlib.util.find_spec("torch") is None
     _actor, records = selection()
     recovery = json.loads(private_file("/run/f05-recovery/selection.json", 512 * 1024))["records"]
-    assert [(r["name"], r["tenant"], r["repository"], r["space"]) for r in recovery] == [
-        (r["name"], r["tenant"], r["repository"], r["space"]) for r in records
-    ]
+    validate_retained(records, recovery)
     humans, api, results = None, None, []
     try:
         humans = Humans()
@@ -35,7 +45,10 @@ def run():
             tenant, repository, space = (record[k] for k in ("tenant", "repository", "space"))
             path = f"/api/v1/tenants/{tenant}/search"
             value = dict(
-                repository_ids=[repository], space_id=space, query="documento de prueba", top_k=3
+                repository_ids=list(dict.fromkeys((repository, retained["repository"]))),
+                space_id=space,
+                query="documento de prueba",
+                top_k=3,
             )
             denials = []
             for user, data, expected in (
@@ -60,7 +73,9 @@ def run():
             assert set(result) == {"request_id", "space_id", "hits", "usage"}
             assert result["space_id"] == space and 1 <= len(result["hits"]) <= 3
             assert result["request_id"] != "ignored-client-trace"
-            expected_versions = {(r["document"], r["version"]) for r in (record, retained)}
+            expected_versions = {
+                (r["repository"], r["document"], r["version"]) for r in (record, retained)
+            }
             for hit in result["hits"]:
                 assert set(hit) == {
                     "repository_id",
@@ -72,8 +87,11 @@ def run():
                     "page",
                     "section",
                 }
-                assert hit["repository_id"] == repository
-                assert (hit["document_id"], hit["version_id"]) in expected_versions
+                assert (
+                    hit["repository_id"],
+                    hit["document_id"],
+                    hit["version_id"],
+                ) in expected_versions
                 assert UUID(hit["chunk_id"]).int != 0
                 assert type(hit["score"]) in (int, float) and math.isfinite(hit["score"])
                 assert -1 <= hit["score"] <= 1 and isinstance(hit["excerpt"], str)
@@ -84,7 +102,7 @@ def run():
             # Existing atomic and recovered TXT originals must still be downloadable.
             for original in (record, retained):
                 base = (
-                    f"/api/v1/tenants/{tenant}/repositories/{repository}"
+                    f"/api/v1/tenants/{tenant}/repositories/{original['repository']}"
                     f"/documents/{original['document']}"
                 )
                 metadata = api.json("alice", "GET", base)["document"]
