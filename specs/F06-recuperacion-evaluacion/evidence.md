@@ -126,3 +126,17 @@ contabilidad/gates. Primera validación compose sin variable de journal fue
 rechazada como corresponde; interpolación config--quiet validada después
 con ruta de prueba, sin ejecutar contenedor. Sin cambios de runtime del servicio.
 Modelo/SQL y baseline aún no ejecutados; no usar métricas simuladas como calidad.
+
+## T006 — consulta autorizada real preparada
+
+Nuevo comprobador de HybridService sobre originales sintéticos ya publicados.
+Reutiliza selección/scope/perfil F05 y entrega limitada del worker, sin bootstrap/
+migrator/día en runtime. Identidad global y ACL reales, filtro documento/versión,
+citas actuales y referencias ajenas/fabricadas; añade regresión exacta F05 tras
+extraer su método de inferencia. Ocho consultas reales previstas en un único
+modelo, cero extra por denegaciones o resolver. No escribe documentos/jobs.
+
+Ruff/composeconfig/docs/diff validados; ejecución real pendiente tras revisión/
+CI/integración/postmerge y después del baseline, sin dos Qwen simultáneos.
+No se repite suite local por este comprobador opt-in sin cambio del servicio;
+CI sigue ejecutando toda la batería. No se declara resultado todavía.

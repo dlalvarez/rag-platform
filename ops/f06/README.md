@@ -41,3 +41,21 @@ y cero fallos en las cuatro fixtures. Conservar resultado fallido y analizar;
 no cambiar golds para aprobar. Latencia de inferencia medida40veces y SQL160
 por modo; no sumar o presentar esos datos como latencia HTTP medida.
 Negativas con resultados se informan aparte, sin prometer abstención semántica.
+
+## Servicio con identidad y originales existentes
+
+Primero cerrar cualquier otro Qwen. Emitir una entrega limitada F05 nueva mediante
+el emisor ya aprobado, solo con sesión diaria válida y consumidor cerrado. No
+montar día/bootstrap/migrator en el comprobador. Definir RAG_F04_QA_ROOT al journal
+API a75adb4c445c46d698abc558a8308112, RAG_F05_EMBED_QA_ROOT al proof Qwen
+1c70faf0282548499cd601f6ebe9859e y RAG_F06_SERVICE_QA_ROOT a un journal nuevo0700.
+
+    docker compose --env-file .env.f02 -f ops/f02/compose.yaml -f ops/f06/service-check.compose.yaml run --rm --no-deps --pull never f06-service-check
+
+Valida scope/perfil/IDs contra manifest retenido; no modifica documentos ni cola.
+Usa identidad real y autorización vigente en los cuatro tenants, HybridService
+filtrado a versiones seleccionadas, resolución de citas y regresión SearchService
+exacto F05. Ocho consultas reales al único Qwen cargado; repos ajenos y citas de
+otro tenant/inexistentes se deniegan sin inferencia adicional. Cierre revoca su
+entrega limitada; no renovar automáticamente. Solo contadores en verified.json.
+No nuevo endpoint HTTP, acceso bootstrap, S3 o generación.
