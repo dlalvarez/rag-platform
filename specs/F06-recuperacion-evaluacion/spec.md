@@ -1,7 +1,7 @@
 # F06 — Búsqueda híbrida, ranking y evaluación de recuperación
 
 **Estado:** alcance original autorizado por ADR0010. F05 aceptada en PR74;
-implementación y pruebas técnicas completas; cierre de aceptación pendiente. Aclaración AC-F06-03 aprobada expresamente por Diego
+aceptada en PR83 con CI/revisión/merge/postmerge correctos. Aclaración AC-F06-03 aprobada expresamente por Diego
 el 2026-11-03; conserva recepción del original y exige versión publicada completa.
 **Dependencia:** F05.
 **Meta:** Motor de búsqueda recupera fuentes verificables.

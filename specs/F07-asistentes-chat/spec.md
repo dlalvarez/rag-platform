@@ -1,7 +1,8 @@
 # F07 — Asistentes, conversaciones y respuestas fundamentadas
 
-**Estado:** BORRADOR RECTOR, pendiente de aprobación humana para ejecutar.  
-**Dependencia:** F06.  
+**Estado:** alcance original autorizado por ADR0010. F06 aceptada en PR83;
+planificación activa. D-07 (perfil LLM y retención) pendiente de decisión expresa.
+**Dependencia:** F06.
 **Meta:** API de conversación especializada con evidencia.
 
 ## Problema y resultado esperado

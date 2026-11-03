@@ -23,33 +23,28 @@ No declarar aceptada ni implementar F06 antes de completar esas puertas.
 - Nueva sesión diaria habilitada por Diego, validada ACTIVE; vence
   2026-11-04T08:51:32-05:00. Sin renovación automática ni cambios Bao/root/políticas.
 
-## Siguiente acción — cierre F06
+## Siguiente acción — F07
 
-Pruebas técnicas F06 completas. Falta CI/revisión/merge/postmerge del expediente.
-Rama docs/F06-acceptance conserva métricas verificadas y diagnósticos.
-Operativo54b4c9684044fc179d7766158e11bd3ae507b31f (PR82), código core probado,
-cuatro checks HEAD/tres postmerge correctos. No cambiar checkout con consumidores.
+F06 aceptada PR83/merge80b29f2adfae2f985a6414a236dc19807e8d8050,
+cuatro checks HEAD/tres postmerge correctos, comentario6608799838.
+Operativo alineado y todos los consumidores cerrados; no Qwen activo.
+Worktree docs/F07-plan, plan/tareas/checklist/evidencia/propuesta preparados.
 
-Calidad ac2b8e1743994b4c9bed1aa5a0573126:44ops/2281tokens,Recall10=1.0
-ES/EN vector+híbrido,1600citas/32FTS/rollbackPASS; baseline-v1.json allowlisted.
-Servicio real7e04eee3dac24d269d825a0fb37bde66:8ops184tokens,4hybridcites
-y12exactF05resultsciteresolved,0deniedinference, sin mutar corpus.
-Regresiónfinal4fb9bbd4bda24235bb401a7c753051a2 exit0/37.58s, cuatro
-tenants/dos instancias OIDC/SQL/TLS/roles/S3/privacidad/históricosPASS.
+D-07 pendiente de respuesta expresa: Qwen3-1.7B GGUF Q8_0/llama.cpp local,
+ensayo sintético CPU1.5/RAM4GiB/context2048/salida256/una generación,
+sin modelo de embeddings activo durante primer ensayo, sin API pagada ni
+envío a terceros, sin VMM/GPU/puertos públicos. Historial privado tenant/
+propietario sin borrado automático. No descargar/ejecutar hasta decisión.
+Ver provider-proposal.md con revisiones/hashes/tamaño verificados.
+No inferir aprobación de la autorización anterior de Qwen embeddings.
 
-S3ProtocolError reproducido68bc0f45... RemoteDisconnected en conexión reutilizada.
-PR82: lectura GET/HEAD retry1, escrituras/status/TLS/conexión sin replay,
-sin redirects y logs saneados antes del retry. No denegaciones relajadas.
-Suite1295PASS91.31s/1warning; hashsmoke105módulos/sourceRO/sinTorch.
-Imagen anterior retenida; nuevoAPI rag-f06-api-source-t010 cerrado limpiamente,
-locks F03/F04/F05 libres. No Qwen activo.
+Trabajo independiente: T002 contratos/provider mock/políticas de evidencia
+offline, sin sockets/modelo/credenciales. Preparar diseño de esquema/CRUD
+sin adopción persistente hasta pruebas/revisión/compatibilidad.
+No pausar toda la fase por D-07 mientras quede trabajo independiente.
+F05 HTTP conserva contrato y exacto; chat F07 concretará su perfil previsto.
 
-Integrar expediente y registrar aceptación efectiva antes de implementar F07.
-Continuar el roadmap ADR0010 sin otra autorización de trámite.
-F07 D-07 requiere propuesta concreta de perfil LLM/retención y decisión real;
-preparar plan/tareas e interfaz/mock dentro del alcance original antes de código.
-No usar proveedor externo/modelo nuevo o cambiar retención por iniciativa.
-
-Día válido hasta2026-11-04T08:51:32-05:00; sin renovación automática.
-Todo en ragdev01, revisión propia ADR0007, sin main/tag/producción/visibilidad/
-purgas/root/políticas Bao. Conservar imágenes/contenedores/documentos/journals.
+Día válido hasta2026-11-04T08:51:32-05:00. Sin renovación automática,
+root/políticas Bao, main/tag/producción/visibilidad/purgas.
+Todos los documentos/originales/espacios/imágenes/contenedores/journals retenidos.
+Toda ejecución ragdev01, revisión propia ADR0007 y continuidad ADR0010.
